@@ -23,30 +23,33 @@ import { axiosClient } from "../../Utils/axiosClient";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { KEY_ACCESS_TOKEN, PATIENT_USER, setItem } from "../../Utils/localStorageManager";
+import {
+    KEY_ACCESS_TOKEN,
+    PATIENT_USER,
+    setItem,
+} from "../../Utils/localStorageManager";
 import { login } from "../../Store/authSlice";
 
 const MobileImageStyle = styled("img")({
-    position:'fixed',
-    bottom:0
+    position: "fixed",
+    bottom: 0,
 });
 
 const TextFeildStyle = styled(TextField)({
     color: "#ffffff",
     borderBottom: "#ffffff",
     marginTop: "10px",
-    [`& input`]:{
-        color:'#ffffff'
+    [`& input`]: {
+        color: "#ffffff",
     },
-    [`& fieldset`]:{
-        color:'#ffffff',
+    [`& fieldset`]: {
+        color: "#ffffff",
         borderBottom: "1px solid #ffffff",
     },
-    '& div:before:hover':{
+    "& div:before:hover": {
         borderBottom: "1px solid #ffffff",
-
-        },
-        "& label": {
+    },
+    "& label": {
         color: "#ffffff",
     },
     // "&:hover": {
@@ -59,7 +62,7 @@ const TextFeildStyle = styled(TextField)({
     //     color: "#ffffff",
     //     borderBottom: "1px solid #ffffff",
     // },
-    
+
     // "& .css-1x5krvu-MuiFormLabel-root-MuiInputLabel-root.Mui-error": {
     //     color: "#ffffff",
     // },
@@ -96,16 +99,15 @@ const SignIn = () => {
     const [disableButton, setDisableButton] = useState(false);
     const dispatch = useDispatch();
     const locationUrl = useLocation();
-    const {isLoggedIn} = useSelector((state)=>state.auth)
+    const { isLoggedIn } = useSelector((state) => state.auth);
     const inputStyles = {
-        '&:hover': {
-          backgroundColor: '#1F51C6', // Change background color on hover
+        "&:hover": {
+            backgroundColor: "#1F51C6", // Change background color on hover
         },
-        '&:focus': {
-          backgroundColor: '#1F51C6', // Change background color on focus
+        "&:focus": {
+            backgroundColor: "#1F51C6", // Change background color on focus
         },
-      };
-
+    };
 
     const togglePassword = () => {
         setEye(!eye);
@@ -127,11 +129,14 @@ const SignIn = () => {
             );
             console.log(response);
             if (response.status === "ok") {
-              setDisableButton(false);
+                setDisableButton(false);
                 console.log(response.result);
-                dispatch(login(response.result.user))
-                navigate(locationUrl?.state?.prevUrl ? locationUrl?.state?.prevUrl : '/');
-
+                dispatch(login(response.result.user));
+                navigate(
+                    locationUrl?.state?.prevUrl
+                        ? locationUrl?.state?.prevUrl
+                        : "/"
+                );
 
                 setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
                 setItem(PATIENT_USER, response.result.PATIENT_USER);
@@ -166,189 +171,215 @@ const SignIn = () => {
     };
     return (
         <>
-        <Box
+            <Box
                 sx={{
                     width: {
                         xs: "100%",
                         sm: "100%",
                         md: "calc(100% - 30px)",
                     },
-                    position:'fixed',
+                    position: "fixed",
                     // top:0,
                     m: "0px auto",
                     p: 1,
                 }}
             >
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems:'center', 
-                    minHeight:'100vh'
-    
-    }}>
-            <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
-                <MobileImageStyle src="/hand image.png" alt="" />
-            </Box>
-            <Box sx={{width:'100%'}}>
-                <Card
+                <Box
                     sx={{
-                        p: { xs: "0.625rem", sm: "2.188rem", md: "3.25rem" },
-                        // px: { xs: "20px", sm: "30px", md: "68px" },
-                        width: { xs: "100%", sm: "100%", md: "500px" },
-                        // height: { xs: "max-content", sm: "450px", md: "500px" },
-                        borderRadius:'10px',
-                        background: "#1F51C6",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        minHeight: "100vh",
                     }}
                 >
-                    <Typography
-                        variant="h6"
+                    <Box
                         sx={{
-                            fontWeight: '600',
-                            fontSize: { xs: "1.563rem", sm: "1.875rem", md: "2.5rem" },
-                            fontFamily: "Raleway",
-                            
-                            color: "#ffffff",
-                            textAlign: {
-                                xs: "center",
-                                sm: "center",
-                                md: "left",
-                            },
+                            display: { xs: "none", sm: "none", md: "block" },
                         }}
                     >
-                        Welcome Back!
-                    </Typography>
-                    <form onSubmit={handleSignIn}>
-                        <Stack spacing="10px">
-                            <TextFeildStyle
-                              color="secondary"
-                                autoFocus
-                                onChange={(e) => setEmail(e.target.value) & setError(false) & setInvalidEmail(false)}
-                                variant="standard"
-                                label="Email Address"
-                                InputProps={{ style: inputStyles }}
-                                error={
-                                    err && !email
-                                        ? true
-                                        : false || (err && invalidEmail)
-                                        ? true
-                                        : false
-                                }
-                                helperText={
-                                    err && !email ? (
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                color: "#FFDF41",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            <ErrorIcon
-                                                sx={{ fontSize: "15px" }}
-                                            />
-                                            &nbsp; Email is required !
-                                        </Box>
-                                    ) : "" || (err && invalidEmail) ? (
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                color: "#FFDF41",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            <ErrorIcon
-                                                sx={{ fontSize: "15px" }}
-                                            />
-                                            &nbsp;
-                                            {invalidEmail}
-                                        </Box>
-                                    ) : "" || (err && invalidEmail) ? (
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                color: "#FFDF41",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            <ErrorIcon
-                                                sx={{ fontSize: "15px" }}
-                                            />
-                                            &nbsp; Plase Enter a Valid Email
-                                            Address
-                                        </Box>
-                                    ) : (
-                                        ""
-                                    )
-                                }
-                            />
-                            <TextFeildStyle
-                              color="secondary"
-                                onChange={(e) => setPassword(e.target.value) & setError(false) & setWrongPassword(false)}
-                                variant="standard"
-                                label="Password"
-                                type={eye ? "text" : "password"}
-                                InputLabelProps={{ className: "lableStyle" }}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={togglePassword}
+                        <MobileImageStyle src="/hand image.png" alt="" />
+                    </Box>
+                    {/* <Box sx={{width:'100%'}}> */}
+                    <Card
+                        sx={{
+                            p: {
+                                xs: "0.625rem",
+                                sm: "2.188rem",
+                                md: "3.25rem",
+                            },
+                            // px: { xs: "20px", sm: "30px", md: "68px" },
+                            width: { xs: "100%", sm: "100%", md: "500px" },
+                            // height: { xs: "max-content", sm: "450px", md: "500px" },
+                            borderRadius: "10px",
+                            background: "#1F51C6",
+                        }}
+                    >
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontWeight: "600",
+                                fontSize: {
+                                    xs: "1.563rem",
+                                    sm: "1.875rem",
+                                    md: "2.5rem",
+                                },
+                                fontFamily: "Raleway",
+
+                                color: "#ffffff",
+                                textAlign: {
+                                    xs: "center",
+                                    sm: "center",
+                                    md: "left",
+                                },
+                            }}
+                        >
+                            Welcome Back!
+                        </Typography>
+                        <form onSubmit={handleSignIn}>
+                            <Stack spacing="10px">
+                                <TextFeildStyle
+                                    color="secondary"
+                                    autoFocus
+                                    onChange={(e) =>
+                                        setEmail(e.target.value) &
+                                        setError(false) &
+                                        setInvalidEmail(false)
+                                    }
+                                    variant="standard"
+                                    label="Email Address"
+                                    InputProps={{ style: inputStyles }}
+                                    error={
+                                        err && !email
+                                            ? true
+                                            : false || (err && invalidEmail)
+                                            ? true
+                                            : false
+                                    }
+                                    helperText={
+                                        err && !email ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
                                             >
-                                                {eye ? (
-                                                    <AiFillEye color="#ffffff" />
-                                                ) : (
-                                                    <AiFillEyeInvisible color="#ffffff" />
-                                                )}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                error={
-                                    err && !password
-                                        ? true
-                                        : false || (err && wrongPassword)
-                                        ? true
-                                        : false
-                                }
-                                helperText={
-                                    err && !password ? (
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                color: "#FFDF41",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            <ErrorIcon
-                                                sx={{ fontSize: "15px" }}
-                                            />
-                                            &nbsp; Password is required!
-                                        </Box>
-                                    ) : "" || (err && wrongPassword) ? (
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                color: "#FFDF41",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            <ErrorIcon
-                                                sx={{ fontSize: "15px" }}
-                                            />
-                                            {wrongPassword}
-                                        </Box>
-                                    ) : (
-                                        ""
-                                    )
-                                }
-                            />
-                            {/* <Typography
+                                                <ErrorIcon
+                                                    sx={{ fontSize: "15px" }}
+                                                />
+                                                &nbsp; Email is required !
+                                            </Box>
+                                        ) : "" || (err && invalidEmail) ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                <ErrorIcon
+                                                    sx={{ fontSize: "15px" }}
+                                                />
+                                                &nbsp;
+                                                {invalidEmail}
+                                            </Box>
+                                        ) : "" || (err && invalidEmail) ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                <ErrorIcon
+                                                    sx={{ fontSize: "15px" }}
+                                                />
+                                                &nbsp; Plase Enter a Valid Email
+                                                Address
+                                            </Box>
+                                        ) : (
+                                            ""
+                                        )
+                                    }
+                                />
+                                <TextFeildStyle
+                                    color="secondary"
+                                    onChange={(e) =>
+                                        setPassword(e.target.value) &
+                                        setError(false) &
+                                        setWrongPassword(false)
+                                    }
+                                    variant="standard"
+                                    label="Password"
+                                    type={eye ? "text" : "password"}
+                                    InputLabelProps={{
+                                        className: "lableStyle",
+                                    }}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={togglePassword}
+                                                >
+                                                    {eye ? (
+                                                        <AiFillEye color="#ffffff" />
+                                                    ) : (
+                                                        <AiFillEyeInvisible color="#ffffff" />
+                                                    )}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    error={
+                                        err && !password
+                                            ? true
+                                            : false || (err && wrongPassword)
+                                            ? true
+                                            : false
+                                    }
+                                    helperText={
+                                        err && !password ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                <ErrorIcon
+                                                    sx={{ fontSize: "15px" }}
+                                                />
+                                                &nbsp; Password is required!
+                                            </Box>
+                                        ) : "" || (err && wrongPassword) ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                <ErrorIcon
+                                                    sx={{ fontSize: "15px" }}
+                                                />
+                                                {wrongPassword}
+                                            </Box>
+                                        ) : (
+                                            ""
+                                        )
+                                    }
+                                />
+                                {/* <Typography
                             onClick={()=>navigate('/medidek/terms&PrivacyPolicy')}
                                 sx={{
                                     my: { xs: 1, sm: 1, md: 2 },
@@ -361,32 +392,32 @@ const SignIn = () => {
                                 By continuing, you agree to Medidek’s Terms of
                                 Service & Privacy Policy
                             </Typography> */}
-                            <LoadingButton
-                                size="small"
-                                fullWidth
-                                type="submit"
-                                loading={disableButton}
-                                // loadingPosition="end"
-                                variant="contained"
-                                sx={{
-                                    my: { xs: 0.5, sm: 0.7, md: 1 },
-                                    fontFamily: "Lato",
-                                    fontWeight: "600",
-                                    textTransform: "none",
-                                    fontSize:{xs:'1rem', md:'1.25rem'},
-                                    background: "#ffffff",
-                                    height:'32px',
-                                    color: "#383838",
-                                    borderRadius: "53px",
-                                    boxShadow:'none',
-                                    "&:hover": {
-                                        background: "#d9d9d9",
-                                    },
-                                }}
-                            >
-                                <span>Sign In</span>
-                            </LoadingButton>
-                            {/* <Button
+                                <LoadingButton
+                                    size="small"
+                                    fullWidth
+                                    type="submit"
+                                    loading={disableButton}
+                                    // loadingPosition="end"
+                                    variant="contained"
+                                    sx={{
+                                        my: { xs: 0.5, sm: 0.7, md: 1 },
+                                        fontFamily: "Lato",
+                                        fontWeight: "600",
+                                        textTransform: "none",
+                                        fontSize: { xs: "1rem", md: "1.25rem" },
+                                        background: "#ffffff",
+                                        height: "32px",
+                                        color: "#383838",
+                                        borderRadius: "53px",
+                                        boxShadow: "none",
+                                        "&:hover": {
+                                            background: "#d9d9d9",
+                                        },
+                                    }}
+                                >
+                                    <span>Sign In</span>
+                                </LoadingButton>
+                                {/* <Button
                                 type="submit"
                                 variant="contained"
                                 sx={{
@@ -404,7 +435,7 @@ const SignIn = () => {
                             >
                                 Continue
                             </Button> */}
-                            {/* <Button
+                                {/* <Button
                             // disabled
                                 variant="contained"
                                 sx={{
@@ -427,24 +458,24 @@ const SignIn = () => {
                                 <FcGoogle size={"20px"} />
                                 &nbsp; Sign Up with Google
                             </Button> */}
-                            <Link
-                                to="/user/signup"
-                                style={{
-                                   margin:'10px auto',
-                                    textAlign: "center",
-                                    fontFamily: "Poppins",
-                                    fontWeight: "500",
-                                    color: "#ffffff",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Don't have an account? Click Here.
-                            </Link>
-                        </Stack>
-                    </form>
-                </Card>
+                                <Link
+                                    to="/user/signup"
+                                    style={{
+                                        margin: "10px auto",
+                                        textAlign: "center",
+                                        fontFamily: "Poppins",
+                                        fontWeight: "500",
+                                        color: "#ffffff",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Don't have an account? Click Here.
+                                </Link>
+                            </Stack>
+                        </form>
+                    </Card>
 
-                {/* <Card className="signup-card">
+                    {/* <Card className="signup-card">
                     <Typography variant="h5">Create Account</Typography>
                     <form className="form">
                             <TextFeildStyle
@@ -507,9 +538,9 @@ const SignIn = () => {
                             </Typography>
                         </form>
                 </Card> */}
+                    {/* </Box> */}
+                </Box>
             </Box>
-        </Box>
-        </Box>
         </>
     );
 };
