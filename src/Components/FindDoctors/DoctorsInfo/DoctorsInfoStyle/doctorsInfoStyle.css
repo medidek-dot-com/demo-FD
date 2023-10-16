@@ -1,0 +1,15 @@
+.button-style{
+    background-color:#ffffff !important;
+    color: #706D6D !important;
+    padding-inline:20px !important ;
+}
+
+.active{
+    background-color: #1F51C6 !important;
+    color: #ffffff !important;
+}
+
+.slotAvailable{
+    color: #15B912;
+    /* font-weight: ; */
+}

@@ -1,0 +1,17 @@
+.payment-container{
+    display: flex !important;
+    justify-content: center;
+    width: 100% !important;
+    margin: 60px auto 0 auto ;
+}
+.payment-card{
+    display: flex;
+    /* justify-content: space-between; */
+    /* width: 70%; */
+    padding: 20px;
+    /* margin-top: 30px; */
+}
+
+/* .doctor-address-box{
+    
+} */

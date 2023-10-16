@@ -1,0 +1,55 @@
+.wrapper{
+    display: flex;
+    margin-top: 40px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.signup-card{
+    min-width: 360px;
+    padding: 40px;
+    height: 405px;
+    background-color: #1F51C6 !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+}
+.logoImg{
+    margin-top: 100px;
+
+}
+.logoImg img{
+    width: 380px;
+    /* margin-top: 40px; */
+}
+.form{
+    display: flex;
+    flex-direction: column;
+}
+
+.terms-con{
+    font-size: 12px !important;
+    margin: 10px 0 !important;
+    cursor: pointer;
+    /* line-height: 10px; */
+}
+.btn{
+    background-color: #ffffff !important;
+    color: #383838 !important;
+    font-weight: bold !important;
+    margin-top: 13px !important;
+    box-shadow: none !important;
+}
+.input{
+    color: red !important;
+}
+.lableStyle{
+    color: #ffffff !important;
+    /* font-size: 15px !important; */
+}
+
+.already-have-acc{
+    text-align: center;
+    margin-top: 6px !important;
+    cursor: pointer;
+    font-size: 13px !important;
+}
