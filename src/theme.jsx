@@ -9,13 +9,19 @@ export const theme = createTheme({
     // },
     palette:{
         primary:{
-            main:"#1F51C6"
+            main:"#1F51C6",
+            light:"#ffffff",
+            dark:"ffffff"
         },
         secondary:{
-            main:"#ffffff"
+            main:"#ffffff",
+            light:"#ffffff",
+            dark:"ffffff"
         },
         success:{
-            main:"#15B912"
+            main:"#15B912",
+            light:"#ffffff",
+            dark:"ffffff"
         }
     },
     components: {

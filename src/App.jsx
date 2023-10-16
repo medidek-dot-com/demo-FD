@@ -51,6 +51,7 @@ import ViewPetiantAppointment from "./Pages/Patient/ViewPetiantAppointment";
 import MedidekTerms from "./Pages/MedidekTerms";
 import DoctorEditProfile from "./Pages/Doctor/DoctorEditProfile";
 import DoctorAppointments from "./Pages/Doctor/DoctorAppointments";
+import ForgotPassword from "./Pages/ForgotPassword";
 
 const App = () => {
 
@@ -79,6 +80,7 @@ const App = () => {
             location.pathname == "/doctor/signin" ||
             location.pathname == "/user/signin" ||
             location.pathname == "/user/signup" ||
+            location.pathname == "/forgot-password" ||
             location.pathname == `/doctor/dashboard/${hospital_id}/${doctor_id}` ||
             location.pathname == `/master/login/verify/${email}`
         ) {
@@ -225,6 +227,10 @@ const App = () => {
                     <Route
                         path="/master/login/verify/:email"
                         element={<OtpScreen />}
+                    />
+                    <Route
+                        path="/forgot-password"
+                        element={<ForgotPassword />}
                     />
                 </Routes>
             {/* </Box> */}

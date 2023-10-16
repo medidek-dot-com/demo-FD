@@ -40,16 +40,31 @@ const ViewPetiantAppointment = () => {
                         sx={{ width: "76px", height: "76px" }}
                     />
                     <Stack alignItems="center" sx={{ mb: "40px" }}>
-                        <Typography>Thank You!</Typography>
-                        <Typography>
+                        <Typography sx={{fontFamily:'Raleway', fontWeight:'600', fontSize:'1.563rem'}}>Thank You!</Typography>
+                        <Typography
+                        sx={{fontFamily:'Lato', fontWeight:'600', fontSize:'1rem', color:'#706D6D'}}
+                        >
                             Your Appointment has been Booked!
                         </Typography>
                     </Stack>
                     <Stack alignItems="center">
-                        <Typography>Track Appointment</Typography>
-                        <Typography>Appointment Id: #02484746</Typography>
+                        <Typography
+                        sx={{fontFamily:'Raleway', fontWeight:'600', fontSize:'1.563rem', color:'#383838'}}
+                        >Track Appointment</Typography>
+                        <Box component='span'
+                        sx={{fontFamily:'Lato', fontWeight:'700', fontSize:'1rem', color:'#1F51C6'}}
+                        >Appointment Id: <span
+                        style={{fontFamily:'Lato', fontWeight:'600', fontSize:'1rem', color:'#383838'}}
+                        
+                        >#02484746</span></Box>
                     </Stack>
-                    <Stack alignSelf="start">
+
+                    <Stack>
+                        
+                    </Stack>
+
+
+                    {/* <Stack alignSelf="start">
                         <Box
                             component="span"
                             sx={{
@@ -110,7 +125,7 @@ const ViewPetiantAppointment = () => {
                                 }}
                             ></Box>
                         </Box>
-                    </Stack>
+                    </Stack> */}
                 </Box>
             </Box>
         </Box>

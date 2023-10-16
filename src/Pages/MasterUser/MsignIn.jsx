@@ -50,16 +50,16 @@ const TextFiledStyle = styled(TextField)({
 });
 
 const TabsOnImgStyle = styled(Typography)`
-margin: 15px;
-z-index: 1;
-border-radius: 30px;
-padding: 2px 13px;
-background: #1f51c6;
-width: max-content;
-color: #ffffff;
-font-family: Raleway;
-font-weight: 600;
-font-size: 1rem;
+    margin: 15px;
+    z-index: 1;
+    border-radius: 30px;
+    padding: 2px 13px;
+    background: #1f51c6;
+    width: max-content;
+    color: #ffffff;
+    font-family: Raleway;
+    font-weight: 600;
+    font-size: 1rem;
 `;
 
 const MsignUpIn = () => {
@@ -258,7 +258,7 @@ const MsignUpIn = () => {
                                 fontFamily: "Raleway",
                                 fontWeight: "700",
                                 fontSize: { xs: "1rem", lineHeight: "18.78px" },
-                                color: signUpActive ? "#383838"  : "#ffffff",
+                                color: signUpActive ? "#383838" : "#ffffff",
                             }}
                         >
                             Sign In
@@ -350,6 +350,24 @@ const MsignUpIn = () => {
                             setWrongPassword(false)
                         }
                     />
+                    <Box sx={{width:'100%', display:'flex'}}>
+                    <Link
+                    to="/forgot-password"
+                        style={{
+                            alignSelf:'flex-end',
+                            textDecoration: "none",
+                            fontFamily: "Lato",
+                            fontWeight: "bolder",
+                            marginLeft:'auto',
+                            textAlign:'right',
+                            display:'block',
+                            color:'#1F51C6'
+                        }}
+                    >
+                        Forgot Password?
+                    </Link>
+
+                    </Box>
 
                     <LoadingButton
                         size="small"

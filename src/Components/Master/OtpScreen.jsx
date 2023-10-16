@@ -28,10 +28,8 @@ const LadyImgStyle = styled("img")({
 });
 
 const TextFiledStyle = styled(TextField)({
-    margin: "20px 0 10px 0",
-    fontSize: 10,
-    [`& fieldset`]: {
-        borderRadius: "36px",
+    [`& input[type = "number"]::-webkit-inner-spin-button`]: {
+        display: "none",
     },
 });
 
@@ -136,7 +134,7 @@ const OtpScreen = () => {
                 return false;
             } else if (error.status === "error" && error.statusCode === 400) {
                 setDisableButton(false);
-                toast.error('something went wrong please try again')
+                toast.error("something went wrong please try again");
                 window.location.replace("/");
                 return false;
             }
@@ -162,7 +160,6 @@ const OtpScreen = () => {
             if (response.status === "ok") {
                 toast.success("Otp has been sent ");
                 setDisableButton(false);
-
             }
         } catch (error) {
             toast.error("something went wrong");
@@ -285,7 +282,8 @@ const OtpScreen = () => {
                     <Box sx={{ display: "flex", gap: 2 }}>
                         <Box>
                             {inputRefs.map((ref, index) => (
-                                <TextField
+                                <TextFiledStyle
+                                    type="number"
                                     key={index}
                                     inputRef={ref}
                                     sx={{
@@ -298,7 +296,6 @@ const OtpScreen = () => {
                                         background: "#ffffff",
                                         borderRadius: "4px",
                                     }}
-                                    type="text"
                                     InputProps={{
                                         inputProps: {
                                             maxLength: 1,

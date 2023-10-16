@@ -4,6 +4,16 @@ import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { axiosClient } from "../../Utils/axiosClient";
 import { toast } from "react-toastify";
+import styled from "@emotion/styled";
+
+const TextFeildStyle = styled(TextField)({
+[`& input[type = "number"]::-webkit-inner-spin-button`]: {
+    display:'none'
+}
+})
+
+
+
 
 const SignUpVarify = () => {
     // const [otp, setOtp] = useState();
@@ -144,7 +154,7 @@ const SignUpVarify = () => {
             >
                 <Box>
                     {inputRefs.map((ref, index) => (
-                        <TextField
+                        <TextFeildStyle
                             key={index}
                             inputRef={ref}
                             sx={{

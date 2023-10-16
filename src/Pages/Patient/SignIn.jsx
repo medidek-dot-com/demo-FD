@@ -131,7 +131,7 @@ const SignIn = () => {
             if (response.status === "ok") {
                 setDisableButton(false);
                 console.log(response.result);
-                dispatch(login(response.result.user));
+                dispatch(login(response.result.ispatient));
                 navigate(
                     locationUrl?.state?.prevUrl
                         ? locationUrl?.state?.prevUrl
@@ -237,6 +237,7 @@ const SignIn = () => {
                         </Typography>
                         <form onSubmit={handleSignIn}>
                             <Stack spacing="10px">
+                                {/* <input type="text" style={{background:'#1F51C6', '&:focus':{background:'red'}, height:'41px', border:'none', borderBottom:'1px solid red'}}/> */}
                                 <TextFeildStyle
                                     color="secondary"
                                     autoFocus
@@ -379,6 +380,18 @@ const SignIn = () => {
                                         )
                                     }
                                 />
+                                <Link
+                                    to="/forgot-password"
+                                    style={{
+                                        textAlign: "right",
+                                        color: "#ffffff",
+                                        textDecoration: "none",
+                                        fontFamily: "Lato",
+                                        fontWeight: "bolder",
+                                    }}
+                                >
+                                    Forgot Password?
+                                </Link>
                                 {/* <Typography
                             onClick={()=>navigate('/medidek/terms&PrivacyPolicy')}
                                 sx={{
@@ -458,10 +471,21 @@ const SignIn = () => {
                                 <FcGoogle size={"20px"} />
                                 &nbsp; Sign Up with Google
                             </Button> */}
+
+                                <Typography
+                                    sx={{
+                                        textAlign: "center",
+                                        fontFamily: "Lato",
+                                        fontWeight: "medium",
+                                        color: "#ffffff",
+                                    }}
+                                >
+                                    Don't have an account?
+                                </Typography>
                                 <Link
                                     to="/user/signup"
                                     style={{
-                                        margin: "10px auto",
+                                        // margin: "10px auto",
                                         textAlign: "center",
                                         fontFamily: "Poppins",
                                         fontWeight: "500",
@@ -469,7 +493,7 @@ const SignIn = () => {
                                         cursor: "pointer",
                                     }}
                                 >
-                                    Don't have an account? Click Here.
+                                    Click Here.
                                 </Link>
                             </Stack>
                         </form>

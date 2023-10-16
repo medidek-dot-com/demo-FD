@@ -61,7 +61,7 @@ const Tracking = () => {
 
     const getPendingAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getPendingAppointmentForPatient/${user._id}`
+            `/v2/getPendingAppointmentForPatient/${user?._id}`
         );
         setPendingAppointmentsData(response.result);
         console.log(response.result);

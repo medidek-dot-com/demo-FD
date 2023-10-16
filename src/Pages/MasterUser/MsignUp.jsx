@@ -40,6 +40,9 @@ const TextFiledStyle = styled(TextField)({
         fontWeight: "500",
         fontSize: "1rem",
     },
+    [`& input[type = "number"]::-webkit-inner-spin-button`]: {
+        display: "none",
+    },
     [`& label`]: {
         fontFamily: "Lato",
         fontWeight: "500",
@@ -74,6 +77,7 @@ const MsignUp = () => {
         phone: "",
     });
 
+    const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -270,6 +274,36 @@ const MsignUp = () => {
                     <form onSubmit={handleSignUp}>
                         <TextFiledStyle
                             autoFocus
+                            type="number"
+                            fullWidth={true}
+                            name="email"
+                            size="small"
+                            label="Enter Your Phone Number"
+                            // error={err && !email && true}
+                            error={
+                                err && !phone
+                                    ? true
+                                    : false || (err && phoneExists)
+                                    ? true
+                                    : false || (err && invalidEmail)
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                err && !email
+                                    ? "Phone Number is required"
+                                    : "" || (err && phoneExists)
+                                    ? emailExists
+                                    : "" || (err && invalidEmail)
+                                    ? "Plase Enter a Valid Email Address"
+                                    : ""
+                            }
+                            // helperText={
+                            //     err && !email && "Please enter your email"
+                            // }
+                            onChange={(e) => setPhone(e.target.value) & setError(false)}
+                        />
+                        <TextFiledStyle
                             fullWidth={true}
                             name="email"
                             size="small"
@@ -297,6 +331,8 @@ const MsignUp = () => {
                             //     err && !email && "Please enter your email"
                             // }
                             onChange={(e) => setEmail(e.target.value) & setError(false)}
+                            onKeyUpCapture={(e)=>e.preventDefault()}
+                            
                         />
                         <TextFiledStyle
                             fullWidth={true}

@@ -38,6 +38,10 @@ const TextFiledStyle = styled(TextField)({
     [`& fieldset`]: {
         borderRadius: "36px",
     },
+    [`& input[type = "number"]::-webkit-inner-spin-button`]: {
+        display:'none'
+    },
+     
 });
 
 const TabsOnImgStyle = styled(Typography)`
@@ -57,7 +61,9 @@ const DoctorSignUp = () => {
     });
 
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
+    const [rol, setRol] = useState("DOCTOR");
 
     const [signUpActive, setSignUpActive] = useState(true);
     const [emailExists, setEmailExists] = useState(false);
@@ -81,19 +87,20 @@ const DoctorSignUp = () => {
         setDisableButton(true);
 
         try {
-            const response = await axiosClient.post("/v2/sendotp", {
+            const response = await axiosClient.post("/v2/userCreation", {
                 email,
                 password,
+                rol,
+                phone,
             });
             console.log(response);
             setDisableButton(false);
             if (response.status === "ok") {
                 toast.success("Otp has been sent ");
                 setDisableButton(false);
-                navigate(`/master/login/verify/${email}`, { state: password });
+
                 // navigate("/user/otp",{state:email})
             }
-            
         } catch (error) {
             // console.log(error);
             if (error.status === "error" && error.statusCode === 409) {
@@ -166,7 +173,6 @@ const DoctorSignUp = () => {
                     mx: 5,
                 }}
             >
-                
                 <Card
                     sx={{
                         mx: "auto",
@@ -178,11 +184,33 @@ const DoctorSignUp = () => {
                         boxShadow: "none",
                     }}
                 >
-                    <Typography variant="h6" sx={{ textAlign: "center", fontFamily:'Raleway', fontWeight:'700', fontSize:'29px', lineHeight:'34.05px' }}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Raleway",
+                            fontWeight: "700",
+                            fontSize: "29px",
+                            lineHeight: "34.05px",
+                        }}
+                    >
                         Hi, Welcome
                     </Typography>
-                    <Typography variant="h6" sx={{ textAlign: "center", fontFamily:'Raleway', fontWeight:'700', fontSize:'29px', lineHeight:{xs:'24px', sm:'25px', md:'34.05px'} }}>
-                        Doctor 
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Raleway",
+                            fontWeight: "700",
+                            fontSize: "29px",
+                            lineHeight: {
+                                xs: "24px",
+                                sm: "25px",
+                                md: "34.05px",
+                            },
+                        }}
+                    >
+                        Doctor
                     </Typography>
 
                     <Box
@@ -214,7 +242,40 @@ const DoctorSignUp = () => {
                     {/* </ButtonGroup> */}
                     <form onSubmit={handleSignUp}>
                         <TextFiledStyle
+                            type="number"
+                            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                             autoFocus
+                            fullWidth={true}
+                            name="phone"
+                            size="small"
+                            label="Enter Your phone"
+                            // error={err && !email && true}
+                            error={
+                                err && !email
+                                    ? true
+                                    : false || (err && phoneExists)
+                                    ? true
+                                    : false || (err && invalidEmail)
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                err && !phone
+                                    ? "Phone is required"
+                                    : "" || (err && phoneExists)
+                                    ? emailExists
+                                    : "" || (err && invalidEmail)
+                                    ? "Plase Enter a Valid Email Address"
+                                    : ""
+                            }
+                            // helperText={
+                            //     err && !email && "Please enter your email"
+                            // }
+                            onChange={(e) =>
+                                setPhone(e.target.value) & setError(false)
+                            }
+                        />
+                        <TextFiledStyle
                             fullWidth={true}
                             name="email"
                             size="small"
@@ -241,7 +302,9 @@ const DoctorSignUp = () => {
                             // helperText={
                             //     err && !email && "Please enter your email"
                             // }
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) =>
+                                setEmail(e.target.value) & setError(false)
+                            }
                         />
                         <TextFiledStyle
                             fullWidth={true}
@@ -347,4 +410,3 @@ const DoctorSignUp = () => {
 };
 
 export default DoctorSignUp;
-

@@ -19,9 +19,13 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import ErrorIcon from "@mui/icons-material/Error";
 import styled from "@emotion/styled";
 import { LoadingButton } from "@mui/lab";
-import { axiosClient } from "../../Utils/axiosClient";
-import { Link, useNavigate } from "react-router-dom";
+import { axiosClient } from "../Utils/axiosClient";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { KEY_ACCESS_TOKEN, PATIENT_USER, setItem } from "../Utils/localStorageManager";
+
+import { login } from "../Store/authSlice";
 
 const MobileImageStyle = styled("img")({
     position: "fixed",
@@ -29,41 +33,25 @@ const MobileImageStyle = styled("img")({
 });
 
 const TextFeildStyle = styled(TextField)({
+    color: "#ffffff",
+    borderBottom: "#ffffff",
+    marginTop: "10px",
     [`& input`]: {
-        color: "#ffffff",
-    },
-    [`& input[type = "number"]::-webkit-inner-spin-button`]: {
-        display:'none'
-    },
-    [`& P`]: {
         color: "#ffffff",
     },
     [`& fieldset`]: {
         color: "#ffffff",
-        borderBottomColor: "#ffffff",
-    },
-    [`&:hover fieldset`]: {
-        color: "#ffffff",
-        borderBottomColor: "#ffffff",
-    },
-    "& input:after": {
-        borderBottom: "#ffffff",
-    },
-    "&:hover > div:before": {
         borderBottom: "1px solid #ffffff",
     },
     "& div:before:hover": {
-        borderBottom: "1px solid red",
+        borderBottom: "1px solid #ffffff",
     },
     "& label": {
         color: "#ffffff",
     },
-    color: "#ffffff",
-    // borderBottom: "#ffffff",
-    marginTop: "10px",
-    "&:hover": {
-        borderBottomColor: "#ffffff",
-    },
+    // "&:hover": {
+    //     borderBottomColor: "#ffffff",
+    // },
     // "& .css-1pnmrwp-MuiTypography-root": {
     //     color: "#ffffff",
     // },
@@ -71,9 +59,7 @@ const TextFeildStyle = styled(TextField)({
     //     color: "#ffffff",
     //     borderBottom: "1px solid #ffffff",
     // },
-    // "& label": {
-    //     color: "#ffffff",
-    // },
+
     // "& .css-1x5krvu-MuiFormLabel-root-MuiInputLabel-root.Mui-error": {
     //     color: "#ffffff",
     // },
@@ -93,98 +79,136 @@ const TextFeildStyle = styled(TextField)({
     //     color: "#ffffff",
     // },
 });
-
-// const LinkStyle = styled(Link)`
-// my: { xs: 0.5, sm: 0.7, md: 2 },
-// textAlign: "center",
-// fontFamily: "Poppins",
-// fontWeight: "500",
-// color: "#ffffff",
-// `
 // '& .MuiInput-underline:after':{
 //   borderBottomColor: '#ffffff'
 // }
 
-const SignUp = () => {
+const ForgotPassword = () => {
     const navigate = useNavigate();
     const [eye, setEye] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailExists, setEmailExists] = useState(false);
+    const [wrongPassword, setWrongPassword] = useState(false);
     const [phone, setphone] = useState("");
     const [err, setError] = useState(false);
     const [invalidEmail, setInvalidEmail] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
-    const [rol, setRol] = useState("PATIENT");
+    const dispatch = useDispatch();
+    const locationUrl = useLocation();
+    const { isLoggedIn } = useSelector((state) => state.auth);
+    const inputStyles = {
+        "&:hover": {
+            backgroundColor: "#1F51C6", // Change background color on hover
+        },
+        "&:focus": {
+            backgroundColor: "#1F51C6", // Change background color on focus
+        },
+    };
 
     const togglePassword = () => {
         setEye(!eye);
     };
-    const handleSignUp = async (e) => {
+    const handleSignIn = async (e) => {
         e.preventDefault();
-        if (!email || !phone || !password || !rol) {
+        if (!email || !password) {
             setError(true);
-            return false;
+            return;
         }
         setDisableButton(true);
-
         try {
-            const response = await axiosClient.post("/v2/userCreation", {
-                email,
-                phone,
-                password,
-                rol,
-            });
+            const response = await axiosClient.post(
+                "/v2/FindUserByNameAndPassword",
+                {
+                    email,
+                    password,
+                }
+            );
             console.log(response);
-            setDisableButton(false);
             if (response.status === "ok") {
-                toast.success("Otp has been sent ");
                 setDisableButton(false);
-                navigate(`/user/signup/varify/${email}`, {
-                    state: { phone, password },
-                });
-                // navigate("/user/otp",{state:email})
+                console.log(response.result);
+                dispatch(login(response.result.user));
+                navigate(
+                    locationUrl?.state?.prevUrl
+                        ? locationUrl?.state?.prevUrl
+                        : "/"
+                );
+
+                setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
+                setItem(PATIENT_USER, response.result.PATIENT_USER);
+
+                // const userData = await axiosClient.get("/v2/masterData");
+                // console.log(userData.result.user.nameOfhospitalOrClinic);
+                // setItem(HOSPITAL_ID, userData.result.user._id);
+
+                toast.success("Sign in successfully");
+                // if (userData.result.user.nameOfhospitalOrClinic) {
+                //     // window.location.href = `/master/user/home/${userData.result.user._id}`
+                //     navigate(`/master/user/home/${userData.result.user._id}`);
+                // } else {
+                //     // window.location.href = `/master/user/profile`
+                //     navigate(
+                //         `/master/user/profile/${userData.result.user._id}`
+                //     );
+                // }
             }
         } catch (error) {
-            // console.log(error);
-            if (error.status === "error" && error.statusCode === 409) {
+            if (error.status === "error" && error.statusCode === 404) {
                 setError(true);
-                setEmailExists(error.message);
+                setInvalidEmail(error.message);
+                setDisableButton(false);
+            } else if (error.status === "error" && error.statusCode === 403) {
+                setError(true);
+                setWrongPassword(error.message);
                 setDisableButton(false);
             }
+            console.log(error);
         }
     };
     return (
-        <Box
-            sx={{
-                width: {
-                    xs: "100%",
-                    sm: "100%",
-                    md: "calc(100% - 30px)",
-                    position: "fixed",
-                },
-                m: "0px auto",
-                p: 1,
-            }}
-        >
+        <>
             <Box
                 sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    minHeight: "100vh",
+                    width: {
+                        xs: "100%",
+                        sm: "100%",
+                        md: "calc(100% - 30px)",
+                    },
+                    position: "fixed",
+                    // top:0,
+                    m: "0px auto",
+                    p: 1,
                 }}
             >
-                <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
-                    <MobileImageStyle src="/hand image.png" alt="img" />
-                </Box>
-                <Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        minHeight: "100vh",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: { xs: "none", sm: "none", md: "block" },
+                        }}
+                    >
+                        <MobileImageStyle src="/hand image.png" alt="" />
+                    </Box>
+                    {/* <Box sx={{width:'100%'}}> */}
                     <Card
                         sx={{
-                            p: { xs: "10px", sm: "35px", md: "52px" },
+                            p: {
+                                xs: "0.625rem",
+                                sm: "2.188rem",
+                                md: "3.25rem",
+                            },
+                            // px: { xs: "20px", sm: "30px", md: "68px" },
                             width: { xs: "100%", sm: "100%", md: "500px" },
-                            background: "#1F51C6",
+                            // height: { xs: "max-content", sm: "450px", md: "500px" },
                             borderRadius: "10px",
+                            background: "#1F51C6",
                         }}
                     >
                         <Typography
@@ -206,60 +230,24 @@ const SignUp = () => {
                                 },
                             }}
                         >
-                            Create Account
+                            Welcome Back!
                         </Typography>
-                        <form onSubmit={handleSignUp}>
-                            <Stack>
+                        <form onSubmit={handleSignIn}>
+                            <Stack spacing="10px">
+                                {/* <input type="text" style={{background:'#1F51C6', '&:focus':{background:'red'}, height:'41px', border:'none', borderBottom:'1px solid red'}}/> */}
                                 <TextFeildStyle
                                     color="secondary"
                                     autoFocus
-                                    onChange={(e) => setphone(e.target.value)}
-                                    variant="standard"
-                                    type="number"
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment
-                                                position="start"
-                                                sx={{ color: "#ffffff" }}
-                                            >
-                                                +91
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    error={err && !phone ? true : false}
-                                    helperText={
-                                        err && !phone ? (
-                                            <Box
-                                                component="span"
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    color: "#FFDF41",
-                                                    fontWeight: "bold",
-                                                }}
-                                            >
-                                                <ErrorIcon
-                                                    sx={{ fontSize: "15px" }}
-                                                />{" "}
-                                                &nbsp; Phone is required !
-                                            </Box>
-                                        ) : (
-                                            ""
-                                        )
+                                    onChange={(e) =>
+                                        setEmail(e.target.value) &
+                                        setError(false) &
+                                        setInvalidEmail(false)
                                     }
-                                />
-                                <TextFeildStyle
-                                    color="secondary"
-                                    onChange={(e) => setEmail(e.target.value)}
                                     variant="standard"
                                     label="Email Address"
-                                    InputLabelProps={{
-                                        className: "lableStyle",
-                                    }}
+                                    InputProps={{ style: inputStyles }}
                                     error={
                                         err && !email
-                                            ? true
-                                            : false || (err && emailExists)
                                             ? true
                                             : false || (err && invalidEmail)
                                             ? true
@@ -281,7 +269,7 @@ const SignUp = () => {
                                                 />
                                                 &nbsp; Email is required !
                                             </Box>
-                                        ) : "" || (err && emailExists) ? (
+                                        ) : "" || (err && invalidEmail) ? (
                                             <Box
                                                 component="span"
                                                 sx={{
@@ -295,7 +283,7 @@ const SignUp = () => {
                                                     sx={{ fontSize: "15px" }}
                                                 />
                                                 &nbsp;
-                                                {emailExists}
+                                                {invalidEmail}
                                             </Box>
                                         ) : "" || (err && invalidEmail) ? (
                                             <Box
@@ -321,7 +309,9 @@ const SignUp = () => {
                                 <TextFeildStyle
                                     color="secondary"
                                     onChange={(e) =>
-                                        setPassword(e.target.value)
+                                        setPassword(e.target.value) &
+                                        setError(false) &
+                                        setWrongPassword(false)
                                     }
                                     variant="standard"
                                     label="Password"
@@ -347,9 +337,7 @@ const SignUp = () => {
                                     error={
                                         err && !password
                                             ? true
-                                            : false || (err && emailExists)
-                                            ? true
-                                            : false || (err && invalidEmail)
+                                            : false || (err && wrongPassword)
                                             ? true
                                             : false
                                     }
@@ -369,25 +357,51 @@ const SignUp = () => {
                                                 />
                                                 &nbsp; Password is required!
                                             </Box>
+                                        ) : "" || (err && wrongPassword) ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                <ErrorIcon
+                                                    sx={{ fontSize: "15px" }}
+                                                />
+                                                {wrongPassword}
+                                            </Box>
                                         ) : (
                                             ""
                                         )
                                     }
                                 />
-                                <Typography
-                                    onClick={() =>
-                                        navigate("/medidek/terms&PrivacyPolicy")
-                                    }
-                                    sx={{
-                                        my: { xs: 1, sm: 1, md: 2 },
-                                        fontFamily: "Poppins",
+                                <Link
+                                    to="/forgot-password"
+                                    style={{
+                                        textAlign: "right",
                                         color: "#ffffff",
-                                        fontWeight: "500",
+                                        textDecoration: "none",
+                                        fontFamily: "Lato",
+                                        fontWeight: "bolder",
                                     }}
                                 >
-                                    By continuing, you agree to Medidek’s Terms
-                                    of Service & Privacy Policy
-                                </Typography>
+                                    Forgot Password?
+                                </Link>
+                                {/* <Typography
+                            onClick={()=>navigate('/medidek/terms&PrivacyPolicy')}
+                                sx={{
+                                    my: { xs: 1, sm: 1, md: 2 },
+                                    fontFamily: "Poppins",
+                                    color: "#ffffff",
+                                    fontWeight: "500",
+                                    fontSize:'0.938rem',
+                                }}
+                            >
+                                By continuing, you agree to Medidek’s Terms of
+                                Service & Privacy Policy
+                            </Typography> */}
                                 <LoadingButton
                                     size="small"
                                     fullWidth
@@ -399,21 +413,20 @@ const SignUp = () => {
                                         my: { xs: 0.5, sm: 0.7, md: 1 },
                                         fontFamily: "Lato",
                                         fontWeight: "600",
-                                        fontSize: { xs: "1rem", md: "1.25rem" },
                                         textTransform: "none",
+                                        fontSize: { xs: "1rem", md: "1.25rem" },
                                         background: "#ffffff",
-                                        color: "#383838",
                                         height: "32px",
-                                        boxShadow: "none",
+                                        color: "#383838",
                                         borderRadius: "53px",
+                                        boxShadow: "none",
                                         "&:hover": {
                                             background: "#d9d9d9",
                                         },
                                     }}
                                 >
-                                    <span>Sign Up</span>
+                                    <span>Sign In</span>
                                 </LoadingButton>
-
                                 {/* <Button
                                 type="submit"
                                 variant="contained"
@@ -433,26 +446,29 @@ const SignUp = () => {
                                 Continue
                             </Button> */}
                                 {/* <Button
-                                    variant="contained"
-                                    sx={{
-                                        my: { xs: 0.5, sm: 0.7, md: 1 },
-                                        fontFamily: "Lato",
-                                        fontWeight: "600",
-                                        fontSize:'18px',
-                                        textTransform: "none",
-                                        background: "#ffffff",
-                                        height:'35px',
-                                        color: "#383838",
-                                        borderRadius: "53px",
-                                        "&:hover": {
-                                            background: "#d9d9d9",
-                                            cursor:'no-drop'
-                                        },
-                                    }}
-                                >
-                                    <FcGoogle size={"20px"} />
-                                    &nbsp; Sign Up with Google
-                                </Button> */}
+                            // disabled
+                                variant="contained"
+                                sx={{
+                                    my: { xs: 0.5, sm: 0.7, md: 1 },
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    textTransform: "none",
+                                    background: "#d9d9d9",
+                                    fontSize:'20px',
+                                    color: "#383838",
+                                    borderRadius: "53px",
+                                    height:'35px',
+                                    cursor:'no-drop',
+                                    "&:hover": {
+                                        background: "#d9d9d9",
+                                        cursor:'no-drop',
+                                    },
+                                }}
+                            >
+                                <FcGoogle size={"20px"} />
+                                &nbsp; Sign Up with Google
+                            </Button> */}
+
                                 <Typography
                                     sx={{
                                         textAlign: "center",
@@ -464,13 +480,14 @@ const SignUp = () => {
                                     Don't have an account?
                                 </Typography>
                                 <Link
-                                    to="/user/signin"
+                                    to="/user/signup"
                                     style={{
-                                        margin: "10px auto",
+                                        // margin: "10px auto",
                                         textAlign: "center",
                                         fontFamily: "Poppins",
                                         fontWeight: "500",
                                         color: "#ffffff",
+                                        cursor: "pointer",
                                     }}
                                 >
                                     Click Here.
@@ -478,10 +495,75 @@ const SignUp = () => {
                             </Stack>
                         </form>
                     </Card>
+
+                    {/* <Card className="signup-card">
+                    <Typography variant="h5">Create Account</Typography>
+                    <form className="form">
+                            <TextFeildStyle
+                                variant="standard"
+                                type="phone"
+                                InputLabelProps={{ className: "lableStyle" }}
+                                autoFocus
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            +91
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <TextFeildStyle
+                                className="input"
+                                variant="standard"
+                                label="Email Address"
+                                InputLabelProps={{ className: "lableStyle" }}
+                            />
+                            <TextFeildStyle
+                                className="textFeild"
+                                variant="standard"
+                                label="Password"
+                                type={eye ? "text" : "password"}
+                                InputLabelProps={{ className: "lableStyle" }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={togglePassword}
+                                            >
+                                                {eye ? (
+                                                    <AiFillEye color="#ffffff" />
+                                                ) : (
+                                                    <AiFillEyeInvisible color="#ffffff" />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <Typography component={"p"} className="terms-con">
+                                By continuing, you agree to Medidek’s Terms of
+                                Service & Privacy Policy
+                            </Typography>
+                            <Button variant="contained" className="btn">
+                                Continue
+                            </Button>
+                            <Button variant="contained" className="btn">
+                                <FcGoogle size={"20px"} />
+                                &nbsp; Sign Up with Google
+                            </Button>
+                            <Typography
+                                component={"p"}
+                                className="already-have-acc"
+                            >
+                                Already have an account? Click Here.
+                            </Typography>
+                        </form>
+                </Card> */}
+                    {/* </Box> */}
                 </Box>
             </Box>
-        </Box>
+        </>
     );
 };
 
-export default SignUp;
+export default ForgotPassword;
