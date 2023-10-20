@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -6,13 +7,16 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBPEDKaG3JlKQUHwDieeCSKBg6hPjrDxfE",
-  authDomain: "medidek-new.firebaseapp.com",
-  projectId: "medidek-new",
-  storageBucket: "medidek-new.appspot.com",
-  messagingSenderId: "767148024609",
-  appId: "1:767148024609:web:e0f7c7d0bc9f3841f8d460"
+  apiKey: "AIzaSyA1lIigfq99WFR-QFc7GGx8ssHURAPkukI",
+  authDomain: "medidek-web.firebaseapp.com",
+  projectId: "medidek-web",
+  storageBucket: "medidek-web.appspot.com",
+  messagingSenderId: "821942632628",
+  appId: "1:821942632628:web:887459817caf0e763297e1"
 };
+
+// Initialize Firebase
+
 
 
 // Initialize Firebase
