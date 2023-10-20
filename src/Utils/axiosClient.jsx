@@ -83,10 +83,10 @@ import {
 } from "./localStorageManager";
 
 
-// export const axiosClient = axios.create({
-//     baseURL: "https://beyondblack.agency",
-//     // withCredentials: true,
-// });
+export const axiosClient = axios.create({
+    baseURL: "https://beyondblack.agency",
+    // withCredentials: true,
+});
 
 // export const baseURL = "https://beyondblack.agency";
 
@@ -96,6 +96,7 @@ import {
 // // //     // withCredentials: true,
 // });
 
+// export const baseURL = "http://localhost:5001";
 // export const baseURL = "http://localhost:5001";
 
 export const axiosClient = axios.create({
