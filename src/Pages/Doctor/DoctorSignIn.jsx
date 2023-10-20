@@ -352,6 +352,24 @@ const DoctorSignIn = () => {
                             }
                         />
 
+<Box sx={{ width: "100%", display: "flex" }}>
+                            <Link
+                                to="/forgot-password"
+                                style={{
+                                    alignSelf: "flex-end",
+                                    textDecoration: "none",
+                                    fontFamily: "Lato",
+                                    fontWeight: "bolder",
+                                    marginLeft: "auto",
+                                    textAlign: "right",
+                                    display: "block",
+                                    color: "#1F51C6",
+                                }}
+                            >
+                                Forgot Password?
+                            </Link>
+                        </Box>
+
                         <LoadingButton
                             size="small"
                             fullWidth

@@ -103,6 +103,7 @@ const ForgotPassword = () => {
                 setDisableButton(false);
             })
             .catch((err) => {
+                setInvalidOtp(true);
                 console.log(err);
                 setDisableButton(false);
             });
@@ -312,7 +313,7 @@ const ForgotPassword = () => {
                                     component={"span"}
                                     sx={{ color: "#1F51C6" }}
                                 >
-                                    {phone}
+                                  &nbsp; {phone}
                                 </Box>
                             </Typography>
                             {/* <TextField/> */}
@@ -358,6 +359,16 @@ const ForgotPassword = () => {
                                 )) ||
                                     `Resend OTP in ${couter} seconds`}
                             </Typography>
+                            <Box
+                            component="span"
+                            sx={{
+                                color: "red",
+                                textAlign: "center",
+                                display: "block",
+                            }}
+                        >
+                            {invalidOtp && "Invalid OTP"}
+                        </Box>
                             <LoadingButton
                                 onClick={onOTPVerify}
                                 fullWidth
