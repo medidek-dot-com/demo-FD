@@ -11,7 +11,7 @@ const NavBarWrapper = () => {
 
   return (
     <>
-            {isLoggedIn && user[0]?.role == 'DOCTOR' && <></> || isLoggedIn && user?.role == 'MASTER' && <MasterNavBar /> || isLoggedIn && user?.role == 'PETIEN' && <NavBar/> || !isLoggedIn && <NavBar/>}
+            {isLoggedIn && user?.role == 'DOCTOR' && <></> || isLoggedIn && user?.role == 'MASTER' && <MasterNavBar /> || isLoggedIn && user?.role == 'PATIENT' && <NavBar/> || !isLoggedIn && <NavBar/>}
     
     </>
   )

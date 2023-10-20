@@ -160,16 +160,16 @@ const DoctorAppointments = () => {
     // const propLocation = hospitalLocation
 
     const [inputValue, setInputValue] = useState({
-        nameOfTheDoctor: numberOfHospitals[0]?.nameOfTheDoctor,
-        qulification: numberOfHospitals[0]?.qulification,
-        speciality: numberOfHospitals[0]?.speciality,
-        yearOfExprience: numberOfHospitals[0]?.yearOfExprience,
-        enterEmailId: numberOfHospitals[0]?.enterEmailId,
-        enterPhoneNo: numberOfHospitals[0]?.enterPhoneNo,
-        connsultationFee: numberOfHospitals[0]?.connsultationFee,
-        consultingTime: numberOfHospitals[0]?.consultingTime,
-        location: numberOfHospitals[0]?.location,
-        hospitalId: hospital_id,
+        // nameOfTheDoctor: numberOfHospitals[0]?.nameOfTheDoctor,
+        // qulification: numberOfHospitals[0]?.qulification,
+        // speciality: numberOfHospitals[0]?.speciality,
+        // yearOfExprience: numberOfHospitals[0]?.yearOfExprience,
+        // enterEmailId: numberOfHospitals[0]?.enterEmailId,
+        // enterPhoneNo: numberOfHospitals[0]?.enterPhoneNo,
+        // connsultationFee: numberOfHospitals[0]?.connsultationFee,
+        // consultingTime: numberOfHospitals[0]?.consultingTime,
+        // location: numberOfHospitals[0]?.location,
+        // hospitalId: hospital_id,
     });
 
     const [inputImage, setInputImage] = useState("");
@@ -307,11 +307,11 @@ const DoctorAppointments = () => {
                     />
                 </Stack>
                 <Avatar
-                    src={
-                        numberOfHospitals[0]?.doctorImg
-                            ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                            : "/default.png"
-                    }
+                    // src={
+                    //     numberOfHospitals[0]?.doctorImg
+                    //         ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                    //         : "/default.png"
+                    // }
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -365,7 +365,23 @@ const DoctorAppointments = () => {
                     <Button
                         onClick={() =>
                             navigate(
-                                `/doctor/edit-profile/${hospital_id}/${doctor_id}`
+                                `/doctor/courses/${user._id}`
+                            ) & setMenu(false)
+                        }
+                        sx={{
+                            color: "#ffffff",
+                            fontFamily: "Lato",
+                            fontSize: "1.5rem",
+                            textTransform: "none",
+                            lineHeight: "28.8px",
+                        }}
+                    >
+                        Medical Courses
+                    </Button>
+                    <Button
+                        onClick={() =>
+                            navigate(
+                                `/doctor/edit-profile/${user._id}`
                             ) & setMenu(false)
                         }
                         sx={{
@@ -420,11 +436,11 @@ const DoctorAppointments = () => {
                     >
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
-                                src={
-                                    numberOfHospitals[0]?.doctorImg
-                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                        : "/default.png"
-                                }
+                                // src={
+                                //     numberOfHospitals[0]?.doctorImg
+                                //         ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                                //         : "/default.png"
+                                // }
                                 sx={{ width: "71px", height: "71px" }}
                             />
                             <Typography
@@ -437,7 +453,7 @@ const DoctorAppointments = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {numberOfHospitals[0].nameOfTheDoctor}
+                             Dr.   {/* Dr. {numberOfHospitals[0].nameOfTheDoctor} */}
                             </Typography>
                         </Stack>
                         <Stack spacing={2} mt={4} flex={1} width={"100%"}>
@@ -507,7 +523,7 @@ const DoctorAppointments = () => {
                             <Button
                                 onClick={() =>
                                     navigate(
-                                        `/doctor/edit-profile/${hospital_id}/${doctor_id}`
+                                        `/doctor/courses/${user._id}`
                                     )
                                 }
                                 variant="text"
@@ -524,6 +540,37 @@ const DoctorAppointments = () => {
                                     "&:hover": {
                                         background:
                                             activeTab === 3
+                                                ? "#ffffff"
+                                                : "#DCE3F6",
+                                        color: "#1F51C6",
+                                    },
+                                }}
+                            >
+                                {/* <ImPencil
+                                    style={{ width: "25px", height: "25px" }}
+                                /> */}
+                                Medical Courses
+                            </Button>
+                            <Button
+                                onClick={() =>
+                                    navigate(
+                                        `/doctor/edit-profile/${user._id}`
+                                    )
+                                }
+                                variant="text"
+                                sx={{
+                                    color:
+                                        activeTab === 4 ? "#1F51C6" : "#ffffff",
+                                    background:
+                                        activeTab === 4 ? "#ffffff" : null,
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    "&:hover": {
+                                        background:
+                                            activeTab === 4
                                                 ? "#ffffff"
                                                 : "#DCE3F6",
                                         color: "#1F51C6",

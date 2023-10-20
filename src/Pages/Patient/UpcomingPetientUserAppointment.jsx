@@ -7,9 +7,10 @@ const UpcomingPetientUserAppointment = ({pendingAppointmentsData}) => {
     return (
         <Stack spacing='15px'>
           {
-            pendingAppointmentsData.length > 0 ? pendingAppointmentsData.map((appointment)=>{
+            pendingAppointmentsData.length > 0 ? pendingAppointmentsData.map((appointment, i)=>{
               return (
 <Card
+key={i}
                 sx={{
                     display: "flex",
                     flexDirection: {xs:"column", sm:"column", md:"row"},
@@ -83,10 +84,18 @@ const UpcomingPetientUserAppointment = ({pendingAppointmentsData}) => {
                 </Box>
             </Card>
               )
-            }) : <Typography>No Upcoming Appointment Found</Typography>
+            }) : <Typography
+            sx={{
+                fontFamily: "Raleway",
+                fontWeight: "600",
+                fontSize: "18px",
+                color: "#383838",
+                textAlign: "center",
+            }}
+            >No Upcoming Appointment Found</Typography>
           }
             
-            <Card
+            {/* <Card
                 sx={{
                     display: "flex",
                     flexDirection: {xs:"column", sm:"column", md:"row"},
@@ -158,7 +167,7 @@ const UpcomingPetientUserAppointment = ({pendingAppointmentsData}) => {
                         View Appointment
                     </Button>
                 </Box>
-            </Card>
+            </Card> */}
             {/* <Card
                 sx={{
                     display: "flex",

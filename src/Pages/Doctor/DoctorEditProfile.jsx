@@ -88,7 +88,7 @@ const DoctorEditProfile = () => {
     const [completeAppointmentsData, setCompleteAppointmentsData] = useState(
         []
     );
-    const [activeTab, setActiveTab] = useState(3);
+    const [activeTab, setActiveTab] = useState(4);
     const [completedAppointments, setCompletedAppointments] = useState(false);
     const [menu, setMenu] = useState(false);
 
@@ -108,10 +108,10 @@ const DoctorEditProfile = () => {
         setCompleteAppointmentsData(response.result);
     };
 
-    useEffect(() => {
-        getPendingAppointmentsData();
-        getCompleteAppointmentsData();
-    }, []);
+    // useEffect(() => {
+    //     getPendingAppointmentsData();
+    //     getCompleteAppointmentsData();
+    // }, []);
 
     const handleTabClick = (tabId) => {
         // Set the active button when it's clicked
@@ -125,15 +125,15 @@ const DoctorEditProfile = () => {
     // const propLocation = hospitalLocation
 
     const [inputValue, setInputValue] = useState({
-        nameOfTheDoctor: numberOfHospitals[0]?.nameOfTheDoctor,
-        qulification: numberOfHospitals[0]?.qulification,
-        speciality: numberOfHospitals[0]?.speciality,
-        yearOfExprience: numberOfHospitals[0]?.yearOfExprience,
-        enterEmailId: numberOfHospitals[0]?.enterEmailId,
-        enterPhoneNo: numberOfHospitals[0]?.enterPhoneNo,
-        connsultationFee: numberOfHospitals[0]?.connsultationFee,
-        consultingTime: numberOfHospitals[0]?.consultingTime,
-        location: numberOfHospitals[0]?.location,
+        nameOfTheDoctor: user?.nameOfTheDoctor,
+        qulification: user?.qulification,
+        speciality: user?.speciality,
+        yearOfExprience: user?.yearOfExprience,
+        email: user?.email,
+        phone: user?.phone,
+        connsultationFee: user?.connsultationFee,
+        consultingTime: user?.consultingTime,
+        location: user?.location,
         hospitalId: hospital_id,
     });
 
@@ -164,9 +164,9 @@ const DoctorEditProfile = () => {
             !inputValue.qulification ||
             !inputValue.speciality ||
             !inputValue.yearOfExprience ||
-            !inputValue.enterEmailId ||
+            !inputValue.email ||
             // !inputImage ||
-            !inputValue.enterPhoneNo ||
+            !inputValue.phone ||
             !inputValue.connsultationFee ||
             !inputValue.consultingTime ||
             !inputValue.hospitalId
@@ -180,8 +180,8 @@ const DoctorEditProfile = () => {
         data.append("qulification", inputValue.qulification);
         data.append("speciality", inputValue.speciality);
         data.append("yearOfExprience", inputValue.yearOfExprience);
-        data.append("enterEmailId", inputValue.enterEmailId);
-        data.append("enterPhoneNo", inputValue.enterPhoneNo);
+        data.append("enterEmailId", inputValue.email);
+        data.append("enterPhoneNo", inputValue.phone);
         data.append("connsultationFee", inputValue.connsultationFee);
         data.append("consultingTime", inputValue.consultingTime);
         data.append("hospitalId", inputValue.hospitalId);
@@ -311,7 +311,19 @@ const DoctorEditProfile = () => {
                         Appointments
                     </Button>
                     <Button
-                            onClick={() => navigate(`/doctor/edit-profile/${hospital_id}/${doctor_id}`) & setMenu(false)}
+                            onClick={() => navigate(`/doctor/courses/${user._id}`) & setMenu(false)}
+                        sx={{
+                            color: "#ffffff",
+                            fontFamily: "Lato",
+                            fontSize: "1.5rem",
+                            textTransform: "none",
+                            lineHeight: "28.8px",
+                        }}
+                    >
+                        Medical Courses
+                    </Button>
+                    <Button
+                            onClick={() => navigate(`/doctor/edit-profile/${user._id}`) & setMenu(false)}
                         sx={{
                             color: "#ffffff",
                             fontFamily: "Lato",
@@ -379,7 +391,7 @@ const DoctorEditProfile = () => {
                                 fontSize: "22px",
                             }}
                         >
-                            Dr. {numberOfHospitals[0].nameOfTheDoctor}
+                            Dr. {user.nameOfTheDoctor}
                         </Typography>
                     </Stack>
                     <Stack spacing={2} mt={4} flex={1} width={"100%"}>
@@ -431,11 +443,34 @@ const DoctorEditProfile = () => {
                             &nbsp; Appointments
                         </Button>
                         <Button
-                            onClick={() => navigate(`/doctor/edit-profile/${hospital_id}/${doctor_id}`)}
+                            onClick={() => navigate(`/doctor/courses/${doctor_id}`)}
                             variant="text"
                             sx={{
                                 color: activeTab === 3 ? "#1F51C6" : "#ffffff",
                                 background: activeTab === 3 ? "#ffffff" : null,
+                                borderRadius: "0",
+                                textTransform: "none",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "18px",
+                                "&:hover": {
+                                    background:
+                                        activeTab === 3 ? "#ffffff" : "#DCE3F6",
+                                    color: "#1F51C6",
+                                },
+                            }}
+                        >
+                            {/* <ImPencil
+                                style={{ width: "25px", height: "25px" }}
+                            /> */}
+                            Medical Courses
+                        </Button>
+                        <Button
+                            onClick={() => navigate(`/doctor/edit-profile/${user._id}`)}
+                            variant="text"
+                            sx={{
+                                color: activeTab === 4 ? "#1F51C6" : "#ffffff",
+                                background: activeTab === 4 ? "#ffffff" : null,
                                 borderRadius: "0",
                                 textTransform: "none",
                                 fontFamily: "Raleway",
@@ -509,7 +544,7 @@ const DoctorEditProfile = () => {
                                     (activeTab === 3 && "Edit Profile")}
                             </Typography>
                         </Box>
-                        {activeTab === 3 ? null : (
+                        {activeTab === 4 ? null : (
                             <TextFieldStyle
                                 placeholder="Search here"
                                 sx={{
@@ -531,768 +566,8 @@ const DoctorEditProfile = () => {
                             />
                         )}
                     </Box>
-                        {/* <>
-                            <Box sx={{ display: "flex", mt: 4 }}>
-                                <Stack direction={"row"} gap={1}>
-                                    <Button
-                                        onClick={() =>
-                                            setCompletedAppointments(false)
-                                        }
-                                        variant={
-                                            !completedAppointments
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            textTransform: "none",
-                                            width: "244px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            borderRadius: "35px",
-                                            color: !completedAppointments
-                                                ? "#ffffff"
-                                                : "#383838",
-                                        }}
-                                    >
-                                        Upcoming Appointments
-                                    </Button>
-                                    <Button
-                                        onClick={() =>
-                                            setCompletedAppointments(true)
-                                        }
-                                        variant={
-                                            completedAppointments
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            textTransform: "none",
-                                            width: "244px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            borderRadius: "35px",
-                                            color: completedAppointments
-                                                ? "#ffffff"
-                                                : "#383838",
-                                        }}
-                                    >
-                                        Completed Appointments
-                                    </Button>
-                                </Stack>
-                            </Box>
-                            {completedAppointments ? (
-                                <CompleteAppointmentsTable
-                                    completeAppointmentsData={
-                                        completeAppointmentsData
-                                    }
-                                    getCompleteAppointmentsData={
-                                        getCompleteAppointmentsData
-                                    }
-                                />
-                            ) : (
-                                <PendingAppointmentsTable
-                                    pendingAppointmentsData={
-                                        pendingAppointmentsData
-                                    }
-                                    getPendingAppointmentsData={
-                                        getPendingAppointmentsData
-                                    }
-                                />
-                            )}
-                        </> */}
-                    
-                    {/* {activeTab === 1 && (
-                        <Stack
-                            direction={{
-                                xs: "column",
-                                sm: "column",
-                                md: "row",
-                            }}
-                            spacing="20px"
-                        >
-                            <Stack
-                                spacing={{ xs: "10px", sm: "10px", md: "20px" }}
-                            >
-                                <Stack
-                                    direction={{
-                                        xs: "column",
-                                        sm: "column",
-                                        md: "row",
-                                    }}
-                                    spacing={{
-                                        xs: "10px",
-                                        sm: "10px",
-                                        md: "20px",
-                                    }}
-                                    sx={{ position: "relative" }}
-                                >
-                                    <Card
-                                        sx={{
-                                            width: {
-                                                xs: "100%",
-                                                sm: "100%",
-                                                md: "242.19px",
-                                            },
-                                            height: {
-                                                xs: "96px",
-                                                sm: "96px",
-                                                md: "149px",
-                                            },
-                                            background: "#DCE3F6",
-                                            p: "15px",
-                                            display: "flex",
-                                            flexDirection: {
-                                                xs: "row",
-                                                sm: "row",
-                                                md: "column",
-                                            },
-                                            alignItems: {
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "start",
-                                            },
-                                            justifyContent: {
-                                                xs: "space-between",
-                                                sm: "space-between",
-                                                md: "start",
-                                            },
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        <Stack
-                                            direction="row"
-                                            spacing="5px"
-                                            alignItems="center"
-                                        >
-                                            <img
-                                                src="/total-paitent-icon.svg"
-                                                alt="icon"
-                                                style={{
-                                                    background: "#1F51C6",
-                                                    width: "38px",
-                                                    height: "38px",
-                                                    borderRadius: "6px",
-                                                    padding: "5px",
-                                                }}
-                                            />
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: {
-                                                        xs: "0.813rem",
-                                                        sm: "0.9rem",
-                                                        md: "1.125rem",
-                                                    },
-                                                    fontWeight: "600",
-                                                    lineHeight: {
-                                                        xs: "13px",
-                                                        sm: "13px",
-                                                        md: "21.13px",
-                                                    },
-                                                    color: "#383838",
-                                                }}
-                                            >
-                                                Total <br />
-                                                Patients
-                                            </Typography>
-                                        </Stack>
-                                        <Stack
-                                            spacing="5px"
-                                            sx={{
-                                                marginTop: {
-                                                    xs: 0,
-                                                    sm: 0,
-                                                    md: "auto",
-                                                },
-                                            }}
-                                        >
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: {
-                                                        xs: "0.813rem",
-                                                        sm: "0.9rem",
-                                                        md: "1.125rem",
-                                                    },
-                                                    fontWeight: "600",
-                                                    lineHeight: {
-                                                        xs: "13px",
-                                                        sm: "13px",
-                                                        md: "21.13px",
-                                                    },
-                                                    color: "#383838",
-                                                }}
-                                            >
-                                                {pendingAppointmentsData.length}
-                                            </Typography>
-                                            <LinearProgress
-                                                variant="determinate"
-                                                value={20}
-                                                sx={{
-                                                    color: "#1F51C6",
-                                                    background: "#ffffff",
-                                                    width: {
-                                                        xs: "164px",
-                                                        sm: "185px",
-                                                        md: "200px",
-                                                    },
-                                                    height: "10px",
-                                                    borderRadius: "10px",
-                                                }}
-                                            />
-                                        </Stack>
-                                    </Card>
-                                    <Card
-                                        sx={{
-                                            width: {
-                                                xs: "100%",
-                                                sm: "100%",
-                                                md: "242.19px",
-                                            },
-                                            height: {
-                                                xs: "96px",
-                                                sm: "96px",
-                                                md: "149px",
-                                            },
-                                            background: "#DCE3F6",
-                                            p: "15px",
-                                            display: "flex",
-                                            flexDirection: {
-                                                xs: "row",
-                                                sm: "row",
-                                                md: "column",
-                                            },
-                                            alignItems: {
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "start",
-                                            },
-                                            justifyContent: {
-                                                xs: "space-between",
-                                                sm: "space-between",
-                                                md: "start",
-                                            },
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        <Stack
-                                            direction="row"
-                                            spacing="5px"
-                                            alignItems="center"
-                                        >
-                                            <img
-                                                src="/appointment-icon.svg"
-                                                alt="icon"
-                                                style={{
-                                                    background: "#1F51C6",
-                                                    width: "38px",
-                                                    height: "38px",
-                                                    borderRadius: "6px",
-                                                    padding: "10px",
-                                                }}
-                                            />
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: {
-                                                        xs: "0.813rem",
-                                                        sm: "0.9rem",
-                                                        md: "1.125rem",
-                                                    },
-                                                    fontWeight: "600",
-                                                    lineHeight: {
-                                                        xs: "13px",
-                                                        sm: "13px",
-                                                        md: "21.13px",
-                                                    },
-                                                    color: "#383838",
-                                                }}
-                                            >
-                                                Today's <br />
-                                                Appointments
-                                            </Typography>
-                                        </Stack>
-                                        <Stack
-                                            spacing="5px"
-                                            sx={{
-                                                marginTop: {
-                                                    xs: 0,
-                                                    sm: 0,
-                                                    md: "auto",
-                                                },
-                                            }}
-                                        >
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: {
-                                                        xs: "0.813rem",
-                                                        sm: "0.9rem",
-                                                        md: "1.125rem",
-                                                    },
-                                                    fontWeight: "600",
-                                                    lineHeight: {
-                                                        xs: "13px",
-                                                        sm: "13px",
-                                                        md: "21.13px",
-                                                    },
-                                                    color: "#383838",
-                                                }}
-                                            >
-                                                {pendingAppointmentsData.length}
-                                            </Typography>
-                                            <LinearProgress
-                                                variant="determinate"
-                                                value={20}
-                                                sx={{
-                                                    color: "#1F51C6",
-                                                    background: "#ffffff",
-                                                    width: {
-                                                        xs: "164px",
-                                                        sm: "185px",
-                                                        md: "200px",
-                                                    },
-                                                    height: "10px",
-                                                    borderRadius: "10px",
-                                                }}
-                                            />
-                                        </Stack>
-                                    </Card>
-                                    <Card
-                                        sx={{
-                                            width: {
-                                                xs: "100%",
-                                                sm: "100%",
-                                                md: "242.19px",
-                                            },
-                                            height: {
-                                                xs: "96px",
-                                                sm: "96px",
-                                                md: "149px",
-                                            },
-                                            background: "#DCE3F6",
-                                            p: "15px",
-                                            display: "flex",
-                                            flexDirection: {
-                                                xs: "row",
-                                                sm: "row",
-                                                md: "column",
-                                            },
-                                            alignItems: {
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "start",
-                                            },
-                                            justifyContent: {
-                                                xs: "space-between",
-                                                sm: "space-between",
-                                                md: "start",
-                                            },
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        <Stack
-                                            direction="row"
-                                            spacing="5px"
-                                            alignItems="center"
-                                        >
-                                            <img
-                                                src="/nextAppointment.svg"
-                                                alt="icon"
-                                                style={{
-                                                    background: "#1F51C6",
-                                                    width: "38px",
-                                                    height: "38px",
-                                                    borderRadius: "6px",
-                                                    padding: "10px",
-                                                }}
-                                            />
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: {
-                                                        xs: "0.813rem",
-                                                        sm: "0.9rem",
-                                                        md: "1.125rem",
-                                                    },
-                                                    fontWeight: "600",
-                                                    lineHeight: {
-                                                        xs: "13px",
-                                                        sm: "13px",
-                                                        md: "21.13px",
-                                                    },
-                                                    color: "#383838",
-                                                }}
-                                            >
-                                                Next <br />
-                                                Appointment
-                                            </Typography>
-                                        </Stack>
-                                        <Stack
-                                            spacing="5px"
-                                            sx={{
-                                                marginTop: {
-                                                    xs: 0,
-                                                    sm: 0,
-                                                    md: "auto",
-                                                },
-                                            }}
-                                        >
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: {
-                                                        xs: "0.813rem",
-                                                        sm: "0.9rem",
-                                                        md: "1.125rem",
-                                                    },
-                                                    fontWeight: "600",
-                                                    lineHeight: {
-                                                        xs: "13px",
-                                                        sm: "13px",
-                                                        md: "21.13px",
-                                                    },
-                                                    color: "#383838",
-                                                }}
-                                            >
-                                                {pendingAppointmentsData.length}
-                                            </Typography>
-                                            <LinearProgress
-                                                variant="determinate"
-                                                value={20}
-                                                sx={{
-                                                    color: "#1F51C6",
-                                                    background: "#ffffff",
-                                                    width: {
-                                                        xs: "164px",
-                                                        sm: "185px",
-                                                        md: "200px",
-                                                    },
-                                                    height: "10px",
-                                                    borderRadius: "10px",
-                                                }}
-                                            />
-                                        </Stack>
-                                    </Card>
-                                </Stack>
 
-                                <Card
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "764px",
-                                        },
-                                        minHeight: "55vh",
-                                        background: "#DCE3F6",
-                                        p: "15px",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        boxShadow: "none",
-                                        // overflow:'auto'
-                                    }}
-                                >
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Raleway",
-                                            fontSize: "18px",
-                                            fontWeight: "600",
-                                            lineHeight: "21.13px",
-                                            color: "#383838",
-                                            mb: "15px",
-                                        }}
-                                    >
-                                        Upcoming Appointments
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            overflow: "auto",
-                                            height: "50vh",
-                                        }}
-                                    >
-                                        {pendingAppointmentsData.length > 0 ? (
-                                            pendingAppointmentsData.map(
-                                                (appointment, i) => (
-                                                    <Paper
-                                                        key={i}
-                                                        sx={{
-                                                            p: "5px",
-                                                            mb: "10px",
-                                                            display: "flex",
-                                                            justifyContent:
-                                                                "space-between",
-                                                            alignItems:
-                                                                "center",
-                                                        }}
-                                                    >
-                                                        <Stack
-                                                            direction="row"
-                                                            spacing="10px"
-                                                            sx={{
-                                                                alignItems:
-                                                                    "center",
-                                                            }}
-                                                        >
-                                                            <Fab
-                                                                sx={{
-                                                                    borderRadius:
-                                                                        "5px",
-                                                                    width: "32px",
-                                                                    height: "29px",
-                                                                    fontFamily:
-                                                                        "Raleway",
-                                                                    fontSize:
-                                                                        "22px",
-                                                                    fontWeight:
-                                                                        "600",
-                                                                    background:
-                                                                        "#1F51C6",
-                                                                    color: "#ffffff",
-                                                                    zIndex: 1,
-                                                                }}
-                                                            >
-                                                                {i + 1}
-                                                            </Fab>
-                                                            <Typography
-                                                                sx={{
-                                                                    fontFamily:
-                                                                        "Raleway",
-                                                                    fontSize:
-                                                                        "18px",
-                                                                    fontWeight:
-                                                                        "600",
-                                                                    lineHeight:
-                                                                        "21.13px",
-                                                                    color: "#383838",
-                                                                }}
-                                                            >
-                                                                {
-                                                                    appointment.patientName
-                                                                }
-                                                            </Typography>
-                                                            <Typography
-                                                                sx={{
-                                                                    fontFamily:
-                                                                        "Raleway",
-                                                                    fontSize:
-                                                                        "18px",
-                                                                    fontWeight:
-                                                                        "600",
-                                                                    lineHeight:
-                                                                        "21.13px",
-                                                                    color: "#706D6D",
-                                                                }}
-                                                            >
-                                                                {
-                                                                    appointment.appointmentTime
-                                                                }
-                                                            </Typography>
-                                                        </Stack>
-                                                        <Stack direction="row">
-                                                            <CancelIcon
-                                                                fontSize="large"
-                                                                sx={{
-                                                                    color: "#B92612",
-                                                                }}
-                                                            />
-                                                            <CheckCircleIcon
-                                                                fontSize="large"
-                                                                sx={{
-                                                                    color: "#15B912",
-                                                                }}
-                                                            />
-                                                        </Stack>
-                                                    </Paper>
-                                                )
-                                            )
-                                        ) : (
-                                            <Typography
-                                                variant="h6"
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: "18px",
-                                                    fontWeight: "600",
-                                                    lineHeight: "21.13px",
-                                                    color: "#383838",
-                                                    textAlign: "center",
-                                                }}
-                                            >
-                                                No Appointment Yet
-                                            </Typography>
-                                        )}
-                                    </Box>
-                                </Card>
-                            </Stack>
-                            <Stack
-                                spacing="20px"
-                                sx={{
-                                    alignItems: {
-                                        xs: "center",
-                                        sm: "center",
-                                        md: "start",
-                                    },
-                                }}
-                            >
-                                <LocalizationProvider
-                                    dateAdapter={AdapterDayjs}
-                                >
-                                    <DateCalendar
-                                        sx={{
-                                            background: "#DCE3F6",
-                                            borderRadius: "8px",
-                                            width: "306px",
-                                            height: "310px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            // position: "fixed",
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                                <Card
-                                    sx={{
-                                        width: "308px",
-                                        height: "237px",
-                                        background: "#DCE3F6",
-                                        p: "15px",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        boxShadow: "none",
-                                        // position: "fixed",
-                                        // bottom: "30px",
-                                    }}
-                                >
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Raleway",
-                                            fontSize: "18px",
-                                            fontWeight: "600",
-                                            lineHeight: "21.13px",
-                                            color: "#383838",
-                                            mb: "15px",
-                                        }}
-                                    >
-                                        Appointment Status
-                                    </Typography>
-                                    <PieChart
-                                        sx={
-                                            {
-                                                // margin: "0 auto",
-                                            }
-                                        }
-                                        series={[
-                                            {
-                                                data: [
-                                                    {
-                                                        id: 0,
-                                                        value: 75,
-                                                        // label: "75% Completed",
-                                                        color: "#1F51C6",
-                                                    },
-                                                    {
-                                                        id: 1,
-                                                        value: 20,
-                                                        // label: "20% Confirmed",
-                                                        color: "#A1E18A",
-                                                    },
-                                                    {
-                                                        id: 2,
-                                                        value: 5,
-                                                        // label: "5% Cancelled",
-                                                        color: "#F45843",
-                                                    },
-                                                ],
-                                            },
-                                        ]}
-                                        // width={200}
-                                        // height={200}
-                                        {...sizing}
-                                    />
-                                </Card>
-                            </Stack>
-                        </Stack>
-                    )} */}
-                    {/* {activeTab === 2 && (
-                        <>
-                            <Box sx={{ display: "flex", mt: 4 }}>
-                                <Stack direction={"row"} gap={1}>
-                                    <Button
-                                        onClick={() =>
-                                            setCompletedAppointments(false)
-                                        }
-                                        variant={
-                                            !completedAppointments
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            textTransform: "none",
-                                            width: "244px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            borderRadius: "35px",
-                                            color: !completedAppointments
-                                                ? "#ffffff"
-                                                : "#383838",
-                                        }}
-                                    >
-                                        Upcoming Appointments
-                                    </Button>
-                                    <Button
-                                        onClick={() =>
-                                            setCompletedAppointments(true)
-                                        }
-                                        variant={
-                                            completedAppointments
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            textTransform: "none",
-                                            width: "244px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            borderRadius: "35px",
-                                            color: completedAppointments
-                                                ? "#ffffff"
-                                                : "#383838",
-                                        }}
-                                    >
-                                        Completed Appointments
-                                    </Button>
-                                </Stack>
-                            </Box>
-                            {completedAppointments ? (
-                                <CompleteAppointmentsTable
-                                    completeAppointmentsData={
-                                        completeAppointmentsData
-                                    }
-                                    getCompleteAppointmentsData={
-                                        getCompleteAppointmentsData
-                                    }
-                                />
-                            ) : (
-                                <PendingAppointmentsTable
-                                    pendingAppointmentsData={
-                                        pendingAppointmentsData
-                                    }
-                                    getPendingAppointmentsData={
-                                        getPendingAppointmentsData
-                                    }
-                                />
-                            )}
-                        </>
-                    )} */}
-
-                    {activeTab === 3 && (
+                    {activeTab === 4 && (
                         <Card sx={{ p: "25px" }}>
                             <form onSubmit={handleSubmit}>
                                 <Stack direction={"row"} gap={3}>
@@ -1450,20 +725,20 @@ const DoctorEditProfile = () => {
                                         </LabelStyle>
                                         <TextFieldStyle
                                             id="mailId"
-                                            name="enterEmailId"
+                                            name="email"
                                             fullWidth
                                             placeholder="doctor@gmail.com"
                                             error={
                                                 err &&
-                                                !inputValue.enterEmailId &&
+                                                !inputValue.email &&
                                                 true
                                             }
                                             helperText={
                                                 err &&
-                                                !inputValue.enterEmailId &&
+                                                !inputValue.email &&
                                                 "Please enter your email"
                                             }
-                                            value={inputValue.enterEmailId}
+                                            value={inputValue.email}
                                             onChange={handleChange}
                                         />
                                     </StackStyle>
@@ -1473,20 +748,20 @@ const DoctorEditProfile = () => {
                                         </LabelStyle>
                                         <TextFieldStyle
                                             id="phoneNo"
-                                            name="enterPhoneNo"
+                                            name="phone"
                                             fullWidth
                                             placeholder="Ex 99112240477"
                                             error={
                                                 err &&
-                                                !inputValue.enterPhoneNo &&
+                                                !inputValue.phone &&
                                                 true
                                             }
                                             helperText={
                                                 err &&
-                                                !inputValue.enterPhoneNo &&
+                                                !inputValue.phone &&
                                                 "Please enter your phone number"
                                             }
-                                            value={inputValue.enterPhoneNo}
+                                            value={inputValue.phone}
                                             onChange={handleChange}
                                         />
                                     </StackStyle>

@@ -44,6 +44,11 @@ const TextFiledStyle = styled(TextField)({
         fontWeight: "500",
         fontSize: "1rem",
     },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
     [`& fieldset`]: {
         borderRadius: "36px",
     },
@@ -65,7 +70,7 @@ const TabsOnImgStyle = styled(Typography)`
 const MsignUpIn = () => {
     const [signUpActive, setSignUpActive] = useState(false);
     const navigate = useNavigate();
-    const [email, setEmail] = useState("");
+    let [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [err, setError] = useState(false);
     const [eye, setEye] = useState(false);
@@ -80,17 +85,21 @@ const MsignUpIn = () => {
         setEye(!eye);
     };
 
-    const handleCLick = async () => {
+    const handleCLick = async (e) => {
+        e.preventDefault();
         console.log("clicked");
         if (!email || !password) {
             setError(true);
             return;
         }
         setDisableButton(true);
+        email = email.trim();
+
         try {
-            const response = await axiosClient.post("/v2/signin", {
+            const response = await axiosClient.post("/v2/FindUserByNameAndPassword", {
                 email,
                 password,
+                role:"MASTER"
             });
 
             if (response.status === "ok") {
@@ -98,31 +107,25 @@ const MsignUpIn = () => {
                 setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
                 // setItem(MASTER_USER, response.result.MASTER_USER);
 
-                dispatch(login(response.result.user));
-                const userData = await axiosClient.get("/v2/masterData");
+                dispatch(login(response.result.ishospital));
+                // const userData = await axiosClient.get("/v2/masterData");
 
-                if (userData.result.user.nameOfhospitalOrClinic) {
+                if (response.result.ishospital.nameOfhospitalOrClinic) {
+                    console.log(response.result.ishospital.nameOfhospitalOrClinic)
                     return navigate(
-                        `/master/user/home/${userData.result.user._id}`
+                        `/master/user/home/${response.result.ishospital._id}`
                     );
                 } else {
+                    console.log(response.result.ishospital.nameOfhospitalOrClinic)
                     navigate(
-                        `/master/user/profile/${userData.result.user._id}`
+                        `/master/user/profile/${response.result.ishospital._id}`
                     );
                 }
-                // console.log(userData.result.user.nameOfhospitalOrClinic);
-                // setItem(HOSPITAL_ID, response.result.user._id);
+                
 
                 toast.success("Sign in successfully");
-                console.log(response.result.user.nameOfhospitalOrClinic);
-                // if (response.result.user.nameOfhospitalOrClinic) {
-                //     // window.location.href = `/master/user/home/${userData.result.user._id}`
-                // } else {
-                //     // window.location.href = `/master/user/profile`
-                //     navigate(
-                //         `/master/user/profile/${response.result.user._id}`
-                //     );
-                // }
+                console.log(response.result.ishospital.nameOfhospitalOrClinic);
+                
             }
         } catch (error) {
             if (error.status === "error" && error.statusCode === 404) {
@@ -282,118 +285,118 @@ const MsignUpIn = () => {
                             Sign Up
                         </Button>
                     </Box>
+                    <form onSubmit={handleCLick}>
+                        <TextFiledStyle
+                            autoFocus
+                            fullWidth={true}
+                            size="small"
+                            error={
+                                err && !email
+                                    ? true
+                                    : false || (err && emailExists)
+                                    ? true
+                                    : false || (err && invalidEmail)
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                err && !email
+                                    ? "Email is required"
+                                    : "" || (err && emailExists)
+                                    ? emailExists
+                                    : "" || (err && invalidEmail)
+                                    ? "Plase Enter a Valid Email Address"
+                                    : ""
+                            }
+                            label="Enter Your Email"
+                            onChange={(e) =>
+                                setEmail(e.target.value) &
+                                setError(false) &
+                                setEmailExists(false)
+                            }
+                        />
+                        <TextFiledStyle
+                            fullWidth={true}
+                            size="small"
+                            type={eye ? "text" : "password"}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={togglePassword}>
+                                            {eye ? (
+                                                <AiFillEye color="#1F51C6" />
+                                            ) : (
+                                                <AiFillEyeInvisible color="#1F51C6" />
+                                            )}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            error={
+                                err && !password
+                                    ? true
+                                    : false || (err && wrongPassword)
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                err && !password
+                                    ? "Password is required"
+                                    : "" || (err && wrongPassword)
+                                    ? wrongPassword
+                                    : ""
+                            }
+                            label="Enter Your Password"
+                            onChange={(e) =>
+                                setPassword(e.target.value) &
+                                setError(false) &
+                                setWrongPassword(false)
+                            }
+                        />
+                        <Box sx={{ width: "100%", display: "flex" }}>
+                            <Link
+                                to="/forgot-password"
+                                style={{
+                                    alignSelf: "flex-end",
+                                    textDecoration: "none",
+                                    fontFamily: "Lato",
+                                    fontWeight: "bolder",
+                                    marginLeft: "auto",
+                                    textAlign: "right",
+                                    display: "block",
+                                    color: "#1F51C6",
+                                }}
+                            >
+                                Forgot Password?
+                            </Link>
+                        </Box>
 
-                    <TextFiledStyle
-                        autoFocus
-                        fullWidth={true}
-                        size="small"
-                        error={
-                            err && !email
-                                ? true
-                                : false || (err && emailExists)
-                                ? true
-                                : false || (err && invalidEmail)
-                                ? true
-                                : false
-                        }
-                        helperText={
-                            err && !email
-                                ? "Email is required"
-                                : "" || (err && emailExists)
-                                ? emailExists
-                                : "" || (err && invalidEmail)
-                                ? "Plase Enter a Valid Email Address"
-                                : ""
-                        }
-                        label="Enter Your Email"
-                        onChange={(e) =>
-                            setEmail(e.target.value) &
-                            setError(false) &
-                            setEmailExists(false)
-                        }
-                    />
-                    <TextFiledStyle
-                        fullWidth={true}
-                        size="small"
-                        type={eye ? "text" : "password"}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={togglePassword}>
-                                        {eye ? (
-                                            <AiFillEye color="#1F51C6" />
-                                        ) : (
-                                            <AiFillEyeInvisible color="#1F51C6" />
-                                        )}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                        error={
-                            err && !password
-                                ? true
-                                : false || (err && wrongPassword)
-                                ? true
-                                : false
-                        }
-                        helperText={
-                            err && !password
-                                ? "Password is required"
-                                : "" || (err && wrongPassword)
-                                ? wrongPassword
-                                : ""
-                        }
-                        label="Enter Your Password"
-                        onChange={(e) =>
-                            setPassword(e.target.value) &
-                            setError(false) &
-                            setWrongPassword(false)
-                        }
-                    />
-                    <Box sx={{width:'100%', display:'flex'}}>
-                    <Link
-                    to="/forgot-password"
-                        style={{
-                            alignSelf:'flex-end',
-                            textDecoration: "none",
-                            fontFamily: "Lato",
-                            fontWeight: "bolder",
-                            marginLeft:'auto',
-                            textAlign:'right',
-                            display:'block',
-                            color:'#1F51C6'
-                        }}
-                    >
-                        Forgot Password?
-                    </Link>
-
-                    </Box>
-
-                    <LoadingButton
-                        size="small"
-                        fullWidth
-                        onClick={handleCLick}
-                        loading={disableButton}
-                        // loadingPosition="end"
-                        variant="contained"
-                        sx={{
-                            mt: 2,
-                            display: "flex",
-                            borderRadius: 40,
-                            textTransform: "none",
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontFamily: "Lato",
-                                fontWeight: "700",
-                                fontSize: "1rem",
+                        <LoadingButton
+                            size="small"
+                            fullWidth
+                            type="submit"
+                            // onClick={handleCLick}
+                            loading={disableButton}
+                            // loadingPosition="end"
+                            variant="contained"
+                            sx={{
+                                mt: 2,
+                                display: "flex",
+                                borderRadius: 40,
+                                textTransform: "none",
                             }}
                         >
-                            Sign In
-                        </span>
-                    </LoadingButton>
-
+                            <span
+                                style={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                }}
+                            >
+                                Sign In
+                            </span>
+                        </LoadingButton>
+                    </form>
                     {/* <Button
                         onClick={handleCLick}
                         fullWidth

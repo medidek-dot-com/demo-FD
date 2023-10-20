@@ -46,15 +46,14 @@ const Tracking = () => {
 
     const checkUser = () => {
         if (!isLoggedIn) {
-            navigate("/user/signin", {
+            return navigate("/user/signin", {
                 state: { prevUrl: urlLocation.pathname },
             });
-            return false;
         }
     };
-
+console.log("here");
     useEffect(() => {
-        checkUser();
+      return  checkUser();
     }, []);
 
 
@@ -63,7 +62,7 @@ const Tracking = () => {
         const response = await axiosClient.get(
             `/v2/getPendingAppointmentForPatient/${user?._id}`
         );
-        setPendingAppointmentsData(response.result);
+       return setPendingAppointmentsData(response.result);
         console.log(response.result);
     };
     const getCompleteAppointmentsData = async () => {

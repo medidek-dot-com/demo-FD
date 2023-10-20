@@ -38,10 +38,33 @@ const TextFieldStyle = styled(TextField)({
     "& .MuiOutlinedInput-input": {
         padding: "5px 10px",
     },
+    ["& input"]: {
+        // color: "white",
+        fontFamily: "Lato",
+        fontWeight: "600",
+        color: "#383838",
+        fontSize: "0.938rem",
+        borderColor: "red",
+    },
+    ["& fieldset"]: {
+        // color: "white",
+        borderColor: "#D9D9D9",
+    },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+    "& .MuiOutlinedInput-input": {
+        padding: "5px 10px",
+    },
 });
 
 const LabelStyle = styled("label")({
     marginBottom: "5px",
+    fontFamily: "Lato",
+    fontWeight: "600",
+    color: "#383838",
 });
 
 const MasterUser = () => {
@@ -127,20 +150,21 @@ const MasterUser = () => {
                 width:"100%",
                 m: "0 auto",
                 borderRadius: "10px",
-                p:{xs:0, sm:0, md:4}
+                p:{xs:0, sm:0, md:4},
+                minHeight:'90vh'
             }}
         >
-            <Box sx={{ width: "30%", display:{xs:"none", sm:"none", md:"block"} }}>
-                <Typography variant="h3">
+            <Box sx={{ width: "30%", display:{xs:"none", sm:"none", md:"block"},  }}>
+                <Typography variant="h3" sx={{fontFamily:'Raleway', fontWeight:'700', color:'#383838'}}>
                     Create or edit Hospital Profile
                 </Typography>
-                <Typography color="#706D6D">
+                <Typography color="#706D6D" sx={{color:'#706D6D', fontFamily:'Lato', fontWeight:'500', fontSize:'1rem'}}>
                     Enter Your details in the given form to create a Hospital
                     Profile. By doing so, you’ll be able to add doctors, staff
                     and Paitents to your hospital.
                 </Typography>
             </Box>
-            <Card sx={{ width: {xs:"100%", sm:"100%", md:"70%"}, height: "90%", p: 3, boxShadow: "none" }}>
+            <Card sx={{ width: {xs:"100%", sm:"100%", md:"70%"}, height: "90%", p: 3, boxShadow: "none", borderRadius:'14px' }}>
                 <form onSubmit={handleSubmit}>
                     <Stack direction={"row"} gap={3}>
                         <Avatar src={preview? preview : '/default.png'} alt="img"  sx={{ width: 50, height: 50 }}/>
@@ -151,8 +175,9 @@ const MasterUser = () => {
                                 color={"#706D6D"}
                                 width="200px"
                                 lineHeight="20px"
+                                sx={{fontFamily:'Lato', fontWeight:'500', fontSize:'0.75rem', lineHeight:'14.4px' }}
                             >
-                                Pick a photo from your computer
+                                Pick a photo from your <br/> computer
                             </Typography>
 
                             <label
@@ -185,6 +210,7 @@ const MasterUser = () => {
                                 Name of the hospital/clinic
                             </LabelStyle>
                             <TextFieldStyle
+                            autoFocus
                                 id="hospitalName"
                                 name="nameOfhospitalOrClinic"
                                 fullWidth
@@ -193,7 +219,7 @@ const MasterUser = () => {
                                 helperText={
                                     err &&
                                     !inputValue.nameOfhospitalOrClinic &&
-                                    "Please enter your email"
+                                    "Please enter hospital name"
                                 }
                                 onChange={handleChange}
                             />
@@ -211,7 +237,7 @@ const MasterUser = () => {
                                 helperText={
                                     err &&
                                     !inputValue.hospitalType &&
-                                    "Please enter your email"
+                                    "Please enter hospital type"
                                 }
                                 onChange={handleChange}
                             />
@@ -229,7 +255,7 @@ const MasterUser = () => {
                                 helperText={
                                     err &&
                                     !inputValue.location &&
-                                    "Please enter your email"
+                                    "Please enter hospital’s location"
                                 }
                                 onChange={handleChange}
                             />
@@ -247,7 +273,7 @@ const MasterUser = () => {
                                 helperText={
                                     err &&
                                     !inputValue.landmark &&
-                                    "Please enter your email"
+                                    "Please enter hospital’s landmark"
                                 }
                                 onChange={handleChange}
                             />
@@ -265,7 +291,7 @@ const MasterUser = () => {
                                 helperText={
                                     err &&
                                     !inputValue.enterFullAddress &&
-                                    "Please enter your email"
+                                    "Please enter hospital’s full address"
                                 }
                                 onChange={handleChange}
                             />
@@ -277,10 +303,12 @@ const MasterUser = () => {
                             type="submit"
                             loading={disableButton}
                             variant="contained"
-                            sx={{ flex: 0.3, width:{xs:"100%", sm:"100%", md:"200px"}, my:2, mx:'auto', display:"block" }}
+                            sx={{ flex: 0.3, width:{xs:"100%", sm:"100%", md:"364.69px"}, my:2, mx:'auto', display:"block", boxShadow:'none' }}
 
                         >
-                            <span>Next</span>
+                            <span
+                            style={{fontFamily:'Lato', fontWeight:'700', fontSize:'1rem', textTransform:'none'}}
+                            >Next</span>
                         </LoadingButton>
                         {/* <Button
                             type="submit"

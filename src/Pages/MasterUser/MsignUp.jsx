@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     Box,
     Button,
@@ -19,7 +19,14 @@ import { registerApi } from "../../Services/Apis";
 import { axiosClient } from "../../Utils/axiosClient";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "../../firebase.config";
 import SaveIcon from "@mui/icons-material/Save";
+import OTPInput, { ResendOTP } from "otp-input-react";
+import { KEY_ACCESS_TOKEN, setItem } from "../../Utils/localStorageManager";
+import { useDispatch } from "react-redux";
+import { login } from "../../Store/authSlice";
+import validator from "validator";
 
 const LadyImgStyle = styled("img")({
     width: "230px",
@@ -72,58 +79,220 @@ const TabsOnImgStyle = styled(Typography)`
 `;
 
 const MsignUp = () => {
-    const [inputData, setInputData] = useState({
-        email: "",
-        phone: "",
-    });
+    // const [inputData, setInputData] = useState({
+    //     email: "",
+    //     phone: "",
+    //     role: "HOSPITAL",
+    // });
 
-    const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
+    let [phone, setPhone] = useState("");
+    let [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [OTP, setOTP] = useState("");
+    // const [Otp, setOtp] = useState(["", "", "", "", "", ""]);
+    const [invalidOtp, setInvalidOtp] = useState(false);
+    const [couter, setCouter] = useState(59);
+    const [showOTP, setShowOTP] = useState(false);
+    const [invalidPhone, setInvalidPhone] = useState(false);
 
     const [signUpActive, setSignUpActive] = useState(true);
     const [emailExists, setEmailExists] = useState(false);
     const [phoneExists, setPhoneExists] = useState(false);
     const [invalidEmail, setInvalidEmail] = useState(false);
+    // const [invalidOtp, setInvalidOtp] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [eye, setEye] = useState(false);
     const [err, setError] = useState(false);
+    const dispatch = useDispatch();
+    const [manyReq, setManyReq] = useState("");
 
     const togglePassword = () => {
         setEye(!eye);
     };
 
-    const handleSignUp = async (e) => {
+    function onCaptchVerify() {
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier(
+                "recaptcha-container",
+                {
+                    size: "invisible",
+                    callback: (response) => {
+                        onSignup();
+                    },
+                    "expired-callback": () => {},
+                },
+                auth
+            );
+        }
+    }
+
+    const isUserExist = async (e) => {
         e.preventDefault();
-        if (!email || !password) {
+        setDisableButton(true);
+
+        if (!email || !password || !phone) {
+            setDisableButton(false);
             setError(true);
             return false;
         }
+        if (phone.length != 10) {
+            setDisableButton(false);
+            setError(true);
+            return setInvalidPhone(true);
+        }
+        if (!validator.isEmail(email)) {
+            setDisableButton(false);
+            setError(true);
+            return setInvalidEmail(true);
+        }
         setDisableButton(true);
+        phone = phone.trim();
+        email = email.trim();
 
         try {
-            const response = await axiosClient.post("/v2/sendotp", {
+            const response = await axiosClient.post("/v2/isUserExist", {
+                phone,
                 email,
-                password,
             });
+            setDisableButton(true);
             console.log(response);
-            setDisableButton(false);
             if (response.status === "ok") {
-                toast.success("Otp has been sent ");
-                setDisableButton(false);
-                navigate(`/master/login/verify/${email}`, { state: password });
-                // navigate("/user/otp",{state:email})
+                console.log(response.status);
+                if (response.result.phone == phone) {
+                    console.log(response.result.phone);
+                    setDisableButton(false);
+                    setError(true);
+                    return setPhoneExists(true);
+                } else if (response.result.email == email) {
+                    console.log(response.result.phone);
+                    setDisableButton(false);
+                    setError(true);
+                    return setEmailExists(true);
+                }
             }
         } catch (error) {
-            // console.log(error);
-            if (error.status === "error" && error.statusCode === 409) {
-                setError(true);
-                setEmailExists(error.message);
-                setDisableButton(false);
+            setDisableButton(false);
+            if (error.statusCode === 404) {
+                return onSignup();
+            } else {
+                return toast.error(error.message);
             }
         }
     };
+
+    function onSignup() {
+        setDisableButton(true);
+        onCaptchVerify();
+        const appVerifier = window.recaptchaVerifier;
+
+        const formatPh = "+91" + phone;
+
+        signInWithPhoneNumber(auth, formatPh, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                setDisableButton(false);
+                setShowOTP(true);
+                toast.success("OTP sended successfully!");
+            })
+            .catch((error) => {
+                console.log(error?.code);
+                if (error?.code === "auth/captcha-check-failed") {
+                    return;
+                } else {
+                    toast.error(error.code);
+                    setDisableButton(false);
+                }
+                // setManyReq(error.code);
+            });
+    }
+
+    function onOTPVerify() {
+        setInvalidOtp(false);
+        setDisableButton(true);
+        window.confirmationResult
+            .confirm(OTP)
+            .then(async (res) => {
+                console.log(res);
+                toast.success("OTP verified successfully!");
+                setUser(res.user);
+                setDisableButton(false);
+            })
+            .catch((err) => {
+                setInvalidOtp(true);
+                console.log(err.message);
+                console.log(err.code);
+                setDisableButton(false);
+            });
+    }
+
+    const signUpUser = async () => {
+        phone = phone.trim();
+        email = email.trim();
+
+        try {
+            const response = await axiosClient.post("/v2/userCreation", {
+                phone,
+                email,
+                password,
+                rol: "HOSPITAL",
+            });
+
+            if (response.status === "ok") {
+                navigate(`/master/user/profile/${response.result.user._id}`);
+                setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
+                dispatch(login(response.result.user));
+            }
+        } catch (error) {
+            return toast.error(error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            signUpUser();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        const timer =
+            couter > 0 && setInterval(() => setCouter(couter - 1), 1000);
+        return () => clearInterval(timer);
+    }, [couter]);
+
+   
+
+    // const handleSignUp = async (e) => {
+    //     e.preventDefault();
+    //     if (!email || !password) {
+    //         setError(true);
+    //         return false;
+    //     }
+    //     setDisableButton(true);
+
+    //     try {
+    //         const response = await axiosClient.post("/v2/sendotp", {
+    //             email,
+    //             password,
+    //         });
+    //         console.log(response);
+    //         setDisableButton(false);
+    //         if (response.status === "ok") {
+    //             toast.success("Otp has been sent ");
+    //             setDisableButton(false);
+    //             navigate(`/master/login/verify/${email}`, { state: password });
+    //             // navigate("/user/otp",{state:email})
+    //         }
+    //     } catch (error) {
+    //         // console.log(error);
+    //         if (error.status === "error" && error.statusCode === 409) {
+    //             setError(true);
+    //             setEmailExists(error.message);
+    //             setDisableButton(false);
+    //         }
+    //     }
+    // };
 
     return (
         <Container
@@ -138,6 +307,7 @@ const MsignUp = () => {
                 // position:'relative'
             }}
         >
+            {/* <div id="recaptcha-container"></div> */}
             <Box
                 width={"370px"}
                 sx={{
@@ -175,6 +345,7 @@ const MsignUp = () => {
                     </TabsOnImgStyle>
                 </Box>
             </Box>
+
             <Box
                 width={"370px"}
                 sx={{
@@ -200,203 +371,220 @@ const MsignUp = () => {
                         top: -40,
                     }}
                 />
-                <Card
-                    sx={{
-                        mx: "auto",
-                        p: 3,
-                        // width: "100%",
-                        // height: "80%",
-                        border: " 1px solid #706D6D61",
-                        borderRadius: "13px",
-                        boxShadow: "none",
-                    }}
-                >
-                    <Typography
-                        variant="h6"
+                <div id="recaptcha-container"></div>
+                {!showOTP ? (
+                    <Card
                         sx={{
-                            textAlign: "center",
-                            fontFamily: "Raleway",
-                            fontWeight: "700",
-                            fontSize: {
-                                xs: "1.5rem",
-                                sm: "1.6rem",
-                                md: "1.813rem",
-                            },
+                            mx: "auto",
+                            p: 3,
+                            // width: "100%",
+                            // height: "80%",
+                            border: " 1px solid #706D6D61",
+                            borderRadius: "13px",
+                            boxShadow: "none",
                         }}
                     >
-                        Hi, Welcome 👋
-                    </Typography>
-
-                    <Box
-                        sx={{
-                            background: "#DCE3F6",
-                            display: "flex",
-                            justifyContent: "center",
-                            borderRadius: "36px",
-                            my: 2,
-                        }}
-                    >
-                        <Button
-                            onClick={() => navigate("/master/signin")}
-                            variant={!signUpActive ? "contained" : "text"}
-                            fullWidth={true}
+                        <Typography
+                            variant="h6"
                             sx={{
-                                borderRadius: "20px",
-                                textTransform: "none",
-                                fontFamily: "Raleway",
-                                fontWeight: "700",
-                                fontSize: { xs: "1rem", lineHeight: "18.78px" },
-                                color: signUpActive ?"#383838"  : "#ffffff",
-                            }}
-                        >
-                            Sign In
-                        </Button>
-                        <Button
-                            onClick={() => navigate("/")}
-                            variant={signUpActive ? "contained" : "text"}
-                            fullWidth
-                            sx={{
-                                borderRadius: "20px",
-                                textTransform: "none",
+                                textAlign: "center",
                                 fontFamily: "Raleway",
                                 fontWeight: "700",
                                 fontSize: {
-                                    xs: "1rem",
-                                    lineHeight: "18.78px",
-                                    color: signUpActive ? "#ffffff" : "#383838",
+                                    xs: "1.5rem",
+                                    sm: "1.6rem",
+                                    md: "1.813rem",
                                 },
                             }}
                         >
-                            Sign Up
-                        </Button>
-                    </Box>
-                    {/* </ButtonGroup> */}
-                    <form onSubmit={handleSignUp}>
-                        <TextFiledStyle
-                            autoFocus
-                            type="number"
-                            fullWidth={true}
-                            name="email"
-                            size="small"
-                            label="Enter Your Phone Number"
-                            // error={err && !email && true}
-                            error={
-                                err && !phone
-                                    ? true
-                                    : false || (err && phoneExists)
-                                    ? true
-                                    : false || (err && invalidEmail)
-                                    ? true
-                                    : false
-                            }
-                            helperText={
-                                err && !email
-                                    ? "Phone Number is required"
-                                    : "" || (err && phoneExists)
-                                    ? emailExists
-                                    : "" || (err && invalidEmail)
-                                    ? "Plase Enter a Valid Email Address"
-                                    : ""
-                            }
-                            // helperText={
-                            //     err && !email && "Please enter your email"
-                            // }
-                            onChange={(e) => setPhone(e.target.value) & setError(false)}
-                        />
-                        <TextFiledStyle
-                            fullWidth={true}
-                            name="email"
-                            size="small"
-                            label="Enter Your Email"
-                            // error={err && !email && true}
-                            error={
-                                err && !email
-                                    ? true
-                                    : false || (err && emailExists)
-                                    ? true
-                                    : false || (err && invalidEmail)
-                                    ? true
-                                    : false
-                            }
-                            helperText={
-                                err && !email
-                                    ? "Email is required"
-                                    : "" || (err && emailExists)
-                                    ? emailExists
-                                    : "" || (err && invalidEmail)
-                                    ? "Plase Enter a Valid Email Address"
-                                    : ""
-                            }
-                            // helperText={
-                            //     err && !email && "Please enter your email"
-                            // }
-                            onChange={(e) => setEmail(e.target.value) & setError(false)}
-                            onKeyUpCapture={(e)=>e.preventDefault()}
-                            
-                        />
-                        <TextFiledStyle
-                            fullWidth={true}
-                            size="small"
-                            name="password"
-                            label="Please Set Your Password "
-                            type={eye ? "text" : "password"}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={togglePassword}>
-                                            {eye ? (
-                                                <AiFillEye color="#1F51C6" />
-                                            ) : (
-                                                <AiFillEyeInvisible color="#1F51C6" />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                            error={
-                                err && !password
-                                    ? true
-                                    : false || (err && phoneExists)
-                                    ? true
-                                    : false
-                            }
-                            helperText={
-                                err && !password
-                                    ? "Password is required"
-                                    : "" || (err && phoneExists)
-                                    ? "Password is already exists"
-                                    : ""
-                            }
-                            onChange={(e) => setPassword(e.target.value) & setError(false)}
-                        />
+                            Hi, Welcome 👋
+                        </Typography>
 
-                        <LoadingButton
-                            size="small"
-                            fullWidth
-                            type="submit"
-                            loading={disableButton}
-                            // loadingPosition="end"
-                            variant="contained"
+                        <Box
                             sx={{
-                                mt: 2,
+                                background: "#DCE3F6",
                                 display: "flex",
-                                borderRadius: 40,
-                                textTransform: "none",
-                                cursor: disableButton
-                                    ? "not-allowed"
-                                    : "pointer",
+                                justifyContent: "center",
+                                borderRadius: "36px",
+                                my: 2,
                             }}
                         >
-                            <span
-                             style={{
-                                fontFamily: "Lato",
-                                fontWeight: "700",
-                                fontSize: "1rem",
-                            }}
-                            >Sign Up</span>
-                        </LoadingButton>
+                            <Button
+                                onClick={() => navigate("/master/signin")}
+                                variant={!signUpActive ? "contained" : "text"}
+                                fullWidth={true}
+                                sx={{
+                                    borderRadius: "20px",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "700",
+                                    fontSize: {
+                                        xs: "1rem",
+                                        lineHeight: "18.78px",
+                                    },
+                                    color: signUpActive ? "#383838" : "#ffffff",
+                                }}
+                            >
+                                Sign In
+                            </Button>
+                            <Button
+                                onClick={() => navigate("/")}
+                                variant={signUpActive ? "contained" : "text"}
+                                fullWidth
+                                sx={{
+                                    borderRadius: "20px",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "700",
+                                    fontSize: {
+                                        xs: "1rem",
+                                        lineHeight: "18.78px",
+                                        color: signUpActive
+                                            ? "#ffffff"
+                                            : "#383838",
+                                    },
+                                }}
+                            >
+                                Sign Up
+                            </Button>
+                        </Box>
+                        {/* </ButtonGroup> */}
+                        <form onSubmit={isUserExist}>
+                            <TextFiledStyle
+                                autoFocus
+                                type="number"
+                                fullWidth={true}
+                                name="email"
+                                size="small"
+                                label="Enter Your Phone Number"
+                                // error={err && !email && true}
+                                error={
+                                    err && !phone
+                                        ? true
+                                        : false || (err && phoneExists)
+                                        ? true
+                                        : false || (err && invalidPhone)
+                                        ? true
+                                        : false
+                                }
+                                helperText={
+                                    err && !phone
+                                        ? "Phone Number is required"
+                                        : "" || (err && phoneExists)
+                                        ? "Phone Number already exists"
+                                        : "" || (err && invalidPhone)
+                                        ? "Plase Enter a Valid phone number"
+                                        : ""
+                                }
+                                // helperText={
+                                //     err && !email && "Please enter your email"
+                                // }
+                                onChange={(e) =>
+                                    setPhone(e.target.value) &
+                                    setError(false) &
+                                    setPhoneExists(false) &
+                                    setInvalidPhone(false)
+                                }
+                            />
+                            <TextFiledStyle
+                                fullWidth={true}
+                                name="email"
+                                size="small"
+                                label="Enter Your Email"
+                                // error={err && !email && true}
+                                error={
+                                    err && !email
+                                        ? true
+                                        : false || (err && emailExists)
+                                        ? true
+                                        : false || (err && invalidEmail)
+                                        ? true
+                                        : false
+                                }
+                                helperText={
+                                    err && !email
+                                        ? "Email is required"
+                                        : "" || (err && emailExists)
+                                        ? "Email already exists"
+                                        : "" || (err && invalidEmail)
+                                        ? "Plase Enter a Valid Email Address"
+                                        : ""
+                                }
+                                // helperText={
+                                //     err && !email && "Please enter your email"
+                                // }
+                                onChange={(e) =>
+                                    setEmail(e.target.value) &
+                                    setError(false) &
+                                    setInvalidEmail(false) &
+                                    setEmailExists(false)
+                                }
+                                onKeyUpCapture={(e) => e.preventDefault()}
+                            />
+                            <TextFiledStyle
+                                fullWidth={true}
+                                size="small"
+                                name="password"
+                                label="Please Set Your Password "
+                                type={eye ? "text" : "password"}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={togglePassword}
+                                            >
+                                                {eye ? (
+                                                    <AiFillEye color="#1F51C6" />
+                                                ) : (
+                                                    <AiFillEyeInvisible color="#1F51C6" />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                error={err && !password ? true : false}
+                                helperText={
+                                    err && !password
+                                        ? "Password is required"
+                                        : ""
+                                }
+                                onChange={(e) =>
+                                    setPassword(e.target.value) &
+                                    setError(false)
+                                }
+                            />
 
-                        {/* <Button
+                            <LoadingButton
+                                // onClick={onSignup}
+                                type="submit"
+                                size="small"
+                                fullWidth
+                                // type="submit"
+                                loading={disableButton}
+                                // loadingPosition="end"
+                                variant="contained"
+                                sx={{
+                                    mt: 2,
+                                    display: "flex",
+                                    borderRadius: 40,
+                                    textTransform: "none",
+                                    cursor: disableButton
+                                        ? "not-allowed"
+                                        : "pointer",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "700",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    Sign Up
+                                </span>
+                            </LoadingButton>
+
+                            {/* <Button
                             type="submit"
                             fullWidth
                             disabled={disableButton}
@@ -411,7 +599,7 @@ const MsignUp = () => {
                            
                             Signup
                         </Button> */}
-                        {/* <Link
+                            {/* <Link
                             to="/master/signin"
                             style={{
                                 marginTop: "16px",
@@ -427,7 +615,7 @@ const MsignUp = () => {
                         >
                             Already have an account Sign In
                         </Link> */}
-                        {/* <Link
+                            {/* <Link
                             to="/master/signup"
                             style={{
                                 marginTop: "16px",
@@ -439,8 +627,130 @@ const MsignUp = () => {
                         >
                             Sign Up with Mobile instead
                         </Link> */}
-                    </form>
-                </Card>
+                        </form>
+                    </Card>
+                ) : (
+                    <Card
+                        sx={{
+                            mx: "auto",
+                            p: 3,
+                            // width: "100%",
+                            // height: "80%",
+                            border: " 1px solid #706D6D61",
+                            borderRadius: "13px",
+                            boxShadow: "none",
+                        }}
+                    >
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                textAlign: "center",
+                                fontWeight: "700",
+                                mt: "35px",
+                                mb: "16px",
+                                lineHeight: "34.05px",
+                            }}
+                        >
+                            {" "}
+                            Verification code
+                        </Typography>
+                        <Typography
+                            sx={{
+                                textAlign: "center",
+                                mb: "24px",
+                                color: "#706D6D",
+                                lineHeight: "19.2px",
+                            }}
+                        >
+                            We have sent the code verification to
+                            <Box component={"span"} sx={{ color: "#1F51C6" }}>
+                                &nbsp; {phone}
+                            </Box>
+                        </Typography>
+                        {/* <TextField/> */}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                gap: 2,
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Box sx={{ width: "100%", textAlign:'center' }}>
+                                <OTPInput
+                                    value={OTP}
+                                    onChange={setOTP}
+                                    inputStyles={{
+                                        width: "45px",
+                                        height: "57px",
+                                        borderRadius: "5px",
+                                        border: "1px solid #706D6D8A",
+                                        margin: "0 4px",
+                                    }}
+                                    autoFocus
+                                    OTPLength={6}
+                                    otpType="number"
+                                    disabled={false}
+                                />
+
+                                <Typography
+                                    sx={{
+                                        mt: 2,
+                                        color: invalidOtp ? "red" : "#1F51C6",
+                                    }}
+                                >
+                                    {(couter === 0 && (
+                                        <Button
+                                            onClick={onSignup}
+                                            sx={{ color: "1F51C6" }}
+                                        >
+                                            Resend Otp
+                                        </Button>
+                                    )) ||
+                                        `Resend OTP in ${couter} seconds`}
+                                </Typography>
+                                
+                            </Box>
+                           
+                        </Box>
+                        <Box
+                            component="span"
+                            sx={{
+                                color: "red",
+                                textAlign: "center",
+                                display: "block",
+                            }}
+                        >
+                            {invalidOtp && "Invalid OTP"}
+                        </Box>
+                        {/* <Typography
+                            sx={{
+                                mt: 2,
+                                color: invalidOtp ? "red" : "#706D6D",
+                            }}
+                        >
+                            {(couter === 0 && (
+                                <Button onClick={resendOtp}>Resend Otp</Button>
+                            )) ||
+                                `Resend OTP in ${couter} seconds`}
+                        </Typography> */}
+                        <LoadingButton
+                            onClick={onOTPVerify}
+                            fullWidth
+                            loading={disableButton}
+                            variant="contained"
+                            sx={{
+                                mt: 2,
+                                borderRadius: 40,
+                                textTransform: "none",
+                                my: 2,
+                                width: "100%",
+                                boxShadow: "none",
+                            }}
+                        >
+                            <span>Sign Up</span>
+                        </LoadingButton>
+                    </Card>
+                )}
             </Box>
         </Container>
     );

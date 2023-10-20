@@ -26,7 +26,6 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { FiUpload } from "react-icons/fi";
 
-
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: "#1F51C6",
@@ -50,8 +49,6 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     fontWeight: "700",
     color: "#383838",
 });
-
-
 
 const AllPendingAppintmentsForAnHospital = ({
     pendingAppointmentsData,
@@ -277,7 +274,7 @@ const AllPendingAppintmentsForAnHospital = ({
                     display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
-                  {pendingAppointmentsData?.length > 0 ? (
+                {pendingAppointmentsData?.length > 0 ? (
                     pendingAppointmentsData.map((appointment, i) => {
                         return (
                             <Box
@@ -494,8 +491,16 @@ const AllPendingAppintmentsForAnHospital = ({
                         );
                     })
                 ) : (
-                    <Typography sx={{textAlign:'center', fontFamily: "Lato",
-                    fontWeight: "600", mt:'10px'}}>No Appointments For Today</Typography>
+                    <Typography
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            mt: "10px",
+                        }}
+                    >
+                        No Appointments For Today
+                    </Typography>
                 )}
             </Stack>
         </>

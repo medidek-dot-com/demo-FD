@@ -18,10 +18,10 @@ const Home = () => {
         if (isLoggedIn && user?.role === "MASTER") {
             console.log("Master loged in");
             return navigate(`/master/user/home/${hospital_id}`);
-        } else if (isLoggedIn && user[0]?.role === "DOCTOR") {
+        } else if (isLoggedIn && user?.role === "DOCTOR") {
             console.log("doctor loged in");
             return navigate('/doctor/select-hospital');
-        } else if (isLoggedIn && user?.role === "PETIEN") {
+        } else if (isLoggedIn && user?.role === "PATIENT") {
             console.log("patient loged in");
             return navigate(`/`);
         }else{

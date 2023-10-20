@@ -46,11 +46,23 @@ const TextFeildStyle = styled(TextField)({
         color: "#ffffff",
         borderBottom: "1px solid #ffffff",
     },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+        color:"yellow"
+    },
+    '& .MuiFormLabel-root-MuiInputLabel-root.Mui-error':{
+        color:"yellow",
+    },
     "& div:before:hover": {
         borderBottom: "1px solid #ffffff",
     },
     "& label": {
         color: "#ffffff",
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
     },
     // "&:hover": {
     //     borderBottomColor: "#ffffff",
@@ -89,11 +101,11 @@ const TextFeildStyle = styled(TextField)({
 const SignIn = () => {
     const navigate = useNavigate();
     const [eye, setEye] = useState(false);
-    const [email, setEmail] = useState("");
+    let [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailExists, setEmailExists] = useState(false);
     const [wrongPassword, setWrongPassword] = useState(false);
-    const [phone, setphone] = useState("");
+    let [phone, setphone] = useState("");
     const [err, setError] = useState(false);
     const [invalidEmail, setInvalidEmail] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
@@ -119,12 +131,15 @@ const SignIn = () => {
             return;
         }
         setDisableButton(true);
+        email = email.trim();
+
         try {
             const response = await axiosClient.post(
                 "/v2/FindUserByNameAndPassword",
                 {
                     email,
                     password,
+                    role:"PATIENT"
                 }
             );
             console.log(response);
@@ -205,7 +220,7 @@ const SignIn = () => {
                             p: {
                                 xs: "0.625rem",
                                 sm: "2.188rem",
-                                md: "3.25rem",
+                                // md: "3.25rem",
                             },
                             // px: { xs: "20px", sm: "30px", md: "68px" },
                             width: { xs: "100%", sm: "100%", md: "500px" },
@@ -224,7 +239,7 @@ const SignIn = () => {
                                     md: "2.5rem",
                                 },
                                 fontFamily: "Raleway",
-
+                                // backgroundColor: "red",
                                 color: "#ffffff",
                                 textAlign: {
                                     xs: "center",

@@ -390,13 +390,15 @@ const MasterNavBar = () => {
                                         `/master/user/profile/edit/${user?._id}`
                                     ) & setUserSetting(false)
                                 }
+                                sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838'}}
                             >
                                 Edit Profile
                             </MenuItem>
                             {/* <MenuItem disabled>As a Doctor</MenuItem> */}
                             <MenuItem
                                 onClick={logOutUser}
-                                sx={{ color: "red" }}
+                                sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#EA4335'}}
+
                             >
                                 Log Out
                             </MenuItem>

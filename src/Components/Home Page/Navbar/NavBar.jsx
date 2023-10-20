@@ -206,6 +206,12 @@ console.log(user, "User");
                         <Button
                             variant={activeMenu === 3 ? "contained" : "text"}
                             onClick={() => {
+                                // if(!isLoggedIn){
+                                //     navigate("/user/signin", {
+                                //         state: { prevUrl: urlLocation.pathname },
+                                //     });
+                                //     return false;
+                                // }
                                 setActiveMenu(3);
                                 navigate(
                                     '/tracking'
@@ -375,9 +381,15 @@ console.log(user, "User");
                         }}
                         sx={{mt:4}}
                     >
-                        <MenuItem onClick={()=>navigate(`/user/profile/edit/${user?._id}`) & setUserSetting(false)} >Edit Profile</MenuItem>
-                        {/* <MenuItem disabled>As a Doctor</MenuItem> */}
-                        <MenuItem onClick={logOutUser} sx={{color:'red'}}>Log Out</MenuItem>
+                        <MenuItem
+                                sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838'}}
+                        onClick={()=>navigate(`/user/profile/edit/${user?._id}`) & setUserSetting(false)} >Edit Profile</MenuItem>
+                        <MenuItem
+                        sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838'}}
+                        onClick={()=>navigate('/user/upload/records') & setUserSetting(false) }>Upload Records</MenuItem>
+                        <MenuItem
+                        sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#EA4335'}}
+                        onClick={logOutUser}>Log Out</MenuItem>
                     </Menu>}
                     {!isLoggedIn && <Menu
                         id="demo-positioned-menu"
@@ -393,11 +405,17 @@ console.log(user, "User");
                             vertical: "top",
                             horizontal: "right",
                         }}
-                        sx={{mt:4}}
+                        sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838', mt:4}}
                     >
-                        <MenuItem  onClick={()=>navigate("/master/signin") & setOpen(false)}>As a Hospital</MenuItem>
-                        <MenuItem onClick={()=>navigate("/doctor/signin") & setOpen(false)}>As a Doctor</MenuItem>
-                        <MenuItem onClick={()=>navigate("/user/signin") & setOpen(false)}>As a Patient</MenuItem>
+                        <MenuItem
+                        sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838'}}
+                        onClick={()=>navigate("/master/signin") & setOpen(false)}>As a Hospital</MenuItem>
+                        <MenuItem
+                        sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838'}}
+                        onClick={()=>navigate("/doctor/signin") & setOpen(false)}>As a Doctor</MenuItem>
+                        <MenuItem
+                        sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838'}}
+                        onClick={()=>navigate("/user/signin") & setOpen(false)}>As a Patient</MenuItem>
                     </Menu>}
                 </StyledToolbar>
             </AppBar>

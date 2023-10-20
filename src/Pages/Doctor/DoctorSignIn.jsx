@@ -33,7 +33,22 @@ const LadyImgStyle = styled("img")({
 
 const TextFiledStyle = styled(TextField)({
     margin: "20px 0 10px 0",
-    fontSize: 10,
+
+    [`& input`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+    [`& label`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
     [`& fieldset`]: {
         borderRadius: "36px",
     },
@@ -52,7 +67,7 @@ const TabsOnImgStyle = styled(Typography)`
 const DoctorSignIn = () => {
     const [signUpActive, setSignUpActive] = useState(false);
     const navigate = useNavigate();
-    const [enterEmailId, setEnterEmailId] = useState("");
+    let [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [err, setError] = useState(false);
     const [eye, setEye] = useState(false);
@@ -67,39 +82,60 @@ const DoctorSignIn = () => {
         setEye(!eye);
     };
 
-    const handleCLick = async () => {
+    const handleCLick = async (e) => {
+        e.preventDefault();
         console.log("clicked from doctor");
-        if (!enterEmailId || !password) {
+        if (!email || !password) {
             setError(true);
             return;
         }
         setDisableButton(true);
+        email = email.trim();
         try {
-            const response = await axiosClient.post("/v2/signinDoctor", {
-                enterEmailId,
-                password,
-            });
-
+            const response = await axiosClient.post(
+                "/v2/FindUserByNameAndPassword",
+                {
+                    email,
+                    password,
+                    role: "DOCTOR",
+                }
+            );
+            console.log(response);
             if (response.status === "ok") {
-                dispatch(login(response.result.user));
-                console.log(response.status);
-                setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
+                setDisableButton(false);
+                console.log(response.result);
+                dispatch(login(response.result.isdoctor));
                 navigate("/doctor/select-hospital");
+
+                setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
+          
+
+                // const userData = await axiosClient.get("/v2/masterData");
+                // console.log(userData.result.user.nameOfhospitalOrClinic);
+                // setItem(HOSPITAL_ID, userData.result.user._id);
+
+                toast.success("Sign in successfully");
+                // if (userData.result.user.nameOfhospitalOrClinic) {
+                //     // window.location.href = `/master/user/home/${userData.result.user._id}`
+                //     navigate(`/master/user/home/${userData.result.user._id}`);
+                // } else {
+                //     // window.location.href = `/master/user/profile`
+                //     navigate(
+                //         `/master/user/profile/${userData.result.user._id}`
+                //     );
+                // }
+            }
+        } catch (error) {
+            if (error.status === "error" && error.statusCode === 404) {
+                setError(true);
+                setInvalidEmail(error.message);
+                setDisableButton(false);
+            } else if (error.status === "error" && error.statusCode === 403) {
+                setError(true);
+                setWrongPassword(error.message);
                 setDisableButton(false);
             }
-        } catch (e) {
-            if (e.status === "error" && e.statusCode === 404) {
-                setError(true);
-                setEmailExists(e.message);
-                setDisableButton(false);
-            } else if (e.status === "error" && e.statusCode === 403) {
-                setError(true);
-                setWrongPassword(e.message);
-                setDisableButton(false);
-            }
-            setDisableButton(false);
-            toast.error('Something went wrong')
-            console.log(e);
+            console.log(error);
         }
     };
 
@@ -164,7 +200,6 @@ const DoctorSignIn = () => {
                     mx: 5,
                 }}
             >
-               
                 <Card
                     sx={{
                         mx: "auto",
@@ -218,7 +253,14 @@ const DoctorSignIn = () => {
                             onClick={() => navigate("/doctor/signin")}
                             variant={!signUpActive ? "contained" : "text"}
                             fullWidth={true}
-                            sx={{ borderRadius: "20px", textTransform: "none" }}
+                            sx={{
+                                borderRadius: "20px",
+                                textTransform: "none",
+                                fontFamily: "Raleway",
+                                fontWeight: "700",
+                                fontSize: { xs: "1rem", lineHeight: "18.78px" },
+                                color: signUpActive ? "#383838" : "#ffffff",
+                            }}
                         >
                             Sign In
                         </Button>
@@ -226,97 +268,116 @@ const DoctorSignIn = () => {
                             onClick={() => navigate("/doctor/signup")}
                             variant={signUpActive ? "contained" : "text"}
                             fullWidth
-                            sx={{ borderRadius: "20px", textTransform: "none" }}
+                            sx={{
+                                borderRadius: "20px",
+                                textTransform: "none",
+                                fontFamily: "Raleway",
+                                fontWeight: "700",
+                                fontSize: {
+                                    xs: "1rem",
+                                    lineHeight: "18.78px",
+                                    color: signUpActive ? "#ffffff" : "#383838",
+                                },
+                            }}
                         >
                             Sign Up
                         </Button>
                     </Box>
+                    <form onSubmit={handleCLick}>
+                        <TextFiledStyle
+                            autoFocus
+                            fullWidth={true}
+                            size="small"
+                            error={
+                                err && !email
+                                    ? true
+                                    : false || (err && emailExists)
+                                    ? true
+                                    : false || (err && invalidEmail)
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                err && !email
+                                    ? "Email is required"
+                                    : "" || (err && emailExists)
+                                    ? emailExists
+                                    : "" || (err && invalidEmail)
+                                    ? invalidEmail
+                                    : ""
+                            }
+                            label="Enter Your Email"
+                            onChange={(e) =>
+                                setEmail(e.target.value) &
+                                setError(false) &
+                                setEmailExists(false)
+                            }
+                        />
+                        <TextFiledStyle
+                            fullWidth={true}
+                            size="small"
+                            type={eye ? "text" : "password"}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={togglePassword}>
+                                            {eye ? (
+                                                <AiFillEye color="#1F51C6" />
+                                            ) : (
+                                                <AiFillEyeInvisible color="#1F51C6" />
+                                            )}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                            error={
+                                err && !password
+                                    ? true
+                                    : false || (err && wrongPassword)
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                err && !password
+                                    ? "Password is required"
+                                    : "" || (err && wrongPassword)
+                                    ? wrongPassword
+                                    : ""
+                            }
+                            label="Enter Your Password"
+                            onChange={(e) =>
+                                setPassword(e.target.value) &
+                                setError(false) &
+                                setWrongPassword(false)
+                            }
+                        />
 
-                    <TextFiledStyle
-                        autoFocus
-                        fullWidth={true}
-                        size="small"
-                        error={
-                            err && !enterEmailId
-                                ? true
-                                : false || (err && emailExists)
-                                ? true
-                                : false || (err && invalidEmail)
-                                ? true
-                                : false
-                        }
-                        helperText={
-                            err && !enterEmailId
-                                ? "Email is required"
-                                : "" || (err && emailExists)
-                                ? emailExists
-                                : "" || (err && invalidEmail)
-                                ? "Plase Enter a Valid Email Address"
-                                : ""
-                        }
-                        label="Enter Your Email"
-                        onChange={(e) =>
-                            setEnterEmailId(e.target.value) &
-                            setError(false) &
-                            setEmailExists(false)
-                        }
-                    />
-                    <TextFiledStyle
-                        fullWidth={true}
-                        size="small"
-                        type={eye ? "text" : "password"}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={togglePassword}>
-                                        {eye ? (
-                                            <AiFillEye color="#1F51C6" />
-                                        ) : (
-                                            <AiFillEyeInvisible color="#1F51C6" />
-                                        )}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                        error={
-                            err && !password
-                                ? true
-                                : false || (err && wrongPassword)
-                                ? true
-                                : false
-                        }
-                        helperText={
-                            err && !password
-                                ? "Password is required"
-                                : "" || (err && wrongPassword)
-                                ? wrongPassword
-                                : ""
-                        }
-                        label="Enter Your Password"
-                        onChange={(e) =>
-                            setPassword(e.target.value) &
-                            setError(false) &
-                            setWrongPassword(false)
-                        }
-                    />
-
-                    <LoadingButton
-                        size="small"
-                        fullWidth
-                        onClick={handleCLick}
-                        loading={disableButton}
-                        // loadingPosition="end"
-                        variant="contained"
-                        sx={{
-                            mt: 2,
-                            display: "flex",
-                            borderRadius: 40,
-                            textTransform: "none",
-                        }}
-                    >
-                        <span>Sign In</span>
-                    </LoadingButton>
-
+                        <LoadingButton
+                            size="small"
+                            fullWidth
+                            type="submit"
+                            // onClick={handleCLick}
+                            loading={disableButton}
+                            // loadingPosition="end"
+                            variant="contained"
+                            sx={{
+                                mt: 2,
+                                display: "flex",
+                                borderRadius: 40,
+                                textTransform: "none",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                }}
+                            >
+                                Sign In
+                            </span>
+                        </LoadingButton>
+                    </form>
                     {/* <Button
                         onClick={handleCLick}
                         fullWidth

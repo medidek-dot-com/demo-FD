@@ -52,6 +52,9 @@ import MedidekTerms from "./Pages/MedidekTerms";
 import DoctorEditProfile from "./Pages/Doctor/DoctorEditProfile";
 import DoctorAppointments from "./Pages/Doctor/DoctorAppointments";
 import ForgotPassword from "./Pages/ForgotPassword";
+import MedicalRecords from "./Pages/Patient/MedicalRecords";
+import DoctorCourses from "./Pages/Doctor/DoctorCourses";
+import DoctorCourseDetails from "./Pages/Doctor/DoctorCourseDetails";
 
 const App = () => {
 
@@ -138,6 +141,7 @@ const App = () => {
                     />
                     <Route path="/tracking" element={<Tracking />} />
                     <Route path="/tracking/view-appointment/:appointmentId" element={<ViewPetiantAppointment />} />
+                    <Route path="/user/upload/records" element={<MedicalRecords />} />
 
                     <Route path="/contact-us" element={<ContactUs />} />
                     <Route
@@ -205,7 +209,15 @@ const App = () => {
                             element={<DoctorAppointments />}
                         />
                         <Route
-                            path="/doctor/edit-profile/:hospital_id/:doctor_id"
+                            path="/doctor/courses/:doctor_id"
+                            element={<DoctorCourses />}
+                        />
+                        <Route
+                            path="/doctor/course/details/:doctor_id/:course_id"
+                            element={<DoctorCourseDetails />}
+                        />
+                        <Route
+                            path="/doctor/edit-profile/:doctor_id"
                             element={<DoctorEditProfile />}
                         />
                     </Route>

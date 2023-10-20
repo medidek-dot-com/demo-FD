@@ -312,7 +312,19 @@ const MUDDashboard = () => {
                         Appointments
                     </Button>
                     <Button
-                            onClick={() => navigate(`/doctor/edit-profile/${hospital_id}/${doctor_id}`) & setMenu(false)}
+                            onClick={() => navigate(`/doctor/courses/${user._id}`) & setMenu(false)}
+                        sx={{
+                            color: "#ffffff",
+                            fontFamily: "Lato",
+                            fontSize: "1.5rem",
+                            textTransform: "none",
+                            lineHeight: "28.8px",
+                        }}
+                    >
+                        Medical Courses
+                    </Button>
+                    <Button
+                            onClick={() => navigate(`/doctor/edit-profile/${user._id}`) & setMenu(false)}
                         sx={{
                             color: "#ffffff",
                             fontFamily: "Lato",
@@ -380,7 +392,8 @@ const MUDDashboard = () => {
                                 fontSize: "22px",
                             }}
                         >
-                            Dr. {numberOfHospitals[0].nameOfTheDoctor}
+                            Dr.
+                            {/* Dr. {numberOfHospitals[0].nameOfTheDoctor} */}
                         </Typography>
                     </Stack>
                     <Stack spacing={2} mt={4} flex={1} width={"100%"}>
@@ -395,6 +408,7 @@ const MUDDashboard = () => {
                                 fontFamily: "Raleway",
                                 fontWeight: "600",
                                 fontSize: "18px",
+                                
                                 color: activeTab === 1 ? "#1F51C6" : "#ffffff",
                                 "&:hover": {
                                     background:
@@ -432,7 +446,7 @@ const MUDDashboard = () => {
                             &nbsp; Appointments
                         </Button>
                         <Button
-                            onClick={() => navigate(`/doctor/edit-profile/${hospital_id}/${doctor_id}`)}
+                            onClick={() => navigate(`/doctor/courses/${user._id}`)}
                             variant="text"
                             sx={{
                                 color: activeTab === 3 ? "#1F51C6" : "#ffffff",
@@ -445,6 +459,29 @@ const MUDDashboard = () => {
                                 "&:hover": {
                                     background:
                                         activeTab === 3 ? "#ffffff" : "#DCE3F6",
+                                    color: "#1F51C6",
+                                },
+                            }}
+                        >
+                            {/* <ImPencil
+                                style={{ width: "25px", height: "25px" }}
+                            /> */}
+                            Medical Courses
+                        </Button>
+                        <Button
+                            onClick={() => navigate(`/doctor/edit-profile/${user._id}`)}
+                            variant="text"
+                            sx={{
+                                color: activeTab === 4 ? "#1F51C6" : "#ffffff",
+                                background: activeTab === 4 ? "#ffffff" : null,
+                                borderRadius: "0",
+                                textTransform: "none",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "18px",
+                                "&:hover": {
+                                    background:
+                                        activeTab === 4 ? "#ffffff" : "#DCE3F6",
                                     color: "#1F51C6",
                                 },
                             }}

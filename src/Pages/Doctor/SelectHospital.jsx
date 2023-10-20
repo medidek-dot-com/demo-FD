@@ -19,7 +19,7 @@ const SelectHospital = () => {
     const { user } = useSelector((state) => state.auth);
     // const [appointments, setAppointments] = useState([]);
     const numberOfHospitals = user;
-    console.log(user[0].role);
+    console.log(user?.role);
     // const doctordAndHospitalDetails = numberOfHospitals.map(hospital => hospital)
     // console.log(doctordAndHospitalDetails);
     // ${hospital.hospitalId._id}/${hospital._id}
@@ -67,11 +67,11 @@ const SelectHospital = () => {
                         }}
                     >
                         <Avatar
-                            src={
-                                numberOfHospitals[0]?.doctorImg
-                                    ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                    : "/default.png"
-                            }
+                            // src={
+                            //     numberOfHospitals[0]?.doctorImg
+                            //         ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                            //         : "/default.png"
+                            // }
                             sx={{ width: "81px", height: "81px" }}
                         />
                         <Typography
@@ -82,7 +82,8 @@ const SelectHospital = () => {
                                 fontSize: "22px",
                             }}
                         >
-                            Welcome, Dr. {numberOfHospitals[0]?.nameOfTheDoctor}
+                            Welcome, Dr.
+                            {/* Welcome, Dr. {numberOfHospitals[0]?.nameOfTheDoctor} */}
                         </Typography>
                         <Typography
                             sx={{
@@ -103,9 +104,9 @@ const SelectHospital = () => {
                                 border: "1px solid #D9D9D9",
                             }}
                         >
-                            {numberOfHospitals.map((hospital, i) => (
+                            {/* {numberOfHospitals.map((hospital, i) => ( */}
                                 <Stack
-                                    key={i}
+                                    // key={i}
                                     direction="row"
                                     sx={{
                                         justifyContent: "space-between",
@@ -120,11 +121,11 @@ const SelectHospital = () => {
                                     >
                                         {/* <Badge badgeContent={4} color="primary"> */}
                                         <Avatar
-                                            src={
-                                                hospital?.hospitalId.img
-                                                    ? `${baseURL}/uploads/Hospital/HospitalImage/${hospital?.hospitalId.img}`
-                                                    : "/default.png"
-                                            }
+                                            // src={
+                                            //     hospital?.hospitalId.img
+                                            //         ? `${baseURL}/uploads/Hospital/HospitalImage/${hospital?.hospitalId.img}`
+                                            //         : "/default.png"
+                                            // }
                                             sx={{
                                                 width: "58px",
                                                 height: "58px",
@@ -140,10 +141,11 @@ const SelectHospital = () => {
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {
+                                                Hospital Name
+                                                {/* {
                                                     hospital.hospitalId
                                                         .nameOfhospitalOrClinic
-                                                }
+                                                } */}
                                             </Typography>
                                             <Typography
                                                 sx={{
@@ -152,14 +154,15 @@ const SelectHospital = () => {
                                                     color: "#706D6D",
                                                 }}
                                             >
-                                                {hospital.hospitalId.location}
+                                                Location
+                                                {/* {hospital.hospitalId.location} */}
                                             </Typography>
                                         </Stack>
                                     </Stack>
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/dashboard/${hospital.hospitalId._id}/${hospital._id}`
+                                                `/doctor/dashboard/${user._id}/${user._id}`
                                             )
                                         }
                                         variant="text"
@@ -173,7 +176,7 @@ const SelectHospital = () => {
                                         Enter <EastIcon />
                                     </Button>
                                 </Stack>
-                            ))}
+                            {/* ))} */}
                             {/* <Stack direction="row" sx={{justifyContent:'space-between', borderBottom:'1px solid #D9D9D9', p:'5px'}}>
                             <Stack direction="row" alignItems="center" spacing='10px'>
                                 <Avatar src="/doctor.png" sx={{width:'58px', height:'58px'}}/>
