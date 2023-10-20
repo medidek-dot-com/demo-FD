@@ -92,6 +92,33 @@ const ForgotPassword = () => {
     };
     console.log(userData);
 
+    function onSignup() {
+        setDisableButton(true);
+        onCaptchVerify();
+        const appVerifier = window.recaptchaVerifier;
+
+        const formatPh = "+91" + phone;
+
+        signInWithPhoneNumber(auth, formatPh, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                setDisableButton(false);
+                setShowOTP(true);
+                toast.success("OTP sended successfully!");
+            })
+            .catch((error) => {
+                console.log(error?.code);
+                if (error?.code === "auth/captcha-check-failed") {
+                    return;
+                } else {
+                    toast.error(error.code);
+                    setDisableButton(false);
+                }
+                // setManyReq(error.code);
+            });
+    }
+
+
     function onOTPVerify() {
         setDisableButton(true);
         window.confirmationResult
