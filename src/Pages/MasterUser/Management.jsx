@@ -28,6 +28,8 @@ import { axiosClient, baseURL } from "../../Utils/axiosClient";
 import DoctorsTable from "../../Components/Master/DoctorsTable";
 import StaffTable from "../../Components/Master/StaffTable";
 import Footer from "../../Components/Footer/Footer";
+import { tab } from "../../Store/tabSlice";
+import { useDispatch } from "react-redux";
 
 const SearchFeildStyle = styled(TextField)({
     "& .css-1kzw815-MuiInputBase-root-MuiOutlinedInput-root": {
@@ -44,6 +46,12 @@ const ManageStaff = () => {
 
     const [search, setSearch] = useState("");
     const [active, setActive] = useState(false);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(1));
+    }, []);
 
     // console.log(pendingAppointmentsData);
 
@@ -143,7 +151,12 @@ const ManageStaff = () => {
                         Staff
                     </Button>
                 </Stack>
-                <Box sx={{display:{xs:'block', sm:'block', md:'none'}, mb:'0.5rem'}}>
+                <Box
+                    sx={{
+                        display: { xs: "block", sm: "block", md: "none" },
+                        mb: "0.5rem",
+                    }}
+                >
                     <Select
                         sx={{
                             color: "#383838",

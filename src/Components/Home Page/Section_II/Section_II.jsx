@@ -141,6 +141,7 @@ const Section_II = () => {
                                 sm: "#000000",
                                 md: "#ffffff",
                             },
+                            boxShadow:"none"
                         }}
                     >
                         <BsGooglePlay /> &nbsp;

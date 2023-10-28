@@ -18,6 +18,8 @@ import { axiosClient } from "../../Utils/axiosClient";
 import styled from "@emotion/styled";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useDispatch } from "react-redux";
+import { tab } from "../../Store/tabSlice";
 
 const WrapperStyle = styled(Box)(({ theme }) => ({
     width: "calc(100% - 100px)",
@@ -29,7 +31,7 @@ const WrapperStyle = styled(Box)(({ theme }) => ({
 
 const MasterUserDoctorDetails = () => {
     const { hospital_id, doctor_id } = useParams();
-console.log(hospital_id, doctor_id);
+    console.log(hospital_id, doctor_id);
     const navigate = useNavigate();
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     const [aboutDropDown, setAboutDropDown] = useState(true);
@@ -38,7 +40,12 @@ console.log(hospital_id, doctor_id);
     const [doctorDetails, setDoctorsDetails] = useState({});
     const [reviews, setReviews] = useState([]);
 
-    
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(2));
+    }, []);
+
     const getDoctorDetails = async () => {
         const response = await axiosClient.get(
             `/v2/getSingleDoctor/${doctor_id}`
@@ -335,7 +342,14 @@ console.log(hospital_id, doctor_id);
                                 boxShadow: "none",
                             }}
                         >
-                            <Typography sx={{ flex: 1, fontWeight: 700, fontFamily:'Raleway', fontSize:{md:'1rem'} }}>
+                            <Typography
+                                sx={{
+                                    flex: 1,
+                                    fontWeight: 700,
+                                    fontFamily: "Raleway",
+                                    fontSize: { md: "1rem" },
+                                }}
+                            >
                                 About Doctor
                             </Typography>
                             {aboutDropDown ? (
@@ -358,9 +372,9 @@ console.log(hospital_id, doctor_id);
                                     color: "#000000BD",
                                     maxHeight: "50vh",
                                     overflow: "auto",
-                                    fontFamily:'Lato',
-                                    fontWeight:'400',
-                                    fontSize:'15px'
+                                    fontFamily: "Lato",
+                                    fontWeight: "400",
+                                    fontSize: "15px",
                                 }}
                             >
                                 Dr. Shashwat Magarkar is an Oral and
@@ -402,7 +416,13 @@ console.log(hospital_id, doctor_id);
                                 boxShadow: "none",
                             }}
                         >
-                            <Typography sx={{ flex: 1, fontWeight: 700, fontFamily:'Raleway' }}>
+                            <Typography
+                                sx={{
+                                    flex: 1,
+                                    fontWeight: 700,
+                                    fontFamily: "Raleway",
+                                }}
+                            >
                                 Reviews
                             </Typography>
                             {reviewDropDown ? (
@@ -418,52 +438,67 @@ console.log(hospital_id, doctor_id);
                                 overflow: "auto",
                             }}
                         >
-                            {
-                                reviews?.length > 0 ? reviews.map((review, i) =>{
+                            {reviews?.length > 0 ? (
+                                reviews.map((review, i) => {
                                     return (
                                         <Card
-                                        key={i}
-                                        sx={{
-                                            width: "100%",
-                                            p: 1,
-                                            mt: 1,
-                                            border: " 1px solid #D9D9D9",
-                                            boxShadow: "none",
-                                            display: "flex",
-                                            gap: 1,
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <Avatar src="/doctor.png" />
-                                        <Stack>
-                                            <Typography
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    fontWeight: 500, fontFamily:'Raleway',
-                                                    fontSize:'0.891rem'
-                                                }}
-                                            >
-                                                {review.name}{" "}
-                                                <Box
-                                                    component="span"
-                                                    sx={{ color: "#D9D9D978" }}
+                                            key={i}
+                                            sx={{
+                                                width: "100%",
+                                                p: 1,
+                                                mt: 1,
+                                                border: " 1px solid #D9D9D9",
+                                                boxShadow: "none",
+                                                display: "flex",
+                                                gap: 1,
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <Avatar src="/doctor.png" />
+                                            <Stack>
+                                                <Typography
+                                                    sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        fontWeight: 500,
+                                                        fontFamily: "Raleway",
+                                                        fontSize: "0.891rem",
+                                                    }}
                                                 >
-                                                    {" "}
-                                                    &nbsp;|&nbsp;
-                                                </Box>
-                                                <Rating value={Number(review.rating)} readOnly />
-                                            </Typography>
-                                            <Typography sx={{ fontSize: "0.8rem", fontFamily:'Raleway', fontWeight:'500', color:'#383838' }}>
-                                                {review.masseage}
-                                            </Typography>
-                                        </Stack>
-                                    </Card>
-                                    ) 
-                                }) : <Typography>hello</Typography>
-                            }
-                           
-                           
+                                                    {review.name}{" "}
+                                                    <Box
+                                                        component="span"
+                                                        sx={{
+                                                            color: "#D9D9D978",
+                                                        }}
+                                                    >
+                                                        {" "}
+                                                        &nbsp;|&nbsp;
+                                                    </Box>
+                                                    <Rating
+                                                        value={Number(
+                                                            review.rating
+                                                        )}
+                                                        readOnly
+                                                    />
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: "0.8rem",
+                                                        fontFamily: "Raleway",
+                                                        fontWeight: "500",
+                                                        color: "#383838",
+                                                    }}
+                                                >
+                                                    {review.masseage}
+                                                </Typography>
+                                            </Stack>
+                                        </Card>
+                                    );
+                                })
+                            ) : (
+                                <Typography>hello</Typography>
+                            )}
                         </Box>
                         {/* Mobile View End  */}
 
@@ -574,11 +609,36 @@ console.log(hospital_id, doctor_id);
                             position: "relative",
                         }}
                     >
-                        <Typography sx={{ p:{xs:'14px 16px', sm:'14px 16px', md:'20px 25px'}, fontFamily:'Raleway', fontWeight:'700', fontSize:{xs:'1rem', sm:'1.1rem', md:'1.375rem'}, background:{xs:'#1F51C6', sm:'#1F51C6', md:'none' }, color:{xs:'#ffffff', sm:'#ffffff', md:'#383838'} }}>
+                        <Typography
+                            sx={{
+                                p: {
+                                    xs: "14px 16px",
+                                    sm: "14px 16px",
+                                    md: "20px 25px",
+                                },
+                                fontFamily: "Raleway",
+                                fontWeight: "700",
+                                fontSize: {
+                                    xs: "1rem",
+                                    sm: "1.1rem",
+                                    md: "1.375rem",
+                                },
+                                background: {
+                                    xs: "#1F51C6",
+                                    sm: "#1F51C6",
+                                    md: "none",
+                                },
+                                color: {
+                                    xs: "#ffffff",
+                                    sm: "#ffffff",
+                                    md: "#383838",
+                                },
+                            }}
+                        >
                             Upcoming Appointments
                         </Typography>
-                        <Divider sx={{mb:1}} />
-                        <Box sx={{ overflow: "auto", mb:'10px',  }}>
+                        <Divider sx={{ mb: 1 }} />
+                        <Box sx={{ overflow: "auto", mb: "10px" }}>
                             {appointments.length > 0 ? (
                                 appointments.map((appointment, i) => (
                                     <Card
@@ -591,26 +651,45 @@ console.log(hospital_id, doctor_id);
                                             border: "1px solid #D9D9D9",
                                             boxShadow: "none",
                                             borderRadius: "5px",
-                                            mb: i === appointments.length - 1 ? '70px' : '3px', // Apply margin-bottom only to the last element
-                                            
+                                            mb:
+                                                i === appointments.length - 1
+                                                    ? "70px"
+                                                    : "3px", // Apply margin-bottom only to the last element
                                         }}
                                     >
                                         <Stack
                                             direction={"row"}
                                             sx={{ m: 1, alignItems: "center" }}
                                         >
-                                            <Fab size="small" color="primary" sx={{zIndex:1, fontFamily:'Lato', fontWeight:'700', fontSize:'1rem', boxShadow:'none'}}>
+                                            <Fab
+                                                size="small"
+                                                color="primary"
+                                                sx={{
+                                                    zIndex: 1,
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "700",
+                                                    fontSize: "1rem",
+                                                    boxShadow: "none",
+                                                }}
+                                            >
                                                 {appointment.token}
                                             </Fab>
                                             <Box ml={1}>
-                                                <Typography sx={{fontFamily:'Raleway', fontWeight:'600', fontSize:'1rem'}}>
+                                                <Typography
+                                                    sx={{
+                                                        fontFamily: "Raleway",
+                                                        fontWeight: "600",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
                                                     {appointment.patientName}
                                                 </Typography>
                                                 <Typography
                                                     sx={{
                                                         fontSize: "0.875rem",
                                                         color: "#706D6D",
-                                                        fontFamily:'Raleway', fontWeight:'600',
+                                                        fontFamily: "Raleway",
+                                                        fontWeight: "600",
                                                     }}
                                                 >
                                                     Appointment at:{" "}
@@ -738,9 +817,9 @@ console.log(hospital_id, doctor_id);
                                     bottom: "0",
                                     left: "0",
                                     right: "0",
-                                    display:'flex',
-                                    justifyContent: 'center',
-                                    zIndex:2
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    zIndex: 2,
                                 }}
                             >
                                 <Button
@@ -760,10 +839,14 @@ console.log(hospital_id, doctor_id);
                                         margin: "15px auto",
                                         textTransform: "none",
                                         borderRadius: "35px",
-                                        fontFamily:'Raleway',
-                                        fontWeight:'600',
-                                        fontSize:{xs:'0.9rem', sm:'1rem', md:'1.125rem'},
-                                        boxShadow:'none'
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: {
+                                            xs: "0.9rem",
+                                            sm: "1rem",
+                                            md: "1.125rem",
+                                        },
+                                        boxShadow: "none",
                                     }}
                                 >
                                     View All

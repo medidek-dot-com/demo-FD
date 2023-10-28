@@ -30,6 +30,7 @@ import {
 import { axiosClient, baseURL } from "../../Utils/axiosClient";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Store/authSlice";
+import { tab } from "../../Store/tabSlice";
 
 // const LogoStyle = styled('img')({
 //     width:{xs:0, sm:185},
@@ -76,14 +77,15 @@ const MasterNavBar = () => {
     const [userLogIn, setUserLogIn] = useState(false);
     const [userSetting, setUserSetting] = useState(false);
     const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.auth);
+    const { isLoggedIn, user } = useSelector((state) => state.auth);
+    const { tabValue } = useSelector((state) => state.tab);
     const [activeMenu, setActiveMenu] = useState(1);
 
     // console.log(user.user.img);
     //     const myProfile = useSelector(state => state.appConfigReducer.myProfile)
     // console.log(myProfile);
     const handleChange = (event, newValue) => {
-        setSelectedTab(newValue);
+        dispatch(tab(newValue));
         setDrawer(false);
     };
 
@@ -126,8 +128,6 @@ const MasterNavBar = () => {
         };
     }, []);
 
-
-
     return (
         <>
             <AppBar
@@ -156,9 +156,9 @@ const MasterNavBar = () => {
                         }}
                     >
                         <Button
-                            variant={activeMenu === 1 ? "contained" : "text"}
+                            variant={tabValue === 0 ? "contained" : "text"}
                             onClick={() => {
-                                setActiveMenu(1);
+                                dispatch(tab(0));
                                 navigate(`/master/user/home/${user?._id}`);
                                 setDrawer(false);
                             }}
@@ -167,20 +167,19 @@ const MasterNavBar = () => {
                                 fontWeight: 600,
                                 fontSize: "1rem",
                                 lineHeight: "24.8px",
-                                color: activeMenu === 1 ? "#1F51C6" : "#ffffff",
+                                color: tabValue === 0 ? "#1F51C6" : "#ffffff",
                                 width: "100%",
                                 textTransform: "none",
-                                background:
-                                    activeMenu === 1 ? "#ffffff" : "none",
+                                background: tabValue === 0 ? "#ffffff" : "none",
                                 borderRadius: "5px",
                             }}
                         >
                             Home
                         </Button>
                         <Button
-                            variant={activeMenu === 2 ? "contained" : "text"}
+                            variant={tabValue === 1 ? "contained" : "text"}
                             onClick={() => {
-                                setActiveMenu(2);
+                                dispatch(tab(1));
                                 navigate(
                                     `/master/user/management/doctors/${user?._id}`
                                 );
@@ -191,23 +190,20 @@ const MasterNavBar = () => {
                                 fontWeight: 600,
                                 fontSize: "1rem",
                                 lineHeight: "24.8px",
-                                color: activeMenu === 2 ? "#1F51C6" : "#ffffff",
+                                color: tabValue === 1 ? "#1F51C6" : "#ffffff",
                                 width: "100%",
                                 textTransform: "none",
                                 borderRadius: "5px",
-                                background:
-                                    activeMenu === 2 ? "#ffffff" : "none",
+                                background: tabValue === 1 ? "#ffffff" : "none",
                             }}
                         >
                             Management
                         </Button>
                         <Button
-                            variant={activeMenu === 3 ? "contained" : "text"}
+                            variant={tabValue === 2 ? "contained" : "text"}
                             onClick={() => {
-                                setActiveMenu(3);
-                                navigate(
-                                    `/master/user/doctors/${user?._id}`
-                                );
+                                dispatch(tab(2));
+                                navigate(`/master/user/doctors/${user?._id}`);
                                 setDrawer(false);
                             }}
                             sx={{
@@ -215,20 +211,19 @@ const MasterNavBar = () => {
                                 fontWeight: 600,
                                 fontSize: "1rem",
                                 lineHeight: "24.8px",
-                                color: activeMenu === 3 ? "#1F51C6" : "#ffffff",
+                                color: tabValue === 2 ? "#1F51C6" : "#ffffff",
                                 width: "100%",
                                 textTransform: "none",
                                 borderRadius: "5px",
-                                background:
-                                    activeMenu === 3 ? "#ffffff" : "none",
+                                background: tabValue === 2 ? "#ffffff" : "none",
                             }}
                         >
                             Doctors
                         </Button>
                         <Button
-                            variant={activeMenu === 4 ? "contained" : "text"}
+                            variant={tabValue === 3 ? "contained" : "text"}
                             onClick={() => {
-                                setActiveMenu(4);
+                                dispatch(tab(3));
                                 navigate(
                                     `/master/user/appointments/${user?._id}`
                                 );
@@ -240,22 +235,19 @@ const MasterNavBar = () => {
                                 fontSize: "1rem",
                                 lineHeight: "24.8px",
                                 borderRadius: "5px",
-                                color: activeMenu === 4 ? "#1F51C6" : "#ffffff",
+                                color: tabValue === 3 ? "#1F51C6" : "#ffffff",
                                 width: "100%",
                                 textTransform: "none",
-                                background:
-                                    activeMenu === 4 ? "#ffffff" : "none",
+                                background: tabValue === 3 ? "#ffffff" : "none",
                             }}
                         >
                             Appointments
                         </Button>
-                        <Button
-                            variant={activeMenu === 5 ? "contained" : "text"}
+                        {/* <Button
+                            variant={tabValue === 4 ? "contained" : "text"}
                             onClick={() => {
-                                setActiveMenu(5);
-                                navigate(
-                                    `/medical-courses`
-                                );
+                                dispatch(tab(4));
+                                navigate(`/medical-courses`);
                                 setDrawer(false);
                             }}
                             sx={{
@@ -264,15 +256,14 @@ const MasterNavBar = () => {
                                 fontSize: "1rem",
                                 lineHeight: "24.8px",
                                 borderRadius: "5px",
-                                color: activeMenu === 5 ? "#1F51C6" : "#ffffff",
+                                color: tabValue === 4 ? "#1F51C6" : "#ffffff",
                                 width: "100%",
                                 textTransform: "none",
-                                background:
-                                    activeMenu === 5 ? "#ffffff" : "none",
+                                background: tabValue === 4 ? "#ffffff" : "none",
                             }}
                         >
                             Medical courses
-                        </Button>
+                        </Button> */}
                     </Stack>
                 </Box>
                 <StyledToolbar>
@@ -294,19 +285,25 @@ const MasterNavBar = () => {
                                 <MenuIcon color="primary" />
                             )}
                         </IconButton>
-                        <LogoStyle src="/m-logonew.png" width={185} onClick={()=>navigate(`/master/user/home/${user._id}`)}/>
+                        <LogoStyle
+                            src="/m-logonew.png"
+                            width={185}
+                            onClick={() =>
+                                navigate(`/master/user/home/${user._id}`)
+                            }
+                        />
                         <LogoMobileStyle
                             src="/m-logonew.png"
                             width={85}
                             height={20}
-                            onClick={()=>navigate('/')}
+                            onClick={() => navigate("/")}
                         />
                     </Stack>
 
                     <Tabs
                         aria-label="Tab navigation"
                         onChange={handleChange}
-                        value={selectedTab}
+                        value={tabValue}
                         sx={{
                             display: { xs: "none", sm: "none", md: "block" },
                         }}
@@ -335,14 +332,16 @@ const MasterNavBar = () => {
                             to={`/master/user/appointments/${user?._id}`}
                             tabIndex={3}
                         />
-                        <TabStyle
-                            component={Link}
-                            label="Medical Courses"
-                            to={`/medical-courses`}
-                            tabIndex={4}
-                        />
+                        {/* {user?.role === "DOCTOR" && (
+                            <TabStyle
+                                component={Link}
+                                label="Medical Courses"
+                                to={`/medical-courses`}
+                                tabIndex={4}
+                            />
+                        )} */}
                     </Tabs>
-                    {userLogIn ? (
+                    {isLoggedIn ? (
                         <Avatar
                             src={
                                 user?.img
@@ -390,15 +389,24 @@ const MasterNavBar = () => {
                                         `/master/user/profile/edit/${user?._id}`
                                     ) & setUserSetting(false)
                                 }
-                                sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#383838'}}
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontSize: "1rem",
+                                    fontWeight: "400",
+                                    color: "#383838",
+                                }}
                             >
                                 Edit Profile
                             </MenuItem>
                             {/* <MenuItem disabled>As a Doctor</MenuItem> */}
                             <MenuItem
                                 onClick={logOutUser}
-                                sx={{fontFamily:'Lato', fontSize:'1rem', fontWeight:'400', color:'#EA4335'}}
-
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontSize: "1rem",
+                                    fontWeight: "400",
+                                    color: "#EA4335",
+                                }}
                             >
                                 Log Out
                             </MenuItem>

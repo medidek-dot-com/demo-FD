@@ -30,6 +30,8 @@ import Footer from "../../Footer/Footer";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { axiosClient, baseURL } from "../../../Utils/axiosClient";
+import { useDispatch } from "react-redux";
+import { tab } from "../../../Store/tabSlice";
 
 const CarouselStyle = styled(Carousel)`
     width: 100%;
@@ -76,6 +78,12 @@ const DoctorInfo = () => {
         console.log(e.target.innerText);
     };
 
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(1));
+    }, []);
+
     const getWeekDates = () => {
         const monthStart = moment().startOf("day");
         const monthsDates = [];
@@ -116,8 +124,8 @@ const DoctorInfo = () => {
     }, [doctorsId]);
 
     console.log(doctorsData?.reviews);
-    const reviews = doctorsData?.reviews
-console.log(reviews);
+    const reviews = doctorsData?.reviews;
+    console.log(reviews);
     // const getSingleDoctorDetails = async() =>{
     //     try {
     //         const response = await axiosClient.get(
@@ -206,8 +214,8 @@ console.log(reviews);
                                 // alignItems: "center",
                                 // px: "10px",
                                 p: "25px",
-                                boxShadow:'none',
-                                border:'1px solid #D9D9D9'
+                                boxShadow: "none",
+                                border: "1px solid #D9D9D9",
                             }}
                         >
                             <Box>
@@ -219,7 +227,7 @@ console.log(reviews);
                                     }
                                     width={"118px"}
                                     height={"118px"}
-                                    style={{borderRadius:'50%'}}
+                                    style={{ borderRadius: "50%" }}
                                     alt="img"
                                 />
                             </Box>
@@ -236,7 +244,7 @@ console.log(reviews);
                                         margin={"0 10px"}
                                         sx={{
                                             fontFamily: "Raleway",
-                                            fontWeight:600,
+                                            fontWeight: 600,
                                             fontSize: "22px",
                                             lineHeight: "25.83px",
                                         }}
@@ -280,7 +288,7 @@ console.log(reviews);
                                         fontFamily: "Lato",
                                         fontSize: "15px",
                                         fontWeight: "400",
-                                        lineHeight:'18px',
+                                        lineHeight: "18px",
                                         color: "#000000BD",
                                     }}
                                 >
@@ -325,71 +333,105 @@ console.log(reviews);
                             Reviews
                         </Typography>
                         <Stack spacing={2}>
-
-                            {
-                                reviews?.map((review, i)=>{
-                                  return  <Card key={i} sx={{ p: "15px", height:'104px', boxShadow:'none', border:'1px solid #D9D9D9',  }}>
-                                    <Box
+                            {reviews?.map((review, i) => {
+                                return (
+                                    <Card
+                                        key={i}
                                         sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
+                                            p: "15px",
+                                            height: "104px",
+                                            boxShadow: "none",
+                                            border: "1px solid #D9D9D9",
                                         }}
                                     >
                                         <Box
-                                            style={{
+                                            sx={{
                                                 display: "flex",
+                                                justifyContent: "space-between",
                                                 alignItems: "center",
                                             }}
                                         >
-                                            <Avatar src="/client.png" sx={{width:'69.88px', height:'69.88px'}}/>
-                                            
-                                            <Box style={{ marginInline: "10px" }}>
-                                                <Typography
-                                                    variant="subtitle2"
+                                            <Box
+                                                style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <Avatar
+                                                    src="/client.png"
                                                     sx={{
-                                                        fontFamily: "Raleway",
-                                                        fontSize: "19.06px",
-                                                        fontWeight: "500",
-                                                        color: "#000000",
-                                                        lineHeight:'22.38px'
-                                                    }} 
+                                                        width: "69.88px",
+                                                        height: "69.88px",
+                                                    }}
+                                                />
+
+                                                <Box
+                                                    style={{
+                                                        marginInline: "10px",
+                                                    }}
                                                 >
-                                                    {review.name}
-                                                </Typography>
-                                                <Typography
-                                                    variant="caption"
-                                                    sx={{
-                                                        fontFamily: "Raleway",
-                                                        fontSize: "19.06px",
-                                                        fontWeight: "400",
-                                                        color: "#000000",
-                                                        lineHeight:'24.78px'
-                                                    }} 
-                                                >
-                                                    Best Medical app! Easy to use.
-                                                </Typography>
+                                                    <Typography
+                                                        variant="subtitle2"
+                                                        sx={{
+                                                            fontFamily:
+                                                                "Raleway",
+                                                            fontSize: "19.06px",
+                                                            fontWeight: "500",
+                                                            color: "#000000",
+                                                            lineHeight:
+                                                                "22.38px",
+                                                        }}
+                                                    >
+                                                        {review.name}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="caption"
+                                                        sx={{
+                                                            fontFamily:
+                                                                "Raleway",
+                                                            fontSize: "19.06px",
+                                                            fontWeight: "400",
+                                                            color: "#000000",
+                                                            lineHeight:
+                                                                "24.78px",
+                                                        }}
+                                                    >
+                                                        Best Medical app! Easy
+                                                        to use.
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                            <Box>
+                                                <Rating
+                                                    name="read-only"
+                                                    value={5}
+                                                    readOnly
+                                                    sx={{ fontSize: "2rem" }}
+                                                />
                                             </Box>
                                         </Box>
-                                        <Box>
-                                            <Rating
-                                                name="read-only"
-                                                value={5}
-                                                readOnly
-                                                sx={{fontSize:'2rem'}}
-                                            />
-                                        </Box>
-                                    </Box>
-                                </Card>
-                                })
-                            }
-                           
-                           
+                                    </Card>
+                                );
+                            })}
                         </Stack>
-                        <Typography variant="h6" sx={{fontFamily:'Raleway',fontWeight:'600', fontSize:'30px', my:'20px'}}>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "30px",
+                                my: "20px",
+                            }}
+                        >
                             Info
                         </Typography>
-                        <Card sx={{ p: "20px", boxShadow:'none', border:'1px solid #D9D9D9' }}>
+                        <Card
+                            sx={{
+                                p: "20px",
+                                boxShadow: "none",
+                                border: "1px solid #D9D9D9",
+                            }}
+                        >
                             <Box
                                 sx={{
                                     display: "flex",
@@ -398,7 +440,15 @@ console.log(reviews);
                                 }}
                             >
                                 <Box sx={{ width: "35%" }}>
-                                    <Typography component="h6" sx={{fontFamily:'Raleway',fontWeight:'600', fontSize:'22px', lineHeight:'25.83px'}}>
+                                    <Typography
+                                        component="h6"
+                                        sx={{
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "22px",
+                                            lineHeight: "25.83px",
+                                        }}
+                                    >
                                         Smilekraft Maxillofacial Surgery And
                                         Dental Hospital
                                     </Typography>
@@ -406,10 +456,10 @@ console.log(reviews);
                                         sx={{
                                             color: "#706D6D",
                                             fontSize: "15px",
-                                            fontFamily:'Lato',
-                                            fontWeight:'400',
-                                            lineHeight:'18px',
-                                            my:'15px'
+                                            fontFamily: "Lato",
+                                            fontWeight: "400",
+                                            lineHeight: "18px",
+                                            my: "15px",
                                         }}
                                         component="p"
                                         color="initial"
@@ -460,11 +510,11 @@ console.log(reviews);
                                             textTransform: "none",
                                             px: "15px",
                                             my: 1,
-                                            width:'190px',
-                                            height:'41px',
-                                            fontFamily:'Raleway',
-                                            fontWeight:'600',
-                                            fontSize:'16px'
+                                            width: "190px",
+                                            height: "41px",
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "16px",
                                         }}
                                     >
                                         Book Appointment
@@ -487,37 +537,57 @@ console.log(reviews);
                             sx={{
                                 padding: "25px",
                                 border: "1px solid #D9D9D9",
-                                boxShadow:'none',
+                                boxShadow: "none",
                             }}
                         >
-                            <Typography variant="h5" sx={{fontFamily:'Raleway', fontWeight:'600', fontSize:'22px'}}>
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "22px",
+                                }}
+                            >
                                 Book Appointment
                             </Typography>
-                            <Divider sx={{my:'23px', color:'#D9D9D9', mx:'-25px'}}/>
-                            <Box sx={{  display:'flex', flexWrap:'wrap', marginTop: "20px", userSelect:'none' }}>
+                            <Divider
+                                sx={{
+                                    my: "23px",
+                                    color: "#D9D9D9",
+                                    mx: "-25px",
+                                }}
+                            />
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    marginTop: "20px",
+                                    userSelect: "none",
+                                }}
+                            >
                                 {/* <CarouselStyle
                                     responsive={responsive}
                                     swipeable={true}
                                     slidesToSlide={4}
                                     arrows={false}
                                 > */}
-                                    {dates.map((date, i) => (
-                                        <Card
-                                            sx={{
-                                                textAlign: "center",
-                                                width: "50px",
-                                                margin: "5px",
-                                                padding: "5px",
-                                                cursor: "pointer",
-                                                border: "1px solid #D9D9D9",
-                                            }}
-                                            key={i}
-                                        >
-                                            <p>{date.day}</p>
-                                            <p>{date.date}</p>
-                                            <p>{date.month}</p>
-                                        </Card>
-                                    ))}
+                                {dates.map((date, i) => (
+                                    <Card
+                                        sx={{
+                                            textAlign: "center",
+                                            width: "50px",
+                                            margin: "5px",
+                                            padding: "5px",
+                                            cursor: "pointer",
+                                            border: "1px solid #D9D9D9",
+                                        }}
+                                        key={i}
+                                    >
+                                        <p>{date.day}</p>
+                                        <p>{date.date}</p>
+                                        <p>{date.month}</p>
+                                    </Card>
+                                ))}
                                 {/* </CarouselStyle> */}
                             </Box>
                             <Box marginTop={"20px"}>
@@ -597,9 +667,9 @@ console.log(reviews);
                                         background: "#15B912",
                                         textTransform: "none",
                                         px: "15px",
-                                        fontFamily:'Lato',
-                                        fontWeight:'600',
-                                        fontSize:'16px',
+                                        fontFamily: "Lato",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
                                         my: 1,
                                         // width: { xs: "100%", sm: "100%", md: "200px" },
                                     }}
@@ -613,7 +683,7 @@ console.log(reviews);
                         </Card>
                     </Box>
                 </Box>
-                
+
                 <Box
                     sx={{
                         display: { xs: "block", sm: "block", md: "none" },
@@ -631,11 +701,11 @@ console.log(reviews);
                         }}
                     >
                         <Avatar
-                           src={
-                            doctorsData.doctorImg
-                                ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctorsData.doctorImg}`
-                                : "/default.png"
-                        }
+                            src={
+                                doctorsData.doctorImg
+                                    ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctorsData.doctorImg}`
+                                    : "/default.png"
+                            }
                             alt="img"
                             width={60}
                             height={60}
@@ -901,56 +971,59 @@ console.log(reviews);
                         </Typography>
                     </Card>
                     <Stack spacing={1}>
-                        {
-                            reviews? reviews.map((review) =>{
-                                return(
-                                    <Card
-                                    sx={{
-                                        p: 2,
-                                        mt: 2,
-                                        border: " 1px solid #D9D9D9",
-                                        boxShadow: "none",
-                                    }}
-                                >
-                                    <Stack
-                                        direction="row"
-                                        spacing={1}
-                                        alignItems="center"
-                                    >
-                                        <Avatar alt="Remy Sharp" src="/client.png" />
-                                        <Stack spacing={-0.6}>
-                                            <Typography
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                               {review.name} &nbsp;{" "}
-                                                <Rating
-                                                    name="read-only"
-                                                    value={review.rating}
-                                                    readOnly
-                                                />
-                                            </Typography>
-                                            <Typography
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    fontSize: "0.6rem",
-                                                    fontWeight: 600,
-                                                    color: "#383838",
-                                                }}
-                                            >
-                                                {review.masseage}
-                                            </Typography>
-                                        </Stack>
-                                    </Stack>
-                                </Card>
-                                )
-                            }) : null
-                        }
-                       
+                        {reviews
+                            ? reviews.map((review) => {
+                                  return (
+                                      <Card
+                                          sx={{
+                                              p: 2,
+                                              mt: 2,
+                                              border: " 1px solid #D9D9D9",
+                                              boxShadow: "none",
+                                          }}
+                                      >
+                                          <Stack
+                                              direction="row"
+                                              spacing={1}
+                                              alignItems="center"
+                                          >
+                                              <Avatar
+                                                  alt="Remy Sharp"
+                                                  src="/client.png"
+                                              />
+                                              <Stack spacing={-0.6}>
+                                                  <Typography
+                                                      sx={{
+                                                          display: "flex",
+                                                          alignItems: "center",
+                                                          fontWeight: 600,
+                                                      }}
+                                                  >
+                                                      {review.name} &nbsp;{" "}
+                                                      <Rating
+                                                          name="read-only"
+                                                          value={review.rating}
+                                                          readOnly
+                                                      />
+                                                  </Typography>
+                                                  <Typography
+                                                      sx={{
+                                                          display: "flex",
+                                                          alignItems: "center",
+                                                          fontSize: "0.6rem",
+                                                          fontWeight: 600,
+                                                          color: "#383838",
+                                                      }}
+                                                  >
+                                                      {review.masseage}
+                                                  </Typography>
+                                              </Stack>
+                                          </Stack>
+                                      </Card>
+                                  );
+                              })
+                            : null}
+
                         <Card
                             sx={{
                                 p: 2,

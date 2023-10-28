@@ -41,6 +41,8 @@ import AllMissedAppintmentsForAnHospital from "../../Components/Master/AllMissed
 import { axiosClient, baseURL } from "../../Utils/axiosClient";
 import Footer from "../../Components/Footer/Footer";
 import { PlayArrow } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { tab } from "../../Store/tabSlice";
 
 const SearchFeildStyle = styled(TextField)({
     "& .css-1kzw815-MuiInputBase-root-MuiOutlinedInput-root": {
@@ -109,6 +111,12 @@ const Appoinments = () => {
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     const [mobileActiveTab, setMobileActiveTab] = useState(1);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(3));
+    }, []);
 
     useEffect(() => {
         getDoctorsData();
@@ -258,7 +266,7 @@ const Appoinments = () => {
                                 sm: "column",
                                 md: "row",
                             },
-                            mt: {xs:'16px', sm:'16px', md:5},
+                            mt: { xs: "16px", sm: "16px", md: 5 },
                         }}
                     >
                         <Stack direction="row">
@@ -282,8 +290,7 @@ const Appoinments = () => {
                                         alignItems: "center",
                                     }}
                                 >
-                                    {doctorData?.nameOfTheDoctor}{" "}
-                                    &nbsp;
+                                    {doctorData?.nameOfTheDoctor} &nbsp;
                                     <CheckCircleIcon color="success" />
                                 </Typography>
                                 <Typography
@@ -292,8 +299,8 @@ const Appoinments = () => {
                                         fontSize: "0.9rem",
                                     }}
                                 >
-                                    {doctorData?.yearOfExprience}{" "}
-                                    Years Experience
+                                    {doctorData?.yearOfExprience} Years
+                                    Experience
                                 </Typography>
                                 <Rating value={5} readOnly />
                             </Box>
@@ -445,7 +452,7 @@ const Appoinments = () => {
                 {/* Web View End */}
 
                 {/* Mobile View Start */}
-                <Stack spacing="8px" sx={{mt:'16px'}}>
+                <Stack spacing="8px" sx={{ mt: "16px" }}>
                     <Box
                         sx={{
                             display: {
@@ -516,7 +523,7 @@ const Appoinments = () => {
                         justifyContent: "space-between",
                         alignItems: "center",
                         mb: "16px",
-                        mt:'16px'
+                        mt: "16px",
                     }}
                 >
                     <Select

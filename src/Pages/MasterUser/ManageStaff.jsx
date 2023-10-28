@@ -28,6 +28,8 @@ import { axiosClient, baseURL } from "../../Utils/axiosClient";
 import DoctorsTable from "../../Components/Master/DoctorsTable";
 import StaffTable from "../../Components/Master/StaffTable";
 import Footer from "../../Components/Footer/Footer";
+import { useDispatch } from "react-redux";
+import { tab } from "../../Store/tabSlice";
 
 const SearchFeildStyle = styled(TextField)({
     "& .css-1kzw815-MuiInputBase-root-MuiOutlinedInput-root": {
@@ -43,9 +45,14 @@ const ManageStaff = () => {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
 
-
     const [updatedStatus, setUpdatedStatus] = useState("pending");
     const [active, setActive] = useState(true);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(1));
+    }, []);
 
     // console.log(pendingAppointmentsData);
 
@@ -68,7 +75,7 @@ const ManageStaff = () => {
 
     return (
         <>
-        <Box
+            <Box
                 sx={{
                     width: {
                         xs: "100%",
@@ -77,74 +84,80 @@ const ManageStaff = () => {
                     },
                     m: "0px auto",
                     p: 1,
-                    minHeight:'80vh'
+                    minHeight: "80vh",
                 }}
             >
-            <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
-                <SearchFeildStyle
-                    size="small"
-                    placeholder="Search Doctors"
-                    sx={{
-                        width: "491px",
-                        // borderRadius:'30px'
-                    }}
-                    InputLabelProps={{ color: "red" }}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <img src="/search.svg" alt="img" />
-                            </InputAdornment>
-                        ),
-                    }}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-            </Box>
-            <Stack direction={"row"} spacing={1} 
+                <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
+                    <SearchFeildStyle
+                        size="small"
+                        placeholder="Search Doctors"
+                        sx={{
+                            width: "491px",
+                            // borderRadius:'30px'
+                        }}
+                        InputLabelProps={{ color: "red" }}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <img src="/search.svg" alt="img" />
+                                </InputAdornment>
+                            ),
+                        }}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </Box>
+                <Stack
+                    direction={"row"}
+                    spacing={1}
                     sx={{ display: { xs: "none", sm: "none", md: "block" } }}
-            
-            >
-                <Button
-                    onClick={() =>
-                        navigate(
-                            `/master/user/management/doctors/${hospital_id}`
-                        )
-                    }
-                    variant="outlined"
+                >
+                    <Button
+                        onClick={() =>
+                            navigate(
+                                `/master/user/management/doctors/${hospital_id}`
+                            )
+                        }
+                        variant="outlined"
+                        sx={{
+                            textTransform: "none",
+                            width: "119px",
+                            height: "41px",
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "16px",
+                            borderRadius: "35px",
+                            color: "#383838",
+                        }}
+                    >
+                        Doctors
+                    </Button>
+                    <Button
+                        onClick={() =>
+                            navigate(
+                                `/master/user/management/staff/${hospital_id}`
+                            )
+                        }
+                        variant="contained"
+                        sx={{
+                            textTransform: "none",
+                            width: "119px",
+                            height: "41px",
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "16px",
+                            borderRadius: "35px",
+                            color: "#ffffff",
+                        }}
+                    >
+                        Staff
+                    </Button>
+                </Stack>
+                <Box
                     sx={{
-                        textTransform: "none",
-                        width: "119px",
-                        height: "41px",
-                        fontFamily: "Raleway",
-                        fontWeight: "600",
-                        fontSize: "16px",
-                        borderRadius: "35px",
-                        color: "#383838",
+                        display: { xs: "block", sm: "block", md: "none" },
+                        mb: "0.5rem",
                     }}
                 >
-                    Doctors
-                </Button>
-                <Button
-                    onClick={() =>
-                        navigate(
-                            `/master/user/management/staff/${hospital_id}`
-                        )
-                    }
-                    variant="contained"
-                    sx={{
-                        textTransform: "none",
-                        width: "119px",
-                        height: "41px",
-                        fontFamily: "Raleway",
-                        fontWeight: "600",
-                        fontSize: "16px",
-                        borderRadius: "35px",
-                        color:"#ffffff",
-                    }}
-                >
-                    Staff
-                </Button>
-            </Stack>
-            <Box sx={{display:{xs:'block', sm:'block', md:'none'}, mb:'0.5rem'}}>
                     <Select
                         sx={{
                             color: "#383838",
@@ -196,9 +209,9 @@ const ManageStaff = () => {
                         </MenuItem>
                     </Select>
                 </Box>
-            <StaffTable search={search}/>
+                <StaffTable search={search} />
             </Box>
-            <Footer/>
+            <Footer />
         </>
     );
 };

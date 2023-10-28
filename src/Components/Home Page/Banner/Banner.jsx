@@ -116,6 +116,7 @@ const Banner = () => {
                         "&:hover": {
                             background: "#e3e8e5",
                         },
+                        boxShadow:"none"
                     }}
                 >
                     Book Now

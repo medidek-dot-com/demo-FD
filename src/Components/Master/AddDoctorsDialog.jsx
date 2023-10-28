@@ -35,10 +35,33 @@ const TextFieldStyle = styled(TextField)({
     "& .MuiOutlinedInput-input": {
         padding: "5px 10px",
     },
+    ["& input"]: {
+        // color: "white",
+        fontFamily: "Lato",
+        fontWeight: "600",
+        color: "#383838",
+        fontSize: "0.938rem",
+        borderColor: "red",
+    },
+    ["& fieldset"]: {
+        // color: "white",
+        borderColor: "#D9D9D9",
+    },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+    "& .MuiOutlinedInput-input": {
+        padding: "5px 10px",
+    },
 });
 
 const LabelStyle = styled("label")({
     marginBottom: "5px",
+    fontFamily: "Lato",
+    fontWeight: "600",
+    color: "#383838",
 });
 
 const AddDoctorsDialog = ({
@@ -174,8 +197,13 @@ const AddDoctorsDialog = ({
                             <Typography
                                 my={1}
                                 color={err && !inputImage ? "red" : "#706D6D"}
-                                width="200px"
-                                lineHeight="20px"
+                                width="160px"
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "500",
+                                    fontSize: "0.75rem",
+                                    lineHeight: "14.4px",
+                                }}
                             >
                                 {err && inputImage
                                     ? "Please Pick a photo from your computer"
@@ -417,24 +445,35 @@ const AddDoctorsDialog = ({
                         </StackStyle>
                     </Box>
                     <LoadingButton
-                        size="small"
-                        fullWidth
-                        type="submit"
-                        loading={disableButton}
-                        // loadingPosition="end"
-                        variant="contained"
-                        sx={{
-                            margin: "10px auto",
-                            textTransform: "none",
-                            display: "block",
-                            width: "200px",
-                        }}
-                    >
-                        <span>Add Doctor</span>
-                    </LoadingButton>
-                    {/* <Button type="submit" variant="contained" sx={{ margin:'10px auto', textTransform:'none', display:'block', width:'200px' }}>
-                            Add Doctor
-                        </Button> */}
+                            size="small"
+                            fullWidth
+                            type="submit"
+                            loading={disableButton}
+                            variant="contained"
+                            sx={{
+                                flex: 0.3,
+                                width: {
+                                    xs: "100%",
+                                    sm: "100%",
+                                    md: "364.69px",
+                                },
+                                my: 2,
+                                mx: "auto",
+                                display: "block",
+                                boxShadow: "none",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                    textTransform: "none",
+                                }}
+                            >
+                                Add Doctor
+                            </span>
+                        </LoadingButton>
                 </form>
             </DialogContent>
         </Dialog>

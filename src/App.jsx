@@ -55,6 +55,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import MedicalRecords from "./Pages/Patient/MedicalRecords";
 import DoctorCourses from "./Pages/Doctor/DoctorCourses";
 import DoctorCourseDetails from "./Pages/Doctor/DoctorCourseDetails";
+import AppointmentSettings from './Pages/Doctor/AppointmentSettings'
 
 const App = () => {
 
@@ -88,7 +89,6 @@ const App = () => {
             location.pathname == `/master/login/verify/${email}`
         ) {
             setShowNavBar(false);
-            console.log("nav bar hide");
         } else {
             setShowNavBar(true);
         }
@@ -215,6 +215,10 @@ const App = () => {
                         <Route
                             path="/doctor/course/details/:doctor_id/:course_id"
                             element={<DoctorCourseDetails />}
+                        />
+                        <Route
+                            path="/doctor/appointment-settings/:doctor_id"
+                            element={<AppointmentSettings />}
                         />
                         <Route
                             path="/doctor/edit-profile/:doctor_id"

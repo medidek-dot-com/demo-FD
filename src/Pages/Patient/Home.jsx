@@ -3,10 +3,11 @@ import Section_I from "../../Components/Home Page/Section-I/Section_I";
 import Section_II from "../../Components/Home Page/Section_II/Section_II";
 import Footer from "../../Components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import NavBarWrapper from "../../Components/NavBarWrapper/NavBarWrapper";
 import { Box } from "@mui/material";
+import { tab } from "../../Store/tabSlice";
 
 const Home = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
@@ -20,15 +21,21 @@ const Home = () => {
             return navigate(`/master/user/home/${hospital_id}`);
         } else if (isLoggedIn && user?.role === "DOCTOR") {
             console.log("doctor loged in");
-            return navigate('/doctor/select-hospital');
+            return navigate("/doctor/select-hospital");
         } else if (isLoggedIn && user?.role === "PATIENT") {
             console.log("patient loged in");
             return navigate(`/`);
-        }else{
+        } else {
             console.log("logged out");
-            return navigate('/');
+            return navigate("/");
         }
     }, [user?.role]);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(0));
+    }, []);
 
     return (
         <>
@@ -44,9 +51,9 @@ const Home = () => {
                     p: 1,
                 }}
             >
-            <Banner />
-            <Section_I />
-            <Section_II />
+                <Banner />
+                <Section_I />
+                <Section_II />
             </Box>
             <Footer />
         </>

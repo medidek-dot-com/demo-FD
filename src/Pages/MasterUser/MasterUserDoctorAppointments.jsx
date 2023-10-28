@@ -36,6 +36,8 @@ import PendingAppointmentsTableForMobile from "./PendingAppointmentsTableForMobi
 import CompletedAppointmentsTableForMobile from "../../Components/Master/CompletedAppointmentsTableForMobile";
 import MissedAppointmentsTableForMobile from "../../Components/Master/MissedAppointmentsTableForMobile";
 import MissedAppointmentsTable from "../../Components/Master/MissedAppointmentsTable";
+import { useDispatch } from "react-redux";
+import { tab } from "../../Store/tabSlice";
 
 const PaginationStyle = styled(Pagination)({
     "& .MuiPaginationItem-root.Mui-selected": {
@@ -75,6 +77,12 @@ const MasterUserDoctorAppointments = () => {
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
     const [doctorDetails, setDoctorsDetails] = useState({});
     const [mobileActiveTab, setMobileActiveTab] = useState(1);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(2));
+    }, []);
 
     const getDoctorDetails = async () => {
         const response = await axiosClient.get(

@@ -35,13 +35,14 @@ import DoctorsCard from "./DoctorsCard";
 import CloseIcon from "@mui/icons-material/Close";
 import DateSlider from "./DateSlider";
 import { axiosClient, baseURL } from "../../../Utils/axiosClient";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NoBackpackSharp } from "@mui/icons-material";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import moment from "moment";
 import dayjs from "dayjs";
 import AppointmentConfirmDIalog from "./AppointmentConfirmDIalog";
+import { tab } from "../../../Store/tabSlice";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -140,7 +141,8 @@ const DoctorsList = () => {
     const specilityName = doctorsData.map((location) => location.speciality);
     const [activeCard, setActiveCard] = useState();
     const uniquespecilityName = [...new Set(specilityName)];
-    const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] = useState(false);
+    const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
+        useState(false);
     const [activeButton, setActiveButton] = useState("1");
     const [confirmedAppointmentData, setConfirmedAppointmentData] = useState(
         {}
@@ -160,16 +162,20 @@ const DoctorsList = () => {
 
     const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
         useState(false);
-    console.log(location);
     const [open, setOpen] = useState(false);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(1));
+    }, []);
+
     const getDoctorsList = async () => {
         try {
             const response = await axiosClient.get(
                 `/v2/getDoctorforSpecialties/abhay?location=${location}&speciality=${speciality}`
             );
-            console.log(response.result);
             if (response.status === "ok") {
-                console.log(response);
                 return setDoctorsData(response.result);
             }
         } catch (error) {
@@ -201,7 +207,12 @@ const DoctorsList = () => {
         getDoctorsList();
     }, [location, speciality]);
 
-    const handleClick = (nameOfTheDoctor, doctorsId, consultingTime, hospitalId) => {
+    const handleClick = (
+        nameOfTheDoctor,
+        doctorsId,
+        consultingTime,
+        hospitalId
+    ) => {
         if (!isLoggedIn) {
             navigate("/user/signin", {
                 state: { prevUrl: urlLocation.pathname },
@@ -214,7 +225,7 @@ const DoctorsList = () => {
             nameOfTheDoctor,
             doctorsId,
             consultingTime,
-            hospitalId
+            hospitalId,
         });
 
         setOpen(true);
@@ -225,8 +236,6 @@ const DoctorsList = () => {
         // Set the active button when it's clicked
         setActiveButton(buttonId);
     };
-
-    console.log(bookingAppointmentDetails);
 
     const bookAppointment = async () => {
         try {
@@ -611,7 +620,7 @@ const DoctorsList = () => {
                                             doctor.nameOfTheDoctor,
                                             doctor._id,
                                             doctor.consultingTime,
-                                            doctor.hospitalId,
+                                            doctor.hospitalId
                                         )
                                     }
                                     variant="contained"
@@ -759,7 +768,8 @@ const DoctorsList = () => {
                 <Dialog
                     open={open}
                     onClose={() => {
-                       return setOpen(false) &  setDateErr(false)}}
+                        return setOpen(false) & setDateErr(false);
+                    }}
                     maxWidth={"md"}
                     sx={{ margin: " 0 auto" }}
                 >
@@ -816,7 +826,9 @@ const DoctorsList = () => {
                                         setDateErr(false);
                                         const dateString = e.target.innerText;
                                         console.log();
-                                        const dateObject = dayjs(dateString+dayjs().year());
+                                        const dateObject = dayjs(
+                                            dateString + dayjs().year()
+                                        );
 
                                         const formattedDate =
                                             dateObject.format("DD-MM-YYYY");
@@ -860,17 +872,19 @@ const DoctorsList = () => {
                             ))}
                             {/* </CarouselStyle> */}
                         </Box>
-                       { dateErr && <Box
-                            component="span"
-                            sx={{
-                                color: "red",
-                                fontFamily: "Lato",
-                                fontSize: "18px",
-                                fontWeight: "500",
-                            }}
-                        >
-                            Please choose date!
-                        </Box>}
+                        {dateErr && (
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "red",
+                                    fontFamily: "Lato",
+                                    fontSize: "18px",
+                                    fontWeight: "500",
+                                }}
+                            >
+                                Please choose date!
+                            </Box>
+                        )}
                         {/* <DateSlider /> */}
                         {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePickerStyle
@@ -1126,7 +1140,7 @@ const DoctorsList = () => {
                             aria-label="close"
                             onClick={() =>
                                 setConfirmBookAppointmentDialog(false)
-                            }   
+                            }
                             sx={{
                                 position: "absolute",
                                 right: 8,

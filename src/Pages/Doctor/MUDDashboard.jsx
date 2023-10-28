@@ -41,6 +41,8 @@ import { logout } from "../../Store/authSlice";
 import { KEY_ACCESS_TOKEN, removeItem } from "../../Utils/localStorageManager";
 import { AiOutlineMenu } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import { BiSolidBook } from "react-icons/bi";
+import { BsFillCalendarPlusFill } from "react-icons/bs";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -214,11 +216,10 @@ const MUDDashboard = () => {
 
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
-        dispatch(logout());
         removeItem(KEY_ACCESS_TOKEN);
+        dispatch(logout());
         // navigate('/')
         // window.location.href = '/master/signin'
-        window.location.replace("/");
     };
 
     return (
@@ -361,153 +362,228 @@ const MUDDashboard = () => {
                 }}
             >
                 <Box
-                    sx={{
-                        width: "240px",
-                        background: "#1F51C6",
-                        display: { xs: "none", sm: "none", md: "flex" },
-                        flexDirection: "column",
-                        alignItems: "center",
-                        height: "100vh",
-                        position: "sticky",
-                        top: "0px",
-                        bottom: "-100px",
-                    }}
-                >
-                    <Stack alignItems={"center"} mt={4}>
-                        <Avatar
-                            src={
-                                numberOfHospitals[0]?.doctorImg
-                                    ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                    : "/default.png"
-                            }
-                            sx={{ width: "71px", height: "71px" }}
-                        />
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                m: 1,
-                                color: "#ffffff",
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "22px",
-                            }}
-                        >
-                            Dr.
-                            {/* Dr. {numberOfHospitals[0].nameOfTheDoctor} */}
-                        </Typography>
-                    </Stack>
-                    <Stack spacing={2} mt={4} flex={1} width={"100%"}>
-                        <Button
-                            onClick={() => navigate(`/doctor/dashboard/${hospital_id}/${doctor_id}`)}
-                            variant="text"
-                            sx={{
-                                color: "#1F51C6",
-                                background: activeTab === 1 ? "#ffffff" : null,
-                                borderRadius: "0",
-                                textTransform: "none",
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                                
-                                color: activeTab === 1 ? "#1F51C6" : "#ffffff",
-                                "&:hover": {
-                                    background:
-                                        activeTab === 1 ? "#ffffff" : "#DCE3F6",
-                                    color: "#1F51C6",
-                                },
-                            }}
-                        >
-                            <MdDashboard
-                                style={{ width: "25px", height: "25px" }}
-                            />
-                            &nbsp;Dashboard
-                        </Button>
-                        <Button
-                            onClick={() => navigate(`/doctor/appointments/${hospital_id}/${doctor_id}`)}
-                            variant="text"
-                            sx={{
-                                color: activeTab === 2 ? "#1F51C6" : "#ffffff",
-                                background: activeTab === 2 ? "#ffffff" : null,
-                                borderRadius: "0",
-                                textTransform: "none",
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                                "&:hover": {
-                                    background:
-                                        activeTab === 2 ? "#ffffff" : "#DCE3F6",
-                                    color: "#1F51C6",
-                                },
-                            }}
-                        >
-                            <BsFillCalendarFill
-                                style={{ width: "25px", height: "25px" }}
-                            />
-                            &nbsp; Appointments
-                        </Button>
-                        <Button
-                            onClick={() => navigate(`/doctor/courses/${user._id}`)}
-                            variant="text"
-                            sx={{
-                                color: activeTab === 3 ? "#1F51C6" : "#ffffff",
-                                background: activeTab === 3 ? "#ffffff" : null,
-                                borderRadius: "0",
-                                textTransform: "none",
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                                "&:hover": {
-                                    background:
-                                        activeTab === 3 ? "#ffffff" : "#DCE3F6",
-                                    color: "#1F51C6",
-                                },
-                            }}
-                        >
-                            {/* <ImPencil
-                                style={{ width: "25px", height: "25px" }}
-                            /> */}
-                            Medical Courses
-                        </Button>
-                        <Button
-                            onClick={() => navigate(`/doctor/edit-profile/${user._id}`)}
-                            variant="text"
-                            sx={{
-                                color: activeTab === 4 ? "#1F51C6" : "#ffffff",
-                                background: activeTab === 4 ? "#ffffff" : null,
-                                borderRadius: "0",
-                                textTransform: "none",
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                                "&:hover": {
-                                    background:
-                                        activeTab === 4 ? "#ffffff" : "#DCE3F6",
-                                    color: "#1F51C6",
-                                },
-                            }}
-                        >
-                            <ImPencil
-                                style={{ width: "25px", height: "25px" }}
-                            />
-                            Edit Profile
-                        </Button>
-                    </Stack>
-                    <Button
-                        onClick={logOutUser}
                         sx={{
-                            color: "#ffffff",
-                            width: "100%",
-                            my: 1,
-                            fontFamily: "Raleway",
-                            fontWeight: "600",
-                            fontSize: "18px",
-                            textTransform: "none",
+                            width: "240px",
+                            background: "#1F51C6",
+                            display: { xs: "none", sm: "none", md: "flex" },
+                            flexDirection: "column",
+                            // alignItems: "center",
+                            height: "100vh",
+                            position: "sticky",
+                            top: "0px",
+                            bottom: "-100px",
                         }}
                     >
-                        <MdLogout style={{ width: "25px", height: "25px" }} />
-                        Log Out
-                    </Button>
-                </Box>
+                        <Stack alignItems={"center"} mt={4}>
+                            <Avatar
+                                src={
+                                    numberOfHospitals[0]?.doctorImg
+                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                                        : "/default.png"
+                                }
+                                sx={{ width: "71px", height: "71px" }}
+                            />
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    m: 1,
+                                    color: "#ffffff",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "22px",
+                                }}
+                            >
+                                Dr. {user.nameOfTheDoctor}
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            alignItems={"start"}
+                            spacing={2}
+                            mt={4}
+                            flex={1}
+                            width={"100%"}
+                        >
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    background: "#ffffff",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#1F51C6",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                        color: "#1F51C6",
+                                    }}
+                                >
+                                    <MdDashboard
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    &nbsp;Dashboard
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <BsFillCalendarFill
+                                        style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    &nbsp; Appointments
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        navigate(`/doctor/courses/${doctor_id}`)
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <BiSolidBook
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "10px",
+                                        }}
+                                    />
+                                    Medical Courses
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/edit-profile/${user._id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <ImPencil
+                                        style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    Edit Profile
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/appointment-settings/${user._id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        lineHeight: "21.13px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                        textAlign: "start",
+                                    }}
+                                >
+                                    <BsFillCalendarPlusFill
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    Appointment Settings
+                                </Button>
+                            </Box>
+                        </Stack>
+                        <Button
+                            onClick={logOutUser}
+                            sx={{
+                                color: "#ffffff",
+                                width: "100%",
+                                my: 1,
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "18px",
+                                textTransform: "none",
+                            }}
+                        >
+                            <MdLogout
+                                style={{ width: "25px", height: "25px" }}
+                            />
+                            Log Out
+                        </Button>
+                    </Box>
                 <Box
                     sx={{
                         flex: 4,
@@ -515,7 +591,7 @@ const MUDDashboard = () => {
                         // justifyContent: "space-between",
                         // alignItems: "center",
                         width: "100%",
-                        mx: "100px",
+                        mx: { xs: 0, sm: 0, md: "100px" },
                         mt: "32px",
                         // height: "90vh",
                     }}
@@ -575,10 +651,11 @@ const MUDDashboard = () => {
                                 sm: "column",
                                 md: "row",
                             }}
-                            spacing="20px"
+                            spacing="10px"
                         >
                             <Stack
                                 spacing={{ xs: "10px", sm: "10px", md: "20px" }}
+                                // mr="5px"
                             >
                                 <Stack
                                     direction={{

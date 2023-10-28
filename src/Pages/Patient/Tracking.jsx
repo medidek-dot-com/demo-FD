@@ -9,11 +9,12 @@ import {
     Button,
 } from "@mui/material";
 import Footer from "../../Components/Footer/Footer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import UpcomingPetientUserAppointment from "./UpcomingPetientUserAppointment";
 import { axiosClient } from "../../Utils/axiosClient";
+import { tab } from "../../Store/tabSlice";
 
 const AutocompleteStyle = styled(Autocomplete)({
     "& input::placeholder": {
@@ -46,23 +47,29 @@ const Tracking = () => {
 
     const checkUser = () => {
         if (!isLoggedIn) {
-            return navigate("/user/signin", {
+            navigate("/user/signin", {
                 state: { prevUrl: urlLocation.pathname },
             });
+            return false;
+        } else {
+            getPendingAppointmentsData();
         }
     };
-console.log("here");
     useEffect(() => {
-      return  checkUser();
+        checkUser();
     }, []);
 
+    const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(tab(2));
+    }, []);
 
     const getPendingAppointmentsData = async () => {
         const response = await axiosClient.get(
             `/v2/getPendingAppointmentForPatient/${user?._id}`
         );
-       return setPendingAppointmentsData(response.result);
+        return setPendingAppointmentsData(response.result);
         console.log(response.result);
     };
     const getCompleteAppointmentsData = async () => {
@@ -80,12 +87,11 @@ console.log("here");
         console.log(response);
     };
 
-
-    useEffect(() => {
-        getPendingAppointmentsData();
-        // getCompleteAppointmentsData();
-        // getMissedAppointmentsData();
-    }, []);
+    // useEffect(() => {
+    //     getPendingAppointmentsData();
+    //     // getCompleteAppointmentsData();
+    //     // getMissedAppointmentsData();
+    // }, []);
 
     return (
         <>
@@ -188,7 +194,11 @@ console.log("here");
                         Missed
                     </Button>
                 </Stack>
-                {activeTab === 1 && <UpcomingPetientUserAppointment pendingAppointmentsData={pendingAppointmentsData} />}
+                {activeTab === 1 && (
+                    <UpcomingPetientUserAppointment
+                        pendingAppointmentsData={pendingAppointmentsData}
+                    />
+                )}
             </Box>
             <Footer />
         </>

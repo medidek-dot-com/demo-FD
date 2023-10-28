@@ -17,23 +17,19 @@ import {
     Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link, useNavigate, useNavigation, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
     KEY_ACCESS_TOKEN,
     getItem,
     removeItem,
-} from "../../../Utils/localStorageManager";
-import { axiosClient, baseURL } from "../../../Utils/axiosClient";
+} from "../../Utils/localStorageManager";
+import { axiosClient } from "../../Utils/axiosClient";
 import { useSelector, useDispatch } from "react-redux";
 import { Logout } from "@mui/icons-material";
-import { logout } from "../../../Store/authSlice";
+import { logout } from "../../Store/authSlice";
 import CloseIcon from "@mui/icons-material/Close";
-import { tab } from "../../../Store/tabSlice";
+import { tab } from "../../Store/tabSlice";
 
-// const LogoStyle = styled('img')({
-//     width:{xs:0, sm:185},
-//     height:44
-// })
 
 const TabStyle = styled(Tab)`
     color: #383838;
@@ -70,7 +66,7 @@ const StyledToolbar = styled(Toolbar)({
 //     padding: 12px;
 // `
 
-const NavBar = () => {
+const PatientNavBar = () => {
     const { hospital_id } = useParams();
     const navigate = useNavigate();
     const [selectedTab, setSelectedTab] = useState(0);
@@ -83,9 +79,9 @@ const NavBar = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const { tabValue } = useSelector((state) => state.tab);
+    console.log(tabValue);
+    console.log(user, "User");
 
-    //     const myProfile = useSelector(state => state.appConfigReducer.myProfile)
-    // console.log(myProfile);
     const handleChange = (event, newValue) => {
         dispatch(tab(newValue));
         // setSelectedTab(newValue);
@@ -225,35 +221,10 @@ const NavBar = () => {
                         >
                             Tracking
                         </Button>
-                        {!isLoggedIn && (
-                            <Button
-                                variant={tabValue === 3 ? "contained" : "text"}
-                                onClick={() => {
-                                    dispatch(tab(3));
-                                    navigate("/medical-courses");
-                                    setDrawer(false);
-                                }}
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: 600,
-                                    fontSize: "1rem",
-                                    lineHeight: "24.8px",
-                                    borderRadius: "5px",
-                                    color:
-                                        tabValue === 3 ? "#1F51C6" : "#ffffff",
-                                    width: "100%",
-                                    textTransform: "none",
-                                    background:
-                                        tabValue === 3 ? "#ffffff" : "none",
-                                }}
-                            >
-                                Medical Courses
-                            </Button>
-                        )}
                         <Button
-                            variant={tabValue === 4 ? "contained" : "text"}
+                            variant={tabValue === 3 ? "contained" : "text"}
                             onClick={() => {
-                                dispatch(tab(4));
+                                dispatch(tab(3));
                                 navigate("/contact-us");
                                 setDrawer(false);
                             }}
@@ -263,10 +234,10 @@ const NavBar = () => {
                                 fontSize: "1rem",
                                 lineHeight: "24.8px",
                                 borderRadius: "5px",
-                                color: tabValue === 4 ? "#1F51C6" : "#ffffff",
+                                color: tabValue === 3 ? "#1F51C6" : "#ffffff",
                                 width: "100%",
                                 textTransform: "none",
-                                background: tabValue === 4 ? "#ffffff" : "none",
+                                background: tabValue === 3 ? "#ffffff" : "none",
                             }}
                         >
                             Contact Us
@@ -330,215 +301,82 @@ const NavBar = () => {
                             to="/tracking"
                             tabIndex={2}
                         />
-                        {!isLoggedIn && (
-                            <TabStyle
-                                component={Link}
-                                label="Medical Courses"
-                                to="/medical-courses"
-                                tabIndex={3}
-                            />
-                        )}
+
                         <TabStyle
                             component={Link}
                             label="Contact Us"
                             to="/contact-us"
-                            tabIndex={4}
+                            tabIndex={3}
                         />
                     </Tabs>
-                    {isLoggedIn ? (
-                        <Avatar
-                            sx={{ width: "44px", height: "44px" }}
-                            src={user?.img ? user?.img : "/patientDefault.png"}
-                            onClick={() => setUserSetting(!userSetting)}
-                        />
-                    ) : (
-                        <Button
-                            // onClick={() => navigate("/sign-up")}
-                            onClick={() => setOpen(true)}
-                            variant="contained"
-                            size="small"
-                            sx={{
-                                borderRadius: "35px",
-                                // px: { xs: 2, sm: 5 },
-                                // py: { xs: 0.2, sm: 1 },
-                                textTransform: "none",
-                                fontWeight: "700",
-                                fontFamily: "Raleway",
-                                fontSize: "16px",
-                                width: { xs: "80px", sm: "90px", md: "121px" },
-                                height: { xs: "25px", sm: "32px", md: "35px" },
-                                boxShadow:'none'
-                            }}
-                        >
-                            Sign In
-                        </Button>
-                    )}
-                    {isLoggedIn && (
-                        <Menu
-                            id="demo-positioned-menu"
-                            aria-labelledby="demo-positioned-button"
-                            anchorEl={open}
-                            open={userSetting}
-                            onClose={(e) => setUserSetting(false)}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            sx={{ mt: 4 }}
-                        >
-                            <MenuItem
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontSize: "1rem",
-                                    fontWeight: "400",
-                                    color: "#383838",
-                                }}
-                                onClick={() =>
-                                    navigate(
-                                        `/user/profile/edit/${user?._id}`
-                                    ) & setUserSetting(false)
-                                }
-                            >
-                                Edit Profile
-                            </MenuItem>
-                            <MenuItem
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontSize: "1rem",
-                                    fontWeight: "400",
-                                    color: "#383838",
-                                }}
-                                onClick={() =>
-                                    navigate("/user/upload/records") &
-                                    setUserSetting(false)
-                                }
-                            >
-                                Upload Records
-                            </MenuItem>
-                            <MenuItem
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontSize: "1rem",
-                                    fontWeight: "400",
-                                    color: "#EA4335",
-                                }}
-                                onClick={logOutUser}
-                            >
-                                Log Out
-                            </MenuItem>
-                        </Menu>
-                    )}
-                    {!isLoggedIn && (
-                        <Menu
-                            id="demo-positioned-menu"
-                            aria-labelledby="demo-positioned-button"
-                            anchorEl={open}
-                            open={open}
-                            onClose={(e) => setOpen(false)}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
+
+                    <Avatar
+                        sx={{ width: "44px", height: "44px" }}
+                        src={user?.img ? user?.img : "/patientDefault.png"}
+                        onClick={() => setUserSetting(!userSetting)}
+                    />
+                    <Menu
+                        id="demo-positioned-menu"
+                        aria-labelledby="demo-positioned-button"
+                        anchorEl={open}
+                        open={userSetting}
+                        onClose={(e) => setUserSetting(false)}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                        }}
+                        transformOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                        }}
+                        sx={{ mt: 4 }}
+                    >
+                        <MenuItem
                             sx={{
                                 fontFamily: "Lato",
                                 fontSize: "1rem",
                                 fontWeight: "400",
                                 color: "#383838",
-                                mt: 4,
                             }}
+                            onClick={() =>
+                                navigate(`/user/profile/edit/${user?._id}`) &
+                                setUserSetting(false)
+                            }
                         >
-                            <MenuItem
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontSize: "1rem",
-                                    fontWeight: "400",
-                                    color: "#383838",
-                                }}
-                                onClick={() =>
-                                    navigate("/master/signin") & setOpen(false)
-                                }
-                            >
-                                As a Hospital
-                            </MenuItem>
-                            <MenuItem
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontSize: "1rem",
-                                    fontWeight: "400",
-                                    color: "#383838",
-                                }}
-                                onClick={() =>
-                                    navigate("/doctor/signin") & setOpen(false)
-                                }
-                            >
-                                As a Doctor
-                            </MenuItem>
-                            <MenuItem
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontSize: "1rem",
-                                    fontWeight: "400",
-                                    color: "#383838",
-                                }}
-                                onClick={() =>
-                                    navigate("/user/signin") & setOpen(false)
-                                }
-                            >
-                                As a Patient
-                            </MenuItem>
-                        </Menu>
-                    )}
+                            Edit Profile
+                        </MenuItem>
+                        <MenuItem
+                            sx={{
+                                fontFamily: "Lato",
+                                fontSize: "1rem",
+                                fontWeight: "400",
+                                color: "#383838",
+                            }}
+                            onClick={() =>
+                                navigate("/user/upload/records") &
+                                setUserSetting(false)
+                            }
+                        >
+                            Upload Records
+                        </MenuItem>
+                        <MenuItem
+                            sx={{
+                                fontFamily: "Lato",
+                                fontSize: "1rem",
+                                fontWeight: "400",
+                                color: "#EA4335",
+                            }}
+                            onClick={logOutUser}
+                        >
+                            Log Out
+                        </MenuItem>
+                    </Menu>
                 </StyledToolbar>
             </AppBar>
-            {/* <Drawer open={drawer} onClose={() => setDrawer(false)} sx={{height:'100vh'}}>
-                <Tabs
-                    orientation="vertical"
-                    aria-label="Tab navigation"
-                    onChange={handleChange}
-                    value={selectedTab}
-                    sx={{ display: { xs: "block", sm: "block" }, background:'#1F51C6',  }}
-                >
-                    <Tab component={Link} label="Home" to="/" tabIndex={0} />
-                    <Tab
-                        component={Link}
-                        label="Find Doctors"
-                        to="/doctors"
-                        tabIndex={1}
-                        sx={{color:'red'}}
-                    />
-                    <Tab
-                        component={Link}
-                        label="Dashboard"
-                        to="/dashboard"
-                        tabIndex={2}
-                        sx={{color:'#FFFFFF'}}
-                    />
-                        <Tab
-                            component={Link}
-                            label="Medical Courses"
-                            to="/medical-courses"
-                            tabIndex={3}
-                            sx={{color:'#FFFFFF'}}
-                        />
-                    <Tab
-                        component={Link}
-                        label="Contact Us"
-                        to="/contact-us"
-                        tabIndex={4}
-                        sx={{color:'#FFFFFF'}}
-                    />
-                </Tabs>
-            </Drawer> */}
+            
+             
         </>
     );
 };
 
-export default NavBar;
+export default PatientNavBar;

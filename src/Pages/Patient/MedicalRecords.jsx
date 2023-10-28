@@ -1,8 +1,17 @@
 import React from "react";
 import { Box, Card, InputLabel, Typography } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+import { tab } from "../../Store/tabSlice";
+import { useEffect } from "react";
 
 const MedicalRecords = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(null));
+    }, []);
+
     return (
         <Box
             sx={{
@@ -54,7 +63,6 @@ const MedicalRecords = () => {
                         id="uploadFile"
                         style={{ display: "none" }}
                     />
-                    
                 </Box>
             </Box>
         </Box>

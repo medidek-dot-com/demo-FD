@@ -33,10 +33,33 @@ const TextFieldStyle = styled(TextField)({
     "& .MuiOutlinedInput-input": {
         padding: "5px 10px",
     },
+    ["& input"]: {
+        // color: "white",
+        fontFamily: "Lato",
+        fontWeight: "600",
+        color: "#383838",
+        fontSize: "0.938rem",
+        borderColor: "red",
+    },
+    ["& fieldset"]: {
+        // color: "white",
+        borderColor: "#D9D9D9",
+    },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+    "& .MuiOutlinedInput-input": {
+        padding: "5px 10px",
+    },
 });
 
 const LabelStyle = styled("label")({
     marginBottom: "5px",
+    fontFamily: "Lato",
+    fontWeight: "600",
+    color: "#383838",
 });
 
 const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => {
@@ -151,8 +174,13 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                             <Typography
                                 my={1}
                                 color={err && !inputImage ? "red" : "#706D6D"}
-                                width="200px"
-                                lineHeight="20px"
+                                width="170px"
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "500",
+                                    fontSize: "0.75rem",
+                                    lineHeight: "14.4px",
+                                }}
                                 >
                                 {err && inputImage ? 'Please Pick a photo from your computer' : ""}
                                 Pick a photo from your computer
@@ -273,10 +301,29 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                             type="submit"
                             loading={disableButton}
                             variant="contained"
-                            sx={{ flex: 0.3, mt:2, textTransform:'none', display:'block', margin:'10px auto', width:'200px' }}
-
+                            sx={{
+                                flex: 0.3,
+                                width: {
+                                    xs: "100%",
+                                    sm: "100%",
+                                    md: "364.69px",
+                                },
+                                my: 2,
+                                mx: "auto",
+                                display: "block",
+                                boxShadow: "none",
+                            }}
                         >
-                            <span>Add Doctor</span>
+                            <span
+                                style={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                    textTransform: "none",
+                                }}
+                            >
+                                Add Staff
+                            </span>
                         </LoadingButton>
                         {/* <Button type="submit" variant="contained" sx={{ flex: 0.3, mt:2, textTransform:'none', display:'block', margin:'10px auto', width:'200px' }}>
                             Add Doctor

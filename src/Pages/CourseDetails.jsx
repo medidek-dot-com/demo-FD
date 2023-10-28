@@ -20,6 +20,9 @@ import {
 import { axiosClient } from "../Utils/axiosClient";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { tab } from "../Store/tabSlice";
+import CourseDetailSkeleton from '../Components/Doctor/Skeleton/CourseDetailSkeleton'
 
 const SearchFeildStyle = styled(TextField)({
     "& .css-1kzw815-MuiInputBase-root-MuiOutlinedInput-root": {
@@ -39,23 +42,28 @@ const CourseImageStyle = styled("img")(({ theme }) => ({
 
 const CourseDetails = () => {
     const { course_id } = useParams();
+    const [loading, setLoading] = useState(true);
     const [courseDetails, setCourseDetails] = useState({});
-
 
     const getsignleCourseDetails = async () => {
         try {
             const response = await axiosClient.get(
                 `/v2/getSingleCourse/${course_id}`
             );
-                console.log(response);
             if (response.status === "ok") {
                 setCourseDetails(response.result);
+                setLoading(false);
             }
-
         } catch (error) {
-            toast.error("Something went wrong")
+            toast.error("Something went wrong");
         }
     };
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(tab(3));
+    }, []);
 
     useEffect(() => {
         getsignleCourseDetails();
@@ -107,7 +115,7 @@ const CourseDetails = () => {
                                 justifyContent: "space-between",
                             }}
                         >
-                            <Stack
+                           {!loading ? <Stack
                                 spacing={2}
                                 sx={{
                                     width: {
@@ -139,9 +147,7 @@ const CourseDetails = () => {
                                         },
                                     }}
                                 >
-                                    {
-                                        courseDetails.courseName
-                                    }
+                                    {courseDetails.courseName}
                                 </Typography>
                                 <Typography
                                     sx={{
@@ -156,9 +162,7 @@ const CourseDetails = () => {
                                         fontSize: { xs: "13px", sm: "15px" },
                                     }}
                                 >
-                                   {
-                                    courseDetails.courseDiscription
-                                   }
+                                    {courseDetails.courseDiscription}
                                 </Typography>
                                 <Stack
                                     direction="row"
@@ -176,7 +180,11 @@ const CourseDetails = () => {
                                         (223,003 ratings)
                                     </Box>
                                 </Stack>
-                            </Stack>
+                            </Stack> : 
+                            <>
+                            <CourseDetailSkeleton/>
+                            </>
+                            }
                             <Card
                                 sx={{
                                     width: {
@@ -328,7 +336,7 @@ const CourseDetails = () => {
                                             <WatchLaterIcon
                                                 sx={{ color: "#1F51C6", mr: 1 }}
                                             />
-                                           {courseDetails.courseDuration}
+                                            {courseDetails.courseDuration}
                                         </Typography>
 
                                         <Typography

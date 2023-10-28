@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import CallMadeIcon from "@mui/icons-material/CallMade";
 import { FaStethoscope } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 // import Section_IRight from "./Section_IRight";
 
 const CardStyled = styled(Card)`
@@ -28,6 +29,11 @@ const ButtonStyle = styled(Button)`
 `;
 
 const Section_I = () => {
+
+    const navigate = useNavigate();
+
+
+
     return (
         <>
             <Box
@@ -114,6 +120,7 @@ const Section_I = () => {
                             height: "44px",
                             fontWeight: "600",
                             fontFamily: "raleway",
+                            boxShadow:"none"
                         }}
                     >
                         Book Now
@@ -149,7 +156,7 @@ const Section_I = () => {
                                 Find Top-notch Doctors near you with just one
                                 Click!
                             </Typography>
-                            <ButtonStyle>
+                            <ButtonStyle onClick={()=>navigate('/doctors')}>
                                 See more <CallMadeIcon />
                             </ButtonStyle>
                         </CardStyled>

@@ -49,6 +49,8 @@ import MissedAppointmentsTable from "../../Components/Master/MissedAppointmentsT
 import PendingAppointmentsTableForLoggedInDoctor from "../../Components/Doctor/PendingAppointmentsTableForLoggedInDoctor";
 import CompletedAppointmentsTableForLoggedInDoctor from "../../Components/Doctor/CompletedAppointmentsTableForLoggedInDoctor";
 import MissedAppointmentsTableForLoggedInDoctor from "../../Components/Doctor/MissedAppointmentsTableForLoggedInDoctor";
+import { BiSolidBook } from "react-icons/bi";
+import { BsFillCalendarPlusFill } from "react-icons/bs";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -427,7 +429,7 @@ const DoctorAppointments = () => {
                             background: "#1F51C6",
                             display: { xs: "none", sm: "none", md: "flex" },
                             flexDirection: "column",
-                            alignItems: "center",
+                            // alignItems: "center",
                             height: "100vh",
                             position: "sticky",
                             top: "0px",
@@ -436,11 +438,11 @@ const DoctorAppointments = () => {
                     >
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
-                                // src={
-                                //     numberOfHospitals[0]?.doctorImg
-                                //         ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                //         : "/default.png"
-                                // }
+                                src={
+                                    numberOfHospitals[0]?.doctorImg
+                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                                        : "/default.png"
+                                }
                                 sx={{ width: "71px", height: "71px" }}
                             />
                             <Typography
@@ -453,135 +455,178 @@ const DoctorAppointments = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                             Dr.   {/* Dr. {numberOfHospitals[0].nameOfTheDoctor} */}
+                                Dr. {user.nameOfTheDoctor}
                             </Typography>
                         </Stack>
-                        <Stack spacing={2} mt={4} flex={1} width={"100%"}>
-                            <Button
-                                onClick={() =>
-                                    navigate(
-                                        `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                                    )
-                                }
-                                variant="text"
+                        <Stack
+                            alignItems={"start"}
+                            spacing={2}
+                            mt={4}
+                            flex={1}
+                            width={"100%"}
+                        >
+                            <Box
                                 sx={{
-                                    color: "#1F51C6",
-                                    background:
-                                        activeTab === 1 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    color:
-                                        activeTab === 1 ? "#1F51C6" : "#ffffff",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 1
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
-                                        color: "#1F51C6",
-                                    },
+                                    width: "100%"
                                 }}
                             >
-                                <MdDashboard
-                                    style={{ width: "25px", height: "25px" }}
-                                />
-                                &nbsp;Dashboard
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    navigate(
-                                        `/doctor/appointments/${hospital_id}/${doctor_id}`
-                                    )
-                                }
-                                variant="text"
-                                sx={{
-                                    color:
-                                        activeTab === 2 ? "#1F51C6" : "#ffffff",
-                                    background:
-                                        activeTab === 2 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 2
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
                                         color: "#1F51C6",
-                                    },
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                        color: "#ffffff",
+                                    }}
+                                >
+                                    <MdDashboard
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    &nbsp;Dashboard
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    background:"#ffffff"
                                 }}
                             >
-                                <BsFillCalendarFill
-                                    style={{ width: "25px", height: "25px" }}
-                                />
-                                &nbsp; Appointments
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    navigate(
-                                        `/doctor/courses/${user._id}`
-                                    )
-                                }
-                                variant="text"
-                                sx={{
-                                    color:
-                                        activeTab === 3 ? "#1F51C6" : "#ffffff",
-                                    background:
-                                        activeTab === 3 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 3
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
                                         color: "#1F51C6",
-                                    },
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <BsFillCalendarFill
+                                        style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    &nbsp; Appointments
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
                                 }}
                             >
-                                {/* <ImPencil
-                                    style={{ width: "25px", height: "25px" }}
-                                /> */}
-                                Medical Courses
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    navigate(
-                                        `/doctor/edit-profile/${user._id}`
-                                    )
-                                }
-                                variant="text"
+                                <Button
+                                    onClick={() =>
+                                        navigate(`/doctor/courses/${doctor_id}`)
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <BiSolidBook
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "10px",
+                                        }}
+                                    />
+                                    Medical Courses
+                                </Button>
+                            </Box>
+                            <Box
                                 sx={{
-                                    color:
-                                        activeTab === 4 ? "#1F51C6" : "#ffffff",
-                                    background:
-                                        activeTab === 4 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 4
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
-                                        color: "#1F51C6",
-                                    },
+                                    width: "100%"
                                 }}
                             >
-                                <ImPencil
-                                    style={{ width: "25px", height: "25px" }}
-                                />
-                                Edit Profile
-                            </Button>
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/edit-profile/${user._id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <ImPencil
+                                        style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    Edit Profile
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/appointment-settings/${user._id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        lineHeight: "21.13px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                        textAlign: "start",
+                                    }}
+                                >
+                                    <BsFillCalendarPlusFill
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    Appointment Settings
+                                </Button>
+                            </Box>
                         </Stack>
                         <Button
                             onClick={logOutUser}
@@ -648,9 +693,7 @@ const DoctorAppointments = () => {
                                         color: "#383838",
                                     }}
                                 >
-                                    {(activeTab === 1 && "Dashboard") ||
-                                        (activeTab === 2 && "Appointment") ||
-                                        (activeTab === 3 && "Edit Profile")}
+                              Appointment
                                 </Typography>
                             </Box>
                             {activeTab === 3 ? null : (

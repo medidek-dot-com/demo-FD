@@ -18,6 +18,7 @@ import {
     IconButton,
     Rating,
     CardContent,
+    Skeleton,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import styled from "@emotion/styled";
@@ -38,6 +39,9 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import GroupIcon from "@mui/icons-material/Group";
+import CoursesSkeleton from "../../Components/Doctor/Skeleton/CoursesSkeleton";
+import { BiSolidBook } from "react-icons/bi";
+import { BsFillCalendarPlusFill } from "react-icons/bs";
 // import { BsFillCalendarFill } from "react-icons/bs";
 
 // const TextFieldStyle = styled(TextField)({
@@ -50,6 +54,8 @@ const CourseDiscriptionTypography = styled(Box)`
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    font-family: Lato;
+    font-weight: 500;
 `;
 const CourseImageStyle = styled("img")(({ theme }) => ({
     width: "259px",
@@ -111,6 +117,7 @@ const DoctorCourses = () => {
     const [menu, setMenu] = useState(false);
 
     const { user } = useSelector((state) => state.auth);
+    const [loading, setLoading] = useState(true);
     const numberOfHospitals = user;
 
     // const {hospital_id} = useParams();
@@ -136,8 +143,13 @@ const DoctorCourses = () => {
     const [search, setSearch] = useState("");
 
     const getCourses = async () => {
-        const result = await axiosClient.get(`/v2/getCourse?search=${search}`);
-        setallCourse(result.result);
+        try {
+            const result = await axiosClient.get(
+                `/v2/getCourse?search=${search}`
+            );
+            setLoading(false);
+            setallCourse(result.result);
+        } catch (error) {}
     };
 
     useEffect(() => {
@@ -336,7 +348,7 @@ const DoctorCourses = () => {
                             background: "#1F51C6",
                             display: { xs: "none", sm: "none", md: "flex" },
                             flexDirection: "column",
-                            alignItems: "center",
+                            // alignItems: "center",
                             height: "100vh",
                             position: "sticky",
                             top: "0px",
@@ -362,133 +374,178 @@ const DoctorCourses = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr.
-                                {/* Dr. {numberOfHospitals[0].nameOfTheDoctor} */}
+                                Dr. {user.nameOfTheDoctor}
                             </Typography>
                         </Stack>
-                        <Stack spacing={2} mt={4} flex={1} width={"100%"}>
-                            <Button
-                                onClick={() =>
-                                    navigate(
-                                        `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                                    )
-                                }
-                                variant="text"
+                        <Stack
+                            alignItems={"start"}
+                            spacing={2}
+                            mt={4}
+                            flex={1}
+                            width={"100%"}
+                        >
+                            <Box
                                 sx={{
-                                    color: "#1F51C6",
-                                    background:
-                                        activeTab === 1 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    color:
-                                        activeTab === 1 ? "#1F51C6" : "#ffffff",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 1
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
-                                        color: "#1F51C6",
-                                        borderRadius: "35px",
-                                    },
+                                    width: "100%"
                                 }}
                             >
-                                <MdDashboard
-                                    style={{ width: "25px", height: "25px" }}
-                                />
-                                &nbsp;Dashboard
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    navigate(
-                                        `/doctor/appointments/${hospital_id}/${doctor_id}`
-                                    )
-                                }
-                                variant="text"
-                                sx={{
-                                    color:
-                                        activeTab === 2 ? "#1F51C6" : "#ffffff",
-                                    background:
-                                        activeTab === 2 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 2
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
                                         color: "#1F51C6",
-                                    },
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                        color: "#ffffff",
+                                    }}
+                                >
+                                    <MdDashboard
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    &nbsp;Dashboard
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
                                 }}
                             >
-                                <BsFillCalendarFill
-                                    style={{ width: "25px", height: "25px" }}
-                                />
-                                &nbsp; Appointments
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    navigate(`/doctor/courses/${user._id}`)
-                                }
-                                variant="text"
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <BsFillCalendarFill
+                                        style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    &nbsp; Appointments
+                                </Button>
+                            </Box>
+                            <Box
                                 sx={{
-                                    color:
-                                        activeTab === 3 ? "#1F51C6" : "#ffffff",
-                                    background:
-                                        activeTab === 3 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 3
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
-                                        color: "#1F51C6",
-                                    },
+                                    width: "100%",
+                                    background:"#ffffff"
                                 }}
                             >
-                                {/* <ImPencil
-                                style={{ width: "25px", height: "25px" }}
-                            /> */}
-                                Medical Courses
-                            </Button>
-                            <Button
-                                onClick={() =>
-                                    navigate(`/doctor/edit-profile/${user._id}`)
-                                }
-                                variant="text"
-                                sx={{
-                                    color:
-                                        activeTab === 4 ? "#1F51C6" : "#ffffff",
-                                    background:
-                                        activeTab === 4 ? "#ffffff" : null,
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "18px",
-                                    "&:hover": {
-                                        background:
-                                            activeTab === 4
-                                                ? "#ffffff"
-                                                : "#DCE3F6",
+                                <Button
+                                    onClick={() =>
+                                        navigate(`/doctor/courses/${doctor_id}`)
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
                                         color: "#1F51C6",
-                                    },
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <BiSolidBook
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "10px",
+                                        }}
+                                    />
+                                    Medical Courses
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%"
                                 }}
                             >
-                                <ImPencil
-                                    style={{ width: "25px", height: "25px" }}
-                                />
-                                Edit Profile
-                            </Button>
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/edit-profile/${user._id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                    }}
+                                >
+                                    <ImPencil
+                                        style={{
+                                            width: "20px",
+                                            height: "20px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    Edit Profile
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/appointment-settings/${user._id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        ml: "30px",
+                                        lineHeight: "21.13px",
+                                        color: "#ffffff",
+                                        borderRadius: "0",
+                                        textTransform: "none",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "18px",
+                                        textAlign: "start",
+                                    }}
+                                >
+                                    <BsFillCalendarPlusFill
+                                        style={{
+                                            width: "25px",
+                                            height: "25px",
+                                            marginRight: "6px",
+                                        }}
+                                    />
+                                    Appointment Settings
+                                </Button>
+                            </Box>
                         </Stack>
                         <Button
                             onClick={logOutUser}
@@ -515,7 +572,7 @@ const DoctorCourses = () => {
                             // justifyContent: "space-between",
                             // alignItems: "center",
                             width: "100%",
-                            mx: "100px",
+                            mx: { xs: 0, sm: 0, md: "100px" },
                             mt: "32px",
                             // height: "90vh",
                         }}
@@ -604,280 +661,282 @@ const DoctorCourses = () => {
                             )}
                         </Box>
                         <>
-                            {allCourse.map((val, i) => {
-                                return (
-                                    <Card
-                                        onClick={() =>
-                                            navigate(
-                                                `/doctor/course/details/${user._id}/${val._id}`
-                                            )
-                                        }
-                                        key={i}
-                                        sx={{
-                                            width: "100%",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            // p: {xs:0, sm:0, md:2},
-                                            boxShadow: "none",
-                                            borderBottom: "1px solid #D9D9D9",
-                                            flexDirection: "row",
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        <Stack direction="row" sx={{ flex: 1 }}>
-                                            <CourseImageStyle
-                                                src="/course.png"
-                                                alt="img"
-                                                // width="100%"
-                                                // height="100%"
-                                            />
+                            {allCourse.map((val, i) => (
+                                <Card
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/course/details/${user._id}/${val._id}`
+                                        )
+                                    }
+                                    key={i}
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        // p: {xs:0, sm:0, md:2},
+                                        boxShadow: "none",
+                                        borderBottom: "1px solid #D9D9D9",
+                                        flexDirection: "row",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    <Stack direction="row" sx={{ flex: 1 }}>
+                                        <CourseImageStyle
+                                            src="/course.png"
+                                            alt="img"
+                                            // width="100%"
+                                            // height="100%"
+                                        />
 
-                                            <CardContent>
-                                                <Typography
-                                                    variant="h6"
-                                                    sx={{
-                                                        fontWeight: 600,
+                                        <CardContent>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    fontFamily: "Lato",
+                                                    fontSize: {
+                                                        xs: "13px",
+                                                        sm: "15px",
+                                                        md: "22px",
+                                                    },
+                                                    lineHeight: {
+                                                        xs: "15px",
+                                                        sm: "15px",
+                                                        md: "25.83px",
+                                                    },
+                                                }}
+                                            >
+                                                {val.courseName}
+                                            </Typography>
+                                            <CourseDiscriptionTypography
+                                                component="span"
+                                                sx={{
+                                                    color: "#706D6D",
+                                                    width: "70%",
+                                                    display: {
+                                                        xs: "none",
+                                                        sm: "none",
+                                                        md: "-webkit-box",
+                                                    },
+                                                }}
+                                            >
+                                                {val.courseDiscription}
+                                            </CourseDiscriptionTypography>
+
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: {
+                                                        xs: "none",
+                                                        sm: "none",
+                                                        md: "block",
+                                                    },
+                                                }}
+                                            >
+                                                <Link
+                                                    style={{
+                                                        color: "#1F51C6",
+                                                        textDecoration: "none",
+                                                        display: "inline",
+                                                        zIndex: "999",
                                                         fontFamily: "Lato",
-                                                        fontSize: {
-                                                            xs: "13px",
-                                                            sm: "15px",
-                                                            md: "22px",
-                                                        },
-                                                        lineHeight: {
-                                                            xs: "15px",
-                                                            sm: "15px",
-                                                            md: "25.83px",
-                                                        },
+                                                        fontSize: "15px",
+                                                        fontWeight: "600",
                                                     }}
+                                                    to={`/medical-course/${val._id}/details`}
                                                 >
-                                                    {/* Program in Acute medicine (Equivalent to Emergency
-                            Medicine) */}
-                                                    {val.courseName}
-                                                </Typography>
-                                                <CourseDiscriptionTypography
-                                                    component="span"
-                                                    sx={{
-                                                        color: "#706D6D",
-                                                        width: "70%",
-                                                        display: {
-                                                            xs: "none",
-                                                            sm: "none",
-                                                            md: "-webkit-box",
-                                                        },
-                                                    }}
-                                                >
-                                                    {val.courseDiscription}
-                                                </CourseDiscriptionTypography>
+                                                    Read More
+                                                </Link>
+                                            </Box>
+                                            <Stack
+                                                direction={"row"}
+                                                sx={{
+                                                    my: 1,
+                                                    display: {
+                                                        xs: "none",
+                                                        sm: "none",
+                                                        md: "flex",
+                                                    },
+                                                }}
+                                            >
                                                 <Box
-                                                    component="span"
                                                     sx={{
-                                                        display: {
-                                                            xs: "none",
-                                                            sm: "none",
-                                                            md: "block",
-                                                        },
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        mr: 1,
                                                     }}
                                                 >
-                                                    <Link
-                                                        style={{
+                                                    <WatchLaterIcon
+                                                        sx={{
                                                             color: "#1F51C6",
-                                                            textDecoration:
-                                                                "none",
-                                                            display: "inline",
-                                                            zIndex: "999",
-                                                        }}
-                                                        to={`/medical-course/${val._id}/details`}
-                                                    >
-                                                        Read More
-                                                    </Link>
-                                                </Box>
-                                                <Stack
-                                                    direction={"row"}
-                                                    sx={{
-                                                        my: 1,
-                                                        display: {
-                                                            xs: "none",
-                                                            sm: "none",
-                                                            md: "flex",
-                                                        },
-                                                    }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
                                                             mr: 1,
                                                         }}
-                                                    >
-                                                        <WatchLaterIcon
-                                                            sx={{
-                                                                color: "#1F51C6",
-                                                                mr: 1,
-                                                            }}
-                                                        />
-                                                        <Box
-                                                            component={"span"}
-                                                            sx={{
-                                                                color: "#383838",
-                                                                fontWeight:
-                                                                    "bold",
-                                                            }}
-                                                        >
-                                                            {val.courseDuration}
-                                                        </Box>
-                                                    </Box>
-                                                    <Box
-                                                        sx={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
-                                                            mr: 1,
-                                                        }}
-                                                    >
-                                                        <GroupIcon
-                                                            sx={{
-                                                                color: "#1F51C6",
-                                                                mr: 1,
-                                                            }}
-                                                        />
-                                                        <Box
-                                                            component={"span"}
-                                                            sx={{
-                                                                color: "#383838",
-                                                                fontWeight:
-                                                                    "bold",
-                                                            }}
-                                                        >
-                                                            NA students
-                                                        </Box>
-                                                    </Box>
-                                                    <Box
-                                                        sx={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
-                                                            mr: 1,
-                                                        }}
-                                                    >
-                                                        <BsFillCalendarFill color="#1F51C6" />
-                                                        <Box
-                                                            component={"span"}
-                                                            sx={{
-                                                                color: "#383838",
-                                                                fontWeight:
-                                                                    "bold",
-                                                                ml: 1,
-                                                            }}
-                                                        >
-                                                            Starts on --
-                                                        </Box>
-                                                    </Box>
-                                                </Stack>
-                                                <Stack
-                                                    direction={"row"}
-                                                    flexWrap="wrap-reverse"
-                                                    spacing={{
-                                                        xs: 0,
-                                                        sm: 0,
-                                                        md: 1,
-                                                    }}
-                                                    alignItems="center"
-                                                    sx={{
-                                                        my: {
-                                                            xs: 0,
-                                                            sm: 0,
-                                                            md: 1,
-                                                        },
-                                                    }}
-                                                    gap="5px"
-                                                >
-                                                    <Button
-                                                        variant="contained"
-                                                        onClick={() =>
-                                                            navigate(
-                                                                "/medical-course/course_id/details"
-                                                            )
-                                                        }
-                                                        sx={{
-                                                            borderRadius:
-                                                                "25px",
-                                                            textTransform:
-                                                                "none",
-                                                            display: "block",
-                                                            width: {
-                                                                xs: "100px",
-                                                                sm: "100px",
-                                                                md: "175px",
-                                                            },
-                                                            height: {
-                                                                xs: "30px",
-                                                                sm: "30px",
-                                                                md: "41px",
-                                                            },
-                                                            fontSize: {
-                                                                xs: "12px",
-                                                                sm: "12px",
-                                                                md: "18px",
-                                                                fontFamily:
-                                                                    "Raleway",
-                                                                fontWeight:
-                                                                    "600",
-                                                            },
-                                                        }}
-                                                    >
-                                                        View Details
-                                                    </Button>
-                                                    <Rating
-                                                        size="small"
-                                                        name="read-only"
-                                                        value={4}
-                                                        readOnly
                                                     />
                                                     <Box
                                                         component={"span"}
                                                         sx={{
-                                                            color: "#706D6D",
-                                                            fontSize: {
-                                                                xs: "12px",
-                                                                sm: "12px",
-                                                                md: "13px",
-                                                            },
+                                                            color: "#383838",
+                                                            fontWeight: "bold",
                                                         }}
                                                     >
-                                                        (223 ratings)
+                                                        {val.courseDuration}
                                                     </Box>
-                                                </Stack>
-                                            </CardContent>
-                                        </Stack>
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                lineHeight: "14px",
-                                                display: "block",
-                                                px: 5,
-                                                py: 1,
-                                                display: {
-                                                    xs: "none",
-                                                    sm: "none",
-                                                    md: "flex",
-                                                },
-                                            }}
-                                        >
-                                            {val.courseFee}
-                                            <br />
-                                            <Box
-                                                component={"span"}
-                                                sx={{ fontSize: "0.6rem" }}
+                                                </Box>
+                                                <Box
+                                                    sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        mr: 1,
+                                                    }}
+                                                >
+                                                    <GroupIcon
+                                                        sx={{
+                                                            color: "#1F51C6",
+                                                            mr: 1,
+                                                        }}
+                                                    />
+                                                    <Box
+                                                        component={"span"}
+                                                        sx={{
+                                                            color: "#383838",
+                                                            fontWeight: "bold",
+                                                        }}
+                                                    >
+                                                        NA students
+                                                    </Box>
+                                                </Box>
+                                                <Box
+                                                    sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        mr: 1,
+                                                    }}
+                                                >
+                                                    <BsFillCalendarFill color="#1F51C6" />
+                                                    <Box
+                                                        component={"span"}
+                                                        sx={{
+                                                            color: "#383838",
+                                                            fontWeight: "bold",
+                                                            ml: 1,
+                                                        }}
+                                                    >
+                                                        Starts on --
+                                                    </Box>
+                                                </Box>
+                                            </Stack>
+                                            <Stack
+                                                direction={"row"}
+                                                flexWrap="wrap-reverse"
+                                                spacing={{
+                                                    xs: 0,
+                                                    sm: 0,
+                                                    md: 1,
+                                                }}
+                                                alignItems="center"
+                                                sx={{
+                                                    my: {
+                                                        xs: 0,
+                                                        sm: 0,
+                                                        md: 1,
+                                                    },
+                                                }}
+                                                gap="5px"
                                             >
-                                                +₹2,700 Gst
-                                            </Box>
-                                        </Button>
-                                    </Card>
-                                );
-                            })}
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={() =>
+                                                        navigate(
+                                                            "/medical-course/course_id/details"
+                                                        )
+                                                    }
+                                                    sx={{
+                                                        borderRadius: "25px",
+                                                        textTransform: "none",
+                                                        display: "block",
+                                                        width: {
+                                                            xs: "100px",
+                                                            sm: "100px",
+                                                            md: "175px",
+                                                        },
+                                                        height: {
+                                                            xs: "30px",
+                                                            sm: "30px",
+                                                            md: "41px",
+                                                        },
+                                                        fontSize: {
+                                                            xs: "12px",
+                                                            sm: "12px",
+                                                            md: "18px",
+                                                            fontFamily:
+                                                                "Raleway",
+                                                            fontWeight: "600",
+                                                        },
+                                                        boxShadow: "none",
+                                                    }}
+                                                >
+                                                    View Details
+                                                </Button>
+                                                <Rating
+                                                    size="small"
+                                                    name="read-only"
+                                                    value={4}
+                                                    readOnly
+                                                />
+                                                <Box
+                                                    component={"span"}
+                                                    sx={{
+                                                        color: "#706D6D",
+                                                        fontSize: {
+                                                            xs: "12px",
+                                                            sm: "12px",
+                                                            md: "13px",
+                                                        },
+                                                    }}
+                                                >
+                                                    (223 ratings)
+                                                </Box>
+                                            </Stack>
+                                        </CardContent>
+                                    </Stack>
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            lineHeight: "14px",
+                                            display: "block",
+                                            px: 5,
+                                            py: 1,
+                                            display: {
+                                                xs: "none",
+                                                sm: "none",
+                                                md: "flex",
+                                            },
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        {val.courseFee}
+                                        <br />
+                                        <Box
+                                            component={"span"}
+                                            sx={{ fontSize: "0.6rem" }}
+                                        >
+                                            +₹2,700 Gst
+                                        </Box>
+                                    </Button>
+                                </Card>
+                            ))}
                         </>
+                        {loading && (
+                            <>
+                                {" "}
+                                <CoursesSkeleton />
+                                <CoursesSkeleton />
+                                <CoursesSkeleton />
+                                <CoursesSkeleton />
+                                <CoursesSkeleton />
+                            </>
+                        )}
                     </Box>
                 </Box>
             )}
