@@ -17,10 +17,13 @@ import {
     FormLabel,
     Select,
     MenuItem,
+    Avatar,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import { LoadingButton } from "@mui/lab";
+import { duiddata } from "./DuidDialog";
+import { useSelector } from "react-redux";
 
 const StackStyle = styled(Stack)(({ theme }) => ({
     width: "48%",
@@ -34,6 +37,11 @@ const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
     "& .MuiOutlinedInput-input": {
         padding: "5px 10px",
+    },
+    ["& input:disabled"]: {
+        color: "#706D6D",
+        backgroundColor: "#D9D9D9",
+        cursor: "no-drop",
     },
     ["& input"]: {
         // color: "white",
@@ -65,6 +73,8 @@ const LabelStyle = styled("label")({
 });
 
 const AddDoctorsDialog = ({
+    inputValue,
+    setInputValue,
     addDoctorsDialog,
     setAddDoctorsDialog,
     getDoctorsData,
@@ -72,22 +82,22 @@ const AddDoctorsDialog = ({
 }) => {
     const { hospital_id } = useParams();
     const navigate = useNavigate();
-
     const [err, setError] = useState(false);
+    const { user } = useSelector((state) => state.auth);
+    const [confirmAddDoctorDialog, setConfirmAddDoctorDialog] = useState(false);
+
     // const propLocation = hospitalLocation
 
-    const [inputValue, setInputValue] = useState({
-        nameOfTheDoctor: "",
-        qulification: "",
-        speciality: "",
-        yearOfExprience: "",
-        enterEmailId: "",
-        enterPhoneNo: "",
-        connsultationFee: "",
-        consultingTime: "",
-        location: hospitalLocation,
-        hospitalId: hospital_id,
-    });
+    // const [inputValue, setInputValue] = useState({
+    //     nameOfTheDoctor: duiddata?.nameOfTheDoctor ? duiddata.nameOfTheDoctor : "",
+    //     qulification: duiddata?.qulification ? duiddata.qulification : "",
+    //     speciality: duiddata?.speciality ? duiddata.speciality : "",
+    //     yearOfExprience:  duiddata?.yearOfExprience ? duiddata.yearOfExprience : "",
+    //     email: duiddata?.email ? duiddata.email : "",
+    //     phone: duiddata?.phone ? duiddata.phone : "",
+    //     connsultationFee: duiddata?.connsultationFee ? duiddata.connsultationFee : "",
+    //     doctorid: duiddata?.doctorid ? duiddata.doctorid : "",
+    // });
 
     const [inputImage, setInputImage] = useState("");
     const [preview, setPreview] = useState("");
@@ -116,61 +126,534 @@ const AddDoctorsDialog = ({
             !inputValue.qulification ||
             !inputValue.speciality ||
             !inputValue.yearOfExprience ||
-            !inputValue.enterEmailId ||
+            !inputValue.email ||
             // !inputImage ||
-            !inputValue.enterPhoneNo ||
+            !inputValue.phone ||
             !inputValue.connsultationFee ||
-            !inputValue.consultingTime ||
+            !inputValue.description ||
             !inputValue.hospitalId
         ) {
             setError(true);
             return false;
         }
 
+        setConfirmAddDoctorDialog(true);
+    };
+
+    const addDoctor = async () => {
+        setDisableButton(true);
         const data = new FormData();
         data.append("nameOfTheDoctor", inputValue.nameOfTheDoctor);
         data.append("qulification", inputValue.qulification);
         data.append("speciality", inputValue.speciality);
         data.append("yearOfExprience", inputValue.yearOfExprience);
-        data.append("enterEmailId", inputValue.enterEmailId);
-        data.append("enterPhoneNo", inputValue.enterPhoneNo);
+        data.append("email", inputValue.email);
+        data.append("phone", inputValue.phone);
         data.append("connsultationFee", inputValue.connsultationFee);
-        data.append("consultingTime", inputValue.consultingTime);
-        data.append("hospitalId", inputValue.hospitalId);
-        data.append("location", hospitalLocation);
-        data.append("doctorImg", inputImage);
-        data.append("password", "Medidek@123");
+        data.append("doctorid", inputValue.doctorid);
+        data.append("description", inputValue.description);
+        data.append("image", inputImage || inputValue?.imgurl);
 
         // console.log(data);
         try {
-            const response = await axiosClient.post("/v2/addDoctor", data);
+            const response = await axiosClient.post(
+                `/v2/addDoctor/${user?._id}`,
+                data
+            );
             console.log(response);
             if (response.status === "ok") {
                 // navigate(`/master/user/home/${uuid.id}`);
+                setDisableButton(false);
                 setAddDoctorsDialog(false);
+                setConfirmAddDoctorDialog(false);
                 getDoctorsData();
                 toast.success("Doctor added successfully");
                 return;
             }
         } catch (e) {
-            toast.error(e.message);
+            setDisableButton(false);
+            return toast.error(e.message);
         }
     };
 
     // console.log(hospitalSpecialties.map (speciality => speciality.specialty));
     return (
-        <Dialog
-            open={addDoctorsDialog}
-            onClose={() => setAddDoctorsDialog(false)}
-            maxWidth={"md"}
-            sx={{ margin: " 0 auto" }}
-        >
-            <DialogTitle>
-                Add Doctor
-                {addDoctorsDialog ? (
+        <>
+            <Dialog
+                open={addDoctorsDialog}
+                onClose={() => setAddDoctorsDialog(false)}
+                maxWidth={"md"}
+                sx={{ margin: " 0 auto" }}
+            >
+                <DialogTitle
+                    sx={{
+                        fontFamily: "Raleway",
+                        fontWeight: "600",
+                        fontSize: { xs: "1rem", sm: "1rem", md: "1.375rem" },
+                    }}
+                >
+                    Add Doctor
+                    {addDoctorsDialog ? (
+                        <IconButton
+                            aria-label="close"
+                            onClick={() => setAddDoctorsDialog(false)}
+                            sx={{
+                                position: "absolute",
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500],
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    ) : null}
+                </DialogTitle>
+                <DialogContent dividers sx={{ margin: "0px" }}>
+                    <form onSubmit={handleSubmit}>
+                        <Stack direction="row" justifyContent="space-between">
+                            <Stack
+                                direction={"row"}
+                                spacing={{ xs: 0.5, sm: 0.5, md: 3 }}
+                                sx={{ flex: 1 }}
+                            >
+                                <Avatar
+                                    src={
+                                        inputValue.imgurl
+                                            ? inputValue.imgurl
+                                            : "/default.png" || preview
+                                            ? preview
+                                            : "/default.png"
+                                    }
+                                    sx={{
+                                        width: {
+                                            xs: "60px",
+                                            sm: "60px",
+                                            md: "86px",
+                                        },
+                                        height: {
+                                            xs: "60px",
+                                            sm: "60px",
+                                            md: "86px",
+                                        },
+                                    }}
+                                    alt="user"
+                                />
+
+                                <Box>
+                                    <Typography
+                                        color="#706D6D"
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "500",
+                                            fontSize: "0.75rem",
+                                            lineHeight: "14.4px",
+                                            display: {
+                                                xs: "none",
+                                                sm: "none",
+                                                md: "block",
+                                            },
+                                            width: "120.73px",
+                                        }}
+                                    >
+                                        Pick a photo from your computer
+                                    </Typography>
+                                    <Typography
+                                        color={
+                                            err && !inputImage
+                                                ? "red"
+                                                : "#706D6D"
+                                        }
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "500",
+                                            fontSize: "0.75rem",
+                                            lineHeight: "14.4px",
+                                            display: {
+                                                xs: "block",
+                                                sm: "block",
+                                                md: "none",
+                                            },
+                                            width: "89px",
+                                        }}
+                                    >
+                                        Pick a photo from your phone
+                                    </Typography>
+
+                                    <FormLabel
+                                        htmlFor="hospitalImg"
+                                        sx={{
+                                            fontWeight: "600",
+                                            color: "#1F51C6",
+                                            fontSize: {
+                                                xs: "0.75rem",
+                                                sm: "0.75rem",
+                                                md: "0.875rem",
+                                            },
+                                        }}
+                                    >
+                                        Change Profile photo
+                                    </FormLabel>
+                                    <Box
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: {
+                                                xs: "0.75rem",
+                                                sm: "0.75rem",
+                                                md: "0.938rem",
+                                            },
+                                            color: "#1F51C6",
+                                        }}
+                                    >
+                                        DUID:{" "}
+                                        <Box
+                                            component="span"
+                                            sx={{ color: "#000000" }}
+                                        >
+                                            {inputValue.doctorid}
+                                        </Box>
+                                    </Box>
+                                    <input
+                                        type="file"
+                                        id="hospitalImg"
+                                        name="photo"
+                                        style={{ display: "none" }}
+                                        onChange={getUserImage}
+                                    />
+                                </Box>
+                            </Stack>
+                            {/* <Box sx={{background:"green", display:'flex', alignItems:'center', width:'200px', flex:1}}> */}
+                            {/* <Button
+                            sx={{
+                                fontSize: {
+                                    xs: "0.75rem",
+                                    sm: "0.75rem",
+                                    md: "0.875rem",
+                                },
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                color: "#1F51C6",
+                                cursor: "pointer",
+                                textTransform: "none",
+                                lineHeight: "14.4px",
+                                textAlign: {
+                                    xs: "right",
+                                    sm: "right",
+                                    md: "center",
+                                },
+                                width: {
+                                    xs: "130px",
+                                    sm: "114px",
+                                    md: "250px",
+                                },
+                                // backgroundColor:'blue',
+                                p: 0,
+                                ":hover": {
+                                    background: "none",
+                                },
+                            }}
+                        >
+                            Change Appointment settings
+                        </Button> */}
+
+                            {/* </Box> */}
+                        </Stack>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                justifyContent: "center",
+
+                                mt: 2,
+                            }}
+                        >
+                            <StackStyle>
+                                <LabelStyle htmlFor="DoctorName">
+                                    Name of the Doctor
+                                </LabelStyle>
+                                <TextFieldStyle
+                                    id="DoctorName"
+                                    name="nameOfTheDoctor"
+                                    fullWidth
+                                    disabled
+                                    sx={{
+                                        ":disabled": {
+                                            color: "red",
+                                        },
+                                    }}
+                                    placeholder="Ex. Dr. John Doe"
+                                    error={
+                                        err &&
+                                        !inputValue.nameOfTheDoctor &&
+                                        true
+                                    }
+                                    helperText={
+                                        err &&
+                                        !inputValue.nameOfTheDoctor &&
+                                        "Please enter Doctor's name"
+                                    }
+                                    value={inputValue.nameOfTheDoctor}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="qualification">
+                                    Qualification
+                                </LabelStyle>
+                                <TextFieldStyle
+                                    id="qualification"
+                                    name="qulification"
+                                    fullWidth
+                                    disabled
+                                    placeholder="Ex. MBBS. MD"
+                                    error={
+                                        err && !inputValue.qulification && true
+                                    }
+                                    helperText={
+                                        err &&
+                                        !inputValue.qulification &&
+                                        "Please enter your qualification"
+                                    }
+                                    value={inputValue.qulification}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="speciality">
+                                    Speciality
+                                </LabelStyle>
+                                {/* <Select>
+                                {hospitalSpecialties.map((speciality, i) => {
+                                    return (
+                                        <MenuItem key={i} value={speciality}>
+                                            {speciality}
+                                        </MenuItem>
+                                    );
+                                })}
+                            </Select> */}
+                                <TextFieldStyle
+                                    id="speciality"
+                                    name="speciality"
+                                    fullWidth
+                                    disabled
+                                    placeholder="Ex. ENT"
+                                    error={
+                                        err && !inputValue.speciality && true
+                                    }
+                                    helperText={
+                                        err &&
+                                        !inputValue.speciality &&
+                                        "Please enter specialty"
+                                    }
+                                    value={inputValue.speciality}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="experience">
+                                    Years Of Experience
+                                </LabelStyle>
+                                <TextFieldStyle
+                                    id="experience"
+                                    name="yearOfExprience"
+                                    fullWidth
+                                    disabled
+                                    placeholder="Ex. 5 Years"
+                                    error={
+                                        err &&
+                                        !inputValue.yearOfExprience &&
+                                        true
+                                    }
+                                    helperText={
+                                        err &&
+                                        !inputValue.yearOfExprience &&
+                                        "Please enter your experience"
+                                    }
+                                    value={inputValue.yearOfExprience}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="mailId">
+                                    Enter Email Id
+                                </LabelStyle>
+                                <TextFieldStyle
+                                    id="mailId"
+                                    name="enterEmailId"
+                                    fullWidth
+                                    disabled
+                                    placeholder="doctor@gmail.com"
+                                    error={err && !inputValue.email && true}
+                                    helperText={
+                                        err &&
+                                        !inputValue.email &&
+                                        "Please enter your email"
+                                    }
+                                    value={inputValue.email}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="phoneNo">
+                                    Enter Phone No
+                                </LabelStyle>
+                                <TextFieldStyle
+                                    id="phoneNo"
+                                    name="enterPhoneNo"
+                                    fullWidth
+                                    disabled
+                                    placeholder="Ex 99112240477"
+                                    error={err && !inputValue.phone && true}
+                                    helperText={
+                                        err &&
+                                        !inputValue.phone &&
+                                        "Please enter your phone number"
+                                    }
+                                    value={inputValue.phone}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="connsultationFee">
+                                    Connsultation Fee
+                                </LabelStyle>
+                                <TextFieldStyle
+                                    id="connsultationFee"
+                                    name="connsultationFee"
+                                    fullWidth
+                                    placeholder="Ex ₹500"
+                                    error={
+                                        err &&
+                                        !inputValue.connsultationFee &&
+                                        true
+                                    }
+                                    helperText={
+                                        err &&
+                                        !inputValue.connsultationFee &&
+                                        "Please enter your fees"
+                                    }
+                                    value={inputValue.connsultationFee}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="description">
+                                    Enter Description
+                                </LabelStyle>
+                                <TextFieldStyle
+                                    id="description"
+                                    name="description"
+                                    fullWidth
+                                    placeholder="Enter Description"
+                                    error={
+                                        err && !inputValue.description && true
+                                    }
+                                    helperText={
+                                        err &&
+                                        !inputValue.description &&
+                                        "Please enter Doctor's description"
+                                    }
+                                    value={inputValue.description}
+                                    onChange={handleChange}
+                                />
+                            </StackStyle>
+                            {/* <StackStyle>
+                            <LabelStyle htmlFor="Category1">
+                                Category 1
+                            </LabelStyle>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "262.93px",
+                                    },
+                                    height: "40px",
+                                    fontFamily: "Lato",
+                                    fontWeight: "semibold",
+                                    fontSize: "1rem",
+                                    borderRadius: "5px",
+                                }}
+                                placeholder="Choose Slot Duration"
+                                // value={view}
+                                onChange={(e) => setView(e.target.value)}
+                            >
+                                <MenuItem
+                                    value="Weekly view"
+                                    sx={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "semibold",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    Choose Slot Duration
+                                </MenuItem>
+                                <MenuItem
+                                    value="Calandar View"
+                                    sx={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "semibold",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    Calandar View
+                                </MenuItem>
+                            </Select>
+                        </StackStyle> */}
+                        </Box>
+                        <Button
+                            size="small"
+                            type="submit"
+                            // onClick={()=>setConfirmAddDoctorDialog(true)}
+                            fullWidth
+                            variant="contained"
+                            sx={{
+                                flex: 0.3,
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                fontSize: "1rem",
+                                textTransform: "none",
+                                width: {
+                                    xs: "100%",
+                                    sm: "100%",
+                                    md: "364.69px",
+                                },
+                                my: 2,
+                                mx: "auto",
+                                display: "block",
+                                boxShadow: "none",
+                            }}
+                        >
+                            Add Doctor
+                        </Button>
+                    </form>
+                </DialogContent>
+            </Dialog>
+            <Dialog
+                sx={{ borderRadius: "14px" }}
+                onClose={() => setConfirmAddDoctorDialog(false)}
+                aria-labelledby="customized-dialog-title"
+                open={confirmAddDoctorDialog}
+            >
+                <DialogTitle
+                    sx={{
+                        m: 0,
+                        p: 2,
+                        fontFamily: "Raleway",
+                        fontWeight: "600",
+                        fontSize: "22px",
+                    }}
+                    id="customized-dialog-title"
+                >
+                    Confirm Doctor Details?
+                </DialogTitle>
+                {confirmAddDoctorDialog ? (
                     <IconButton
                         aria-label="close"
-                        onClick={() => setAddDoctorsDialog(false)}
+                        onClick={() => setConfirmAddDoctorDialog(false)}
                         sx={{
                             position: "absolute",
                             right: 8,
@@ -181,285 +664,53 @@ const AddDoctorsDialog = ({
                         <CloseIcon />
                     </IconButton>
                 ) : null}
-            </DialogTitle>
-            <DialogContent dividers sx={{ margin: "10px" }}>
-                <form onSubmit={handleSubmit}>
-                    <Stack direction={"row"} gap={3}>
-                        <img
-                            src={preview ? preview : "/default.png"}
-                            alt="user"
-                            width={60}
-                            height={60}
-                            style={{ borderRadius: "50%" }}
-                        />
-
-                        <Box>
-                            <Typography
-                                my={1}
-                                color={err && !inputImage ? "red" : "#706D6D"}
-                                width="160px"
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.75rem",
-                                    lineHeight: "14.4px",
-                                }}
-                            >
-                                {err && inputImage
-                                    ? "Please Pick a photo from your computer"
-                                    : "Pick a photo from your computer"}
-                            </Typography>
-
-                            <FormLabel
-                                htmlFor="hospitalImg"
-                                sx={{ fontWeight: "600", color: "#1F51C6" }}
-                            >
-                                Change Profile photo
-                            </FormLabel>
-                            <input
-                                type="file"
-                                id="hospitalImg"
-                                name="photo"
-                                style={{ display: "none" }}
-                                onChange={getUserImage}
-                            />
-                        </Box>
-                    </Stack>
-                    <Box
+                <DialogContent dividers>
+                    <Typography
                         sx={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            justifyContent: "center",
-
-                            mt: 2,
+                            fontFamily: "Lato",
+                            fontWeight: "500",
+                            fontSize: "16px",
+                            color: "#706D6D",
+                            my: "25px",
+                            lineHeight: "21.6px",
                         }}
                     >
-                        <StackStyle>
-                            <LabelStyle htmlFor="DoctorName">
-                                Name of the Doctor
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="DoctorName"
-                                name="nameOfTheDoctor"
-                                fullWidth
-                                placeholder="Ex. Dr. John Doe"
-                                error={
-                                    err && !inputValue.nameOfTheDoctor && true
-                                }
-                                helperText={
-                                    err &&
-                                    !inputValue.nameOfTheDoctor &&
-                                    "Please enter Doctor's name"
-                                }
-                                onChange={handleChange}
-                            />
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="qualification">
-                                Qualification
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="qualification"
-                                name="qulification"
-                                fullWidth
-                                placeholder="Ex. MBBS. MD"
-                                error={err && !inputValue.qulification && true}
-                                helperText={
-                                    err &&
-                                    !inputValue.qulification &&
-                                    "Please enter your qualification"
-                                }
-                                onChange={handleChange}
-                            />
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="speciality">
-                                Speciality
-                            </LabelStyle>
-                            {/* <Select>
-                                {hospitalSpecialties.map((speciality, i) => {
-                                    return (
-                                        <MenuItem key={i} value={speciality}>
-                                            {speciality}
-                                        </MenuItem>
-                                    );
-                                })}
-                            </Select> */}
-                            <TextFieldStyle
-                                id="speciality"
-                                name="speciality"
-                                fullWidth
-                                placeholder="Ex. ENT"
-                                error={err && !inputValue.speciality && true}
-                                helperText={
-                                    err &&
-                                    !inputValue.speciality &&
-                                    "Please enter specialty"
-                                }
-                                onChange={handleChange}
-                                select
-                                SelectProps={{}}
-                            >
-                                {hospitalSpecialties.map((speciality, i) => (
-                                    <MenuItem
-                                        value={speciality.specialty}
-                                        key={i}
-                                    >
-                                        {speciality.specialty}
-                                    </MenuItem>
-                                ))}
-                            </TextFieldStyle>
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="experience">
-                                Years Of Experience
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="experience"
-                                name="yearOfExprience"
-                                fullWidth
-                                placeholder="Ex. 5 Years"
-                                error={
-                                    err && !inputValue.yearOfExprience && true
-                                }
-                                helperText={
-                                    err &&
-                                    !inputValue.yearOfExprience &&
-                                    "Please enter your experience"
-                                }
-                                onChange={handleChange}
-                            />
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="mailId">
-                                Enter Email Id
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="mailId"
-                                name="enterEmailId"
-                                fullWidth
-                                placeholder="doctor@gmail.com"
-                                error={err && !inputValue.enterEmailId && true}
-                                helperText={
-                                    err &&
-                                    !inputValue.enterEmailId &&
-                                    "Please enter your email"
-                                }
-                                onChange={handleChange}
-                            />
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="phoneNo">
-                                Enter Phone No
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="phoneNo"
-                                name="enterPhoneNo"
-                                fullWidth
-                                placeholder="Ex 99112240477"
-                                error={err && !inputValue.enterPhoneNo && true}
-                                helperText={
-                                    err &&
-                                    !inputValue.enterPhoneNo &&
-                                    "Please enter your phone number"
-                                }
-                                onChange={handleChange}
-                            />
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="password">
-                                Password(can be edited later)
-                            </LabelStyle>
-                            <Stack direction={"row"}>
-                                <TextFieldStyle
-                                    disabled
-                                    id="password"
-                                    name="password"
-                                    fullWidth
-                                    value="Medidek@123"
-                                    sx={{ color: "green" }}
-                                    placeholder="Auto generated Password"
-                                />
-                            </Stack>
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="connsultationFee">
-                                Connsultation Fee
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="connsultationFee"
-                                name="connsultationFee"
-                                fullWidth
-                                placeholder="Ex ₹500"
-                                error={
-                                    err && !inputValue.connsultationFee && true
-                                }
-                                helperText={
-                                    err &&
-                                    !inputValue.connsultationFee &&
-                                    "Please enter your fees"
-                                }
-                                onChange={handleChange}
-                            />
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="consultingTime">
-                                Consulting Time
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="consultingTime"
-                                name="consultingTime"
-                                fullWidth
-                                placeholder="Ex 2PM to 5PM"
-                                error={
-                                    err && !inputValue.consultingTime && true
-                                }
-                                helperText={
-                                    err &&
-                                    !inputValue.consultingTime &&
-                                    "Please enter OPD Hrs"
-                                }
-                                onChange={handleChange}
-                            />
-                        </StackStyle>
-                        <StackStyle>
-                            <LabelStyle htmlFor="location">
-                                Full Address
-                            </LabelStyle>
-                            <TextFieldStyle
-                                id="location"
-                                name="location"
-                                fullWidth
-                                placeholder="Enter Full Address"
-                                error={
-                                    err && !inputValue.enterFullAdress && true
-                                }
-                                helperText={
-                                    err &&
-                                    !inputValue.enterFullAdress &&
-                                    "Please enter Doctor's Full Address"
-                                }
-                                // onChange={handleChange}
-                                value={hospitalLocation}
-                            />
-                        </StackStyle>
-                    </Box>
-                    <LoadingButton
+                        Are you sure you want to Add Doctor?
+                    </Typography>
+                    <Stack direction="row" spacing="15px">
+                        <Button
+                            onClick={() => setConfirmAddDoctorDialog(false)}
+                            variant="contained"
+                            sx={{
+                                width: "328px",
+                                height: "41px",
+                                background: "#D9D9D9",
+                                color: "#383838",
+                                textTransform: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                borderRadius: "44px",
+                                boxShadow: "none",
+                                ":hover": { background: "#706D6D" },
+                            }}
+                        >
+                            Cancel{" "}
+                        </Button>
+                        <LoadingButton
                             size="small"
                             fullWidth
-                            type="submit"
+                            onClick={addDoctor}
                             loading={disableButton}
                             variant="contained"
                             sx={{
-                                flex: 0.3,
-                                width: {
-                                    xs: "100%",
-                                    sm: "100%",
-                                    md: "364.69px",
-                                },
-                                my: 2,
-                                mx: "auto",
-                                display: "block",
+                                width: "328px",
+                                height: "41px",
+                                background: "#1F51C6",
+                                color: "#ffffff",
+                                textTransform: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                borderRadius: "44px",
                                 boxShadow: "none",
                             }}
                         >
@@ -474,9 +725,26 @@ const AddDoctorsDialog = ({
                                 Add Doctor
                             </span>
                         </LoadingButton>
-                </form>
-            </DialogContent>
-        </Dialog>
+                        {/* <Button
+                                onClick={handleSubmit}
+                                variant="contained"
+                                sx={{
+                                    width: "328px",
+                                    height: "41px",
+                                    background: "#1F51C6",
+                                    color: "#ffffff",
+                                    textTransform: "none",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    borderRadius: "44px",
+                                }}
+                            >
+                                Confirm{" "}
+                            </Button> */}
+                    </Stack>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
 

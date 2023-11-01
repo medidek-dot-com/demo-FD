@@ -344,8 +344,7 @@ const MasterNavBar = () => {
                     {isLoggedIn ? (
                         <Avatar
                             src={
-                                user?.img
-                                    ? `${baseURL}/uploads/Hospital/HospitalImage/${user?.img}`
+                                user?.imgurl ? user.imgurl
                                     : "/default.png"
                             }
                             onClick={() => setUserSetting(!userSetting)}

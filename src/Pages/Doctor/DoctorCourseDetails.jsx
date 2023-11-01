@@ -23,7 +23,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import styled from "@emotion/styled";
 
 import { axiosClient, baseURL } from "../../Utils/axiosClient";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { BsFillCalendarFill } from "react-icons/bs";
 import { MdDashboard, MdLogout } from "react-icons/md";
 import { ImPencil } from "react-icons/im";
@@ -42,6 +42,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import CourseDetailSkeleton from "../../Components/Doctor/Skeleton/CourseDetailSkeleton";
 import { BiSolidBook } from "react-icons/bi";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
+import CourseEnrollFormDialog from "../../Components/Doctor/CourseEnrollFormDialog";
 // import { BsFillCalendarFill } from "react-icons/bs";
 
 // const TextFieldStyle = styled(TextField)({
@@ -107,7 +108,8 @@ const LabelStyle = styled("label")({
 
 const DoctorCourseDetails = () => {
     const { hospital_id, doctor_id, course_id } = useParams();
-
+    const [courseEnrollDialog, setCourseEnrollDialog] = useState(false);
+    const { user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     const [activeTab, setActiveTab] = useState(3);
@@ -116,7 +118,6 @@ const DoctorCourseDetails = () => {
 
     const [menu, setMenu] = useState(false);
 
-    const { user } = useSelector((state) => state.auth);
     const numberOfHospitals = user;
 
     // const {hospital_id} = useParams();
@@ -129,28 +130,36 @@ const DoctorCourseDetails = () => {
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
 
+    const getAllCourses = async () => {
+        try {
+            const result = await axiosClient.get(
+                `/v2/getCourse?search=${search}`
+            );
+            setLoading(false);
+            setallCourse(result.result);
+        } catch (error) {}
+    };
+
+    // useEffect(() => {
+    //     getAllCourses();
+    // }, [search]);
+
     const getCourses = async () => {
-        const result = await axiosClient.get(`/v2/getCourse?search=${search}`);
+        const result = await axiosClient.get(`/v2/getCourse`);
         setallCourse(result.result);
         setLoading(false);
     };
 
     useEffect(() => {
         getCourses();
-    }, [search]);
+        getAllCourses();
+    }, []);
 
     useEffect(() => {
         if (inputImage) {
             setPreview(URL.createObjectURL(inputImage));
         }
     }, [inputImage]);
-
-    const sizing = {
-        margin: { right: 5 },
-        width: 308,
-        height: 237,
-        legend: { hidden: true },
-    };
 
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
@@ -179,405 +188,404 @@ const DoctorCourseDetails = () => {
     }, [course_id]);
 
     return (
-        <Box
-            sx={{
-                width: {
-                    xs: "100%",
-                    sm: "100%",
-                    md: "calc(100% - 100px)",
-                },
-                m: "0px auto",
-                p: 1,
-            }}
-        >
-            <Stack
-                direction="row"
+        <>
+            <Box
                 sx={{
-                    display: { xs: "flex", sm: "flex", md: "none" },
-                    mb: "24px",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    position: "sticky",
-                    top: "0",
-                    background: "#ffffff",
-                    zIndex: 2,
+                    width: {
+                        xs: "100%",
+                        sm: "100%",
+                        md: "calc(100% - 100px)",
+                    },
+                    m: "0px auto",
+                    p: 1,
                 }}
             >
-                <Stack direction="row" sx={{ alignItems: "center" }}>
-                    <IconButton onClick={() => setMenu(!menu)}>
-                        {!menu ? (
-                            <AiOutlineMenu
-                                style={{
-                                    width: "32px",
-                                    height: "19px",
-                                    color: "#1F51C6",
-                                }}
-                            />
-                        ) : (
-                            <RxCross1
-                                style={{
-                                    width: "32px",
-                                    height: "19px",
-                                    color: "#1F51C6",
-                                }}
-                            />
-                        )}
-                    </IconButton>
-                    <img
-                        src="/m-logonew.png"
-                        alt="logo"
-                        style={{ width: "121px", height: "28px" }}
+                <Stack
+                    direction="row"
+                    sx={{
+                        display: { xs: "flex", sm: "flex", md: "none" },
+                        mb: "24px",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        position: "sticky",
+                        top: "0",
+                        background: "#ffffff",
+                        zIndex: 2,
+                    }}
+                >
+                    <Stack direction="row" sx={{ alignItems: "center" }}>
+                        <IconButton onClick={() => setMenu(!menu)}>
+                            {!menu ? (
+                                <AiOutlineMenu
+                                    style={{
+                                        width: "32px",
+                                        height: "19px",
+                                        color: "#1F51C6",
+                                    }}
+                                />
+                            ) : (
+                                <RxCross1
+                                    style={{
+                                        width: "32px",
+                                        height: "19px",
+                                        color: "#1F51C6",
+                                    }}
+                                />
+                            )}
+                        </IconButton>
+                        <img
+                            src="/m-logonew.png"
+                            alt="logo"
+                            style={{ width: "121px", height: "28px" }}
+                        />
+                    </Stack>
+                    <Avatar
+                        src={user?.imgurl ? user.imgurl : "/default.png"}
+                        sx={{ width: "32px", height: "32px" }}
                     />
                 </Stack>
-                <Avatar
-                    src={
-                        numberOfHospitals[0]?.doctorImg
-                            ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                            : "/default.png"
-                    }
-                    sx={{ width: "32px", height: "32px" }}
-                />
-            </Stack>
 
-            {menu && (
-                <Box
-                    sx={{
-                        width: "100%",
-                        height: "100vh",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "30px",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#1F51C6",
-                        borderRadius: "6px",
-                    }}
-                >
-                    <Button
-                        onClick={() =>
-                            navigate(
-                                `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
-                        }
+                {menu && (
+                    <Box
                         sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Dashboard
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            navigate(
-                                `/doctor/appointments/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Appointments
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/courses/${user._id}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Medical Courses
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/edit-profile/${user._id}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Edit Profile
-                    </Button>
-                    <Button
-                        onClick={logOutUser}
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Log Out
-                    </Button>
-                </Box>
-            )}
-
-            {!menu && (
-                <Box
-                    sx={{
-                        // width: "calc(100% - 100px)",
-                        mr: { xs: 0, sm: 0, md: "-55px" },
-                        ml: { xs: 0, sm: 0, md: "-60px" },
-                        display: "flex",
-                        justifyContent: "center",
-                        mt: -1,
-                        // position: "fixed"
-                    }}
-                >
-                     <Box
-                        sx={{
-                            width: "240px",
-                            background: "#1F51C6",
-                            display: { xs: "none", sm: "none", md: "flex" },
-                            flexDirection: "column",
-                            // alignItems: "center",
+                            width: "100%",
                             height: "100vh",
-                            position: "sticky",
-                            top: "0px",
-                            bottom: "-100px",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "30px",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "#1F51C6",
+                            borderRadius: "6px",
                         }}
                     >
-                        <Stack alignItems={"center"} mt={4}>
-                            <Avatar
-                                src={
-                                    numberOfHospitals[0]?.doctorImg
-                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                        : "/default.png"
-                                }
-                                sx={{ width: "71px", height: "71px" }}
-                            />
-                            <Typography
-                                variant="h5"
-                                sx={{
-                                    m: 1,
-                                    color: "#ffffff",
-                                    fontFamily: "Raleway",
-                                    fontWeight: "600",
-                                    fontSize: "22px",
-                                }}
-                            >
-                                Dr. {user.nameOfTheDoctor}
-                            </Typography>
-                        </Stack>
-                        <Stack
-                            alignItems={"start"}
-                            spacing={2}
-                            mt={4}
-                            flex={1}
-                            width={"100%"}
+                        <Button
+                            onClick={() =>
+                                navigate(
+                                    `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                ) & setMenu(false)
+                            }
+                            sx={{
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontSize: "1.5rem",
+                                textTransform: "none",
+                                lineHeight: "28.8px",
+                            }}
                         >
-                            <Box
-                                sx={{
-                                    width: "100%"
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#1F51C6",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                        color: "#ffffff",
-                                    }}
-                                >
-                                    <MdDashboard
-                                        style={{
-                                            width: "25px",
-                                            height: "25px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    &nbsp;Dashboard
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/appointments/${hospital_id}/${doctor_id}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                    }}
-                                >
-                                    <BsFillCalendarFill
-                                        style={{
-                                            width: "20px",
-                                            height: "20px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    &nbsp; Appointments
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                    background:"#ffffff"
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(`/doctor/courses/${doctor_id}`)
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "##1F51C6",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                    }}
-                                >
-                                    <BiSolidBook
-                                        style={{
-                                            width: "25px",
-                                            height: "25px",
-                                            marginRight: "10px",
-                                        }}
-                                    />
-                                    Medical Courses
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%"
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/edit-profile/${user._id}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                    }}
-                                >
-                                    <ImPencil
-                                        style={{
-                                            width: "20px",
-                                            height: "20px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    Edit Profile
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/appointment-settings/${user._id}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        lineHeight: "21.13px",
-                                        color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                        textAlign: "start",
-                                    }}
-                                >
-                                    <BsFillCalendarPlusFill
-                                        style={{
-                                            width: "25px",
-                                            height: "25px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    Appointment Settings
-                                </Button>
-                            </Box>
-                        </Stack>
+                            Dashboard
+                        </Button>
+                        <Button
+                            onClick={() =>
+                                navigate(
+                                    `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                ) & setMenu(false)
+                            }
+                            sx={{
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontSize: "1.5rem",
+                                textTransform: "none",
+                                lineHeight: "28.8px",
+                            }}
+                        >
+                            Appointments
+                        </Button>
+                        <Button
+                            onClick={() =>
+                                navigate(`/doctor/courses/${user._id}`) &
+                                setMenu(false)
+                            }
+                            sx={{
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontSize: "1.5rem",
+                                textTransform: "none",
+                                lineHeight: "28.8px",
+                            }}
+                        >
+                            Medical Courses
+                        </Button>
+                        <Button
+                            onClick={() =>
+                                navigate(`/doctor/edit-profile/${user._id}`) &
+                                setMenu(false)
+                            }
+                            sx={{
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontSize: "1.5rem",
+                                textTransform: "none",
+                                lineHeight: "28.8px",
+                            }}
+                        >
+                            Edit Profile
+                        </Button>
                         <Button
                             onClick={logOutUser}
                             sx={{
                                 color: "#ffffff",
-                                width: "100%",
-                                my: 1,
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "18px",
+                                fontFamily: "Lato",
+                                fontSize: "1.5rem",
                                 textTransform: "none",
+                                lineHeight: "28.8px",
                             }}
                         >
-                            <MdLogout
-                                style={{ width: "25px", height: "25px" }}
-                            />
                             Log Out
                         </Button>
                     </Box>
+                )}
+
+                {!menu && (
                     <Box
                         sx={{
-                            flex: 4,
-                            // display: "flex",
-                            // justifyContent: "space-between",
-                            // alignItems: "center",
-                            width: "100%",
-                            mx: {xs:0, sm:0, md:"100px"},
-                            // mt: "32px",
-                            // height: "90vh",
+                            // width: "calc(100% - 100px)",
+                            mr: { xs: 0, sm: 0, md: "-55px" },
+                            ml: { xs: 0, sm: 0, md: "-60px" },
+                            display: "flex",
+                            justifyContent: "center",
+                            mt: -1,
+                            // position: "fixed"
                         }}
                     >
-                        {/* <Box
+                        <Box
+                            sx={{
+                                width: "240px",
+                                background: "#1F51C6",
+                                display: { xs: "none", sm: "none", md: "flex" },
+                                flexDirection: "column",
+                                // alignItems: "center",
+                                height: "100vh",
+                                position: "sticky",
+                                top: "0px",
+                                bottom: "-100px",
+                            }}
+                        >
+                            <Stack alignItems={"center"} mt={4}>
+                                <Avatar
+                                    src={
+                                        user?.imgurl
+                                            ? user.imgurl
+                                            : "/default.png"
+                                    }
+                                    sx={{ width: "71px", height: "71px" }}
+                                />
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        m: 1,
+                                        color: "#ffffff",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "22px",
+                                    }}
+                                >
+                                    Dr. {user.nameOfTheDoctor}
+                                </Typography>
+                            </Stack>
+                            <Stack
+                                alignItems={"start"}
+                                spacing={2}
+                                mt={4}
+                                flex={1}
+                                width={"100%"}
+                            >
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Button
+                                        onClick={() =>
+                                            navigate(
+                                                `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                            )
+                                        }
+                                        variant="text"
+                                        sx={{
+                                            ml: "30px",
+                                            color: "#1F51C6",
+                                            borderRadius: "0",
+                                            textTransform: "none",
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "18px",
+                                            color: "#ffffff",
+                                        }}
+                                    >
+                                        <MdDashboard
+                                            style={{
+                                                width: "25px",
+                                                height: "25px",
+                                                marginRight: "6px",
+                                            }}
+                                        />
+                                        &nbsp;Dashboard
+                                    </Button>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Button
+                                        onClick={() =>
+                                            navigate(
+                                                `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                            )
+                                        }
+                                        variant="text"
+                                        sx={{
+                                            ml: "30px",
+                                            color: "#ffffff",
+                                            borderRadius: "0",
+                                            textTransform: "none",
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "18px",
+                                        }}
+                                    >
+                                        <BsFillCalendarFill
+                                            style={{
+                                                width: "20px",
+                                                height: "20px",
+                                                marginRight: "6px",
+                                            }}
+                                        />
+                                        &nbsp; Appointments
+                                    </Button>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        background: "#ffffff",
+                                    }}
+                                >
+                                    <Button
+                                        onClick={() =>
+                                            navigate(
+                                                `/doctor/courses/${doctor_id}`
+                                            )
+                                        }
+                                        variant="text"
+                                        sx={{
+                                            ml: "30px",
+                                            color: "##1F51C6",
+                                            borderRadius: "0",
+                                            textTransform: "none",
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "18px",
+                                        }}
+                                    >
+                                        <BiSolidBook
+                                            style={{
+                                                width: "25px",
+                                                height: "25px",
+                                                marginRight: "10px",
+                                            }}
+                                        />
+                                        Medical Courses
+                                    </Button>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Button
+                                        onClick={() =>
+                                            navigate(
+                                                `/doctor/edit-profile/${user._id}`
+                                            )
+                                        }
+                                        variant="text"
+                                        sx={{
+                                            ml: "30px",
+                                            color: "#ffffff",
+                                            borderRadius: "0",
+                                            textTransform: "none",
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "18px",
+                                        }}
+                                    >
+                                        <ImPencil
+                                            style={{
+                                                width: "20px",
+                                                height: "20px",
+                                                marginRight: "6px",
+                                            }}
+                                        />
+                                        Edit Profile
+                                    </Button>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Button
+                                        onClick={() =>
+                                            navigate(
+                                                `/doctor/appointment-settings/${user._id}`
+                                            )
+                                        }
+                                        variant="text"
+                                        sx={{
+                                            ml: "30px",
+                                            lineHeight: "21.13px",
+                                            color: "#ffffff",
+                                            borderRadius: "0",
+                                            textTransform: "none",
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "18px",
+                                            textAlign: "start",
+                                        }}
+                                    >
+                                        <BsFillCalendarPlusFill
+                                            style={{
+                                                width: "25px",
+                                                height: "25px",
+                                                marginRight: "6px",
+                                            }}
+                                        />
+                                        Appointment Settings
+                                    </Button>
+                                </Box>
+                            </Stack>
+                            <Button
+                                onClick={logOutUser}
+                                sx={{
+                                    color: "#ffffff",
+                                    width: "100%",
+                                    my: 1,
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    textTransform: "none",
+                                }}
+                            >
+                                <MdLogout
+                                    style={{ width: "25px", height: "25px" }}
+                                />
+                                Log Out
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                flex: 4,
+                                // display: "flex",
+                                // justifyContent: "space-between",
+                                // alignItems: "center",
+                                width: "100%",
+                                mx: { xs: 0, sm: 0, md: "100px" },
+                                // mt: "32px",
+                                // height: "90vh",
+                            }}
+                        >
+                            {/* <Box
                             sx={{
                                 width: "100%",
                                 display: "flex",
@@ -660,51 +668,381 @@ const DoctorCourseDetails = () => {
                                 />
                             )}
                         </Box> */}
-                        <>
-                            <Box sx={{ width: "100%", position: "relative" }}>
-                                <Card
-                                    sx={{
-                                        background: {xs:"none", sm:"none", md:"#DCE3F6"},
-                                        width: "100%",
-                                        display: "flex",
-                                        py: { xs: "0", sm: "0", md: "25px" },
-                                        px: { xs: "4px", sm: "0", md: "37px" },
-                                        my: {xs:0, sm:0, md:4},
-                                        flexDirection: {
-                                            xs: "column-reverse",
-                                            sm: "column-reverse",
-                                            md: "row",
-                                        },
-                                        justifyContent: "space-between",
-                                        boxShadow:"none"
+                            <>
+                                <Box
+                                    sx={{ width: "100%", position: "relative" }}
+                                >
+                                    <Card
+                                        sx={{
+                                            background: {
+                                                xs: "none",
+                                                sm: "none",
+                                                md: "#DCE3F6",
+                                            },
+                                            width: "100%",
+                                            display: "flex",
+                                            py: {
+                                                xs: "0",
+                                                sm: "0",
+                                                md: "25px",
+                                            },
+                                            px: {
+                                                xs: "4px",
+                                                sm: "0",
+                                                md: "37px",
+                                            },
+                                            my: { xs: 0, sm: 0, md: 4 },
+                                            flexDirection: {
+                                                xs: "column-reverse",
+                                                sm: "column-reverse",
+                                                md: "row",
+                                            },
+                                            justifyContent: "space-between",
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        {!loading ? (
+                                            <Stack
+                                                spacing={2}
+                                                sx={{
+                                                    flex: 1.6,
+                                                    // width: {
+                                                    //     xs: "100%",
+                                                    //     sm: "100%",
+                                                    //     md: "600px",
+                                                    // },
+                                                }}
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: 600,
+                                                        fontSize: {
+                                                            xs: "20px",
+                                                            sm: "20px",
+                                                            md: "35px",
+                                                        },
+                                                        fontFamily: "Raleway",
+                                                        lineHeight: {
+                                                            xs: "23.48px",
+                                                            sm: "23.48px",
+                                                            md: "40px",
+                                                        },
+                                                        color: "#383838",
+                                                        textAlign: {
+                                                            xs: "center",
+                                                            sm: "center",
+                                                            md: "left",
+                                                        },
+                                                    }}
+                                                >
+                                                    {courseDetails.courseName}
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                        color: "#706D6D",
+                                                        textAlign: {
+                                                            xs: "center",
+                                                            sm: "center",
+                                                            md: "left",
+                                                        },
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "600",
+                                                        fontSize: {
+                                                            xs: "13px",
+                                                            sm: "15px",
+                                                        },
+                                                    }}
+                                                >
+                                                    {
+                                                        courseDetails.courseDiscription
+                                                    }
+                                                </Typography>
+                                                <Stack
+                                                    direction="row"
+                                                    justifyContent={{
+                                                        xs: "center",
+                                                        sm: "center",
+                                                        md: "start",
+                                                    }}
+                                                >
+                                                    <Rating
+                                                        value={5}
+                                                        readOnly
+                                                    />
+                                                    <Box
+                                                        component="span"
+                                                        sx={{
+                                                            color: "#706D6D",
+                                                        }}
+                                                    >
+                                                        (223,003 ratings)
+                                                    </Box>
+                                                </Stack>
+                                            </Stack>
+                                        ) : (
+                                            <CourseDetailSkeleton />
+                                        )}
+                                        <Box sx={{ flex: 1 }}> </Box>
+                                        <Card
+                                            sx={{
+                                                width: {
+                                                    xs: "100%",
+                                                    sm: "100%",
+                                                    md: "347px",
+                                                },
+                                                p: {
+                                                    xs: "0",
+                                                    sm: "0",
+                                                    md: "16px",
+                                                },
+                                                position: {
+                                                    xs: "static",
+                                                    sm: "static",
+                                                    md: "absolute",
+                                                },
+                                                right: "46px",
+                                                boxShadow: {
+                                                    xs: "none",
+                                                    sm: "none",
+                                                    md: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+                                                },
+                                            }}
+                                        >
+                                            <CourseImageStyle
+                                                src="/course.png"
+                                                alt="img"
+                                                style={{
+                                                    width: "100%",
+                                                    height: "252px",
+                                                }}
+                                            />
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                p={{
+                                                    xs: "10px",
+                                                    sm: "10px",
+                                                    md: "0",
+                                                }}
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: 700,
+                                                        fontSize: "25px",
+                                                    }}
+                                                >
+                                                    ₹15,999{" "}
+                                                    <Box
+                                                        component="span"
+                                                        sx={{
+                                                            fontSize: "15px",
+                                                        }}
+                                                    >
+                                                        +₹2,700GST
+                                                    </Box>
+                                                </Typography>{" "}
+                                                &nbsp;
+                                                <img
+                                                    src="/limited-seat.png"
+                                                    alt="img"
+                                                    width="141px"
+                                                    height="26px"
+                                                />
+                                            </Stack>
+                                            <Button
+                                                onClick={() =>
+                                                    setCourseEnrollDialog(true)
+                                                }
+                                                variant="contained"
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: 700,
+                                                    width: "100%",
+                                                    borderRadius: "36px",
+                                                    my: 2,
+                                                }}
+                                            >
+                                                Enroll Now
+                                            </Button>
+                                            <Typography
+                                                sx={{
+                                                    fontFamily: "Raleway",
+                                                    fontWeight: 700,
+                                                    
+                                                    color: "#383838",
+                                                    textAlign: {
+                                                        xs: "center",
+                                                        sm: "center",
+                                                        md: "left",
+                                                    },
+                                                }}
+                                            >
+                                                This Course Includes:
+                                            </Typography>
+                                            <Stack
+                                                direction="row"
+                                                spacing={{
+                                                    xs: 0,
+                                                    sm: 0,
+                                                    md: 4,
+                                                }}
+                                                mb={{ xs: 1 }}
+                                                justifyContent={{
+                                                    xs: "center",
+                                                    sm: "center",
+                                                    md: "start",
+                                                }}
+                                            >
+                                                <Stack
+                                                    justifyContent="space-between"
+                                                    sx={{ margin: "0 auto" }}
+                                                >
+                                                    <Typography
+                                                        sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            color: "#706D6D",
+                                                            lineHeight:
+                                                                "15.6px",
+                                                            fontSize: {
+                                                                xs: "13px",
+                                                                sm: "15px",
+                                                                md: "18px",
+                                                            },
+                                                        }}
+                                                    >
+                                                        <PiCertificateFill
+                                                            color="#1F51C6"
+                                                            size="1.6rem"
+                                                            style={{
+                                                                marginRight:
+                                                                    "10px",
+                                                            }}
+                                                        />
+                                                        Certificate of
+                                                        completion
+                                                    </Typography>
+                                                    <Typography
+                                                        sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            color: "#706D6D",
+                                                            fontSize: {
+                                                                xs: "13px",
+                                                                sm: "15px",
+                                                                md: "18px",
+                                                            },
+                                                        }}
+                                                    >
+                                                        <GroupIcon
+                                                            sx={{
+                                                                color: "#1F51C6",
+                                                                mr: 1,
+                                                            }}
+                                                            size="2rem"
+                                                        />
+                                                        50 students
+                                                    </Typography>
+                                                </Stack>
+                                                <Stack justifyContent="space-between">
+                                                    <Typography
+                                                        sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            color: "#706D6D",
+                                                            lineHeight:
+                                                                "15.6px",
+                                                            fontSize: {
+                                                                xs: "13px",
+                                                                sm: "15px",
+                                                                md: "18px",
+                                                            },
+                                                        }}
+                                                    >
+                                                        <WatchLaterIcon
+                                                            sx={{
+                                                                color: "#1F51C6",
+                                                                mr: 1,
+                                                            }}
+                                                        />
+                                                        {
+                                                            courseDetails.courseDuration
+                                                        }
+                                                    </Typography>
+
+                                                    <Typography
+                                                        sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            color: "#706D6D",
+                                                            lineHeight:
+                                                                "15.6px",
+                                                            fontSize: {
+                                                                xs: "13px",
+                                                                sm: "15px",
+                                                                md: "18px",
+                                                            },
+                                                        }}
+                                                    >
+                                                        <BsFillCalendarFill
+                                                            color="#1F51C6"
+                                                            size="1.2rem"
+                                                            style={{
+                                                                marginRight:
+                                                                    "10px",
+                                                            }}
+                                                        />
+                                                        Starts on 21/08/23
+                                                    </Typography>
+                                                </Stack>
+                                            </Stack>
+                                        </Card>
+                                    </Card>
+                                </Box>
+                                <Stack
+                                    direction={{
+                                        xs: "column",
+                                        sm: "column",
+                                        md: "row",
                                     }}
                                 >
-                                    {!loading ?<Stack
-                                        spacing={2}
+                                    <Card
                                         sx={{
-                                            flex:1.6
+                                            p: "20px",
                                             // width: {
                                             //     xs: "100%",
                                             //     sm: "100%",
-                                            //     md: "600px",
+                                            //     // md: "50%",
                                             // },
+                                            flex: 1.4,
+                                            // ml: { xs: "0", sm: "0", md: "35px" },
+                                            // mr: { xs: "0", sm: "0", md: "auto" },
+                                            boxShadow: {
+                                                xs: "none",
+                                                sm: "none",
+                                                md: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+                                            },
                                         }}
                                     >
                                         <Typography
                                             sx={{
-                                                fontWeight: 600,
-                                                fontSize: {
-                                                    xs: "20px",
-                                                    sm: "20px",
-                                                    md: "35px",
-                                                },
                                                 fontFamily: "Raleway",
-                                                lineHeight: {
-                                                    xs: "23.48px",
-                                                    sm: "23.48px",
-                                                    md: "40px",
-                                                },
+                                                fontWeight: "700",
                                                 color: "#383838",
+                                                fontSize: "30px",
                                                 textAlign: {
                                                     xs: "center",
                                                     sm: "center",
@@ -712,363 +1050,132 @@ const DoctorCourseDetails = () => {
                                                 },
                                             }}
                                         >
-                                            {courseDetails.courseName}
+                                            What You’ll Learn
                                         </Typography>
                                         <Typography
                                             sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "400",
+                                                fontSize: "15px",
                                                 color: "#706D6D",
                                                 textAlign: {
                                                     xs: "center",
                                                     sm: "center",
                                                     md: "left",
                                                 },
-                                                fontFamily: "Lato",
-                                                fontWeight: "600",
-                                                fontSize: {
-                                                    xs: "13px",
-                                                    sm: "15px",
-                                                },
                                             }}
                                         >
-                                            {courseDetails.courseDiscription}
+                                            Lorem ipsum dolor sit amet
+                                            consectetur, adipisicing elit.
+                                            Molestiae reprehenderit optio nemo a
+                                            animi, itaque quidem quisquam
+                                            repellendus minus, quasi reiciendis.
+                                            Asperiores impedit optio distinctio
+                                            explicabo quisquam libero et totam.
                                         </Typography>
-                                        <Stack
-                                            direction="row"
-                                            justifyContent={{
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "start",
-                                            }}
-                                        >
-                                            <Rating value={5} readOnly />
-                                            <Box
-                                                component="span"
-                                                sx={{ color: "#706D6D" }}
-                                            >
-                                                (223,003 ratings)
-                                            </Box>
-                                        </Stack>
-                                    </Stack>:
-                                    <CourseDetailSkeleton/>
-                                    }
-                                    <Box sx={{flex:1}}> </Box>
-                                    <Card
-                                        sx={{
-                                            width: {
-                                                xs: "100%",
-                                                sm: "100%",
-                                                md: "347px",
-                                            },
-                                            p: { xs: "0", sm: "0", md: "16px" },
-                                            position: {
-                                                xs: "static",
-                                                sm: "static",
-                                                md: "absolute",
-                                            },
-                                            right:"46px",
-                                            boxShadow:{xs:'none', sm:'none', md:'0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'},
-                                        }}
-                                    >
-                                        <CourseImageStyle
-                                            src="/course.png"
-                                            alt="img"
-                                            style={{
-                                                width: "100%",
-                                                height: "252px",
-                                            }}
-                                        />
-                                        <Stack
-                                            direction="row"
-                                            alignItems="center"
-                                            p={{
-                                                xs: "10px",
-                                                sm: "10px",
-                                                md: "0",
-                                            }}
-                                        >
+                                        <Stack mt={2} spacing={2}>
                                             <Typography
                                                 sx={{
                                                     fontFamily: "Lato",
-                                                    fontWeight: 700,
-                                                    fontSize: "25px",
+                                                    fontWeight: "400",
+                                                    fontSize: "15px",
+                                                    color: "#706D6D",
+                                                    textAlign: {
+                                                        xs: "center",
+                                                        sm: "center",
+                                                        md: "left",
+                                                    },
                                                 }}
                                             >
-                                                ₹15,999{" "}
-                                                <Box
-                                                    component="span"
-                                                    sx={{ fontSize: "15px" }}
-                                                >
-                                                    +₹2,700GST
-                                                </Box>
-                                            </Typography>{" "}
-                                            &nbsp;
-                                            <img
-                                                src="/limited-seat.png"
-                                                alt="img"
-                                                width="141px"
-                                                height="26px"
-                                            />
-                                        </Stack>
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: 700,
-                                                width: "100%",
-                                                borderRadius: "36px",
-                                                my: 2,
-                                            }}
-                                        >
-                                            Enroll Now
-                                        </Button>
-                                        <Typography
-                                            sx={{
-                                                fontFamily: "Raleway",
-                                                fontWeight: 700,
-                                                color: "#383838",
-                                                textAlign: {
-                                                    xs: "center",
-                                                    sm: "center",
-                                                    md: "left",
-                                                },
-                                            }}
-                                        >
-                                            This Course Includes:
-                                        </Typography>
-                                        <Stack
-                                            direction="row"
-                                            spacing={{ xs: 0, sm: 0, md: 4 }}
-                                            mb={{ xs: 1 }}
-                                            justifyContent={{
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "start",
-                                            }}
-                                        >
-                                            <Stack
-                                                justifyContent="space-between"
-                                                sx={{ margin: "0 auto" }}
+                                                Lorem, ipsum dolor sit amet
+                                                consectetur adipisicing elit.
+                                                Illum unde consequuntur rem
+                                                voluptate quo nesciunt dolore
+                                                adipisci incidunt, facere,
+                                                deserunt animi accusamus totam
+                                                quam veniam inventore fugiat
+                                                reiciendis quod ipsa.
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "400",
+                                                    fontSize: "15px",
+                                                    color: "#706D6D",
+                                                    textAlign: {
+                                                        xs: "center",
+                                                        sm: "center",
+                                                        md: "left",
+                                                    },
+                                                }}
                                             >
-                                                <Typography
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "600",
-                                                        color: "#706D6D",
-                                                        lineHeight: "15.6px",
-                                                        fontSize: {
-                                                            xs: "13px",
-                                                            sm: "15px",
-                                                            md: "18px",
-                                                        },
-                                                    }}
-                                                >
-                                                    <PiCertificateFill
-                                                        color="#1F51C6"
-                                                        size="1.6rem"
-                                                        style={{
-                                                            marginRight: "10px",
-                                                        }}
-                                                    />
-                                                    Certificate of completion
-                                                </Typography>
-                                                <Typography
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "600",
-                                                        color: "#706D6D",
-                                                        fontSize: {
-                                                            xs: "13px",
-                                                            sm: "15px",
-                                                            md: "18px",
-                                                        },
-                                                    }}
-                                                >
-                                                    <GroupIcon
-                                                        sx={{
-                                                            color: "#1F51C6",
-                                                            mr: 1,
-                                                        }}
-                                                        size="2rem"
-                                                    />
-                                                    50 students
-                                                </Typography>
-                                            </Stack>
-                                            <Stack justifyContent="space-between">
-                                                <Typography
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "600",
-                                                        color: "#706D6D",
-                                                        lineHeight: "15.6px",
-                                                        fontSize: {
-                                                            xs: "13px",
-                                                            sm: "15px",
-                                                            md: "18px",
-                                                        },
-                                                    }}
-                                                >
-                                                    <WatchLaterIcon
-                                                        sx={{
-                                                            color: "#1F51C6",
-                                                            mr: 1,
-                                                        }}
-                                                    />
-                                                    {
-                                                        courseDetails.courseDuration
-                                                    }
-                                                </Typography>
-
-                                                <Typography
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "600",
-                                                        color: "#706D6D",
-                                                        lineHeight: "15.6px",
-                                                        fontSize: {
-                                                            xs: "13px",
-                                                            sm: "15px",
-                                                            md: "18px",
-                                                        },
-                                                    }}
-                                                >
-                                                    <BsFillCalendarFill
-                                                        color="#1F51C6"
-                                                        size="1.2rem"
-                                                        style={{
-                                                            marginRight: "10px",
-                                                        }}
-                                                    />
-                                                    Starts on 21/08/23
-                                                </Typography>
-                                            </Stack>
+                                                Lorem ipsum dolor sit amet
+                                                consectetur adipisicing elit.
+                                                Voluptatum laborum eaque nam ea
+                                                voluptate unde quae culpa hic
+                                                officia, velit quas fugit sequi
+                                                ipsum consequuntur corporis iste
+                                                nemo distinctio facere!
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "400",
+                                                    fontSize: "15px",
+                                                    color: "#706D6D",
+                                                    textAlign: {
+                                                        xs: "center",
+                                                        sm: "center",
+                                                        md: "left",
+                                                    },
+                                                }}
+                                            >
+                                                Lorem ipsum dolor sit amet
+                                                consectetur adipisicing elit.
+                                                Magnam, voluptatibus enim!
+                                                Soluta, iure. Id, porro quos
+                                                vero magni iusto, dolorum,
+                                                ducimus debitis quaerat ipsum
+                                                veritatis accusamus deserunt ab
+                                                est. Unde!
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "400",
+                                                    fontSize: "15px",
+                                                    color: "#706D6D",
+                                                    textAlign: {
+                                                        xs: "center",
+                                                        sm: "center",
+                                                        md: "left",
+                                                    },
+                                                }}
+                                            >
+                                                Lorem ipsum dolor, sit amet
+                                                consectetur adipisicing elit.
+                                                Quod odio consectetur error quae
+                                                sapiente illum harum iusto neque
+                                                ipsam veritatis, voluptatem quis
+                                                cupiditate eius officiis
+                                                expedita asperiores eveniet nisi
+                                                quisquam!
+                                            </Typography>
                                         </Stack>
                                     </Card>
-                                   
-                                </Card>
-                            </Box>
-                            <Stack direction={{xs:"column", sm:"column", md:"row"}}>
-                            <Card
-                                sx={{
-                                    p: "20px",
-                                    // width: {
-                                    //     xs: "100%",
-                                    //     sm: "100%",
-                                    //     // md: "50%",
-                                    // },
-                                    flex:1.4,
-                                    // ml: { xs: "0", sm: "0", md: "35px" },
-                                    // mr: { xs: "0", sm: "0", md: "auto" },
-                                    boxShadow:{xs:'none', sm:'none', md:'0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'},
-                                }}
-                            >
-                                <Typography
-                                    sx={{
-                                        fontFamily: "Raleway",
-                                        fontWeight: "700",
-                                        color: "#383838",
-                                        fontSize: "30px",
-                                        textAlign: {
-                                            xs: "center",
-                                            sm: "center",
-                                            md: "left",
-                                        },
-                                    }}
-                                >
-                                    What You’ll Learn
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        fontFamily: "Lato",
-                                        fontWeight: "400",
-                                        fontSize: "15px",
-                                        color: "#706D6D",
-                                        textAlign: {
-                                            xs: "center",
-                                            sm: "center",
-                                            md: "left",
-                                        },
-                                    }}
-                                >
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Molestiae reprehenderit optio nemo a animi, itaque quidem quisquam repellendus minus, quasi reiciendis. Asperiores impedit optio distinctio explicabo quisquam libero et totam.
-                                </Typography>
-                                <Stack mt={2} spacing={2}>
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "400",
-                                            fontSize: "15px",
-                                            color: "#706D6D",
-                                            textAlign: {
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "left",
-                                            },
-                                        }}
-                                    >
-                                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum unde consequuntur rem voluptate quo nesciunt dolore adipisci incidunt, facere, deserunt animi accusamus totam quam veniam inventore fugiat reiciendis quod ipsa.
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "400",
-                                            fontSize: "15px",
-                                            color: "#706D6D",
-                                            textAlign: {
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "left",
-                                            },
-                                        }}
-                                    >
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum laborum eaque nam ea voluptate unde quae culpa hic officia, velit quas fugit sequi ipsum consequuntur corporis iste nemo distinctio facere!
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "400",
-                                            fontSize: "15px",
-                                            color: "#706D6D",
-                                            textAlign: {
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "left",
-                                            },
-                                        }}
-                                    >
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, voluptatibus enim! Soluta, iure. Id, porro quos vero magni iusto, dolorum, ducimus debitis quaerat ipsum veritatis accusamus deserunt ab est. Unde!
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "400",
-                                            fontSize: "15px",
-                                            color: "#706D6D",
-                                            textAlign: {
-                                                xs: "center",
-                                                sm: "center",
-                                                md: "left",
-                                            },
-                                        }}
-                                    >
-                                       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quod odio consectetur error quae sapiente illum harum iusto neque ipsam veritatis, voluptatem quis cupiditate eius officiis expedita asperiores eveniet nisi quisquam!
-                                    </Typography>
+                                    <Box sx={{ flex: 1 }}></Box>
                                 </Stack>
-                            </Card>
-                            <Box sx={{flex:1}}></Box>
-                            </Stack>
-                        </>
+                            </>
+                        </Box>
                     </Box>
-                </Box>
-            )}
-        </Box>
+                )}
+            </Box>
+            <CourseEnrollFormDialog
+                courseEnrollDialog={courseEnrollDialog}
+                setCourseEnrollDialog={setCourseEnrollDialog}
+                courseList={allCourse}
+            />
+        </>
     );
 };
 

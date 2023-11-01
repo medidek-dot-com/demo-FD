@@ -240,9 +240,8 @@ const currentDay = moment().format("ddd");
                 </Stack>
                 <Avatar
                     src={
-                        numberOfHospitals[0]?.doctorImg
-                            ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                            : "/default.png"
+                        user?.imgurl ? user.imgurl
+                        : "/default.png"
                     }
                     sx={{ width: "32px", height: "32px" }}
                 />
@@ -382,9 +381,8 @@ const currentDay = moment().format("ddd");
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    numberOfHospitals[0]?.doctorImg
-                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                        : "/default.png"
+                                    user?.imgurl ? user.imgurl
+                                    : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />

@@ -439,9 +439,8 @@ const DoctorAppointments = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    numberOfHospitals[0]?.doctorImg
-                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                        : "/default.png"
+                                    user?.imgurl ? user.imgurl
+                                    : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />

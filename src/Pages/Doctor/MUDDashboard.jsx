@@ -160,52 +160,6 @@ const MUDDashboard = () => {
         setInputImage(e.target.files[0]);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (
-            !inputValue.nameOfTheDoctor ||
-            !inputValue.qulification ||
-            !inputValue.speciality ||
-            !inputValue.yearOfExprience ||
-            !inputValue.enterEmailId ||
-            // !inputImage ||
-            !inputValue.enterPhoneNo ||
-            !inputValue.connsultationFee ||
-            !inputValue.consultingTime ||
-            !inputValue.hospitalId
-        ) {
-            setError(true);
-            return false;
-        }
-
-        const data = new FormData();
-        data.append("nameOfTheDoctor", inputValue.nameOfTheDoctor);
-        data.append("qulification", inputValue.qulification);
-        data.append("speciality", inputValue.speciality);
-        data.append("yearOfExprience", inputValue.yearOfExprience);
-        data.append("enterEmailId", inputValue.enterEmailId);
-        data.append("enterPhoneNo", inputValue.enterPhoneNo);
-        data.append("connsultationFee", inputValue.connsultationFee);
-        data.append("consultingTime", inputValue.consultingTime);
-        data.append("hospitalId", inputValue.hospitalId);
-        data.append("location", hospitalLocation);
-        data.append("doctorImg", inputImage);
-
-        // console.log(data);
-        try {
-            const response = await axiosClient.post("/v2/addDoctor", data);
-            console.log(response);
-            if (response.status === "ok") {
-                // navigate(`/master/user/home/${uuid.id}`);
-                setAddDoctorsDialog(false);
-                getDoctorsData();
-                toast.success("Doctor added successfully");
-                return;
-            }
-        } catch (e) {
-            toast.error(e.message);
-        }
-    };
 
     const sizing = {
         margin: { right: 5 },
@@ -267,8 +221,7 @@ const MUDDashboard = () => {
                 </Stack>
                 <Avatar
                     src={
-                        numberOfHospitals[0]?.doctorImg
-                            ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                        user?.imgurl ? user.imgurl
                             : "/default.png"
                     }
                     sx={{ width: "32px", height: "32px" }}
@@ -377,9 +330,8 @@ const MUDDashboard = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    numberOfHospitals[0]?.doctorImg
-                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                        : "/default.png"
+                                    user?.imgurl ? user.imgurl
+                                    : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -394,6 +346,18 @@ const MUDDashboard = () => {
                                 }}
                             >
                                 Dr. {user.nameOfTheDoctor}
+                            </Typography>
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    mx: 1,
+                                    color: "#ffffff",
+                                    fontFamily: "Lato",
+                                    fontWeight: "500",
+                                    fontSize: "15px",
+                                }}
+                            >
+                            DUID :- {user.doctorid}
                             </Typography>
                         </Stack>
                         <Stack

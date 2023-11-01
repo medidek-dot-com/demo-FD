@@ -76,10 +76,10 @@ const CourseDetails = () => {
                     width: {
                         xs: "100%",
                         sm: "100%",
-                        md: "calc(100% - 100px)",
+                        // md: "calc(100% - 100px)",
                     },
                     m: "0px auto",
-                    p: 1,
+                    // p: 1,
                 }}
             >
                 <Stack sx={{ alignItems: "center" }}>
@@ -101,12 +101,14 @@ const CourseDetails = () => {
                     <Box sx={{ width: "100%", position: "relative" }}>
                         <Card
                             sx={{
-                                background: "#DCE3F6",
+                                background: {xs:"none", sm:"none", md:"#DCE3F6"},
                                 width: "100%",
                                 display: "flex",
                                 py: { xs: "0", sm: "0", md: "35px" },
                                 px: { xs: "4px", sm: "0", md: "47px" },
                                 my: 4,
+                                borderRadius:"0",
+                                boxShadow:"none",
                                 flexDirection: {
                                     xs: "column-reverse",
                                     sm: "column-reverse",
@@ -199,6 +201,8 @@ const CourseDetails = () => {
                                         md: "absolute",
                                     },
                                     right: "50px",
+                                    boxShadow: {xs:"none", sm:"none", md:'0px 0px 24px -9px rgba(0,0,0,0.3)'}
+                                    // boxShadow: '0px 0px 24px -9px rgba(0,0,0,0.68)'
                                 }}
                             >
                                 <CourseImageStyle
@@ -250,6 +254,7 @@ const CourseDetails = () => {
                                     sx={{
                                         fontFamily: "Raleway",
                                         fontWeight: 700,
+                                        fontSize:{xs:"", sm:"", md:"20px"},
                                         color: "#383838",
                                         textAlign: {
                                             xs: "center",
@@ -279,7 +284,7 @@ const CourseDetails = () => {
                                                 display: "flex",
                                                 alignItems: "center",
                                                 fontFamily: "Lato",
-                                                fontWeight: "600",
+                                                fontWeight: "500",
                                                 color: "#706D6D",
                                                 lineHeight: "15.6px",
                                                 fontSize: {
@@ -301,7 +306,7 @@ const CourseDetails = () => {
                                                 display: "flex",
                                                 alignItems: "center",
                                                 fontFamily: "Lato",
-                                                fontWeight: "600",
+                                                fontWeight: "500",
                                                 color: "#706D6D",
                                                 fontSize: {
                                                     xs: "13px",
@@ -323,7 +328,7 @@ const CourseDetails = () => {
                                                 display: "flex",
                                                 alignItems: "center",
                                                 fontFamily: "Lato",
-                                                fontWeight: "600",
+                                                fontWeight: "500",
                                                 color: "#706D6D",
                                                 lineHeight: "15.6px",
                                                 fontSize: {
@@ -344,7 +349,7 @@ const CourseDetails = () => {
                                                 display: "flex",
                                                 alignItems: "center",
                                                 fontFamily: "Lato",
-                                                fontWeight: "600",
+                                                fontWeight: "500",
                                                 color: "#706D6D",
                                                 lineHeight: "15.6px",
                                                 fontSize: {

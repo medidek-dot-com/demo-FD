@@ -31,7 +31,8 @@ import styled from "@emotion/styled";
 import MasterNavBar from "../../Components/Master/MasterNavBar";
 import NavBarWrapper from "../../Components/NavBarWrapper/NavBarWrapper";
 import { tab } from "../../Store/tabSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import DuidDialog from "../../Components/Master/DuidDialog";
 
 const WrapperStyle = styled(Box)(({ theme }) => ({
     width: "calc(100% - 100px)",
@@ -87,37 +88,48 @@ const CarouseBox = styled(Stack)`
 
 const MhomePage = () => {
     const { hospital_id } = useParams();
+    const [inputValue, setInputValue] = useState({
+        nameOfTheDoctor:"",
+        qulification:"",
+        speciality:"",
+        yearOfExprience:"",
+        email:"",
+        phone:"",
+        connsultationFee:"",
+        doctorid:"",
+        imgurl:"",
+    });
     const [hospitalData, setHospitalData] = useState({});
     const [doctorsData, setDoctorsData] = useState([]);
     const [staffsData, setStaffsData] = useState([]);
+    const [duidDialog, setDuidDialog] = useState(false);
     const [addDoctorsDialog, setAddDoctorsDialog] = useState(false);
     const [addStaffDialog, setAddStaffDialog] = useState(false);
 
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(tab(0));
     }, []);
 
-    const getHospitalData = async () => {
-        const response = await axiosClient.get("/v2/masterData");
-        if (response.status === "ok") {
-            setHospitalData(response.result.user);
-        }
-    };
+    // const getHospitalData = async () => {
+    //     const response = await axiosClient.get("/v2/masterData");
+    //     if (response.status === "ok") {
+    //         setHospitalData(response.result.user);
+    //     }
+    // };
 
     const getDoctorsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getDoctorsforHospital/${hospital_id}`
+            `/v2/getAlldoctor/${hospital_id}`
         );
-
         if (response.status === "ok") {
             return setDoctorsData(response.result);
         }
     };
-    console.log(hospitalData);
     const getStaffData = async () => {
         const response = await axiosClient.get(`/v2/getstaff/${hospital_id}`);
         console.log(response);
@@ -127,7 +139,7 @@ const MhomePage = () => {
     };
 
     useEffect(() => {
-        getHospitalData();
+        // getHospitalData();
         getDoctorsData();
         getStaffData();
         // getStaffData();DoctorsData();
@@ -173,9 +185,8 @@ const MhomePage = () => {
                             <Box>
                                 <img
                                     src={
-                                        hospitalData.img
-                                            ? `${baseURL}/uploads/Hospital/HospitalImage/${hospitalData.img}`
-                                            : "/default.png"
+                                        user?.imgurl ? user.imgurl
+                                    : "/default.png"
                                     }
                                     alt="doctor-img"
                                     style={{
@@ -197,7 +208,7 @@ const MhomePage = () => {
                                         color: "#383838",
                                     }}
                                 >
-                                    {hospitalData.nameOfhospitalOrClinic}
+                                    {user?.nameOfhospitalOrClinic}
                                     {/* Wokhardt Hospital, Nagpur. */}
                                 </Typography>
                                 <HospitalDetailsStyle component={"p"}>
@@ -210,9 +221,9 @@ const MhomePage = () => {
                                             height: "33px",
                                         }}
                                     />
-                                    {hospitalData.enterFullAddress} &nbsp;
-                                    {hospitalData.location} &nbsp;
-                                    {hospitalData.landmark}
+                                    {user?.enterFullAddress} &nbsp;
+                                    {user?.location} &nbsp;
+                                    {user?.landmark}
                                 </HospitalDetailsStyle>
                                 <Rating
                                     name="read-only"
@@ -293,7 +304,7 @@ const MhomePage = () => {
                                 <Box>
                                     <DoctorCardStyle
                                         onClick={() =>
-                                            setAddDoctorsDialog(true)
+                                            setDuidDialog(true)
                                         }
                                         sx={{ border: "1px solid #8d8989" }}
                                     >
@@ -317,7 +328,7 @@ const MhomePage = () => {
                                         my={1}
                                         sx={{
                                             fontWeight: 600,
-                                            fontFamily: "Lato",
+                                            fontFamily: "Raleway",
                                             fontSize: {
                                                 xs: "0.875rem",
                                                 sm: "0.875rem",
@@ -336,8 +347,8 @@ const MhomePage = () => {
                                                 <DoctorCardStyle>
                                                     <img
                                                         src={
-                                                            doctor.doctorImg
-                                                                ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctor.doctorImg}`
+                                                            doctor.imgurl 
+                                                                ? doctor.imgurl
                                                                 : "/default.png"
                                                         }
                                                         alt="img"
@@ -600,8 +611,16 @@ const MhomePage = () => {
                         </Box>
                     </Box>
                     {/* Add Doctor Card End Here */}
+                    <DuidDialog
+                    duidDialog={duidDialog}
+                    setInputValue={setInputValue}
+                    setDuidDialog={setDuidDialog}
+                    setAddDoctorsDialog={setAddDoctorsDialog}
+                    />
                     <AddDoctorsDialog
                         getDoctorsData={getDoctorsData}
+                        inputValue={inputValue}
+                    setInputValue={setInputValue}
                         addDoctorsDialog={addDoctorsDialog}
                         setAddDoctorsDialog={setAddDoctorsDialog}
                         hospitalLocation={hospitalData.enterFullAddress}

@@ -137,11 +137,13 @@ const MsignUp = () => {
             setError(true);
             return false;
         }
+        email = email.trim();
         if (phone.length != 10) {
             setDisableButton(false);
             setError(true);
             return setInvalidPhone(true);
         }
+        
         if (!validator.isEmail(email)) {
             setDisableButton(false);
             setError(true);
@@ -149,7 +151,6 @@ const MsignUp = () => {
         }
         setDisableButton(true);
         phone = phone.trim();
-        email = email.trim();
 
         try {
             const response = await axiosClient.post("/v2/isUserExist", {
@@ -198,8 +199,16 @@ const MsignUp = () => {
             })
             .catch((error) => {
                 console.log(error?.code);
+                console.log(error?.message);
                 if (error?.code === "auth/captcha-check-failed") {
+                    toast.error("Something went wrong");
                     return;
+                } else if (
+                    error?.message ===
+                    "reCAPTCHA client element has been removed: 0"
+                ) {
+                    toast.error("Something went wrong");
+                    setDisableButton(false);
                 } else {
                     toast.error(error.code);
                     setDisableButton(false);
@@ -260,8 +269,6 @@ const MsignUp = () => {
             couter > 0 && setInterval(() => setCouter(couter - 1), 1000);
         return () => clearInterval(timer);
     }, [couter]);
-
-   
 
     // const handleSignUp = async (e) => {
     //     e.preventDefault();
@@ -675,7 +682,7 @@ const MsignUp = () => {
                                 justifyContent: "center",
                             }}
                         >
-                            <Box sx={{ width: "100%", textAlign:'center' }}>
+                            <Box sx={{ width: "100%", textAlign: "center" }}>
                                 <OTPInput
                                     value={OTP}
                                     onChange={setOTP}
@@ -708,9 +715,7 @@ const MsignUp = () => {
                                     )) ||
                                         `Resend OTP in ${couter} seconds`}
                                 </Typography>
-                                
                             </Box>
-                           
                         </Box>
                         <Box
                             component="span"

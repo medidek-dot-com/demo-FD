@@ -21,7 +21,7 @@ import Footer from "../Components/Footer/Footer";
 import { axiosClient } from "../Utils/axiosClient";
 import { useDispatch } from "react-redux";
 import { tab } from "../Store/tabSlice";
-import CoursesSkeleton from '../Components/Doctor/Skeleton/CoursesSkeleton'
+import CoursesSkeleton from "../Components/Doctor/Skeleton/CoursesSkeleton";
 const SearchFeildStyle = styled(TextField)({
     "& .css-1kzw815-MuiInputBase-root-MuiOutlinedInput-root": {
         borderRadius: "25px",
@@ -33,6 +33,8 @@ const CourseDiscriptionTypography = styled(Box)`
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    font-family: Lato;
+    font-weight: 500;
 `;
 const CourseImageStyle = styled("img")(({ theme }) => ({
     width: "259px",
@@ -185,6 +187,9 @@ const MedicalCourses = () => {
                                                     textDecoration: "none",
                                                     display: "inline",
                                                     zIndex: "999",
+                                                    fontFamily: "Lato",
+                                                    fontSize: "15px",
+                                                    fontWeight: "600",
                                                 }}
                                                 to={`/medical-course/${val._id}/details`}
                                             >
@@ -357,15 +362,15 @@ const MedicalCourses = () => {
                         );
                     })}
 
-                    {
-                        loading && <>
-                        <CoursesSkeleton/>
-                        <CoursesSkeleton/>
-                        <CoursesSkeleton/>
-                        <CoursesSkeleton/>
-                        <CoursesSkeleton/>
+                    {loading && (
+                        <>
+                            <CoursesSkeleton />
+                            <CoursesSkeleton />
+                            <CoursesSkeleton />
+                            <CoursesSkeleton />
+                            <CoursesSkeleton />
                         </>
-                    }
+                    )}
                 </Stack>
             </Box>
             <Footer />

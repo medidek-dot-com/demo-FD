@@ -72,11 +72,11 @@ const EditHospitalProfile = () => {
     const { user } = useSelector((state) => state.auth);
     const { hospital_id } = useParams();
     const [inputValue, setInputValue] = useState({
-        nameOfhospitalOrClinic: "",
-        hospitalType: "",
-        location: "",
-        landmark: "",
-        enterFullAddress: "",
+        nameOfhospitalOrClinic: user?.nameOfhospitalOrClinic,
+        hospitalType: user?.hospitalType,
+        location: user?.location,
+        landmark: user?.landmark,
+        enterFullAddress: user?.enterFullAddress,
     });
 
     const [inputImage, setInputImage] = useState("");
@@ -87,22 +87,23 @@ const EditHospitalProfile = () => {
     const [imageValues, setImageValues] = useState("");
     const dispatch = useDispatch();
 
+
     useEffect(() => {
         dispatch(tab(null));
     }, []);
 
-    const getHospitalData = async () => {
-        const response = await axiosClient.get("/v2/masterData");
-        console.log(response.result.user);
-        if (response.status === "ok") {
-            setInputValue(response.result.user);
-            setImageValues(response.result.user.img);
-        }
-    };
+    // const getHospitalData = async () => {
+    //     const response = await axiosClient.get("/v2/masterData");
+    //     console.log(response.result.user);
+    //     if (response.status === "ok") {
+    //         setInputValue(response.result.user);
+    //         setImageValues(response.result.user.img);
+    //     }
+    // };
 
-    useEffect(() => {
-        getHospitalData();
-    }, []);
+    // useEffect(() => {
+    //     getHospitalData();
+    // }, []);
 
     useEffect(() => {
         if (inputImage) {
@@ -142,11 +143,11 @@ const EditHospitalProfile = () => {
         formData.append("enterFullAddress", inputValue.enterFullAddress);
         formData.append("location", inputValue.location);
         formData.append("landmark", inputValue.landmark);
-        formData.append("img", inputImage || imageValues);
+        formData.append("image", inputImage || imageValues);
 
         try {
             const response = await axiosClient.put(
-                `/v2/master/${hospital_id}`,
+                `/v2/master/${user?._id}`,
                 formData
             );
             console.log(response);
@@ -227,8 +228,8 @@ const EditHospitalProfile = () => {
                                 <Avatar
                                     src={
                                         (preview && preview) ||
-                                        (user?.img &&
-                                            `${baseURL}/uploads/Hospital/HospitalImage/${user?.img}`) ||
+                                        (user?.imgurl &&
+                                            user.imgurl) ||
                                         "/default.png"
                                     }
                                     alt="img"

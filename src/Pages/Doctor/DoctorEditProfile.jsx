@@ -16,6 +16,8 @@ import {
     Typography,
     FormLabel,
     IconButton,
+    Select,
+    MenuItem,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import styled from "@emotion/styled";
@@ -37,7 +39,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { logout } from "../../Store/authSlice";
+import { logout, updateUserData } from "../../Store/authSlice";
 import { KEY_ACCESS_TOKEN, removeItem } from "../../Utils/localStorageManager";
 import { AiOutlineMenu } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
@@ -140,14 +142,14 @@ const DoctorEditProfile = () => {
         email: user?.email,
         phone: user?.phone,
         connsultationFee: user?.connsultationFee,
-        consultingTime: user?.consultingTime,
-        location: user?.location,
-        hospitalId: hospital_id,
+       description: user?.description
+       
     });
 
     const [inputImage, setInputImage] = useState("");
     const [preview, setPreview] = useState("");
     const [disableButton, setDisableButton] = useState(false);
+    // const dispatch = useDispatch();
 
     useEffect(() => {
         if (inputImage) {
@@ -173,11 +175,9 @@ const DoctorEditProfile = () => {
             !inputValue.speciality ||
             !inputValue.yearOfExprience ||
             !inputValue.email ||
-            // !inputImage ||
             !inputValue.phone ||
             !inputValue.connsultationFee ||
-            !inputValue.consultingTime ||
-            !inputValue.hospitalId
+            !inputValue.description
         ) {
             setError(true);
             return false;
@@ -188,23 +188,22 @@ const DoctorEditProfile = () => {
         data.append("qulification", inputValue.qulification);
         data.append("speciality", inputValue.speciality);
         data.append("yearOfExprience", inputValue.yearOfExprience);
-        data.append("enterEmailId", inputValue.email);
-        data.append("enterPhoneNo", inputValue.phone);
+        data.append("email", inputValue.email);
+        data.append("phone", inputValue.phone);
         data.append("connsultationFee", inputValue.connsultationFee);
-        data.append("consultingTime", inputValue.consultingTime);
-        data.append("hospitalId", inputValue.hospitalId);
-        data.append("location", hospitalLocation);
-        data.append("doctorImg", inputImage);
+        data.append("description", inputValue.description);
+        data.append("image", inputImage || user?.imgurl);
 
         // console.log(data);
         try {
-            const response = await axiosClient.post("/v2/addDoctor", data);
-            console.log(response);
+            const response = await axiosClient.put(`/v2/editDoctorfile/${user?._id}`, data);
+            console.log(response.result);
             if (response.status === "ok") {
                 // navigate(`/master/user/home/${uuid.id}`);
-                setAddDoctorsDialog(false);
-                getDoctorsData();
+                dispatch(updateUserData(response.result));
+                navigate(`/doctor/courses/${user?._id}`)
                 toast.success("Doctor added successfully");
+
                 return;
             }
         } catch (e) {
@@ -212,19 +211,11 @@ const DoctorEditProfile = () => {
         }
     };
 
-    const sizing = {
-        margin: { right: 5 },
-        width: 308,
-        height: 237,
-        legend: { hidden: true },
-    };
 
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
         dispatch(logout());
         removeItem(KEY_ACCESS_TOKEN);
-        // navigate('/')
-        // window.location.href = '/master/signin'
         window.location.replace("/");
     };
 
@@ -281,8 +272,8 @@ const DoctorEditProfile = () => {
                 </Stack>
                 <Avatar
                     src={
-                        numberOfHospitals[0]?.doctorImg
-                            ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                        user?.imgurl
+                            ? user.imgurl
                             : "/default.png"
                     }
                     sx={{ width: "32px", height: "32px" }}
@@ -425,8 +416,8 @@ const DoctorEditProfile = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    numberOfHospitals[0]?.doctorImg
-                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                                    user?.imgurl
+                                        ? user.imgurl
                                         : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
@@ -441,7 +432,7 @@ const DoctorEditProfile = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {user.nameOfTheDoctor}
+                                Dr. {user?.nameOfTheDoctor}
                             </Typography>
                         </Stack>
                         <Stack
@@ -712,12 +703,14 @@ const DoctorEditProfile = () => {
                                         direction="row"
                                         sx={{ justifyContent: "space-between" }}
                                     >
-                                        <Stack direction={"row"} spacing={{xs:0.8, sm:1, md:3}} sx={{}}>
+                                        <Stack
+                                            direction={"row"}
+                                            spacing={{ xs: 0.8, sm: 1, md: 3 }}
+                                            sx={{}}
+                                        >
                                             <img
                                                 src={
-                                                    preview
-                                                        ? preview
-                                                        : "/default.png"
+                                                    preview ? preview : "/default.png" ||  user?.imgurl ? user.imgurl : "/default.png"
                                                 }
                                                 alt="user"
                                                 width="60"
@@ -725,14 +718,15 @@ const DoctorEditProfile = () => {
                                                 style={{ borderRadius: "50%" }}
                                             />
 
-                                            <Box sx={{display:'flex', flexDirection:'column'}}>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                }}
+                                            >
                                                 <Typography
                                                     my={1}
-                                                    color={
-                                                        err && !inputImage
-                                                            ? "red"
-                                                            : "#706D6D"
-                                                    }
+                                                    color="#706D6D"
                                                     lineHeight="20px"
                                                     sx={{
                                                         fontFamily: "Lato",
@@ -741,9 +735,9 @@ const DoctorEditProfile = () => {
                                                         width: "120.73px",
                                                     }}
                                                 >
-                                                    {err && inputImage
-                                                        ? "Please Pick a photo from your computer"
-                                                        : "Pick a photo from your computer"}
+                                                    
+                                                        
+                                                        Pick a photo from your computer
                                                 </Typography>
 
                                                 <FormLabel
@@ -752,7 +746,11 @@ const DoctorEditProfile = () => {
                                                         fontWeight: "600",
                                                         color: "#1F51C6",
                                                         lineHeight: "14.4px",
-                                                        fontSize:{xs:"0.75rem", sm:"0.75rem", md:"0.875rem"}
+                                                        fontSize: {
+                                                            xs: "0.75rem",
+                                                            sm: "0.75rem",
+                                                            md: "0.875rem",
+                                                        },
                                                     }}
                                                 >
                                                     Change Profile photo
@@ -762,7 +760,7 @@ const DoctorEditProfile = () => {
                                                     id="hospitalImg"
                                                     name="photo"
                                                     style={{ display: "none" }}
-                                                    onChange={getUserImage}
+                                                    onChange={(e)=>getUserImage(e)}
                                                 />
                                             </Box>
                                         </Stack>
@@ -786,7 +784,7 @@ const DoctorEditProfile = () => {
                                                         md: "250px",
                                                     },
                                                     // backgroundColor:'blue',
-                                                    p:0,
+                                                    p: 0,
                                                     ":hover": {
                                                         background: "none",
                                                     },
@@ -828,7 +826,7 @@ const DoctorEditProfile = () => {
                                                 value={
                                                     inputValue.nameOfTheDoctor
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -851,7 +849,7 @@ const DoctorEditProfile = () => {
                                                     "Please enter your qualification"
                                                 }
                                                 value={inputValue.qulification}
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -874,7 +872,7 @@ const DoctorEditProfile = () => {
                                                     "Please enter specialty"
                                                 }
                                                 value={inputValue.speciality}
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -899,7 +897,7 @@ const DoctorEditProfile = () => {
                                                 value={
                                                     inputValue.yearOfExprience
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -922,7 +920,7 @@ const DoctorEditProfile = () => {
                                                     "Please enter your email"
                                                 }
                                                 value={inputValue.email}
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -945,7 +943,7 @@ const DoctorEditProfile = () => {
                                                     "Please enter your phone number"
                                                 }
                                                 value={inputValue.phone}
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
 
@@ -997,197 +995,221 @@ const DoctorEditProfile = () => {
                                                 value={
                                                     inputValue.connsultationFee
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
 
-                                        <StackStyle>
+                                        {/* <StackStyle>
                                             <LabelStyle htmlFor="category1">
                                                 Category 1
                                             </LabelStyle>
-                                            <select
-                                                placeholder="Enter Category"
-                                                value={categoryValue}
-                                                onChange={(e) =>
-                                                    setCategory1Value(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                name="category1"
-                                                id="category1"
-                                                style={{
-                                                    height: "38px",
-                                                    border: "1px solid #D9D9D9",
-                                                    borderRadius: "5px",
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                sx={{
+                                                    width: {
+                                                        xs: "100%",
+                                                        sm: "100%",
+                                                        md: "262.93px",
+                                                    },
+                                                    height: "40px",
                                                     fontFamily: "Lato",
-                                                    fontWeight: "500",
+                                                    fontWeight: "semibold",
                                                     fontSize: "1rem",
+                                                    borderRadius: "5px",
                                                 }}
+                                                placeholder="Choose Slot Duration"
+                                                // value={view}
+                                                onChange={(e) =>
+                                                    setView(e.target.value)
+                                                }
                                             >
-                                                {/* <option value=""></option> */}
-                                                <option value="1">
-                                                    Enter Category
-                                                </option>
-                                                <option value="2">
-                                                    Category 1
-                                                </option>
-                                                <option value="3">
-                                                    Category 2
-                                                </option>
-                                                <option value="4">
-                                                    Category 3
-                                                </option>
-                                                <option value="4">
-                                                    Category 4
-                                                </option>
-                                            </select>
+                                                <MenuItem
+                                                    value="Weekly view"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Choose Slot Duration
+                                                </MenuItem>
+                                                <MenuItem
+                                                    value="Calandar View"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Calandar View
+                                                </MenuItem>
+                                            </Select>
                                         </StackStyle>
                                         <StackStyle>
                                             <LabelStyle htmlFor="category2">
                                                 Category 2
                                             </LabelStyle>
-                                            <select
-                                                placeholder="Enter Category"
-                                                value={categoryValue}
-                                                onChange={(e) =>
-                                                    setCategory1Value(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                name="category2"
-                                                id="category2"
-                                                style={{
-                                                    height: "38px",
-                                                    border: "1px solid #D9D9D9",
-                                                    borderRadius: "5px",
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                sx={{
+                                                    width: {
+                                                        xs: "100%",
+                                                        sm: "100%",
+                                                        md: "262.93px",
+                                                    },
+                                                    height: "40px",
                                                     fontFamily: "Lato",
-                                                    fontWeight: "500",
+                                                    fontWeight: "semibold",
                                                     fontSize: "1rem",
+                                                    borderRadius: "5px",
                                                 }}
+                                                placeholder="Choose Slot Duration"
+                                                // value={view}
+                                                onChange={(e) =>
+                                                    setView(e.target.value)
+                                                }
                                             >
-                                                {/* <option value=""></option> */}
-                                                <option value="1">
-                                                    Enter Category
-                                                </option>
-                                                <option value="2">
-                                                    Category 1
-                                                </option>
-                                                <option value="3">
-                                                    Category 2
-                                                </option>
-                                                <option value="4">
-                                                    Category 3
-                                                </option>
-                                                <option value="4">
-                                                    Category 4
-                                                </option>
-                                            </select>
+                                                <MenuItem
+                                                    value="Weekly view"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Choose Slot Duration
+                                                </MenuItem>
+                                                <MenuItem
+                                                    value="Calandar View"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Calandar View
+                                                </MenuItem>
+                                            </Select>
                                         </StackStyle>
                                         <StackStyle>
                                             <LabelStyle htmlFor="category3">
                                                 Category 3
                                             </LabelStyle>
-                                            <select
-                                                placeholder="Enter Category"
-                                                value={categoryValue}
-                                                onChange={(e) =>
-                                                    setCategory1Value(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                name="category3"
-                                                id="category1"
-                                                style={{
-                                                    height: "38px",
-                                                    border: "1px solid #D9D9D9",
-                                                    borderRadius: "5px",
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                sx={{
+                                                    width: {
+                                                        xs: "100%",
+                                                        sm: "100%",
+                                                        md: "262.93px",
+                                                    },
+                                                    height: "40px",
                                                     fontFamily: "Lato",
-                                                    fontWeight: "500",
+                                                    fontWeight: "semibold",
                                                     fontSize: "1rem",
+                                                    borderRadius: "5px",
                                                 }}
+                                                placeholder="Choose Slot Duration"
+                                                // value={view}
+                                                onChange={(e) =>
+                                                    setView(e.target.value)
+                                                }
                                             >
-                                                {/* <option value=""></option> */}
-                                                <option value="1">
-                                                    Enter Category
-                                                </option>
-                                                <option value="2">
-                                                    Category 1
-                                                </option>
-                                                <option value="3">
-                                                    Category 2
-                                                </option>
-                                                <option value="4">
-                                                    Category 3
-                                                </option>
-                                                <option value="4">
-                                                    Category 4
-                                                </option>
-                                            </select>
+                                                <MenuItem
+                                                    value="Weekly view"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Choose Slot Duration
+                                                </MenuItem>
+                                                <MenuItem
+                                                    value="Calandar View"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Calandar View
+                                                </MenuItem>
+                                            </Select>
                                         </StackStyle>
                                         <StackStyle>
                                             <LabelStyle htmlFor="category4">
                                                 Category 4
                                             </LabelStyle>
-                                            <select
-                                                placeholder="Enter Category"
-                                                value={categoryValue}
-                                                onChange={(e) =>
-                                                    setCategory1Value(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                name="category4"
-                                                id="category1"
-                                                style={{
-                                                    height: "38px",
-                                                    border: "1px solid #D9D9D9",
-                                                    borderRadius: "5px",
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                sx={{
+                                                    width: {
+                                                        xs: "100%",
+                                                        sm: "100%",
+                                                        md: "262.93px",
+                                                    },
+                                                    height: "40px",
                                                     fontFamily: "Lato",
-                                                    fontWeight: "500",
+                                                    fontWeight: "semibold",
                                                     fontSize: "1rem",
+                                                    borderRadius: "5px",
                                                 }}
+                                                placeholder="Choose Slot Duration"
+                                                // value={view}
+                                                onChange={(e) =>
+                                                    setView(e.target.value)
+                                                }
                                             >
-                                                {/* <option value=""></option> */}
-                                                <option value="1">
-                                                    Enter Category
-                                                </option>
-                                                <option value="2">
-                                                    Category 1
-                                                </option>
-                                                <option value="3">
-                                                    Category 2
-                                                </option>
-                                                <option value="4">
-                                                    Category 3
-                                                </option>
-                                                <option value="4">
-                                                    Category 4
-                                                </option>
-                                            </select>
-                                        </StackStyle>
+                                                <MenuItem
+                                                    value="Weekly view"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Choose Slot Duration
+                                                </MenuItem>
+                                                <MenuItem
+                                                    value="Calandar View"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "semibold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    Calandar View
+                                                </MenuItem>
+                                            </Select>
+                                        </StackStyle> */}
                                         <StackStyle>
-                                            <LabelStyle htmlFor="discreption">
+                                            <LabelStyle htmlFor="description">
                                                 Enter Description
                                             </LabelStyle>
                                             <TextFieldStyle
-                                                id="discreption"
-                                                name="discreption"
+                                                id="description"
+                                                name="description"
                                                 fullWidth
                                                 placeholder="Enter Doctor’s Description"
                                                 error={
                                                     err &&
-                                                    !inputValue.consultingTime &&
+                                                    !inputValue.description &&
                                                     true
                                                 }
                                                 helperText={
                                                     err &&
-                                                    !inputValue.consultingTime &&
-                                                    "Please enter OPD Hrs"
+                                                    !inputValue.description &&
+                                                    "Please enter description"
                                                 }
                                                 value={
-                                                    inputValue.consultingTime
+                                                    inputValue.description
                                                 }
-                                                onChange={handleChange}
+                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
                                         {/* <StackStyle>
@@ -1214,7 +1236,14 @@ const DoctorEditProfile = () => {
                                             />
                                         </StackStyle> */}
                                     </Box>
-                                    <Stack spacing={{xs:'8px', sm:'8px', md:'10px'}} sx={{ mt: 2 }}>
+                                    <Stack
+                                        spacing={{
+                                            xs: "8px",
+                                            sm: "8px",
+                                            md: "10px",
+                                        }}
+                                        sx={{ mt: 2 }}
+                                    >
                                         <LoadingButton
                                             size="small"
                                             fullWidth
@@ -1228,7 +1257,7 @@ const DoctorEditProfile = () => {
                                                 display: "block",
                                                 width: "100%",
                                                 boxShadow: "none",
-                                                borderRadius:'53px',
+                                                borderRadius: "53px",
                                                 ":hover": {
                                                     boxShadow: "none",
                                                 },
@@ -1261,7 +1290,7 @@ const DoctorEditProfile = () => {
                                                 fontFamily: "Lato",
                                                 fontWeight: "700",
                                                 fontSize: "1.125rem",
-                                                borderRadius:'53px',
+                                                borderRadius: "53px",
                                                 ":hover": {
                                                     boxShadow: "none",
                                                     borderColor: "#D9D9D8",

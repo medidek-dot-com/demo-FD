@@ -21,7 +21,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import { toast } from "react-toastify";
 import { LoadingButton } from "@mui/lab";
 import { baseURL } from "../../Utils/axiosClient";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateUserData } from "../../Store/authSlice";
 import { tab } from "../../Store/tabSlice";
 
@@ -70,6 +70,7 @@ const LabelStyle = styled("label")({
 const MasterUser = () => {
     const navigate = useNavigate();
     const { hospital_id } = useParams();
+
     const [inputValue, setInputValue] = useState({
         nameOfhospitalOrClinic: "",
         hospitalType: "",
@@ -83,6 +84,7 @@ const MasterUser = () => {
     const [err, setError] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
     const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(tab(null));
@@ -125,18 +127,18 @@ const MasterUser = () => {
         formData.append("enterFullAddress", inputValue.enterFullAddress);
         formData.append("location", inputValue.location);
         formData.append("landmark", inputValue.landmark);
-        formData.append("img", inputImage);
+        formData.append("image", inputImage);
 
         try {
             const response = await axiosClient.put(
-                `/v2/master/${hospital_id}`,
+                `/v2/master/${user?._id}`,
                 formData
             );
             console.log(response.result);
             if (response.status === "ok") {
                 dispatch(updateUserData(response.result));
                 toast.success("Profile updated successfully");
-                navigate(`/master/user/home/${hospital_id}`);
+                navigate(`/master/user/home/${user?._id}`);
             }
         } catch (error) {
             toast.error(error.message);

@@ -231,8 +231,7 @@ const DoctorCourses = () => {
                 </Stack>
                 <Avatar
                     src={
-                        numberOfHospitals[0]?.doctorImg
-                            ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
+                        user?.imgurl ? user.imgurl
                             : "/default.png"
                     }
                     sx={{ width: "32px", height: "32px" }}
@@ -358,9 +357,8 @@ const DoctorCourses = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    numberOfHospitals[0]?.doctorImg
-                                        ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                                        : "/default.png"
+                                    user?.imgurl ? user.imgurl
+                            : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -665,7 +663,7 @@ const DoctorCourses = () => {
                                 <Card
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/course/details/${user._id}/${val._id}`
+                                            `/doctor/course/details/${user._id}/${val._id}`, {state : allCourse}
                                         )
                                     }
                                     key={i}

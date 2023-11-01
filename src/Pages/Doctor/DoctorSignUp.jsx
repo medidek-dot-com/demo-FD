@@ -187,6 +187,8 @@ const DoctorSignUp = () => {
             setError(true);
             return false;
         }
+        email = email.trim();
+
         if (phone.length != 10) {
             setDisableButton(false);
             setError(true);
@@ -200,7 +202,6 @@ const DoctorSignUp = () => {
         setDisableButton(true);
 
         phone = phone.trim();
-        email = email.trim();
 
 
         try {
