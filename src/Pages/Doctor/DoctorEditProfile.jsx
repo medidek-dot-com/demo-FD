@@ -353,6 +353,9 @@ const DoctorEditProfile = () => {
                             fontSize: "1.5rem",
                             textTransform: "none",
                             lineHeight: "28.8px",
+                            ':hover':{
+                                background: "#ffffff",
+                                }
                         }}
                     >
                         Edit Profile
@@ -433,6 +436,18 @@ const DoctorEditProfile = () => {
                                 }}
                             >
                                 Dr. {user?.nameOfTheDoctor}
+                            </Typography>
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    mx: 1,
+                                    color: "#ffffff",
+                                    fontFamily: "Lato",
+                                    fontWeight: "500",
+                                    fontSize: "15px",
+                                }}
+                            >
+                            DUID :- {user.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -710,7 +725,7 @@ const DoctorEditProfile = () => {
                                         >
                                             <img
                                                 src={
-                                                    preview ? preview : "/default.png" ||  user?.imgurl ? user.imgurl : "/default.png"
+                                                    preview ? preview :  user?.imgurl ? user.imgurl : "/default.png"  
                                                 }
                                                 alt="user"
                                                 width="60"

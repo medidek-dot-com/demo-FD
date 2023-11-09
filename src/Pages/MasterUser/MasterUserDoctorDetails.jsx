@@ -48,7 +48,7 @@ const MasterUserDoctorDetails = () => {
 
     const getDoctorDetails = async () => {
         const response = await axiosClient.get(
-            `/v2/getSingleDoctor/${doctor_id}`
+            `/v2/singledoctor/${doctor_id}`
         );
         setDoctorsDetails(response.result);
         setReviews(response.result.reviews);
@@ -76,12 +76,12 @@ const MasterUserDoctorDetails = () => {
                     doctorDetails={doctorDetails}
                 />
 
-                {/* <Typography
+                <Typography
                     my={2}
-                    sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+                    sx={{ display: { xs: "none", sm: "none", md: "block" }, fontFamily:"Raleway", fontWeight:"600", fontSize:"1.375rem" }}
                 >
                     Reviews
-                </Typography> */}
+                </Typography>
                 <Box
                     sx={{
                         display: "flex",
@@ -105,7 +105,7 @@ const MasterUserDoctorDetails = () => {
                                 },
                             }}
                         >
-                            {/* <Card
+                             <Card
                                 sx={{
                                     display: "flex",
                                     justifyContent: "space-between",
@@ -130,12 +130,14 @@ const MasterUserDoctorDetails = () => {
                                         }}
                                     />
                                     <Box ml={2}>
-                                        <Typography>
+                                        <Typography sx={{fontFamily:"Raleway", fontWeight:"500", fontSize:"1.191rem"}}>
                                             Ashwini Hingolikar
                                         </Typography>
                                         <Typography
                                             sx={{
                                                 color: "#706D6D",
+                                                fontFamily:"Lato",
+                                                fontWeight:"500",
                                                 fontSize: "0.9rem",
                                             }}
                                         >
@@ -147,7 +149,7 @@ const MasterUserDoctorDetails = () => {
                                     <Rating value={5} readOnly />
                                 </Box>
                             </Card>
-                            <Card
+                            {/* <Card
                                 sx={{
                                     display: "flex",
                                     justifyContent: "space-between",
@@ -329,6 +331,7 @@ const MasterUserDoctorDetails = () => {
                             </Card> */}
                         </Box>
                         {/* For Mobile View */}
+                        <Box sx={{display:{xs:"block", sm:"block", md:"none"}}}>
                         <Card
                             onClick={() => setAboutDropDown(!aboutDropDown)}
                             sx={{
@@ -377,28 +380,7 @@ const MasterUserDoctorDetails = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                                Dr. Shashwat Magarkar is an Oral and
-                                Maxillofacial Surgeon working at Smilekraft,
-                                Dhantoli. He has a keen interest in Dental
-                                Implantology, Wisdom tooth Extraction, Fixed and
-                                Removable dentures, Root canal Treatment,
-                                Cosmetic Dentistry, Orthodontic treatment. He
-                                has specialized in Orthognathic Surgery, Cleft
-                                lip and palate surgery, Facial trauma surgery.
-                                He has received a Gold Medal in Oral and
-                                Maxillofacial Surgery. He has completed his
-                                graduation from Government Dental College &
-                                Hospital, Mumbai in 2007. Upon graduating from
-                                dental school, he completed Post-graduation in
-                                Oral & Maxillofacial Surgery in 2011. He also
-                                completed a 1 year super specialty fellowship in
-                                Cleft and Craniofacial Surgery at Amrita
-                                Institute of Medical Sciences, Kochi. With his
-                                intrinsic goal and vision to provide a painless
-                                but comprehensive dental experience to his
-                                patients, Dr. Shashwat is always on the lookout
-                                for new and improved technology that would aid
-                                him in achieving this vision. [shrink]
+                                {doctorDetails.description}
                             </Typography>
                         </Card>
                         <Card
@@ -499,6 +481,7 @@ const MasterUserDoctorDetails = () => {
                             ) : (
                                 <Typography>hello</Typography>
                             )}
+                        </Box>
                         </Box>
                         {/* Mobile View End  */}
 

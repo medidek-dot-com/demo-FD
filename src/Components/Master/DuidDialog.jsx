@@ -75,6 +75,7 @@ const DuidDialog = ({
                 // navigate(`/master/user/home/${uuid.id}`);
                 setDisableButton(false);
                 setAddDoctorsDialog(true);
+                setDuidDialog(false);
                 setInputValue(response.result);
                 return;
             }

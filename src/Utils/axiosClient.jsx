@@ -71,7 +71,6 @@
 //     return Promise.reject(error);
 // });
 
-
 //gpt code
 
 import axios from "axios";
@@ -82,14 +81,12 @@ import {
     setItem,
 } from "./localStorageManager";
 
-
 // export const axiosClient = axios.create({
 //     baseURL: "https://beyondblack.agency",
 //     // withCredentials: true,
 // });
 
 // export const baseURL = "https://beyondblack.agency";
-
 
 // export const axiosClient = axios.create({
 //     baseURL: "http://localhost:5001",
@@ -100,12 +97,11 @@ import {
 // export const baseURL = "http://localhost:5001";
 
 export const axiosClient = axios.create({
-        baseURL: 'https://medidekdemobackend.onrender.com',
-        // withCredentials: true
-    })
-    
-    export const baseURL = 'https://medidekdemobackend.onrender.com'
+    baseURL: "https://medidekdemobackend.onrender.com",
+    // withCredentials: true
+});
 
+export const baseURL = "https://medidekdemobackend.onrender.com";
 
 axiosClient.interceptors.request.use((request) => {
     const accessToken = getItem(KEY_ACCESS_TOKEN);
@@ -119,15 +115,15 @@ axiosClient.interceptors.response.use(
         if (data.status === "ok") {
             return data;
         }
-console.log(respon.config)
+        // console.log(respon.config)
         const originalRequest = respon.config;
         const statusCode = data.statusCode;
 
-        if (statusCode === 401 && data.message === 'Invalid access key') {
+        if (statusCode === 401 && data.message === "Invalid access key") {
             // originalRequest._retry = true;
-           
+
             removeItem(KEY_ACCESS_TOKEN);
-                window.location.replace("/");
+            window.location.replace("/");
             // try {
             //     const refreshResponse = await axios.get(`${baseURL}/v2/refresh`, {
             //         withCredentials: true,

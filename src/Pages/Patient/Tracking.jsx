@@ -15,6 +15,8 @@ import styled from "@emotion/styled";
 import UpcomingPetientUserAppointment from "./UpcomingPetientUserAppointment";
 import { axiosClient } from "../../Utils/axiosClient";
 import { tab } from "../../Store/tabSlice";
+import CompletedPatientUserAppointment from "../../Components/Patient/CompletedPatientUserAppointment";
+import MissedPatientUserAppointment from "../../Components/Patient/MissedPatientUserAppointment";
 
 const AutocompleteStyle = styled(Autocomplete)({
     "& input::placeholder": {
@@ -44,6 +46,7 @@ const Tracking = () => {
         []
     );
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const checkUser = () => {
         if (!isLoggedIn) {
@@ -53,6 +56,8 @@ const Tracking = () => {
             return false;
         } else {
             getPendingAppointmentsData();
+            getCompleteAppointmentsData();
+            getMissedAppointmentsData();
         }
     };
     useEffect(() => {
@@ -66,23 +71,29 @@ const Tracking = () => {
     }, []);
 
     const getPendingAppointmentsData = async () => {
+        setIsLoading(true);
         const response = await axiosClient.get(
             `/v2/getPendingAppointmentForPatient/${user?._id}`
         );
-        return setPendingAppointmentsData(response.result);
+        setIsLoading(false);
         console.log(response.result);
+        return setPendingAppointmentsData(response.result);
     };
     const getCompleteAppointmentsData = async () => {
+        setIsLoading(true);
         const response = await axiosClient.get(
-            `/v2/getCompleteAppointmentsForHospital/${user._id}`
+            `/v2/getCompletedAppointment/${user._id}`
         );
+        setIsLoading(false);
         setCompleteAppointmentsData(response.result);
         console.log(response);
     };
     const getMissedAppointmentsData = async () => {
+        setIsLoading(true);
         const response = await axiosClient.get(
-            `/v2/getMissedAppointmentsForHospital/${user._id}`
+            `/v2/getMissedAppointment/${user._id}`
         );
+        setIsLoading(false);
         setMissedAppointmentsData(response.result);
         console.log(response);
     };
@@ -157,6 +168,7 @@ const Tracking = () => {
                             fontSize: "16px",
                             borderRadius: "35px",
                             color: activeTab === 1 ? "#ffffff" : "#383838",
+                            boxShadow: "none",
                         }}
                     >
                         Upcoming
@@ -173,6 +185,7 @@ const Tracking = () => {
                             fontSize: "16px",
                             borderRadius: "35px",
                             color: activeTab === 2 ? "#ffffff" : "#383838",
+                            boxShadow: "none",
                         }}
                     >
                         Completed
@@ -189,6 +202,7 @@ const Tracking = () => {
                             fontSize: "16px",
                             borderRadius: "35px",
                             color: activeTab === 3 ? "#ffffff" : "#383838",
+                            boxShadow: "none",
                         }}
                     >
                         Missed
@@ -197,6 +211,22 @@ const Tracking = () => {
                 {activeTab === 1 && (
                     <UpcomingPetientUserAppointment
                         pendingAppointmentsData={pendingAppointmentsData}
+                        isLoading={isLoading}
+                        setIsLoading={setIsLoading}
+                    />
+                )}
+                {activeTab === 2 && (
+                    <CompletedPatientUserAppointment
+                        completeAppointmentsData={completeAppointmentsData}
+                        isLoading={isLoading}
+                        setIsLoading={setIsLoading}
+                    />
+                )}
+                {activeTab === 3 && (
+                    <MissedPatientUserAppointment
+                        missedAppointmentsData={missedAppointmentsData}
+                        isLoading={isLoading}
+                        setIsLoading={setIsLoading}
                     />
                 )}
             </Box>

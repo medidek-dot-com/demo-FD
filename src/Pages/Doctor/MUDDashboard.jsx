@@ -244,11 +244,14 @@ const MUDDashboard = () => {
                     <Button
                             onClick={() => navigate(`/doctor/dashboard/${hospital_id}/${doctor_id}`) & setMenu(false)}
                         sx={{
-                            color: "#ffffff",
+                            background: "#ffffff",
                             fontFamily: "Lato",
                             fontSize: "1.5rem",
                             textTransform: "none",
                             lineHeight: "28.8px",
+                            ':hover':{
+                                background: "#ffffff",
+                                }
                         }}
                     >
                         Dashboard
@@ -288,6 +291,22 @@ const MUDDashboard = () => {
                         }}
                     >
                         Edit Profile
+                    </Button>
+                    <Button
+                        onClick={() =>
+                            navigate(
+                                `/doctor/appointment-settings/${user._id}`
+                            ) & setMenu(false)
+                        }
+                        sx={{
+                            color: "#ffffff",
+                            fontFamily: "Lato",
+                            fontSize: "1.5rem",
+                            textTransform: "none",
+                            lineHeight: "28.8px",
+                        }}
+                    >
+                        Appointment Settings
                     </Button>
                     <Button
                         onClick={logOutUser}

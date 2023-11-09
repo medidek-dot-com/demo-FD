@@ -89,7 +89,7 @@ const DoctorsTable = ({ search }) => {
 
     const getDoctorsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getDoctorsforHospital/${hospital_id}?search=${search}`
+            `/v2/getAlldoctor/${hospital_id}?search=${search}`
         );
        
         if (response.status === "ok") {
@@ -173,7 +173,7 @@ const DoctorsTable = ({ search }) => {
                             <StyledTableCell>Sr No.</StyledTableCell>
                             <StyledTableCell>Photo</StyledTableCell>
                             <StyledTableCell> Name </StyledTableCell>
-                            <StyledTableCell>Gender</StyledTableCell>
+                            {/* <StyledTableCell>Gender</StyledTableCell> */}
                             <StyledTableCell>Contact No.</StyledTableCell>
                             <StyledTableCell>Speciality</StyledTableCell>
                             <StyledTableCell>Unique Id</StyledTableCell>
@@ -196,9 +196,7 @@ const DoctorsTable = ({ search }) => {
                                     <StyledTableCell>
                                         <Avatar
                                             src={
-                                                doctor.doctorImg
-                                                    ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctor.doctorImg}`
-                                                    : "/default.png"
+                                                doctor?.imgurl ? doctor.imgurl : "/default.png"
                                             }
                                             sx={{
                                                 width: "32px",
@@ -211,17 +209,17 @@ const DoctorsTable = ({ search }) => {
                                         {doctor.nameOfTheDoctor}
                                     </StyledTableCell>
                                     {/* <StyledTableCell>{doctor.age}</StyledTableCell> */}
-                                    <StyledTableCell>
+                                    {/* <StyledTableCell>
                                         {doctor.gender}
-                                    </StyledTableCell>
+                                    </StyledTableCell> */}
                                     <StyledTableCell>
-                                        {doctor.enterPhoneNo}
+                                        {doctor.phone}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {doctor.speciality}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {doctor.enterEmailId}
+                                        {doctor.doctorid}
                                     </StyledTableCell>
                                     <StyledTableCell
                                         onClick={() => editDoctor(doctor)}

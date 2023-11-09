@@ -48,10 +48,23 @@ const ManageStaff = () => {
     const [active, setActive] = useState(false);
 
     const dispatch = useDispatch();
+    const [doctorsData, setDoctorsData] = useState([]);
+
+    
+    const getDoctorsData = async () => {
+        const response = await axiosClient.get(
+            `/v2/getAlldoctor/${hospital_id}`
+        );
+        if (response.status === "ok") {
+            return setDoctorsData(response.result);
+        }
+    };
 
     useEffect(() => {
         dispatch(tab(1));
+        getDoctorsData();
     }, []);
+
 
     // console.log(pendingAppointmentsData);
 

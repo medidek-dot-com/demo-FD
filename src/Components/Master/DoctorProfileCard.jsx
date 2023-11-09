@@ -14,7 +14,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { baseURL } from "../../Utils/axiosClient";
 
-const DoctorProfileCard = ({getUpcomingAppointmentsData, doctorDetails}) => {
+const DoctorProfileCard = ({ getUpcomingAppointmentsData, doctorDetails }) => {
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     // const [doctorDetails, setDoctorsDetails] = useState({});
 
@@ -63,11 +63,10 @@ const DoctorProfileCard = ({getUpcomingAppointmentsData, doctorDetails}) => {
                 <Stack direction="row">
                     <Avatar
                         src={
-                            doctorDetails?.doctorImg
-                                ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctorDetails.doctorImg}`
+                            doctorDetails?.imgurl
+                                ? doctorDetails.imgurl
                                 : "/default.png"
                         }
-                       
                         alt="User Image"
                         sx={{
                             width: { xs: 70, sm: 60, md: 140 },
@@ -77,15 +76,40 @@ const DoctorProfileCard = ({getUpcomingAppointmentsData, doctorDetails}) => {
                     <Box ml={2}>
                         <Typography
                             variant="h6"
-                            sx={{ display: "flex", alignItems: "center", fontFamily:'Raleway', fontWeight:'600', color:'#383838', fontSize:'1.375rem', lineHeight:'25.83px' }}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                color: "#383838",
+                                fontSize: "1.375rem",
+                                lineHeight: "25.83px",
+                            }}
                         >
                             {doctorDetails?.nameOfTheDoctor} &nbsp;
                             <CheckCircleIcon color="success" />
                         </Typography>
                         <Typography
-                            sx={{ color: "#706D6D", fontSize: "0.9rem", fontFamily:'Lato', fontWeight:'600', lineHeight:'18px' }}
+                            sx={{
+                                color: "#706D6D",
+                                fontSize: "0.9rem",
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                lineHeight: "18px",
+                            }}
                         >
                             {doctorDetails?.yearOfExprience} Years Experience
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: "#706D6D",
+                                fontSize: "0.9rem",
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                lineHeight: "18px",
+                            }}
+                        >
+                            {doctorDetails.description}
                         </Typography>
                         <Rating value={5} readOnly />
                     </Box>
@@ -103,11 +127,11 @@ const DoctorProfileCard = ({getUpcomingAppointmentsData, doctorDetails}) => {
                             "&:hover": {
                                 background: "#148512",
                             },
-                            fontFamily:'Raleway',
-                            fontWeight:'600',
-                            fontSize:'1.125rem',
-                            boxShadow:'none',
-                            display:{xs:'none', sm:'none', md:'block'}
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "1.125rem",
+                            boxShadow: "none",
+                            display: { xs: "none", sm: "none", md: "block" },
                         }}
                     >
                         Book Appointment

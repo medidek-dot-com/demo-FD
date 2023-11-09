@@ -56,12 +56,10 @@ const MasterUserDoctors = () => {
 
     const getDoctorsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getDoctorsforHospital/${hospital_id}?search=${search}`
+            `/v2/getAlldoctor/${hospital_id}`
         );
-
         if (response.status === "ok") {
-            setDoctorsData(response.result);
-            return;
+            return setDoctorsData(response.result);
         }
     };
 
@@ -150,9 +148,7 @@ const MasterUserDoctors = () => {
                                 >
                                     <Avatar
                                         src={
-                                            doctor.doctorImg
-                                                ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctor.doctorImg}`
-                                                : "/default.png"
+                                            doctor?.imgurl ? doctor.imgurl : "/default.png"
                                         }
                                         alt="User Image"
                                         sx={{

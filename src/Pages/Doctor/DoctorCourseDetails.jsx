@@ -297,11 +297,14 @@ const DoctorCourseDetails = () => {
                                 setMenu(false)
                             }
                             sx={{
-                                color: "#ffffff",
+                                background: "#ffffff",
                                 fontFamily: "Lato",
                                 fontSize: "1.5rem",
                                 textTransform: "none",
                                 lineHeight: "28.8px",
+                                ':hover':{
+                                    background: "#ffffff",
+                                    }
                             }}
                         >
                             Medical Courses
@@ -321,6 +324,22 @@ const DoctorCourseDetails = () => {
                         >
                             Edit Profile
                         </Button>
+                        <Button
+                        onClick={() =>
+                            navigate(
+                                `/doctor/appointment-settings/${user._id}`
+                            ) & setMenu(false)
+                        }
+                        sx={{
+                            color: "#ffffff",
+                            fontFamily: "Lato",
+                            fontSize: "1.5rem",
+                            textTransform: "none",
+                            lineHeight: "28.8px",
+                        }}
+                    >
+                        Appointment Settings
+                    </Button>
                         <Button
                             onClick={logOutUser}
                             sx={{

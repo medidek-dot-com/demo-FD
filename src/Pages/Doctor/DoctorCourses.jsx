@@ -290,11 +290,14 @@ const DoctorCourses = () => {
                             setMenu(false)
                         }
                         sx={{
-                            color: "#ffffff",
+                            background: "#ffffff",
                             fontFamily: "Lato",
                             fontSize: "1.5rem",
                             textTransform: "none",
                             lineHeight: "28.8px",
+                            ':hover':{
+                                background: "#ffffff",
+                                }
                         }}
                     >
                         Medical Courses
@@ -313,6 +316,22 @@ const DoctorCourses = () => {
                         }}
                     >
                         Edit Profile
+                    </Button>
+                    <Button
+                        onClick={() =>
+                            navigate(
+                                `/doctor/appointment-settings/${user._id}`
+                            ) & setMenu(false)
+                        }
+                        sx={{
+                            color: "#ffffff",
+                            fontFamily: "Lato",
+                            fontSize: "1.5rem",
+                            textTransform: "none",
+                            lineHeight: "28.8px",
+                        }}
+                    >
+                        Appointment Settings
                     </Button>
                     <Button
                         onClick={logOutUser}
@@ -373,6 +392,18 @@ const DoctorCourses = () => {
                                 }}
                             >
                                 Dr. {user.nameOfTheDoctor}
+                            </Typography>
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    mx: 1,
+                                    color: "#ffffff",
+                                    fontFamily: "Lato",
+                                    fontWeight: "500",
+                                    fontSize: "15px",
+                                }}
+                            >
+                            DUID :- {user.doctorid}
                             </Typography>
                         </Stack>
                         <Stack

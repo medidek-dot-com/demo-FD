@@ -22,6 +22,7 @@ import {
     Radio,
     Dialog,
     DialogContent,
+    Switch,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import styled from "@emotion/styled";
@@ -54,6 +55,10 @@ import { IoRadioButtonOn } from "react-icons/io5";
 import moment from "moment";
 import HolidayListDialog from "../../Components/Doctor/HolidayListDialog";
 import dayjs from "dayjs";
+import OnlineAppointmentsComponent from "../../Components/Doctor/OnlineAppointmentsComponent";
+import AppointmentByToken from "../../Components/Doctor/AppointmentByToken";
+import OnlineAppointmentEditSettings from "../../Components/OnlineAppointmentEditSettings";
+import AppointmentByTokenEditSettings from "../../Components/Doctor/AppointmentByTokenEditSettings";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -121,34 +126,42 @@ const AppointmentSettings = () => {
 
     const [activeTab, setActiveTab] = useState(4);
     const [menu, setMenu] = useState(false);
+    const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
+        useState(false);
 
     const { user } = useSelector((state) => state.auth);
     const numberOfHospitals = user;
     const [dates, setDates] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(1);
+    const currentDate = moment().format("yyyy-MM-DD");
+    console.log(currentDate);
+    const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
     const [view, setView] = useState("Weekly view");
     const [holidayDialog, setHolidayDialog] = useState(false);
+    const [markAsHoliday, setMarkAsHoliday] = useState(false);
     const [appointmentByToken, setAppointmentByToken] = useState(false);
     const [activeCard, setActiveCard] = useState();
-
+    const [currentMonth, setCurrentMonth] = useState(moment());
+    const [onlineSlotData, setOnlineSlotsData] = useState({});
+    const [tokenSlotData, setTokenSlotsData] = useState({});
 
     // const {hospital_id} = useParams();
     const navigate = useNavigate();
-const today = moment().startOf('week');
+    const today = moment().startOf("week");
 
-// Create an array to store the 7 days
-const daysOfWeek = [];
+    // Create an array to store the 7 days
+    const daysOfWeek = [];
 
-// Use a loop to add the next 7 days to the array
-for (let i = 0; i < 7; i++) {
-  daysOfWeek.push(today.format('dddd'));
-  today.add(1, 'day'); // Move to the next day
-}
+    // Use a loop to add the next 7 days to the array
+    for (let i = 0; i < 7; i++) {
+        daysOfWeek.push(today.format("dddd"));
+        today.add(1, "day"); // Move to the next day
+    }
 
-const currentDay = moment().format("ddd");
+    const currentDay = moment().format("ddd");
 
     const getWeekDates = () => {
-        const monthStart = moment().startOf("week");
+        const daysInMonth = currentMonth.daysInMonth();
+        const monthStart = moment().startOf("day");
         const monthsDates = [];
 
         for (let i = 0; i < 7; i++) {
@@ -160,23 +173,57 @@ const currentDay = moment().format("ddd");
                 year: date.format("YYYY"),
             });
         }
-        setDates(monthsDates, currentDay );
+        setDates(monthsDates, currentDay);
     };
 
     useEffect(() => {
         getWeekDates();
     }, []);
 
-    const getDate = (usersDate) =>{
-        const {date, month, year} = usersDate;
+    const getDate = (usersDate) => {
+        const { date, month, year } = usersDate;
         // console.log(day, date, month, year);
-        const a = date + " " + month + " " + year
+        const a = date + " " + month + " " + year;
         // console.log(a)
         const newDate = new Date(a);
-        console.log(newDate)
+        console.log(newDate);
+        let dateIndex = new Date(newDate);
+        let dayIndex = dateIndex.getDay();
+        console.log(dayIndex);
+
         // const formattedDate = moment.format(date)
-        
-    }
+    };
+    console.log(selectedDay.currentDate);
+    const getOnlineSlotDetailForDoctorForPerticularDate = async () => {
+        const date = selectedDay.currentDate;
+        try {
+            const response = await axiosClient.get(
+                `/v2/getSlotDetailForDoctorForPerticularDate/${user._id}/${date}`
+            );
+            setOnlineSlotsData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+    const getAppointmentByTokenSlotDetailForDoctorForPerticularDate =
+        async () => {
+            const date = selectedDay.currentDate;
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${user._id}/${date}`
+                );
+                setTokenSlotsData(response.result);
+                return console.log(response);
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
+
+    useEffect(() => {
+        getOnlineSlotDetailForDoctorForPerticularDate();
+        getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
+    }, [selectedDay]);
 
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
@@ -239,10 +286,7 @@ const currentDay = moment().format("ddd");
                     />
                 </Stack>
                 <Avatar
-                    src={
-                        user?.imgurl ? user.imgurl
-                        : "/default.png"
-                    }
+                    src={user?.imgurl ? user.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -329,7 +373,7 @@ const currentDay = moment().format("ddd");
                             setMenu(false)
                         }
                         sx={{
-                            color: "#ffffff",
+                            background: "#ffffff",
                             fontFamily: "Lato",
                             fontSize: "1.5rem",
                             textTransform: "none",
@@ -381,8 +425,7 @@ const currentDay = moment().format("ddd");
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl ? user.imgurl
-                                    : "/default.png"
+                                    user?.imgurl ? user.imgurl : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -396,7 +439,19 @@ const currentDay = moment().format("ddd");
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {user.nameOfTheDoctor}
+                                Dr. {user?.nameOfTheDoctor}
+                            </Typography>
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    mx: 1,
+                                    color: "#ffffff",
+                                    fontFamily: "Lato",
+                                    fontWeight: "500",
+                                    fontSize: "15px",
+                                }}
+                            >
+                                DUID :- {user?.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -738,13 +793,36 @@ const currentDay = moment().format("ddd");
                                         Appointments by token
                                     </Button>
                                 </Stack>
-                                <Box
+                                {/* <Box
                                     sx={{
                                         display: "flex",
-                                        justifyContent: "end",
+                                        justifyContent: "start",
+                                        alignItems: "center",
                                         my: "15px",
                                     }}
                                 >
+                                    <Switch
+                                        // value={"enabled"}
+
+                                        onChange={(e) =>
+                                            setOnlineAppointmentEnabled(
+                                                e.target.checked
+                                            )
+                                        }
+                                    />
+                                    <Box
+                                        component="span"
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "0.938rem",
+                                            color: "#1F51C6",
+                                        }}
+                                    >
+                                        {onlineAppointmentEnabled
+                                            ? "Enable"
+                                            : "Disabled"}
+                                    </Box>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
@@ -784,7 +862,7 @@ const currentDay = moment().format("ddd");
                                             Calandar View
                                         </MenuItem>
                                     </Select>
-                                    {/* <select
+                                    <select
                                         style={{
                                             color: "#ffffff",
                                             background: "#1F51C6",
@@ -800,567 +878,67 @@ const currentDay = moment().format("ddd");
                                         <OptionStyle value="Calandar View">
                                             Calandar View
                                         </OptionStyle>
-                                    </select> */}
-                                </Box>
+                                    </select>
+                                </Box> */}
 
-                                <Card
-                                    sx={{
-                                        px: {
-                                            xs: "16px",
-                                            sm: "16px",
-                                            md: "30px",
-                                        },
-                                        py: {
-                                            xs: "25px",
-                                            sm: "25px",
-                                            md: "30px",
-                                        },
-                                        boxShadow: "none",
-                                        border: "1px solid #D9D9D9",
-                                    }}
-                                >
-                                    <Stack
-                                        direction="row"
-                                        spacing="12.61px"
-                                        sx={{}}
-                                    >
-                                        {dates.map((date, i) => (
-                                            <Box
-                                                key={i + 1}
-                                                component="button"
-                                                onClick={()=>getDate(date)}
-                                                sx={{
-                                                    width: {
-                                                        xs: "43.18px",
-                                                        sm: "43.18px",
-                                                        md: "57.39px",
-                                                    },
-                                                    height: {
-                                                        xs: "43.18px",
-                                                        sm: "43.18px",
-                                                        md: "57.39px",
-                                                    },
-                                                    background:
-                                                    currentDay === date.day ? "#1F51C6" : "#FFFFFF",
-                                                    border:
-                                                    currentDay === date.day
-                                                            ? "none"
-                                                            : "1px solid #706D6D8F",
-                                                    borderRadius: "3px",
-                                                    color:
-                                                    currentDay === date.day
-                                                            ? "#FFFFFF"
-                                                            : "#706D6D",
-                                                }}
-                                            >
-                                                <Typography
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "semibold",
-                                                        fontSize: {
-                                                            xs: "0.938rem",
-                                                            sm: "0.938rem",
-                                                            md: "1.125rem",
-                                                        },
-                                                        lineHeight: "21.6px",
-                                                    }}
-                                                >
-                                                    {date.day}
-                                                </Typography>
-                                                <Typography
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "semibold",
-                                                        fontSize: {
-                                                            xs: "0.938rem",
-                                                            sm: "0.938rem",
-                                                            md: "1.125rem",
-                                                        },
-                                                        lineHeight: "21.6px",
-                                                    }}
-                                                >
-                                                    {date.date}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Stack>
-                                    <Stack
-                                        spacing="20px"
-                                        sx={{ mt: "16.61px" }}
-                                    >
-                                        <Stack
-                                            direction={{
-                                                xs: "column",
-                                                sm: "column",
-                                                md: "row",
-                                            }}
-                                        >
-                                            <Stack spacing="10.48px">
-                                                <InputLabel
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "500",
-                                                        fontSize: "0.938rem",
-                                                        color: "#383838",
-                                                    }}
-                                                >
-                                                    Choose Slot Duration
-                                                </InputLabel>
-                                                <Stack
-                                                    direction="row"
-                                                    spacing="20.02px"
-                                                    sx={{
-                                                        alignItems: "center",
-                                                    }}
-                                                >
-                                                    <Select
-                                                        labelId="demo-simple-select-label"
-                                                        id="demo-simple-select"
-                                                        sx={{
-                                                            width: {
-                                                                xs: "100%",
-                                                                sm: "100%",
-                                                                md: "262.93px",
-                                                            },
-                                                            height: "40px",
-                                                            fontFamily: "Lato",
-                                                            fontWeight:
-                                                                "semibold",
-                                                            fontSize: "1rem",
-                                                            borderRadius: "5px",
-                                                        }}
-                                                        placeholder="Choose Slot Duration"
-                                                        value={view}
-                                                        onChange={(e) =>
-                                                            setView(
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <MenuItem
-                                                            value="Weekly view"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Choose Slot Duration
-                                                        </MenuItem>
-                                                        <MenuItem
-                                                            value="Calandar View"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Calandar View
-                                                        </MenuItem>
-                                                    </Select>
-                                                    <Button
-                                                        onClick={() =>
-                                                            setHolidayDialog(
-                                                                true
-                                                            )
-                                                        }
-                                                        sx={{
-                                                            lineHeight:
-                                                                "21.13px",
-                                                            // color: "#ffffff",
-                                                            borderRadius: "0",
-                                                            textTransform:
-                                                                "none",
-                                                            padding: 0,
-                                                            fontFamily: "Lato",
-                                                            fontWeight: "500",
-                                                            fontSize:
-                                                                "1.125rem",
-                                                            display: {
-                                                                xs: "none",
-                                                                sm: "none",
-                                                                md: "block",
-                                                            },
-                                                        }}
-                                                    >
-                                                        View Holiday List
-                                                    </Button>
-                                                </Stack>
-                                            </Stack>
-                                        </Stack>
-                                        <Stack
-                                            spacing="20.02px"
-                                            direction={{
-                                                xs: "column",
-                                                sm: "column",
-                                                md: "row",
-                                            }}
-                                        >
-                                            <Stack spacing="10.48px">
-                                                <InputLabel
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "500",
-                                                        fontSize: "0.938rem",
-                                                        color: "#383838",
-                                                    }}
-                                                >
-                                                    Start Time
-                                                </InputLabel>
-                                                <Stack
-                                                    direction="row"
-                                                    sx={{
-                                                        alignItems: "center",
-                                                    }}
-                                                >
-                                                    <Select
-                                                        labelId="demo-simple-select-label"
-                                                        id="demo-simple-select"
-                                                        sx={{
-                                                            width: {
-                                                                xs: "100%",
-                                                                sm: "100%",
-                                                                md: "262.93px",
-                                                            },
-                                                            height: "40px",
-                                                            fontFamily: "Lato",
-                                                            fontWeight:
-                                                                "semibold",
-                                                            fontSize: "1rem",
-                                                            borderRadius: "5px",
-                                                        }}
-                                                        placeholder="Choose Slot Duration"
-                                                        value={view}
-                                                        onChange={(e) =>
-                                                            setView(
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <MenuItem
-                                                            value="Weekly view"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Enter Start Time
-                                                        </MenuItem>
-                                                        <MenuItem
-                                                            value="Calandar View"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Calandar View
-                                                        </MenuItem>
-                                                    </Select>
-                                                </Stack>
-                                            </Stack>
-                                            <Stack spacing="10.48px">
-                                                <InputLabel
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "500",
-                                                        fontSize: "0.938rem",
-                                                        color: "#383838",
-                                                    }}
-                                                >
-                                                    End Time
-                                                </InputLabel>
-                                                <Stack
-                                                    direction="row"
-                                                    sx={{
-                                                        alignItems: "center",
-                                                    }}
-                                                >
-                                                    <Select
-                                                        labelId="demo-simple-select-label"
-                                                        id="demo-simple-select"
-                                                        sx={{
-                                                            width: {
-                                                                xs: "100%",
-                                                                sm: "100%",
-                                                                md: "262.93px",
-                                                            },
-                                                            height: "40px",
-                                                            fontFamily: "Lato",
-                                                            fontWeight:
-                                                                "semibold",
-                                                            fontSize: "1rem",
-                                                            borderRadius: "5px",
-                                                        }}
-                                                        placeholder="Choose Slot Duration"
-                                                        value={view}
-                                                        onChange={(e) =>
-                                                            setView(
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <MenuItem
-                                                            value="Weekly view"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Enter End Time
-                                                        </MenuItem>
-                                                        <MenuItem
-                                                            value="Calandar View"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Calandar View
-                                                        </MenuItem>
-                                                    </Select>
-                                                </Stack>
-                                            </Stack>
-                                        </Stack>
-                                        <Stack
-                                            spacing="20.02px"
-                                            direction={{
-                                                xs: "column",
-                                                sm: "column",
-                                                md: "row",
-                                            }}
-                                        >
-                                            <Stack spacing="10.48px">
-                                                <InputLabel
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "500",
-                                                        fontSize: "0.938rem",
-                                                        color: "#383838",
-                                                    }}
-                                                >
-                                                    Start Break Time
-                                                </InputLabel>
-                                                <Stack
-                                                    direction="row"
-                                                    sx={{
-                                                        alignItems: "center",
-                                                    }}
-                                                >
-                                                    <Select
-                                                        labelId="demo-simple-select-label"
-                                                        id="demo-simple-select"
-                                                        sx={{
-                                                            width: {
-                                                                xs: "100%",
-                                                                sm: "100%",
-                                                                md: "262.93px",
-                                                            },
-                                                            height: "40px",
-                                                            fontFamily: "Lato",
-                                                            fontWeight:
-                                                                "semibold",
-                                                            fontSize: "1rem",
-                                                            borderRadius: "5px",
-                                                        }}
-                                                        placeholder="Choose Slot Duration"
-                                                        value={view}
-                                                        onChange={(e) =>
-                                                            setView(
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <MenuItem
-                                                            value="Weekly view"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Enter Start Time
-                                                        </MenuItem>
-                                                        <MenuItem
-                                                            value="Calandar View"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Calandar View
-                                                        </MenuItem>
-                                                    </Select>
-                                                </Stack>
-                                            </Stack>
-                                            <Stack spacing="10.48px">
-                                                <InputLabel
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "500",
-                                                        fontSize: "0.938rem",
-                                                        color: "#383838",
-                                                    }}
-                                                >
-                                                    End Break Time
-                                                </InputLabel>
-                                                <Stack
-                                                    direction="row"
-                                                    sx={{
-                                                        alignItems: "center",
-                                                    }}
-                                                >
-                                                    <Select
-                                                        labelId="demo-simple-select-label"
-                                                        id="demo-simple-select"
-                                                        sx={{
-                                                            width: {
-                                                                xs: "100%",
-                                                                sm: "100%",
-                                                                md: "262.93px",
-                                                            },
-                                                            height: "40px",
-                                                            fontFamily: "Lato",
-                                                            fontWeight:
-                                                                "semibold",
-                                                            fontSize: "1rem",
-                                                            borderRadius: "5px",
-                                                        }}
-                                                        placeholder="Choose Slot Duration"
-                                                        value={view}
-                                                        onChange={(e) =>
-                                                            setView(
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <MenuItem
-                                                            value="Weekly view"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Enter Start Time
-                                                        </MenuItem>
-                                                        <MenuItem
-                                                            value="Calandar View"
-                                                            sx={{
-                                                                fontFamily:
-                                                                    "Lato",
-                                                                fontWeight:
-                                                                    "semibold",
-                                                                fontSize:
-                                                                    "1rem",
-                                                            }}
-                                                        >
-                                                            Calandar View
-                                                        </MenuItem>
-                                                    </Select>
-                                                </Stack>
-                                            </Stack>
-                                        </Stack>
-                                        <Stack
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Stack
-                                                direction="row"
-                                                sx={{ alignItems: "center" }}
-                                            >
-                                                <Radio
-                                                    // checked={selectedValue === 'a'}
-                                                    // onChange={handleChange}
-                                                    value="a"
-                                                    id="markAsHoliday"
-                                                    name="radio-buttons"
-                                                    inputProps={{
-                                                        "aria-label": "A",
-                                                    }}
-                                                />
-                                                <InputLabel
-                                                    htmlFor="markAsHoliday"
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "semibold",
-                                                        fontSize: "0.938rem",
-                                                        color: "#706D6D",
-                                                    }}
-                                                >
-                                                    Mark as Holiday
-                                                </InputLabel>
-                                            </Stack>
-                                            <Button
-                                                onClick={() =>
-                                                    setHolidayDialog(true)
+                                {appointmentByToken ? (
+                                    <>
+                                        {tokenSlotData ? (
+                                            <AppointmentByTokenEditSettings
+                                                dates={dates}
+                                                selectedDay={selectedDay}
+                                                setSelectedDay={setSelectedDay}
+                                                currentDate={currentDate}
+                                                tokenSlotData={tokenSlotData}
+                                            />
+                                        ) : (
+                                            <AppointmentByToken
+                                                dates={dates}
+                                                view={view}
+                                                setHolidayDialog={
+                                                    setHolidayDialog
                                                 }
-                                                sx={{
-                                                    lineHeight: "21.13px",
-                                                    // color: "#ffffff",
-                                                    borderRadius: "0",
-                                                    textTransform: "none",
-                                                    padding: 0,
-                                                    fontFamily: "Lato",
-                                                    fontWeight: "500",
-                                                    fontSize: "0.75rem",
-                                                    display: {
-                                                        xs: "block",
-                                                        sm: "block",
-                                                        md: "none",
-                                                    },
-                                                }}
-                                            >
-                                                View Holiday List
-                                            </Button>
-                                        </Stack>
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                boxShadow: "none",
-                                                borderRadius: "29px",
-                                                textTransform: "none",
-                                                fontFamily: "Lato",
-                                                fontWeight: "700",
-                                                fontSize: "1.063rem",
-                                            }}
-                                        >
-                                            Save
-                                        </Button>
-                                    </Stack>
-                                </Card>
+                                                markAsHoliday={markAsHoliday}
+                                                setMarkAsHoliday={
+                                                    setMarkAsHoliday
+                                                }
+                                                selectedDay={selectedDay}
+                                                setSelectedDay={setSelectedDay}
+                                                currentDate={currentDate}
+                                            />
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {onlineSlotData ? (
+                                            <OnlineAppointmentEditSettings
+                                                dates={dates}
+                                                selectedDay={selectedDay}
+                                                setSelectedDay={setSelectedDay}
+                                                currentDate={currentDate}
+                                                onlineSlotData={onlineSlotData}
+                                            />
+                                        ) : (
+                                            <OnlineAppointmentsComponent
+                                                dates={dates}
+                                                view={view}
+                                                setHolidayDialog={
+                                                    setHolidayDialog
+                                                }
+                                                markAsHoliday={markAsHoliday}
+                                                setMarkAsHoliday={
+                                                    setMarkAsHoliday
+                                                }
+                                                selectedDay={selectedDay}
+                                                setSelectedDay={setSelectedDay}
+                                                currentDate={currentDate}
+                                                getOnlineSlotDetailForDoctorForPerticularDate={
+                                                    getOnlineSlotDetailForDoctorForPerticularDate
+                                                }
+                                            />
+                                        )}
+                                    </>
+                                )}
                             </Box>
                             <HolidayListDialog
                                 holidayDialog={holidayDialog}

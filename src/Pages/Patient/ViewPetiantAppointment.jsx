@@ -40,6 +40,7 @@ const ViewPetiantAppointment = () => {
                     sx={{
                         width: { xs: "100%", sm: "100%", md: "391px" },
                         background: "#DCE3F6",
+                        borderRadius: "5px",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",

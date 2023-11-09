@@ -43,6 +43,11 @@ import moment from "moment";
 import dayjs from "dayjs";
 import AppointmentConfirmDIalog from "./AppointmentConfirmDIalog";
 import { tab } from "../../../Store/tabSlice";
+import HospitalListDialog from "../../Patient/HospitalListDialog";
+import BookAppointmentDialogForPatient from "../../Patient/BookAppointmentDialogForPatient";
+import ConfirmAppointmentDialog from "../../Patient/ConfirmAppointmentDialog";
+import BookAppointmnetDetailsDialog from "../../Patient/BookAppointmnetDetailsDialog";
+import FindDoctorsSkeleton from "../../Skeleton/FindDoctorsSkeleton";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -141,6 +146,7 @@ const DoctorsList = () => {
     const specilityName = doctorsData.map((location) => location.speciality);
     const [activeCard, setActiveCard] = useState();
     const uniquespecilityName = [...new Set(specilityName)];
+    const [hospitalListDialog, setHospitalListDialog] = useState(false);
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
     const [activeButton, setActiveButton] = useState("1");
@@ -155,14 +161,45 @@ const DoctorsList = () => {
         appointmentDate: "",
         consultingTime: "",
         hospitalId: "",
-        userId: user?._id,
+        userid: user?._id,
+        doctorid: "",
+        name: "",
+        Age: "",
+        Gender: "",
+        phone: "",
+        AppointmentNotes: "",
+        AppointmentTime: "",
+        imgurl: "",
     });
+    const [doctor_id, setDoctor_id] = useState("");
+
+    const [inputValue, setInputValue] = useState({
+        name: user?.name ? user.name : "",
+        age: user?.age ? user.age : "",
+        gender: user?.gender ? user.gender : "",
+        phone: user?.phone ? user.phone : "",
+        email: user?.email ? user.email : "",
+        AppointmentNotes: "",
+        appointmentDate: "",
+        AppointmentTime: "",
+        doctorid: bookingAppointmentDetails.doctorid,
+        userid: user?._id,
+    });
+
+    console.log(bookingAppointmentDetails);
+    console.log(inputValue);
     const [dateErr, setDateErr] = useState(false);
     // const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({})
-
+    const [bookingAppointmentDialog, setBookAppointmentDialog] =
+        useState(false);
+    const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
+        useState(false);
     const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
         useState(false);
     const [open, setOpen] = useState(false);
+    const [slotData, setSlotData] = useState([]);
+
+    const [isloading, setIsLoading] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -171,17 +208,36 @@ const DoctorsList = () => {
     }, []);
 
     const getDoctorsList = async () => {
+        setIsLoading(true);
         try {
             const response = await axiosClient.get(
-                `/v2/getDoctorforSpecialties/abhay?location=${location}&speciality=${speciality}`
+                `/v2/getusergetalldoctors?location=${location}&speciality=${speciality}`
             );
             if (response.status === "ok") {
+                setIsLoading(false);
                 return setDoctorsData(response.result);
+            }
+        } catch (error) {
+            setIsLoading(false);
+            console.log(error.message);
+        }
+    };
+    const getAvailableSlots = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${bookingAppointmentDetails.appointmentDate}`
+            );
+            if (response.status === "ok") {
+                return setSlotData(response.result);
             }
         } catch (error) {
             console.log(error.message);
         }
     };
+
+    useEffect(() => {
+        getAvailableSlots();
+    }, [bookingAppointmentDetails.appointmentDate]);
 
     const getWeekDates = () => {
         const monthStart = moment().startOf("day");
@@ -207,28 +263,44 @@ const DoctorsList = () => {
         getDoctorsList();
     }, [location, speciality]);
 
-    const handleClick = (
+    const handleClick = async (
         nameOfTheDoctor,
-        doctorsId,
+        doctorId,
         consultingTime,
-        hospitalId
+        hospitalId,
+        duid
     ) => {
+        console.log(doctorId);
         if (!isLoggedIn) {
             navigate("/user/signin", {
                 state: { prevUrl: urlLocation.pathname },
             });
             return false;
         }
+        try {
+            const response = await axiosClient.get(
+                `/v2/multipleloginprofile/${duid}`
+            );
+            if (response.status === "ok") {
+                setHospitalList(response.result);
+                setHospitalListDialog(true);
+            }
+            console.log(response);
+            return;
+        } catch (error) {
+            console.log(error);
+        }
 
-        setBookingAppointmentDetails({
-            ...bookingAppointmentDetails,
-            nameOfTheDoctor,
-            doctorsId,
-            consultingTime,
-            hospitalId,
-        });
+        // setBookingAppointmentDetails({
+        //     ...bookingAppointmentDetails,
+        //     nameOfTheDoctor,
+        //     doctorsId,
+        //     consultingTime,
+        //     hospitalId,
+        //     doctorid
+        // });
 
-        setOpen(true);
+        setHospitalListDialog(true);
     };
 
     // Define a function to handle button clicks
@@ -252,6 +324,10 @@ const DoctorsList = () => {
             console.log(error);
         }
     };
+
+    const [hospitalList, setHospitalList] = useState([]);
+
+    const multipleloginprofile = async () => {};
 
     return (
         <>
@@ -322,29 +398,9 @@ const DoctorsList = () => {
                                     {...params}
                                     placeholder="Enter Location"
                                     sx={{ background: "#ffffff" }}
-                                    // InputProps={{
-                                    //     endAdornment: (
-                                    //         <InputAdornment position="end">
-                                    //             <img src="/location.svg" alt="" />
-                                    //         </InputAdornment>
-                                    //     ),
-                                    // }}
                                 />
                             )}
                         />
-
-                        {/* <TextField
-                        size="small"
-                        placeholder="Enter Location"
-                        sx={{ flex: 0.5, background: "#ffffff", position:'relative' }}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <img src="/location.svg" alt="" />
-                                </InputAdornment>
-                            ),
-                        }}
-                    /> */}
                     </Stack>
                     <Stack>
                         <AutocompleteStyle
@@ -378,18 +434,6 @@ const DoctorsList = () => {
                                 />
                             )}
                         />
-                        {/* <TextField
-                        size="small"
-                        placeholder="Search doctors, clinics, etc."
-                        sx={{ flex: 0.7, background: "#ffffff" }}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <img src="/doctor.svg" alt="" />
-                                </InputAdornment>
-                            ),
-                        }}
-                    /> */}
                     </Stack>
                 </Stack>
                 <Box
@@ -414,37 +458,13 @@ const DoctorsList = () => {
                             : "Search for a doctor"}
                         {/* {doctorsData.length} {speciality} near you */}
                     </Typography>
-                    {/* <Box sx={{ display: "flex" }}>
-                        <Box
-                            component="span"
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                fontSize: { xs: "0.9rem", sm: "1rem" },
-                                mx: 1,
-                            }}
-                        >
-                            <FaSort color="#706D6D" />
-                            Sort By: Nearest
-                        </Box>
-                        <Box
-                            component="span"
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                fontSize: { xs: "0.8rem", sm: "1rem" },
-                            }}
-                        >
-                            <FaFilter color="#706D6D" />
-                            Filters
-                        </Box>
-                    </Box> */}
                 </Box>
                 <Stack
                     spacing={2}
                     width={{ xs: "100%", sm: "100%", md: "80%" }}
                     m="15px auto"
                 >
+                    {isloading && <FindDoctorsSkeleton />}
                     {doctorsData.map((doctor, i) => (
                         <Card
                             key={i}
@@ -479,8 +499,8 @@ const DoctorsList = () => {
                                 <Box>
                                     <Avatar
                                         src={
-                                            doctor.doctorImg
-                                                ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctor.doctorImg}`
+                                            doctor?.imgurl
+                                                ? doctor.imgurl
                                                 : "/default.png"
                                         }
                                         alt="img"
@@ -620,7 +640,8 @@ const DoctorsList = () => {
                                             doctor.nameOfTheDoctor,
                                             doctor._id,
                                             doctor.consultingTime,
-                                            doctor.hospitalId
+                                            doctor.hospitalId,
+                                            doctor.doctorid
                                         )
                                     }
                                     variant="contained"
@@ -641,6 +662,7 @@ const DoctorsList = () => {
                                             sm: "100%",
                                             md: "210px",
                                         },
+                                        boxShadow: "none",
                                     }}
                                 >
                                     Book Appointment
@@ -648,579 +670,83 @@ const DoctorsList = () => {
                             </Box>
                         </Card>
                     ))}
-                    {/* <Card
-                    sx={{
-                        boxShadow: "none",
-                        border: "1px solid #D9D9D9",
-                        p: 2,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: { xs: "start", sm: "start", md: "center" },
-                        flexDirection: {
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        },
-                    }}
-                >
-                    <Stack direction="row">
-                        <Box>
-                            <img
-                                src="/doctor.png"
-                                alt="img"
-                                width="100px"
-                                height="100px"
-                            />
-                        </Box>
-                        <Box sx={{ mx: 1 }}>
-                            <Typography
-                                variant="h6"
-                                fontWeight="600"
-                                fontSize={{
-                                    xs: "1rem",
-                                    sm: "1.4",
-                                    md: "1.4rem",
-                                }}
-                            >
-                                Dr Shashwat Magarkar
-                            </Typography>
-                            <Typography
-                                fontSize={{
-                                    xs: "0.8rem",
-                                    sm: "1.4rem",
-                                    md: "1.1rem",
-                                }}
-                            >
-                                <Box component={"span"}>Dentist</Box>&nbsp; 5
-                                Years Experience
-                            </Typography>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    fontSize: {
-                                        xs: "0.8rem",
-                                        sm: "1.4rem",
-                                        md: "1.1rem",
-                                    },
-                                }}
-                            >
-                                <Rating
-                                    name="simple-controlled"
-                                    value={5}
-                                    readOnly
-                                />
-                                &nbsp;<Box component={"span"}>114 Rating</Box>
-                            </Box>
-                            <Stack direction="row" alignItems="center">
-                                <img src="/location.svg" width={15} alt="img" />
-                                &nbsp;
-                                <Typography
-                                    fontSize={{
-                                        xs: "0.8rem",
-                                        sm: "1rem",
-                                        md: "1rem",
-                                    }}
-                                >
-                                    Dharampeth
-                                </Typography>
-                            </Stack>
-                            <Typography
-                                fontSize={{
-                                    xs: "0.8rem",
-                                    sm: "1rem",
-                                    md: "1rem",
-                                }}
-                            >
-                                ₹500 Consultation fee
-                            </Typography>
-                        </Box>
-                    </Stack>
-                    <Box
-                        sx={{
-                            width: { xs: "100%", sm: "100%", md: "auto" },
-                            display: "flex",
-                            justifyContent: "flex-end",
-                        }}
-                    >
-                        <Button
-                            variant="contained"
-                            size="small"
-                            sx={{
-                                borderRadius: "25px",
-                                background: "#15B912",
-                                px: "15px",
-                                width: { xs: "100%", sm: "100%", md: "200px" },
-                            }}
-                        >
-                            Book Appointment
-                        </Button>
-                    </Box>
-                </Card> */}
                 </Stack>
-                {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-                <PaginationStyle
-                    count={10}
-                    variant="outlined"
-                    shape="rounded"
+
+                <BookAppointmnetDetailsDialog
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                    setConfirmBookAppointmentDialog={
+                        setConfirmBookAppointmentDialog
+                    }
+                    bookingAppointmentDetailsDialog={
+                        bookingAppointmentDetailsDialog
+                    }
+                    setBookAppointmentDetailsDialog={
+                        setBookAppointmentDetailsDialog
+                    }
+                    bookingAppointmentDetails={bookingAppointmentDetails}
+                    setBookingAppointmentDetails={setBookingAppointmentDetails}
                 />
-            </Box> */}
-                <Dialog
-                    open={open}
-                    onClose={() => {
-                        return setOpen(false) & setDateErr(false);
-                    }}
-                    maxWidth={"md"}
-                    sx={{ margin: " 0 auto" }}
-                >
-                    <DialogTitle
-                        sx={{
-                            fontFamily: "Raleway",
-                            fontWeight: "600",
-                            fontSize: "22px",
-                        }}
-                    >
-                        Book Appointment
-                        {open ? (
-                            <IconButton
-                                aria-label="close"
-                                onClick={() => setOpen(false)}
-                                sx={{
-                                    position: "absolute",
-                                    right: 8,
-                                    top: 8,
-                                    color: (theme) => theme.palette.grey[500],
-                                }}
-                            >
-                                <CloseIcon />
-                            </IconButton>
-                        ) : null}
-                    </DialogTitle>
-                    <DialogContent
-                        dividers
-                        sx={{
-                            margin: "10px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                marginTop: "20px",
-                                userSelect: "none",
-                            }}
-                        >
-                            {/* <CarouselStyle
-                                    responsive={responsive}
-                                    swipeable={true}
-                                    slidesToSlide={4}
-                                    arrows={false}
-                                > */}
-                            {dates.map((date, i) => (
-                                <Card
-                                    onClick={(e) => {
-                                        setActiveCard(i);
-                                        setDateErr(false);
-                                        const dateString = e.target.innerText;
-                                        console.log();
-                                        const dateObject = dayjs(
-                                            dateString + dayjs().year()
-                                        );
+                <BookAppointmentDialogForPatient
+                    bookingAppointmentDetails={bookingAppointmentDetails}
+                    bookingAppointmentDialog={bookingAppointmentDialog}
+                    setBookAppointmentDialog={setBookAppointmentDialog}
+                    setBookingAppointmentDetails={setBookingAppointmentDetails}
+                    confirmBookAppointmentDialog={confirmBookAppointmentDialog}
+                    setConfirmBookAppointmentDialog={
+                        setConfirmBookAppointmentDialog
+                    }
+                    setBookAppointmentDetailsDialog={
+                        setBookAppointmentDetailsDialog
+                    }
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                    slotData={slotData}
+                    setSlotData={setSlotData}
+                />
+                <ConfirmAppointmentDialog
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                    confirmBookAppointmentDialog={confirmBookAppointmentDialog}
+                    setConfirmBookAppointmentDialog={
+                        setConfirmBookAppointmentDialog
+                    }
+                    bookingAppointmentDetails={bookingAppointmentDetails}
+                    bookingAppointmentDialog={bookingAppointmentDialog}
+                    setBookAppointmentDialog={setBookAppointmentDialog}
+                    hospitalListDialog={hospitalListDialog}
+                    setHospitalListDialog={setHospitalListDialog}
+                    setBookAppointmentDetailsDialog={
+                        setBookAppointmentDetailsDialog
+                    }
+                    setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                    confirmedAppointmentData={confirmedAppointmentData}
+                    setConfirmedAppointmentData={setConfirmedAppointmentData}
+                />
 
-                                        const formattedDate =
-                                            dateObject.format("DD-MM-YYYY");
-                                        console.log(formattedDate);
-
-                                        setBookingAppointmentDetails({
-                                            ...bookingAppointmentDetails,
-                                            appointmentDate: formattedDate,
-                                        });
-                                    }}
-                                    sx={{
-                                        width: "50px",
-                                        // height: "60px",
-                                        textAlign: "center",
-                                        margin: "5px 8px",
-                                        padding: "5px",
-                                        textTransform: "none",
-                                        fontFamily: "Lato",
-                                        fontWeight: "700",
-                                        fontSize: "12px",
-                                        boxShadow: "none",
-                                        border: "1px solid #D9D9D9",
-                                        cursor: "pointer",
-                                        background:
-                                            activeCard === i
-                                                ? "#1F51C6"
-                                                : "#ffffff",
-                                        color:
-                                            activeCard === i
-                                                ? "#ffffff"
-                                                : " #000000",
-                                    }}
-                                    key={i}
-                                >
-                                    {date.day}
-                                    <br />
-                                    {date.date}
-                                    <br />
-                                    {date.month}
-                                </Card>
-                            ))}
-                            {/* </CarouselStyle> */}
-                        </Box>
-                        {dateErr && (
-                            <Box
-                                component="span"
-                                sx={{
-                                    color: "red",
-                                    fontFamily: "Lato",
-                                    fontSize: "18px",
-                                    fontWeight: "500",
-                                }}
-                            >
-                                Please choose date!
-                            </Box>
-                        )}
-                        {/* <DateSlider /> */}
-                        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePickerStyle
-                                onChange={(e) => {
-                                    setDateErr(false);
-                                    const dateString = e?.$d;
-                                    const dateObject = dayjs(dateString);
-                                    const formattedDate =
-                                        dateObject.format("DD-MM-YYYY");
-                                    console.log(formattedDate);
-                                    setBookingAppointmentDetails({
-                                        ...bookingAppointmentDetails,
-                                        appointmentDate: formattedDate,
-                                    });
-                                }}
-                                sx={{ width: "100%" }}
-                            />
-                            <Typography
-                                sx={{
-                                    color: "red",
-                                    display: dateErr ? "block" : "none",
-                                }}
-                            >
-                                Please select date
-                            </Typography>
-                        </LocalizationProvider> */}
-                        <List
-                            style={{
-                                display: "flex",
-                                // width: "60%",
-                                marginTop: "20px",
-                                flexWrap: "wrap",
-                            }}
-                        >
-                            <ListBoxStyle>
-                                <Button
-                                    variant="contained"
-                                    sx={{
-                                        // width: "110px",
-                                        // height: "33px",
-                                        borderRadius: "3px",
-                                        fontWeight: "600",
-                                        fontSize: "15px",
-                                        fontFamily: "Lato",
-                                        display: "block",
-                                        cursor: "text",
-                                        " :hover": {
-                                            background: "#1F51C6",
-                                            boxShadow: "none",
-                                        },
-                                        // backgroundColor:
-                                        //     activeButton === 1
-                                        //         ? "#1F51C6"
-                                        //         : "#ffffff",
-                                        // color:
-                                        //     activeButton === 1
-                                        //         ? "#ffffff"
-                                        //         : "#706D6D",
-                                        // " :hover": {
-                                        //     backgroundColor:
-                                        //         activeButton === 1
-                                        //             ? "#1F51C6"
-                                        //             : "#e3dddd",
-                                        //     color:
-                                        //         activeButton === 1
-                                        //             ? "#ffffff"
-                                        //             : "#000000",
-                                        // },
-                                    }}
-                                    onClick={() => handleButtonClick(1)}
-                                >
-                                    {bookingAppointmentDetails.consultingTime}
-                                </Button>
-                                {/* <ListItemsStyling
-                                onClick={() => handleButtonClick(1)}
-                            >
-                                12:30
-                            </ListItemsStyling> */}
-                                {/* <SpanTypograophyStyle
-                                    variant="caption"
-                                    color="initial"
-                                >
-                                    2 Slots Available
-                                </SpanTypograophyStyle> */}
-                            </ListBoxStyle>
-                            {/* <ListBoxStyle>
-                                <Button
-                                    variant="contained"
-                                    sx={{
-                                        width: "110px",
-                                        height: "33px",
-                                        borderRadius: "3px",
-                                        fontWeight: "600",
-                                        fontSize: "15px",
-                                        fontFamily: "Lato",
-                                        display: "block",
-                                        backgroundColor:
-                                            activeButton === 2
-                                                ? "#1F51C6"
-                                                : "#ffffff",
-                                        color:
-                                            activeButton === 2
-                                                ? "#ffffff"
-                                                : "#706D6D",
-                                        " :hover": {
-                                            backgroundColor:
-                                                activeButton === 2
-                                                    ? "#1F51C6"
-                                                    : "#e3dddd",
-                                            color:
-                                                activeButton === 2
-                                                    ? "#ffffff"
-                                                    : "#000000",
-                                        },
-                                    }}
-                                    onClick={() => handleButtonClick(2)}
-                                >
-                                    12:30
-                                </Button>
-                                <SpanTypograophyStyle
-                                    variant="caption"
-                                    color="initial"
-                                >
-                                    2 Slots Available
-                                </SpanTypograophyStyle>
-                            </ListBoxStyle>
-                            <ListBoxStyle>
-                                <Button
-                                    variant="contained"
-                                    sx={{
-                                        width: "110px",
-                                        height: "33px",
-                                        borderRadius: "3px",
-                                        fontWeight: "600",
-                                        fontSize: "15px",
-                                        fontFamily: "Lato",
-                                        display: "block",
-                                        backgroundColor:
-                                            activeButton === 3
-                                                ? "#1F51C6"
-                                                : "#ffffff",
-                                        color:
-                                            activeButton === 3
-                                                ? "#ffffff"
-                                                : "#706D6D",
-                                        " :hover": {
-                                            backgroundColor:
-                                                activeButton === 3
-                                                    ? "#1F51C6"
-                                                    : "#e3dddd",
-                                            color:
-                                                activeButton === 3
-                                                    ? "#ffffff"
-                                                    : "#000000",
-                                        },
-                                    }}
-                                    onClick={() => handleButtonClick(3)}
-                                >
-                                    12:30
-                                </Button>
-                                <SpanTypograophyStyle
-                                    variant="caption"
-                                    color="initial"
-                                >
-                                    2 Slots Available
-                                </SpanTypograophyStyle>
-                            </ListBoxStyle>
-                            <ListBoxStyle>
-                                <Button
-                                    variant="contained"
-                                    sx={{
-                                        width: "110px",
-                                        height: "33px",
-                                        borderRadius: "3px",
-                                        fontWeight: "600",
-                                        fontSize: "15px",
-                                        fontFamily: "Lato",
-                                        display: "block",
-                                        backgroundColor:
-                                            activeButton === 4
-                                                ? "#1F51C6"
-                                                : "#ffffff",
-                                        color:
-                                            activeButton === 4
-                                                ? "#ffffff"
-                                                : "#706D6D",
-                                        " :hover": {
-                                            backgroundColor:
-                                                activeButton === 4
-                                                    ? "#1F51C6"
-                                                    : "#e3dddd",
-                                            color:
-                                                activeButton === 4
-                                                    ? "#ffffff"
-                                                    : "#000000",
-                                        },
-                                    }}
-                                    onClick={() => handleButtonClick(4)}
-                                >
-                                    12:30
-                                </Button>
-                                <SpanTypograophyStyle
-                                    variant="caption"
-                                    color="initial"
-                                >
-                                    2 Slots Available
-                                </SpanTypograophyStyle>
-                            </ListBoxStyle> */}
-                        </List>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                background: "#15B912",
-                                margin: "20px 10px",
-                                width: "190px",
-                                borderRadius: "40px",
-                            }}
-                            onClick={() => {
-                                if (
-                                    !bookingAppointmentDetails.appointmentDate
-                                ) {
-                                    return setDateErr(true);
-                                }
-
-                                setConfirmBookAppointmentDialog(true);
-                            }}
-                        >
-                            Book Appointment
-                        </Button>
-                    </DialogContent>
-                </Dialog>
-                <Dialog
-                    sx={{ borderRadius: "14px" }}
-                    onClose={() => setConfirmBookAppointmentDialog(false)}
-                    aria-labelledby="customized-dialog-title"
-                    open={confirmBookAppointmentDialog}
-                >
-                    <DialogTitle
-                        sx={{
-                            m: 0,
-                            p: 2,
-                            fontFamily: "Raleway",
-                            fontWeight: "600",
-                            fontSize: "22px",
-                        }}
-                        id="customized-dialog-title"
-                    >
-                        Confirm Appointment With Dr.{" "}
-                        {bookingAppointmentDetails.nameOfTheDoctor}
-                    </DialogTitle>
-                    {confirmBookAppointmentDialog ? (
-                        <IconButton
-                            aria-label="close"
-                            onClick={() =>
-                                setConfirmBookAppointmentDialog(false)
-                            }
-                            sx={{
-                                position: "absolute",
-                                right: 8,
-                                top: 8,
-                                color: (theme) => theme.palette.grey[500],
-                            }}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                    ) : null}
-                    <DialogContent dividers>
-                        <Typography
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "500",
-                                fontSize: "18px",
-                                color: "#706D6D",
-                                my: "10px",
-                                lineHeight: "21.6px",
-                            }}
-                        >
-                            Are you sure you want to book appointment with Dr.{" "}
-                            {bookingAppointmentDetails.nameOfTheDoctor}?
-                        </Typography>
-                        <Typography
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                                my: "10px",
-                            }}
-                        >
-                            <span style={{ color: "#1F51C6" }}>Date : </span>{" "}
-                            {bookingAppointmentDetails.appointmentDate},{" "}
-                            <span style={{ color: "#1F51C6" }}>Time : </span>
-                            {bookingAppointmentDetails.consultingTime}{" "}
-                        </Typography>
-                        <Stack direction="row" spacing="15px">
-                            <Button
-                                onClick={() =>
-                                    setConfirmBookAppointmentDialog(false)
-                                }
-                                variant="contained"
-                                sx={{
-                                    width: "328px",
-                                    height: "40px",
-                                    background: "#D9D9D9",
-                                    color: "#383838",
-                                    textTransform: "none",
-                                    fontFamily: "Lato",
-                                    fontWeight: "700",
-                                    borderRadius: "44px",
-                                    ":hover": { background: "#706D6D" },
-                                }}
-                            >
-                                Cancel{" "}
-                            </Button>
-                            <Button
-                                onClick={bookAppointment}
-                                variant="contained"
-                                sx={{
-                                    width: "328px",
-                                    height: "40px",
-                                    background: "#1F51C6",
-                                    color: "#ffffff",
-                                    textTransform: "none",
-                                    fontFamily: "Lato",
-                                    fontWeight: "700",
-                                    borderRadius: "44px",
-                                }}
-                            >
-                                Confirm{" "}
-                            </Button>
-                        </Stack>
-                    </DialogContent>
-                </Dialog>
+                <HospitalListDialog
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                    hospitalList={hospitalList}
+                    openBookingAppointmentDialog={bookingAppointmentDialog}
+                    setOpenBookingAppointmentDialog={setBookAppointmentDialog}
+                    hospitalListDialog={hospitalListDialog}
+                    setHospitalListDialog={setHospitalListDialog}
+                    setBookingAppointmentDetails={setBookingAppointmentDetails}
+                    bookingAppointmentDetails={bookingAppointmentDetails}
+                    setDoctor_id={setDoctor_id}
+                />
                 <AppointmentConfirmDIalog
                     confirmedAppointmentData={confirmedAppointmentData}
                     setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                     appointmentCofirmedDialog={appointmentCofirmedDialog}
+                    openBookingAppointmentDialog={bookingAppointmentDialog}
+                    setOpenBookingAppointmentDialog={setBookAppointmentDialog}
+                    hospitalListDialog={hospitalListDialog}
+                    setHospitalListDialog={setHospitalListDialog}
+                    bookingAppointmentDetails={bookingAppointmentDetails}
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
                 />
             </Box>
             <Footer />

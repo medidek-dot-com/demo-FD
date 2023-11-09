@@ -107,7 +107,7 @@ const DoctorInfo = () => {
     const getSingleDoctorDetails = async () => {
         try {
             const response = await axiosClient.get(
-                `/v2/getSingleDoctor/${doctorsId}`
+                `/v2/singledoctor/${doctorsId}`
             );
             console.log(response);
 
@@ -118,6 +118,8 @@ const DoctorInfo = () => {
             console.log(error.message);
         }
     };
+
+    
 
     useEffect(() => {
         getSingleDoctorDetails();
@@ -221,9 +223,8 @@ const DoctorInfo = () => {
                             <Box>
                                 <img
                                     src={
-                                        doctorsData.doctorImg
-                                            ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctorsData.doctorImg}`
-                                            : "/default.png"
+                                        doctorsData.imgurl
+                                            ? doctorsData.imgurl : "/default.png"
                                     }
                                     width={"118px"}
                                     height={"118px"}
@@ -292,30 +293,7 @@ const DoctorInfo = () => {
                                         color: "#000000BD",
                                     }}
                                 >
-                                    Dr. Shashwat Magarkar is an Oral and
-                                    Maxillofacial Surgeon working at Smilekraft,
-                                    Dhantoli. He has a keen interest in Dental
-                                    Implantology, Wisdom tooth Extraction, Fixed
-                                    and Removable dentures, Root canal
-                                    Treatment, Cosmetic Dentistry, Orthodontic
-                                    treatment. He has specialized in
-                                    Orthognathic Surgery, Cleft lip and palate
-                                    surgery, Facial trauma surgery. He has
-                                    received a Gold Medal in Oral and
-                                    Maxillofacial Surgery. He has completed his
-                                    graduation from Government Dental College &
-                                    Hospital, Mumbai in 2007. Upon graduating
-                                    from dental school, he completed
-                                    Post-graduation in Oral & Maxillofacial
-                                    Surgery in 2011. He also completed a 1 year
-                                    super specialty fellowship in Cleft and
-                                    Craniofacial Surgery at Amrita Institute of
-                                    Medical Sciences, Kochi. With his intrinsic
-                                    goal and vision to provide a painless but
-                                    comprehensive dental experience to his
-                                    patients, Dr. Shashwat is always on the
-                                    lookout for new and improved technology that
-                                    would aid him in achieving this vision.
+                                    {doctorsData.description}
                                 </Typography>
                             </Box>
                         </Card>
@@ -515,6 +493,7 @@ const DoctorInfo = () => {
                                             fontFamily: "Raleway",
                                             fontWeight: "600",
                                             fontSize: "16px",
+                                            boxShadow: "none"
                                         }}
                                     >
                                         Book Appointment
@@ -597,6 +576,7 @@ const DoctorInfo = () => {
                                             className="active button-style"
                                             size="small"
                                             variant="contained"
+                                            sx={{boxShadow:'none'}}
                                         >
                                             12:30 PM
                                         </Button>
@@ -671,6 +651,7 @@ const DoctorInfo = () => {
                                         fontWeight: "600",
                                         fontSize: "16px",
                                         my: 1,
+                                        boxShadow: "none",
                                         // width: { xs: "100%", sm: "100%", md: "200px" },
                                     }}
                                     // onClick={() =>

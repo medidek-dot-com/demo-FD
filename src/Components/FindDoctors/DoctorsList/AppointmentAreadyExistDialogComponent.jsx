@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 // import { axiosClient } from "../../Utils/axiosClient";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const StackStyle = styled(Stack)(({ theme }) => ({
     width: "48%",
@@ -38,14 +38,17 @@ const LabelStyle = styled("label")({
     marginBottom: "5px",
 });
 
-const AppointmentAreadyExistDialogComponent = ({confirmedAppointmentData, appointmentCofirmedDialog, setAppointmentCofirmedDialog}) => {
+const AppointmentAreadyExistDialogComponent = ({
+    appointmentAlreadyExistDialog,
+    setAppointmentAlreadyExistDialog,
+}) => {
     // const [err, setError] = useState(false);
 
     return (
         <Dialog
-            open={false}
+            open={appointmentAlreadyExistDialog}
             onClose={() => {
-                setAppointmentCofirmedDialog(false)
+                setAppointmentAlreadyExistDialog(false);
                 // setInputValue({
                 //     patientName: "",
                 //     age: "",
@@ -56,21 +59,26 @@ const AppointmentAreadyExistDialogComponent = ({confirmedAppointmentData, appoin
                 // });
                 // setError(false)
             }}
-            maxWidth={"md"}
+            maxWidth={"sm"}
             sx={{ margin: " 0 auto", borderRadius: "10px" }}
         >
-            <DialogTitle>
-                <Typography
-                    variant="h6"
-                    sx={{ fontWeight: "600", color: "#15B912" }}
-                >
-                    Booking Confirmation
-                </Typography>
-                {appointmentCofirmedDialog ? (
+            <DialogTitle
+                sx={{
+                    fontFamily: "Raleway",
+                    fontWeight: "600",
+                    fontSize: "1.375rem",
+                    lineHeight: "14.4px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
+            >
+                Booking Status
+                {appointmentAlreadyExistDialog ? (
                     <IconButton
                         aria-label="close"
                         onClick={() => {
-                            setAppointmentCofirmedDialog(false)
+                            setAppointmentAlreadyExistDialog(false);
                             setInputValue({
                                 patientName: "",
                                 age: "",
@@ -79,13 +87,13 @@ const AppointmentAreadyExistDialogComponent = ({confirmedAppointmentData, appoin
                                 appointmentDate: "",
                                 appointmentTime: "",
                             });
-                            setError(false)
+                            setError(false);
                         }}
                         sx={{
-                            position: "absolute",
-                            right: 8,
-                            top: 8,
-                            color: (theme) => theme.palette.grey[500],
+                            // position: "absolute",
+                            // right: 8,
+                            // top: 8,
+                            color: "#383838",
                         }}
                     >
                         <CloseIcon />
@@ -103,58 +111,61 @@ const AppointmentAreadyExistDialogComponent = ({confirmedAppointmentData, appoin
                     alignItems: "center",
                 }}
             >
-                <Stack spacing={1}>
+                <Stack direction="row" spacing={1}>
                     <Typography
                         variant="h5"
-                        sx={{ fontWeight: "600", fontSize: {xs:"1.2rem", sm:"1.4rem", md:"1.6rem"} }}
+                        sx={{
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            fontSize: {
+                                xs: "1.2rem",
+                                sm: "1.4rem",
+                                md: "1.6rem",
+                            },
+                        }}
                     >
-                        Appointment Confirmed for {confirmedAppointmentData.patientName}!
+                        Appointment Is Already Exist
                     </Typography>
-                    <Stack
-                        direction={{ xs: "column", sm: "column", md: "row" }}
-                        spacing={1}
-                    >
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Name :-{" "}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                            {/* {inputValue.patientName} */}
-                            </Box>
-                        </Typography>
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Age :- {""}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                            {/* {inputValue.age} */}
-                            </Box>
-                        </Typography>
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Token no:
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                                5
-                            </Box>
-                        </Typography>
-                    </Stack>
-                    <Stack
-                        direction={{ xs: "column", sm: "column", md: "row" }}
-                        spacing={1}
-                    >
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Gender :- {" "}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                            {/* {inputValue.gender} */}
-                            </Box>
-                        </Typography>
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Phone No.{" "}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                            {/* {inputValue.phoneNumber} */}
-                            </Box>
-                        </Typography>
-                    </Stack>
+                    <CancelIcon
+                        sx={{
+                            color: "#B92612",
+                            fontSize: {
+                                xs: "2rem",
+                                sm: "1rem",
+                                md: "2rem",
+                            },
+                        }}
+                    />
                 </Stack>
-                <CheckCircleIcon sx={{ color: "#15B912", fontSize: {xs:"3rem", sm:"4rem", md:"6rem"} }} />
+                <Typography
+                    sx={{
+                        fontFamily: "Lato",
+                        fontWeight: "500",
+                        fontSize: {
+                            xs: "0.813rem",
+                            sm: "0.813rem",
+                            md: "1rem",
+                        },
+                        lineHeight: "14px",
+                        mt: "10px",
+                    }}
+                >
+                    click on My Appointments to get your appointment details{" "}
+                    <Link
+                        to="/tracking"
+                        style={{
+                            fontFamily: "Lato",
+                            fontWeight: "500",
+                            textDecoration: "none",
+                            color: "#1F51C6",
+                        }}
+                    >
+                        My Appointments
+                    </Link>
+                </Typography>
             </DialogContent>
         </Dialog>
     );
 };
 
-export default AppointmentAreadyExistDialogComponent; 
+export default AppointmentAreadyExistDialogComponent;

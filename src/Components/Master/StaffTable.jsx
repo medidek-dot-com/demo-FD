@@ -172,8 +172,7 @@ const StaffTable = ({ search }) => {
                                     <StyledTableCell>
                                         <Avatar
                                             src={
-                                                staff.img
-                                                    ? `${baseURL}/Uploads/Hospital/StaffImage/${staff.img}`
+                                                staff?.imgurl ? staff.imgurl
                                                     : "/default.png"
                                             }
                                             sx={{
@@ -191,13 +190,13 @@ const StaffTable = ({ search }) => {
                                         {staff.gender}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {staff.enterPhoneNo}
+                                        {staff.phone}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {staff.designation}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {staff.enterEmailId}
+                                        {staff.email}
                                     </StyledTableCell>
                                     <StyledTableCell
                                         onClick={() => editStaff(staff)}
@@ -426,7 +425,7 @@ const StaffTable = ({ search }) => {
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {staff.enterPhoneNo}
+                                                {staff.phone}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>

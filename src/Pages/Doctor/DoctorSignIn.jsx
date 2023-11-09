@@ -108,7 +108,6 @@ const DoctorSignIn = () => {
                 navigate("/doctor/select-hospital");
 
                 setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
-          
 
                 // const userData = await axiosClient.get("/v2/masterData");
                 // console.log(userData.result.user.nameOfhospitalOrClinic);
@@ -352,7 +351,7 @@ const DoctorSignIn = () => {
                             }
                         />
 
-<Box sx={{ width: "100%", display: "flex" }}>
+                        <Box sx={{ width: "100%", display: "flex" }}>
                             <Link
                                 to="/forgot-password"
                                 style={{

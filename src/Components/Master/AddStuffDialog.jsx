@@ -16,8 +16,11 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { axiosClient } from "../../Utils/axiosClient";
-import { LoadingButton } from "@mui/lab";
+import { DatePicker, LoadingButton } from "@mui/lab";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const StackStyle = styled(Stack)(({ theme})=>({
     width:'48%',
@@ -69,10 +72,10 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
     const [inputValue, setInputValue] = useState({
         nameOfStaff:"",
         designation: "",
-        enterEmailId: "",
-        enterPhoneNo: "",
-        password: "",
-        hospoitalId: hospital_id,
+        email: "",
+        phone: "",
+        gender: "",
+        hospitalId: hospital_id,
     });
 
     const [inputImage, setInputImage] = useState("");
@@ -103,8 +106,9 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
         if (
             !inputValue.nameOfStaff ||
             !inputValue.designation ||
-            !inputValue.enterEmailId ||
-            !inputValue.enterPhoneNo 
+            !inputValue.email ||
+            !inputValue.gender ||
+            !inputValue.phone 
         ) {
             setError(true);
             return false;
@@ -113,14 +117,15 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
         const data = new FormData();
         data.append("nameOfStaff", inputValue.nameOfStaff);
         data.append("designation", inputValue.designation);
-        data.append("enterEmailId", inputValue.enterEmailId);
-        data.append("enterPhoneNo", inputValue.enterPhoneNo );
-        data.append("img", inputImage );
-        data.append("hospoitalId", hospital_id );
+        data.append("email", inputValue.email);
+        data.append("phone", inputValue.phone );
+        data.append("gender", inputValue.gender );
+        data.append("image", inputImage );
+        data.append("hospitalId", hospital_id );
 
         // console.log(data);
         try {
-            const response = await axiosClient.post('/v2/staff', data);
+            const response = await axiosClient.post('/v2/addstaff', data);
             if (response.status === 'ok') {
                 toast.success("Staff added successfully")
                 setAddStaffDialog(false);
@@ -218,9 +223,9 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 name="nameOfStaff"
                                 fullWidth
                                 placeholder="Ex.  John Doe"
-                                error={err && !inputValue.name && true}
+                                error={err && !inputValue.nameOfStaff && true}
                                 helperText={
-                                    err && !inputValue.name && "Please enter your name"
+                                    err && !inputValue.nameOfStaff && "Please enter staff's name"
                                 }
                                 onChange={handleChange}
                             />
@@ -236,7 +241,7 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 placeholder="Nurse/Compounder/Support Staff"
                                 error={err && !inputValue.designation && true}
                                 helperText={
-                                    err && !inputValue.designation && "Please enter your name"
+                                    err && !inputValue.designation && "Please enter staff's designation"
                                 }
                                 onChange={handleChange}
                             />
@@ -247,12 +252,12 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                             </LabelStyle>
                             <TextFieldStyle
                                 id="email"
-                                name="enterEmailId"
+                                name="email"
                                 fullWidth
                                 placeholder="doctor@gmail.com"
                                 error={err && !inputValue.email && true}
                                 helperText={
-                                    err && !inputValue.email && "Please enter your name"
+                                    err && !inputValue.email && "Please enter staff's name"
                                 }
                                 onChange={handleChange}
                             />
@@ -263,16 +268,52 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                             </LabelStyle>
                             <TextFieldStyle
                                 id="phone"
-                                name="enterPhoneNo"
+                                name="phone"
                                 fullWidth
                                 placeholder="Ex 99112240477"
                                 error={err && !inputValue.phone && true}
                                 helperText={
-                                    err && !inputValue.phone && "Please enter your name"
+                                    err && !inputValue.phone && "Please enter staff's phone"
                                 }
                                 onChange={handleChange}
                             />
                         </StackStyle>
+                        <StackStyle>
+                            <LabelStyle htmlFor="gender">
+                            Gender
+                            </LabelStyle>
+                            <TextFieldStyle
+                                id="gender"
+                                name="gender"
+                                fullWidth
+                                placeholder="Ex. Male"
+                                error={err && !inputValue.gender && true}
+                                helperText={
+                                    err && !inputValue.gender && "Please enter staff's phone"
+                                }
+                                onChange={handleChange}
+                            />
+                        </StackStyle>
+                        {/* <StackStyle>
+                            <LabelStyle htmlFor="dob">
+                            Enter Date Of Birth
+                            </LabelStyle>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker defaultValue={dayjs('2022-04-17')} />
+                            </LocalizationProvider> */}
+                            {/* <TextFieldStyle
+                                id="dob"
+                                name="dob"
+                                type="date"
+                                fullWidth
+                                placeholder="DD/MM/YY"
+                                error={err && !inputValue.gender && true}
+                                helperText={
+                                    err && !inputValue.gender && "Please enter staff's phone"
+                                }
+                                onChange={handleChange}
+                            /> */}
+                        {/* </StackStyle> */}
                         <StackStyle>
                             <LabelStyle htmlFor="password">
                                 Password(can be edited later)
@@ -285,10 +326,7 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                     fullWidth
                                     placeholder="Auto generated Password"
                                     value="medidekPass@123"
-                                    error={err && !inputValue.password && true}
-                                    helperText={
-                                        err && !inputValue.password && "Please enter your name"
-                                    }
+                                    sx={{background:"#D9D9D9"}}
                                     onChange={handleChange}
                                 />
                             </Stack>
@@ -312,6 +350,7 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 mx: "auto",
                                 display: "block",
                                 boxShadow: "none",
+                                borderRadius:"41px"
                             }}
                         >
                             <span

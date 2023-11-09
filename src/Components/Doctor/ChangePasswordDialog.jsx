@@ -15,7 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 
 const ChangePasswordField = styled(TextField)({
-    minWidth:"280px",
+    minWidth: "280px",
     [`& input`]: {
         fontFamily: "Lato",
         fontWeight: "500",
@@ -30,6 +30,11 @@ const ChangePasswordField = styled(TextField)({
     "& .css-1jnszeg-MuiInputBase-root-MuiOutlinedInput-root": {
         height: "38px",
     },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
 });
 
 const ChangePasswordDialog = ({
@@ -43,40 +48,41 @@ const ChangePasswordDialog = ({
     const [passwordNotMatch, setPasswordNotMatch] = useState(false);
     const [err, setError] = useState(false);
 
-    // const changeDoctorPassword = async () => {
-    //     if (!oldPassword || !newPassword || !confirmPassword) {
-    //         return setError(true);
-    //     }
+    const changeDoctorPassword = async (e) => {
+        e.preventDefault();
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            return setError(true);
+        }
 
-    //     if (newPassword !== confirmPassword) {
-    //         setError(true);
-    //         return setPasswordNotMatch(true);
-    //     }
-    //     try {
-    //         const response = await axiosClient.put(
-    //             `/v2/changePasswordForDoctor/${inputValue._id}`,
-    //             {
-    //                 oldPassword,
-    //                 newPassword,
-    //             }
-    //         );
-    //         if (response.status === "ok") {
-    //             setChangePasswordDialog(false);
-    //             return toast.success("password Changed successfully");
-    //         } else if (
-    //             response.status === "error" &&
-    //             response.statusCode === 403
-    //         ) {
-    //             setWrongPassword(true);
-    //         }
-    //     } catch (error) {
-    //         setOldPassword("");
-    //         setNewPassword("");
-    //         setConfirmPassword("");
-    //         setError(true);
-    //         setWrongPassword(error.message);
-    //     }
-    // };
+        if (newPassword !== confirmPassword) {
+            setError(true);
+            return setPasswordNotMatch(true);
+        }
+        try {
+            const response = await axiosClient.put(
+                `/v2/changePasswordForDoctor/${inputValue._id}`,
+                {
+                    oldPassword,
+                    newPassword,
+                }
+            );
+            if (response.status === "ok") {
+                setChangePasswordDialog(false);
+                return toast.success("password Changed successfully");
+            } else if (
+                response.status === "error" &&
+                response.statusCode === 403
+            ) {
+                setWrongPassword(true);
+            }
+        } catch (error) {
+            setOldPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            setError(true);
+            setWrongPassword(error.message);
+        }
+    };
 
     return (
         <>
@@ -84,7 +90,7 @@ const ChangePasswordDialog = ({
                 open={changePasswordDialog}
                 onClose={() => setChangePasswordDialog(false)}
                 maxWidth={"md"}
-                sx={{ margin: " 0 auto", width: "100%"}}
+                sx={{ margin: " 0 auto", width: "100%" }}
             >
                 <DialogTitle
                     sx={{
@@ -112,164 +118,168 @@ const ChangePasswordDialog = ({
                     ) : null}
                 </DialogTitle>
                 <Divider />
-                <DialogContent
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",   
-                        gap: "20px",
-                    }}
-                >
-                    <Stack spacing="10px">
-                        <InputLabel
-                            htmlFor="oldPass"
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "600",
-                                fontSize: "15px",
-                                color: "#383838",
-                            }}
-                        >
-                            Enter Old Password
-                            <span style={{ color: "#EA4335" }}>*</span>
-                        </InputLabel>
-                        <ChangePasswordField
-                            id="oldPass"
-                            value={oldPassword}
-                            error={
-                                err && !oldPassword
-                                    ? true
-                                    : false || (err && wrongPassword)
-                                    ? true
-                                    : false
-                            }
-                            helperText={
-                                err && !oldPassword
-                                    ? "Please enter old password"
-                                    : null || (err && wrongPassword)
-                                    ? wrongPassword
-                                    : null
-                            }
-                            placeholder="Old Password"
-                            onChange={(e) =>
-                                setOldPassword(e.target.value) & setError(false)
-                            }
-                        />
-                    </Stack>
-                    <Stack spacing="10px">
-                        <InputLabel
-                            htmlFor="oldPass"
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "600",
-                                fontSize: "15px",
-                                color: "#383838",
-                            }}
-                        >
-                            Enter New Password
-                            <span style={{ color: "#EA4335" }}>*</span>
-                        </InputLabel>
-                        <ChangePasswordField
-                            value={newPassword}
-                            error={
-                                err && !newPassword
-                                    ? true
-                                    : false || (err && passwordNotMatch)
-                                    ? true
-                                    : false
-                            }
-                            helperText={
-                                err && !newPassword
-                                    ? "Please enter new password"
-                                    : null || (err && passwordNotMatch)
-                                    ? "Password did not match"
-                                    : null
-                            }
-                            id="oldPass"
-                            placeholder="New Password"
-                            onChange={(e) =>
-                                setNewPassword(e.target.value) & setError(false)
-                            }
-                        />
-                    </Stack>
-                    <Stack spacing="10px">
-                        <InputLabel
-                            htmlFor="oldPass"
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "600",
-                                fontSize: "15px",
-                                color: "#383838",
-                            }}
-                        >
-                            Confirm New Password
-                            <span style={{ color: "#EA4335" }}>*</span>
-                        </InputLabel>
-                        <ChangePasswordField
-                            value={confirmPassword}
-                            error={
-                                err && !confirmPassword
-                                    ? true
-                                    : false || (err && passwordNotMatch)
-                                    ? true
-                                    : false
-                            }
-                            helperText={
-                                err && !confirmPassword
-                                    ? "Please enter new password"
-                                    : null || (err && passwordNotMatch)
-                                    ? "Password did not match"
-                                    : null
-                            }
-                            id="oldPass"
-                            placeholder="Confirm New"
-                            onChange={(e) =>
-                                setConfirmPassword(e.target.value) &
-                                setError(false)
-                            }
-                        />
-                    </Stack>
-                    <Stack spacing="10px">
-                        <Button
-                            // onClick={changeDoctorPassword}
-                            variant="contained"
-                            sx={{
-                                textTransform: "none",
-                                fontFamily: "Lato",
-                                fontWeight: "700",
-                                fontSize: "17px",
-                                color: "#ffffff",
-                                borderRadius: "63px",
-                                borderColor: "#D9D9D9",
-                                height: "40px",
-                                boxShadow: "none",
-                                width:"100%",
-                                display:"block",
-                            }}
-                        >
-                            Change Password
-                        </Button>
-                        <Button
-                            onClick={() => setChangePasswordDialog(false)}
-                            variant="outlined"
-                            fullWidth
-                            sx={{
-                                textTransform: "none",
-                                fontFamily: "Lato",
-                                fontWeight: "700",
-                                fontSize: "17px",
-                                color: "#383838",
-                                borderRadius: "63px",
-                                borderColor: "#D9D9D9",
-                                height: "40px",
-                                boxShadow: "none",
-                                display:"block",
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                    </Stack>
-                </DialogContent>
+                <form onSubmit={changeDoctorPassword}>
+                    <DialogContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "20px",
+                        }}
+                    >
+                        <Stack spacing="10px">
+                            <InputLabel
+                                htmlFor="oldPass"
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "15px",
+                                    color: "#383838",
+                                }}
+                            >
+                                Enter Old Password
+                                <span style={{ color: "#EA4335" }}>*</span>
+                            </InputLabel>
+                            <ChangePasswordField
+                                id="oldPass"
+                                value={oldPassword}
+                                error={
+                                    err && !oldPassword
+                                        ? true
+                                        : false || (err && wrongPassword)
+                                        ? true
+                                        : false
+                                }
+                                helperText={
+                                    err && !oldPassword
+                                        ? "Please enter old password"
+                                        : null || (err && wrongPassword)
+                                        ? wrongPassword
+                                        : null
+                                }
+                                placeholder="Old Password"
+                                onChange={(e) =>
+                                    setOldPassword(e.target.value) &
+                                    setError(false)
+                                }
+                            />
+                        </Stack>
+                        <Stack spacing="10px">
+                            <InputLabel
+                                htmlFor="oldPass"
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "15px",
+                                    color: "#383838",
+                                }}
+                            >
+                                Enter New Password
+                                <span style={{ color: "#EA4335" }}>*</span>
+                            </InputLabel>
+                            <ChangePasswordField
+                                value={newPassword}
+                                error={
+                                    err && !newPassword
+                                        ? true
+                                        : false || (err && passwordNotMatch)
+                                        ? true
+                                        : false
+                                }
+                                helperText={
+                                    err && !newPassword
+                                        ? "Please enter new password"
+                                        : null || (err && passwordNotMatch)
+                                        ? "Password did not match"
+                                        : null
+                                }
+                                id="oldPass"
+                                placeholder="New Password"
+                                onChange={(e) =>
+                                    setNewPassword(e.target.value) &
+                                    setError(false)
+                                }
+                            />
+                        </Stack>
+                        <Stack spacing="10px">
+                            <InputLabel
+                                htmlFor="oldPass"
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "15px",
+                                    color: "#383838",
+                                }}
+                            >
+                                Confirm New Password
+                                <span style={{ color: "#EA4335" }}>*</span>
+                            </InputLabel>
+                            <ChangePasswordField
+                                value={confirmPassword}
+                                error={
+                                    err && !confirmPassword
+                                        ? true
+                                        : false || (err && passwordNotMatch)
+                                        ? true
+                                        : false
+                                }
+                                helperText={
+                                    err && !confirmPassword
+                                        ? "Please enter new password"
+                                        : null || (err && passwordNotMatch)
+                                        ? "Password did not match"
+                                        : null
+                                }
+                                id="oldPass"
+                                placeholder="Confirm New"
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value) &
+                                    setError(false)
+                                }
+                            />
+                        </Stack>
+                        <Stack spacing="10px" sx={{width:'100%'}}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                sx={{
+                                    textTransform: "none",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "17px",
+                                    color: "#ffffff",
+                                    borderRadius: "63px",
+                                    borderColor: "#D9D9D9",
+                                    height: "40px",
+                                    boxShadow: "none",
+                                    width: "100%",
+                                    display: "block",
+                                }}
+                            >
+                                Change Password
+                            </Button>
+                            <Button
+                                onClick={() => setChangePasswordDialog(false)}
+                                variant="outlined"
+                                fullWidth
+                                sx={{
+                                    textTransform: "none",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "17px",
+                                    color: "#383838",
+                                    borderRadius: "63px",
+                                    borderColor: "#D9D9D9",
+                                    height: "40px",
+                                    boxShadow: "none",
+                                    display: "block",
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </Stack>
+                    </DialogContent>
+                </form>
             </Dialog>
         </>
     );

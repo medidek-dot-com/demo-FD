@@ -42,6 +42,8 @@ const AppointmentConfirmDIalog = ({
     confirmedAppointmentData,
     appointmentCofirmedDialog,
     setAppointmentCofirmedDialog,
+    bookingAppointmentDetails,
+    setInputValue,
 }) => {
     // const [err, setError] = useState(false);
     console.log(confirmedAppointmentData);
@@ -63,7 +65,17 @@ const AppointmentConfirmDIalog = ({
             maxWidth={"md"}
             sx={{ margin: " 0 auto", borderRadius: "10px" }}
         >
-            <DialogTitle sx={{ fontWeight: "600", color: "#15B912" }}>
+            <DialogTitle
+                sx={{
+                    fontFamily: "Raleway",
+                    fontWeight: "600",
+                    fontSize: { xs: "1.2rem", sm: "1.2rem", md: "1.375rem" },
+                    lineHeight: "25.4px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
+            >
                 Booking Confirmation
                 {appointmentCofirmedDialog ? (
                     <IconButton
@@ -81,10 +93,10 @@ const AppointmentConfirmDIalog = ({
                             setError(false);
                         }}
                         sx={{
-                            position: "absolute",
-                            right: 8,
-                            top: 8,
-                            color: (theme) => theme.palette.grey[500],
+                            // position: "absolute",
+                            // right: 8,
+                            // top: 8,
+                            color: "#383838",
                         }}
                     >
                         <CloseIcon />
@@ -106,37 +118,69 @@ const AppointmentConfirmDIalog = ({
                     <Typography
                         variant="h5"
                         sx={{
+                            fontFamily: "Lato",
                             fontWeight: "600",
                             fontSize: {
-                                xs: "1.2rem",
-                                sm: "1.4rem",
-                                md: "1.6rem",
+                                xs: "0.938rem",
+                                sm: "0.938rem",
+                                md: "1.25rem",
                             },
                         }}
                     >
-                        Appointment Confirmed for{" "}
-                        {confirmedAppointmentData?.userId?.name}!
+                        Appointment Confirmed With{" "}
+                        {bookingAppointmentDetails?.nameOfTheDoctor}!
                     </Typography>
                     <Stack
                         direction={{ xs: "column", sm: "column", md: "row" }}
                         spacing={1}
                     >
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Name :-{confirmedAppointmentData?.userId?.name}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {/* {inputValue.patientName} */}
+                        <Typography
+                            sx={{
+                                lineHeight: "20px",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1rem",
+                                },
+                                color: "#1F51C6",
+                            }}
+                        >
+                            Name :-{" "}
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#383838",
+                                    lineHeight: "20px",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: {
+                                        xs: "0.813rem",
+                                        sm: "0.813rem",
+                                        md: "1rem",
+                                    },
+                                }}
+                            >
+                                {confirmedAppointmentData?.name}
                             </Box>
                         </Typography>
-                        <Typography sx={{ lineHeight: "20px" }}>
+                        <Typography
+                            sx={{
+                                color: "#1F51C6",
+                                lineHeight: "20px",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1rem",
+                                },
+                            }}
+                        >
                             Age :- {""}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {/* {inputValue.age} */}
-                            </Box>
-                        </Typography>
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Token no: {""}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {confirmedAppointmentData?.token}
+                            <Box component="span" sx={{ color: "#383838" }}>
+                                {confirmedAppointmentData?.age}
                             </Box>
                         </Typography>
                     </Stack>
@@ -144,16 +188,40 @@ const AppointmentConfirmDIalog = ({
                         direction={{ xs: "column", sm: "column", md: "row" }}
                         spacing={1}
                     >
-                        <Typography sx={{ lineHeight: "20px" }}>
+                        <Typography
+                            sx={{
+                                color: "#1F51C6",
+                                lineHeight: "20px",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1rem",
+                                },
+                            }}
+                        >
                             Gender :-{" "}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {/* {inputValue.gender} */}
+                            <Box component="span" sx={{ color: "#383838" }}>
+                                {confirmedAppointmentData?.gender}
                             </Box>
                         </Typography>
-                        <Typography sx={{ lineHeight: "20px" }}>
-                            Phone No. {confirmedAppointmentData?.userId?.phone}
-                            <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {/* {inputValue.phoneNumber} */}
+                        <Typography
+                            sx={{
+                                color: "#1F51C6",
+                                lineHeight: "20px",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1rem",
+                                },
+                            }}
+                        >
+                            Phone No :-{" "}
+                            <Box component="span" sx={{ color: "#383838" }}>
+                                {confirmedAppointmentData?.phone}
                             </Box>
                         </Typography>
                     </Stack>

@@ -12,60 +12,28 @@ import {
     Switch,
     Typography,
 } from "@mui/material";
-import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
 import moment from "moment";
-import { blue } from "@mui/material/colors";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AddIcon from "@mui/icons-material/Add";
+import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
 import { BiSolidPlusSquare } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
-import { Bs0Circle } from "react-icons/bs";
-import { useSelector } from "react-redux";
 import { axiosClient } from "../../Utils/axiosClient";
+import { useSelector } from "react-redux";
 
-// const [hour, minutes] = startTime.split(":");
-// const parts = startTime.split(" ");
-// const pmPart = parts[1];
-let value;
-let newvalue;
-let parts;
-let pmPart;
-
-const OnlineAppointmentsComponent = ({
+const AppointmentByToken = ({
     dates,
     setHolidayDialog,
     view,
     markAsHoliday,
     setMarkAsHoliday,
-    selectedDay,
-    setSelectedDay,
     currentDate,
-    getOnlineSlotDetailForDoctorForPerticularDate,
 }) => {
-    // const currentDate = moment().format("yyyy-MM-DD");
-    console.log(currentDate);
-    // const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
-    console.log(selectedDay);
-    let c;
-    let d;
-
     const { user } = useSelector((state) => state.auth);
-    const [slotDurationTime, setSlotDurationTime] = useState("15 min");
+    // const currentDate = moment().format("yyyy-MM-DD");
 
-    // const [startTime, setStartTime] = useState("10:00 AM");
-    // let [endTime, setEndTime] = useState("");
-    // console.log("endtime start", endTime);
-    let count = 1;
-    const [numOfStartTimes, setNumOfStartTimes] = useState(0);
-
-    //From here
-    const [slotDuration, setSlotDuration] = useState(15);
+    const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
+        useState(false);
+    const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
     const [startTime, setStartTime] = useState("");
-    const [endTime, setEndTime] = useState("");
-    const [endTimes, setEndTimes] = useState([]);
 
     const [startTime2, setStartTime2] = useState("");
     const [startTimes2, setStartTimes2] = useState([]);
@@ -77,8 +45,12 @@ const OnlineAppointmentsComponent = ({
     const [endTime3, setEndTime3] = useState("");
     const [endTimes3, setEndTimes3] = useState([]);
 
-    const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
-        useState(false);
+    //From here
+    const [slotDuration, setSlotDuration] = useState(60);
+    const [endTime, setEndTime] = useState("");
+    const [endTimes, setEndTimes] = useState([]);
+    let count = 1;
+    const [numOfStartTimes, setNumOfStartTimes] = useState(0);
 
     const slotDurations = [15, 30, 45, 60];
 
@@ -86,9 +58,9 @@ const OnlineAppointmentsComponent = ({
         // Calculate the initial end time based on slot duration and start time
         const start = new Date(`01/01/2023 ${startTime}`);
         start.setMinutes(start.getMinutes() + slotDuration);
-        // setEndTime(
-        //     start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        // );
+        setEndTime(
+            start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        );
         console.log(start);
 
         // Generate end times based on the selected start time and slot duration
@@ -143,7 +115,7 @@ const OnlineAppointmentsComponent = ({
             );
         }
         setEndTimes3(generatedEndTimes3);
-    }, [startTime3, numOfStartTimes === 2]);
+    }, [startTime3]);
 
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
@@ -181,7 +153,7 @@ const OnlineAppointmentsComponent = ({
         //     );
         // }
         // setEndTimes2(generatedEndTimes2);
-    }, [startTime2, numOfStartTimes === 1]);
+    }, [startTime2]);
 
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
@@ -207,22 +179,19 @@ const OnlineAppointmentsComponent = ({
             );
         }
         setStartTimes3(genratedStartTimes3);
-    }, [endTime2, numOfStartTimes === 2]);
+    }, [endTime2]);
 
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
         const start = new Date(`01/01/2023 ${endTime}`);
-        console.log(start);
         start.setMinutes(start.getMinutes() + slotDuration);
         // setStartTime2(
         //     start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         // );
-        console.log(start);
 
         // Generate end times based on the selected start time and slot duration
         const genratedStartTimes2 = [];
         let currentTime = new Date(`01/01/2023 ${endTime}`);
-        console.log(currentTime);
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
             genratedStartTimes2.push(
@@ -233,7 +202,7 @@ const OnlineAppointmentsComponent = ({
             );
         }
         setStartTimes2(genratedStartTimes2);
-    }, [endTime, numOfStartTimes === 1]);
+    }, [endTime]);
 
     const handleSlotDurationChange = (event) => {
         setSlotDuration(event.target.value);
@@ -242,120 +211,7 @@ const OnlineAppointmentsComponent = ({
     const handleStartTimeChange = (event) => {
         setStartTime(event.target.value);
     };
-
     //To here
-
-    const saveData = async () => {
-        try {
-            const response = await axiosClient.post("/v2/creatSlotForDoctor", {
-                slotduration: slotDuration,
-                Starttime1: startTime,
-                Endtime1: endTime,
-                Starttime2: startTime2,
-                Endtime2: endTime2,
-                Starttime3: startTime3,
-                Endtime3: endTime3,
-                isholiday: markAsHoliday,
-                date: selectedDay.currentDate,
-                doctorid: user._id,
-            });
-            getOnlineSlotDetailForDoctorForPerticularDate();
-            console.log(response.result);
-            setStartTime("");
-            setStartTime2("");
-            setStartTime3("");
-            setEndTime("");
-            setEndTime2("");
-            setEndTime3("");
-        } catch (error) {
-            console.log(error.message);
-        }
-    };
-
-    var startTimeOptions = [];
-    var hours = 0;
-    let e = 1;
-
-    while (hours <= 24) {
-        if (hours > 12) {
-            var time = e.toString().padStart(2, "0") + ":00";
-            e++;
-            startTimeOptions.push(time + " " + "PM");
-            hours++;
-        } else if (hours <= 12) {
-            var time = hours.toString().padStart(2, "0") + ":00";
-            if (time < "12:00") {
-                startTimeOptions.push(time + " " + "AM");
-                hours++;
-            } else if (time == "12:00") {
-                startTimeOptions.push(time + " " + "PM");
-                hours++;
-            }
-        }
-
-        // console.log(time);
-    }
-
-    var endTimeOptions = [];
-    let f = 1;
-    let temp = endTime;
-    let changeTimeFormat = pmPart;
-    for (let hours = 0; hours <= 24; hours++) {
-        if (hours > 12) {
-            if (f <= 12) {
-                let time = f + ":" + slotDurationTime.toString();
-                endTimeOptions.push(time + " " + "AM");
-                f++;
-            }
-        }
-        // time = hours.toString().padStart(2, "0") + `:${slotDurationTime}`;
-        //  else if (hours <= 12) {
-        //     const time = temp + ":" + slotDurationTime.toString();
-        //     console.log(time);
-        //     if (time < "12:00") {
-        //         endTimeOptions.push(time + " " + "AM");
-        //         temp++;
-        //         // setEndTime(endTime++);
-        //     } else if (time == "12:00") {
-        //         endTimeOptions.push(time + " " + "PM");
-        //         temp++;
-        //     }
-        // }
-        else {
-            if (temp < 12 && changeTimeFormat === "AM") {
-                let time = temp + ":" + slotDurationTime.toString();
-                // time = hours.toString().padStart(2, "0") + `:${slotDurationTime}`;
-                const [hour, minutes] = time.split(":");
-
-                endTimeOptions.push(time + " " + "AM");
-                temp++;
-            }
-            if (temp >= 12 && changeTimeFormat === "AM" && hours <= 12) {
-                let time = f + ":" + slotDurationTime.toString();
-                const [hour, minutes] = time.split(":");
-                console.log(hour, minutes.split(" ")[0]);
-
-                if (minutes !== "") endTimeOptions.push(time + " " + "PM");
-                f++;
-            }
-            if (temp < 12 && changeTimeFormat === "PM") {
-                let time = temp + ":" + slotDurationTime.toString();
-                // time = hours.toString().padStart(2, "0") + `:${slotDurationTime}`;
-                const [hour, minutes] = time.split(":");
-                console.log(hour, minutes.split(" ")[0]);
-
-                endTimeOptions.push(time + " " + "PM");
-                temp++;
-            }
-            // if (hours < 12) {
-            //     let time = f + ":" + slotDurationTime.toString();
-            //     const [hour, minutes] = time.split(":");
-            //     // time = hours.toString().padStart(2, "0") + `:${slotDurationTime}`;
-            //     endTimeOptions.push(time + " " + "PM");
-            //     f++;
-            // }
-        }
-    }
 
     const handleSelectedDate = (userDate, i) => {
         const { date, month, year, day } = userDate;
@@ -368,6 +224,30 @@ const OnlineAppointmentsComponent = ({
         // const formattedDate = moment.format(date)
 
         setSelectedDay({ currentDate: formattedDate, i });
+    };
+
+    const saveData = async () => {
+        try {
+            const response = await axiosClient.post("/v2/creatTokenForDoctor", {
+                Starttime1: startTime,
+                Endtime1: endTime,
+                Starttime2: startTime2,
+                Endtime2: endTime2,
+                Starttime3: startTime3,
+                Endtime3: endTime3,
+                date: selectedDay.currentDate,
+                doctorid: user._id,
+            });
+            console.log(response.result);
+            setStartTime("");
+            setStartTime2("");
+            setStartTime3("");
+            setEndTime("");
+            setEndTime2("");
+            setEndTime3("");
+        } catch (error) {
+            console.log(error.message);
+        }
     };
 
     return (
@@ -398,62 +278,6 @@ const OnlineAppointmentsComponent = ({
                 >
                     {onlineAppointmentEnabled ? "Enable" : "Disabled"}
                 </Box>
-                {/* <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        sx={{
-                                            color: "#ffffff",
-                                            background: "#1F51C6",
-                                            width: "147px",
-                                            height: "40px",
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                            borderRadius: "5px",
-                                        }}
-                                        value={view}
-                                        onChange={(e) =>
-                                            setView(e.target.value)
-                                        }
-                                    >
-                                        <MenuItem
-                                            value="Weekly view"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            Weekly view
-                                        </MenuItem>
-                                        <MenuItem
-                                            value="Calandar View"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            Calandar View
-                                        </MenuItem>
-                                    </Select> */}
-                {/* <select
-                                        style={{
-                                            color: "#ffffff",
-                                            background: "#1F51C6",
-                                            padding: "10px",
-                                            fontSize: "1rem",
-                                            borderRadius: "5px",
-                                            marginLeft: "auto"
-                                        }}
-                                    >
-                                        <OptionStyle value="Weekly view">
-                                            Weekly view
-                                        </OptionStyle>
-                                        <OptionStyle value="Calandar View">
-                                            Calandar View
-                                        </OptionStyle>
-                                    </select> */}
             </Box>
             <Card
                 sx={{
@@ -471,14 +295,7 @@ const OnlineAppointmentsComponent = ({
                     border: "1px solid #D9D9D9",
                 }}
             >
-                <Stack
-                    direction="row"
-                    spacing={{ xs: "7px", sm: "7px", md: "12.61px" }}
-                    sx={{
-                        width: { xs: "100%", sm: "100%", md: "100%" },
-                        // background: "red",
-                    }}
-                >
+                <Stack direction="row" spacing="12.61px" sx={{}}>
                     {dates.map((date, i) => (
                         <Box
                             key={i + 1}
@@ -539,102 +356,6 @@ const OnlineAppointmentsComponent = ({
                     ))}
                 </Stack>
                 <Stack spacing="20px" sx={{ mt: "16.61px" }}>
-                    <Stack
-                        direction={{
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        }}
-                    >
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                Choose Slot Duration
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                spacing="20.02px"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
-                                    }}
-                                    placeholder="Choose Slot Duration"
-                                    value={slotDuration}
-                                    onChange={handleSlotDurationChange}
-                                >
-                                    {slotDurations.map((duration, i) => (
-                                        <MenuItem
-                                            key={i}
-                                            value={duration}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {duration} min
-                                        </MenuItem>
-                                    ))}
-
-                                    {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                                </Select>
-                                <Button
-                                    onClick={() => setHolidayDialog(true)}
-                                    sx={{
-                                        lineHeight: "21.13px",
-                                        // color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        padding: 0,
-                                        fontFamily: "Lato",
-                                        fontWeight: "500",
-                                        fontSize: "1.125rem",
-                                        display: {
-                                            xs: "none",
-                                            sm: "none",
-                                            md: "block",
-                                        },
-                                    }}
-                                >
-                                    View Holiday List
-                                </Button>
-                            </Stack>
-                        </Stack>
-                    </Stack>
                     <Stack
                         spacing="20.02px"
                         direction={{
@@ -1361,82 +1082,6 @@ const OnlineAppointmentsComponent = ({
                             </Stack>
                         </Stack>
                     )}
-
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                    >
-                        <Stack direction="row" sx={{ alignItems: "center" }}>
-                            {/* <Radio
-                                // checked={selectedValue === 'a'}
-                                onChange={()=>console.log("Checked")}
-                                value="a"
-                                id="markAsHoliday"
-                                name="radio-buttons"
-                                inputProps={{
-                                    "aria-label": "A",
-                                }}
-                            /> */}
-                            <IconButton
-                                id="markAsHoliday"
-                                sx={{
-                                    ":hover": {
-                                        background: "none",
-                                    },
-                                }}
-                                onClick={() => setMarkAsHoliday(!markAsHoliday)}
-                            >
-                                {markAsHoliday ? (
-                                    <BiRadioCircleMarked
-                                        style={{
-                                            fontSize: "2rem",
-                                            color: "#1F51C6",
-                                        }}
-                                    />
-                                ) : (
-                                    <BiRadioCircle
-                                        style={{
-                                            fontSize: "2rem",
-                                            color: "#1F51C6",
-                                        }}
-                                    />
-                                )}
-                            </IconButton>
-                            <InputLabel
-                                htmlFor="markAsHoliday"
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "semibold",
-                                    fontSize: "0.938rem",
-                                    color: "#706D6D",
-                                    userSelect: "none",
-                                }}
-                            >
-                                Mark as Holiday
-                            </InputLabel>
-                        </Stack>
-                        <Button
-                            onClick={() => setHolidayDialog(true)}
-                            sx={{
-                                lineHeight: "21.13px",
-                                // color: "#ffffff",
-                                borderRadius: "0",
-                                textTransform: "none",
-                                padding: 0,
-                                fontFamily: "Lato",
-                                fontWeight: "500",
-                                fontSize: "0.75rem",
-                                display: {
-                                    xs: "block",
-                                    sm: "block",
-                                    md: "none",
-                                },
-                            }}
-                        >
-                            View Holiday List
-                        </Button>
-                    </Stack>
                     <Button
                         variant="contained"
                         onClick={saveData}
@@ -1457,4 +1102,4 @@ const OnlineAppointmentsComponent = ({
     );
 };
 
-export default OnlineAppointmentsComponent;
+export default AppointmentByToken;

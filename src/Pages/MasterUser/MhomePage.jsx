@@ -52,15 +52,14 @@ const SearchFeildStyle = styled(TextField)({
     },
 });
 
-const HospitalDetailsStyle = styled(Typography)`
+const HospitalDetailsStyle = styled(Box)`
     color: #706d6d;
-    font-size: 15px;
+    
     display: flex;
     align-items: center;
     width: 60%;
     margin-top: 5px;
-    font-family:Lato,
-    font-weight: 400;
+    
 `;
 
 const DoctorCardStyle = styled(Card)(({ theme }) => ({
@@ -211,7 +210,7 @@ const MhomePage = () => {
                                     {user?.nameOfhospitalOrClinic}
                                     {/* Wokhardt Hospital, Nagpur. */}
                                 </Typography>
-                                <HospitalDetailsStyle component={"p"}>
+                                <HospitalDetailsStyle>
                                     <img
                                         src="/location.svg"
                                         alt="img"
@@ -221,9 +220,17 @@ const MhomePage = () => {
                                             height: "33px",
                                         }}
                                     />
+                                    <Typography sx={{
+                                        fontFamily:"Lato",
+                                        fontWeight: 400,
+                                        fontSize: "0.938rem"
+
+                                    }}>
                                     {user?.enterFullAddress} &nbsp;
                                     {user?.location} &nbsp;
                                     {user?.landmark}
+
+                                    </Typography>
                                 </HospitalDetailsStyle>
                                 <Rating
                                     name="read-only"
@@ -235,7 +242,7 @@ const MhomePage = () => {
                         </Box>
                         <Box>
                             <Button
-                                // onClick={handleClickOpen}
+                                onClick={()=>navigate(`/master/user/profile/edit/${user?._id}`)}
                                 variant="contained"
                                 startIcon={<CreateOutlinedIcon />}
                                 sx={{
@@ -246,6 +253,7 @@ const MhomePage = () => {
                                     fontSize: "18px",
                                     fontFamily: "Raleway",
                                     fontWeight: "600",
+                                    boxShadow:'none'
                                 }}
                             >
                                 Edit Profile
