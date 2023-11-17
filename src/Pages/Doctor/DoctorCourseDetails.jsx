@@ -107,7 +107,7 @@ const LabelStyle = styled("label")({
 });
 
 const DoctorCourseDetails = () => {
-    const { hospital_id, doctor_id, course_id } = useParams();
+    const { doctorid, course_id } = useParams();
     const [courseEnrollDialog, setCourseEnrollDialog] = useState(false);
     const { user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -261,9 +261,8 @@ const DoctorCourseDetails = () => {
                     >
                         <Button
                             onClick={() =>
-                                navigate(
-                                    `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                                ) & setMenu(false)
+                                navigate(`/doctor/dashboard/${doctorid}`) &
+                                setMenu(false)
                             }
                             sx={{
                                 color: "#ffffff",
@@ -277,9 +276,8 @@ const DoctorCourseDetails = () => {
                         </Button>
                         <Button
                             onClick={() =>
-                                navigate(
-                                    `/doctor/appointments/${hospital_id}/${doctor_id}`
-                                ) & setMenu(false)
+                                navigate(`/doctor/appointments/${doctorid}`) &
+                                setMenu(false)
                             }
                             sx={{
                                 color: "#ffffff",
@@ -302,9 +300,9 @@ const DoctorCourseDetails = () => {
                                 fontSize: "1.5rem",
                                 textTransform: "none",
                                 lineHeight: "28.8px",
-                                ':hover':{
+                                ":hover": {
                                     background: "#ffffff",
-                                    }
+                                },
                             }}
                         >
                             Medical Courses
@@ -325,21 +323,21 @@ const DoctorCourseDetails = () => {
                             Edit Profile
                         </Button>
                         <Button
-                        onClick={() =>
-                            navigate(
-                                `/doctor/appointment-settings/${user._id}`
-                            ) & setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Appointment Settings
-                    </Button>
+                            onClick={() =>
+                                navigate(
+                                    `/doctor/appointment-settings/${doctorid}`
+                                ) & setMenu(false)
+                            }
+                            sx={{
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontSize: "1.5rem",
+                                textTransform: "none",
+                                lineHeight: "28.8px",
+                            }}
+                        >
+                            Appointment Settings
+                        </Button>
                         <Button
                             onClick={logOutUser}
                             sx={{
@@ -417,7 +415,7 @@ const DoctorCourseDetails = () => {
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                                `/doctor/dashboard/${doctorid}`
                                             )
                                         }
                                         variant="text"
@@ -450,7 +448,7 @@ const DoctorCourseDetails = () => {
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                                `/doctor/appointments/${doctorid}`
                                             )
                                         }
                                         variant="text"
@@ -483,7 +481,7 @@ const DoctorCourseDetails = () => {
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/courses/${doctor_id}`
+                                                `/doctor/courses/${user?._id}`
                                             )
                                         }
                                         variant="text"
@@ -547,7 +545,7 @@ const DoctorCourseDetails = () => {
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/appointment-settings/${user._id}`
+                                                `/doctor/appointment-settings/${doctorid}`
                                             )
                                         }
                                         variant="text"
@@ -888,7 +886,7 @@ const DoctorCourseDetails = () => {
                                                 sx={{
                                                     fontFamily: "Raleway",
                                                     fontWeight: 700,
-                                                    
+
                                                     color: "#383838",
                                                     textAlign: {
                                                         xs: "center",

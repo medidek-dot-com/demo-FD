@@ -27,7 +27,6 @@ const StackStyle = styled(Stack)({
     "&::-webkit-scrollbar-thumb": {
         backgroundColor: "transparent",
     },
-    WebkitOverflowScrolling: ["touch", "scroll"],
     touchAction: "pan-x",
     WebkitOverflowScrolling: ["touch", "scroll"],
     cursor: "grab",
@@ -37,7 +36,6 @@ const StackStyle = styled(Stack)({
 
 const HolidayListDialog = ({ holidayDialog, setHolidayDialog }) => {
     const currentDay = moment().format("DD MMM");
-
 
     const [dates, setDates] = useState([]);
     // console.log(dates.map(date => date.date + " " + date.month));
@@ -162,7 +160,11 @@ const HolidayListDialog = ({ holidayDialog, setHolidayDialog }) => {
                     >
                         {dates.map((date, i) => (
                             <Box
-                            id = {currentDay === date.date + " " + date.month ? "activeDate" : "NormalDate"}
+                                id={
+                                    currentDay === date.date + " " + date.month
+                                        ? "activeDate"
+                                        : "NormalDate"
+                                }
                                 key={i}
                                 sx={{
                                     width: {
@@ -177,15 +179,18 @@ const HolidayListDialog = ({ holidayDialog, setHolidayDialog }) => {
                                     alignItems: "center",
                                     padding: "30px",
                                     background:
-                                        currentDay === date.date + " " + date.month
+                                        currentDay ===
+                                        date.date + " " + date.month
                                             ? "#1F51C6"
                                             : "#FFFFFF",
                                     border:
-                                        currentDay === date.date + " " + date.month
+                                        currentDay ===
+                                        date.date + " " + date.month
                                             ? "none"
                                             : "1px solid #706D6D8F",
                                     color:
-                                        currentDay === date.date + " " + date.month
+                                        currentDay ===
+                                        date.date + " " + date.month
                                             ? "#FFFFFF"
                                             : "#706D6D",
                                     borderRadius: "50%",

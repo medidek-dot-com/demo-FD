@@ -160,7 +160,7 @@ const ViewPetiantAppointment = () => {
                             }}
                         >
                             <Box component="span" sx={{ display: "flex" }}>
-                                <CheckCircleIcon color="success" sx={{}} />
+                                <CheckCircleIcon color="success" sx={{}} />{" "}
                             </Box>
                             <Box
                                 component="span"

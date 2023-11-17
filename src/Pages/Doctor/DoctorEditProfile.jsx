@@ -96,7 +96,7 @@ const LabelStyle = styled("label")({
 });
 
 const DoctorEditProfile = () => {
-    const { hospital_id, doctor_id } = useParams();
+    const { doctorid } = useParams();
     const dispatch = useDispatch();
     const [pendingAppointmentsData, setPendingAppointmentsData] = useState([]);
     const [completeAppointmentsData, setCompleteAppointmentsData] = useState(
@@ -142,8 +142,7 @@ const DoctorEditProfile = () => {
         email: user?.email,
         phone: user?.phone,
         connsultationFee: user?.connsultationFee,
-       description: user?.description
-       
+        description: user?.description,
     });
 
     const [inputImage, setInputImage] = useState("");
@@ -196,12 +195,15 @@ const DoctorEditProfile = () => {
 
         // console.log(data);
         try {
-            const response = await axiosClient.put(`/v2/editDoctorfile/${user?._id}`, data);
+            const response = await axiosClient.put(
+                `/v2/editDoctorfile/${user?._id}`,
+                data
+            );
             console.log(response.result);
             if (response.status === "ok") {
                 // navigate(`/master/user/home/${uuid.id}`);
                 dispatch(updateUserData(response.result));
-                navigate(`/doctor/courses/${user?._id}`)
+                navigate(`/doctor/courses/${user?._id}`);
                 toast.success("Doctor added successfully");
 
                 return;
@@ -210,7 +212,6 @@ const DoctorEditProfile = () => {
             toast.error(e.message);
         }
     };
-
 
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
@@ -271,11 +272,7 @@ const DoctorEditProfile = () => {
                     />
                 </Stack>
                 <Avatar
-                    src={
-                        user?.imgurl
-                            ? user.imgurl
-                            : "/default.png"
-                    }
+                    src={user?.imgurl ? user.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -296,9 +293,8 @@ const DoctorEditProfile = () => {
                 >
                     <Button
                         onClick={() =>
-                            navigate(
-                                `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
+                            navigate(`/doctor/dashboard/${doctorid}`) &
+                            setMenu(false)
                         }
                         sx={{
                             color: "#ffffff",
@@ -312,9 +308,8 @@ const DoctorEditProfile = () => {
                     </Button>
                     <Button
                         onClick={() =>
-                            navigate(
-                                `/doctor/appointments/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
+                            navigate(`/doctor/appointments/${doctorid}`) &
+                            setMenu(false)
                         }
                         sx={{
                             color: "#ffffff",
@@ -353,9 +348,9 @@ const DoctorEditProfile = () => {
                             fontSize: "1.5rem",
                             textTransform: "none",
                             lineHeight: "28.8px",
-                            ':hover':{
+                            ":hover": {
                                 background: "#ffffff",
-                                }
+                            },
                         }}
                     >
                         Edit Profile
@@ -363,7 +358,7 @@ const DoctorEditProfile = () => {
                     <Button
                         onClick={() =>
                             navigate(
-                                `/doctor/appointment-settings/${user._id}`
+                                `/doctor/appointment-settings/${doctorid}`
                             ) & setMenu(false)
                         }
                         sx={{
@@ -419,9 +414,7 @@ const DoctorEditProfile = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl
-                                        ? user.imgurl
-                                        : "/default.png"
+                                    user?.imgurl ? user.imgurl : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -447,7 +440,7 @@ const DoctorEditProfile = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                            DUID :- {user.doctorid}
+                                DUID :- {user.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -465,7 +458,7 @@ const DoctorEditProfile = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                            `/doctor/dashboard/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -498,7 +491,7 @@ const DoctorEditProfile = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                            `/doctor/appointments/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -529,7 +522,7 @@ const DoctorEditProfile = () => {
                             >
                                 <Button
                                     onClick={() =>
-                                        navigate(`/doctor/courses/${doctor_id}`)
+                                        navigate(`/doctor/courses/${user?._id}`)
                                     }
                                     variant="text"
                                     sx={{
@@ -594,7 +587,7 @@ const DoctorEditProfile = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointment-settings/${user._id}`
+                                            `/doctor/appointment-settings/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -725,7 +718,11 @@ const DoctorEditProfile = () => {
                                         >
                                             <img
                                                 src={
-                                                    preview ? preview :  user?.imgurl ? user.imgurl : "/default.png"  
+                                                    preview
+                                                        ? preview
+                                                        : user?.imgurl
+                                                        ? user.imgurl
+                                                        : "/default.png"
                                                 }
                                                 alt="user"
                                                 width="60"
@@ -750,9 +747,8 @@ const DoctorEditProfile = () => {
                                                         width: "120.73px",
                                                     }}
                                                 >
-                                                    
-                                                        
-                                                        Pick a photo from your computer
+                                                    Pick a photo from your
+                                                    computer
                                                 </Typography>
 
                                                 <FormLabel
@@ -775,7 +771,9 @@ const DoctorEditProfile = () => {
                                                     id="hospitalImg"
                                                     name="photo"
                                                     style={{ display: "none" }}
-                                                    onChange={(e)=>getUserImage(e)}
+                                                    onChange={(e) =>
+                                                        getUserImage(e)
+                                                    }
                                                 />
                                             </Box>
                                         </Stack>
@@ -841,7 +839,9 @@ const DoctorEditProfile = () => {
                                                 value={
                                                     inputValue.nameOfTheDoctor
                                                 }
-                                                onChange={(e)=>handleChange(e)}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -864,7 +864,9 @@ const DoctorEditProfile = () => {
                                                     "Please enter your qualification"
                                                 }
                                                 value={inputValue.qulification}
-                                                onChange={(e)=>handleChange(e)}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -887,7 +889,9 @@ const DoctorEditProfile = () => {
                                                     "Please enter specialty"
                                                 }
                                                 value={inputValue.speciality}
-                                                onChange={(e)=>handleChange(e)}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -912,7 +916,9 @@ const DoctorEditProfile = () => {
                                                 value={
                                                     inputValue.yearOfExprience
                                                 }
-                                                onChange={(e)=>handleChange(e)}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -935,7 +941,9 @@ const DoctorEditProfile = () => {
                                                     "Please enter your email"
                                                 }
                                                 value={inputValue.email}
-                                                onChange={(e)=>handleChange(e)}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
                                             />
                                         </StackStyle>
                                         <StackStyle>
@@ -958,7 +966,9 @@ const DoctorEditProfile = () => {
                                                     "Please enter your phone number"
                                                 }
                                                 value={inputValue.phone}
-                                                onChange={(e)=>handleChange(e)}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
                                             />
                                         </StackStyle>
 
@@ -1010,7 +1020,9 @@ const DoctorEditProfile = () => {
                                                 value={
                                                     inputValue.connsultationFee
                                                 }
-                                                onChange={(e)=>handleChange(e)}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
                                             />
                                         </StackStyle>
 
@@ -1221,10 +1233,10 @@ const DoctorEditProfile = () => {
                                                     !inputValue.description &&
                                                     "Please enter description"
                                                 }
-                                                value={
-                                                    inputValue.description
+                                                value={inputValue.description}
+                                                onChange={(e) =>
+                                                    handleChange(e)
                                                 }
-                                                onChange={(e)=>handleChange(e)}
                                             />
                                         </StackStyle>
                                         {/* <StackStyle>

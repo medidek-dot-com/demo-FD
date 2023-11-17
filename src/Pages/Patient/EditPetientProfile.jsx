@@ -11,6 +11,8 @@ import {
     FormGroup,
     InputBase,
     InputLabel,
+    MenuItem,
+    Select,
     Stack,
     TextField,
     Typography,
@@ -23,7 +25,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, updateUserData } from "../../Store/authSlice";
 import Footer from "../../Components/Footer/Footer";
 import { tab } from "../../Store/tabSlice";
-import ChangePasswordDialogForPatient from '../../Components/Patient/ChangePasswordDialogForPatient'
+import ChangePasswordDialogForPatient from "../../Components/Patient/ChangePasswordDialogForPatient";
+import DatePicker from "react-date-picker";
+import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const StackStyle = styled(Stack)(({ theme }) => ({
     width: "48%",
@@ -44,6 +50,35 @@ const TextFieldStyle = styled(TextField)({
     "& .MuiOutlinedInput-input": {
         padding: "10px 15px",
     },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+});
+const SelectFieldStyle = styled(Select)({
+    // [`& select`]: {
+    fontFamily: "Lato",
+    fontWeight: "600",
+    fontSize: "15px",
+    color: "#383838",
+    // },
+
+    "& .MuiOutlinedInput-input": {
+        padding: "10px 15px",
+    },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+});
+
+const MenuItemStyle = styled(MenuItem)({
+    fontFamily: "Lato",
+    fontWeight: "600",
+    fontSize: "15px",
+    color: "#383838",
 });
 
 const LabelStyle = styled("label")({
@@ -54,20 +89,34 @@ const LabelStyle = styled("label")({
     color: "#383838",
 });
 
+const DatePickerStyle = styled(MobileDatePicker)({
+    [`& input`]: {
+        color: "#383838",
+        fontFamily: "Lato",
+        fontWeight: "600",
+        fontSize: "15px",
+    },
+    [`& div`]: {
+        height: "41px",
+    },
+});
+
 const EditPetientProfile = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const { user } = useSelector((state) => state.auth);
     // console.log(user.user._id);
+    // const [dob, setDob] = useState("");
+
     const [inputValue, setInputValue] = useState({
         name: user?.name,
         email: user?.email,
-        dateOfBirth: user?.dateOfBirth,
+        dateOfBirth: user?.dateOfBirth ? user?.dateOfBirth : "",
         phone: user?.phone,
-        age: user?.age,
+        dateOfBirth: user?.age ? user?.dateOfBirth : "",
         gender: user?.gender,
     });
-    
+
     const dispatch = useDispatch();
     const [inputImage, setInputImage] = useState("");
     const [preview, setPreview] = useState("");
@@ -268,7 +317,7 @@ const EditPetientProfile = () => {
                                         helperText={
                                             err &&
                                             !inputValue.name &&
-                                            "Please enter your email"
+                                            "Please enter your name"
                                         }
                                         value={inputValue.name}
                                         onChange={handleChange}
@@ -306,7 +355,7 @@ const EditPetientProfile = () => {
                                         helperText={
                                             err &&
                                             !inputValue.phone &&
-                                            "Please enter your email"
+                                            "Please enter your phone"
                                         }
                                         value={inputValue.phone}
                                         onChange={handleChange}
@@ -316,10 +365,33 @@ const EditPetientProfile = () => {
                                     <LabelStyle htmlFor="dateOfBirth">
                                         Date Of Birth
                                     </LabelStyle>
+                                    {/* <LocalizationProvider
+                                        dateAdapter={AdapterDayjs}
+                                    >
+                                        <DatePickerStyle
+                                            format="DD/MM/YYYY"
+                                            id="dateOfBirth"
+                                            name="dateOfBirth"
+                                            defaultValue={"DD/MM/YYYY"}
+                                            error={
+                                                err &&
+                                                !inputValue.dateOfBirth &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.dateOfBirth &&
+                                                "Please enter your email"
+                                            }
+                                            value={inputValue.dateOfBirth}
+                                            onChange={()=>console.log()}
+                                        />
+                                    </LocalizationProvider> */}
                                     <TextFieldStyle
                                         id="dateOfBirth"
                                         name="dateOfBirth"
                                         fullWidth
+                                        // type="date"
                                         placeholder="Enter Date Of Birth"
                                         error={
                                             err &&
@@ -329,44 +401,42 @@ const EditPetientProfile = () => {
                                         helperText={
                                             err &&
                                             !inputValue.dateOfBirth &&
-                                            "Please enter your email"
+                                            "Please enter your date of birth"
                                         }
                                         value={inputValue.dateOfBirth}
                                         onChange={handleChange}
                                     />
                                 </StackStyle>
                                 <StackStyle>
-                                    <LabelStyle htmlFor="dateOfBirth">
-                                        Age
-                                    </LabelStyle>
-                                    <TextFieldStyle
-                                        id="dateOfBirth"
-                                        name="dateOfBirth"
-                                        fullWidth
-                                        placeholder="Enter Date Of Birth"
-                                        error={
-                                            err &&
-                                            !inputValue.dateOfBirth &&
-                                            true
-                                        }
-                                        helperText={
-                                            err &&
-                                            !inputValue.dateOfBirth &&
-                                            "Please enter your email"
-                                        }
-                                        value={inputValue.dateOfBirth}
-                                        onChange={handleChange}
-                                    />
-                                </StackStyle>
-                                <StackStyle>
-                                    <LabelStyle htmlFor="dateOfBirth">
+                                    <LabelStyle htmlFor="gender">
                                         Gender
                                     </LabelStyle>
-                                    <TextFieldStyle
-                                        id="dateOfBirth"
-                                        name="dateOfBirth"
+                                    <SelectFieldStyle
+                                        id="gender"
+                                        name="gender"
                                         fullWidth
-                                        placeholder="Enter Date Of Birth"
+                                        placeholder="Select Gender"
+                                        error={
+                                            err && !inputValue.gender && true
+                                        }
+                                        value={inputValue.gender}
+                                        onChange={handleChange}
+                                    >
+                                        <MenuItemStyle value="male">
+                                            Male
+                                        </MenuItemStyle>
+                                        <MenuItemStyle value="female">
+                                            Female
+                                        </MenuItemStyle>
+                                        <MenuItemStyle value="other">
+                                            Other
+                                        </MenuItemStyle>
+                                    </SelectFieldStyle>
+                                    {/* <TextFieldStyle
+                                        id="gender"
+                                        name="gender"
+                                        fullWidth
+                                        placeholder="Select Gender"
                                         error={
                                             err &&
                                             !inputValue.dateOfBirth &&
@@ -379,7 +449,7 @@ const EditPetientProfile = () => {
                                         }
                                         value={inputValue.dateOfBirth}
                                         onChange={handleChange}
-                                    />
+                                    /> */}
                                 </StackStyle>
                             </Box>
                             <Button
@@ -407,7 +477,7 @@ const EditPetientProfile = () => {
                             </Button>
                             <Button
                                 variant="contained"
-                                onClick={()=>setChangePasswordDialog(true)}
+                                onClick={() => setChangePasswordDialog(true)}
                                 sx={{
                                     flex: 0.3,
                                     width: {
@@ -437,9 +507,11 @@ const EditPetientProfile = () => {
                             </Button>
                         </form>
                     </Card>
-                    
                 </Box>
-                <ChangePasswordDialogForPatient changePasswordDialog={changePasswordDialog} setChangePasswordDialog={setChangePasswordDialog}/>
+                <ChangePasswordDialogForPatient
+                    changePasswordDialog={changePasswordDialog}
+                    setChangePasswordDialog={setChangePasswordDialog}
+                />
             </Box>
             <Footer />
         </>

@@ -27,7 +27,7 @@ const ImageStyle = styled("img")(({ theme }) => ({
 
 const SelectHospital = () => {
     const navigate = useNavigate();
-    // const { hospital_id, doctor_id } = useParams();
+    const { doctorid } = useParams();
     const { user } = useSelector((state) => state.auth);
     const [hospitalList, setHospitalList] = useState([]);
     const numberOfHospitals = user;
@@ -39,7 +39,7 @@ const SelectHospital = () => {
             const response = await axiosClient.get(
                 `/v2/multipleloginprofile/${user?.doctorid}`
             );
-            setHospitalList(response.result)
+            setHospitalList(response.result);
             console.log(response);
             return;
         } catch (error) {
@@ -80,9 +80,7 @@ const SelectHospital = () => {
                     }}
                 >
                     <Avatar
-                        src={
-                           user?.imgurl ? user.imgurl : "/default.png"
-                        }
+                        src={user?.imgurl ? user.imgurl : "/default.png"}
                         sx={{ width: "81px", height: "81px" }}
                     />
                     <Typography
@@ -115,76 +113,78 @@ const SelectHospital = () => {
                         }}
                     >
                         {hospitalList.map((hospital, i) => (
-                        <Stack
-                            key={i}
-                            direction="row"
-                            sx={{
-                                justifyContent: "space-between",
-                                borderBottom: "1px solid #D9D9D9",
-                                p: "5px",
-                            }}
-                        >
                             <Stack
+                                key={i}
                                 direction="row"
-                                alignItems="center"
-                                spacing="10px"
-                            >
-                                {/* <Badge badgeContent={4} color="primary"> */}
-                                <Avatar
-                                    src={
-                                        hospital?.hospitalId === null ? hospital?.imgurl :
-                                        hospital?.hospitalId?.imgurl  || "/default.png"
-                                    }
-                                    sx={{
-                                        width: "58px",
-                                        height: "58px",
-                                    }}
-                                />
-                                {/* </Badge> */}
-                                <Stack>
-                                    <Typography
-                                        sx={{
-                                            lineHeight: "21.6px",
-                                            fontFamily: "Lato",
-                                            fontSize: "18px",
-                                            fontWeight: "600",
-                                        }}
-                                    >
-                                        {/* Hospital Name */}
-                                        {
-                                             hospital?.hospitalId===null ? hospital?.nameOfTheDoctor : hospital?.hospitalId?.nameOfhospitalOrClinic
-                                                }
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            lineHeight: "19.2px",
-                                            fontFamily: "Lato",
-                                            color: "#706D6D",
-                                        }}
-                                    >
-                                        {hospital?.hospitalId?.location}
-                                    </Typography>
-                                </Stack>
-                            </Stack>
-                            <Button
-                                onClick={() =>
-                                    navigate(
-                                        `/doctor/dashboard/${user._id}/${user._id}`
-                                    )
-                                }
-                                variant="text"
                                 sx={{
-                                    textTransform: "none",
-                                    fontSize: "16px",
-                                    fontFamily: "Lato",
-                                    fontWeight: "600",
+                                    justifyContent: "space-between",
+                                    borderBottom: "1px solid #D9D9D9",
+                                    p: "5px",
                                 }}
                             >
-                                Enter <EastIcon />
-                            </Button>
-                        </Stack>
-                         ))}
-                       
+                                <Stack
+                                    direction="row"
+                                    alignItems="center"
+                                    spacing="10px"
+                                >
+                                    {/* <Badge badgeContent={4} color="primary"> */}
+                                    <Avatar
+                                        src={
+                                            hospital?.hospitalId === null
+                                                ? hospital?.imgurl
+                                                : hospital?.hospitalId
+                                                      ?.imgurl || "/default.png"
+                                        }
+                                        sx={{
+                                            width: "58px",
+                                            height: "58px",
+                                        }}
+                                    />
+                                    {/* </Badge> */}
+                                    <Stack>
+                                        <Typography
+                                            sx={{
+                                                lineHeight: "21.6px",
+                                                fontFamily: "Lato",
+                                                fontSize: "18px",
+                                                fontWeight: "600",
+                                            }}
+                                        >
+                                            {/* Hospital Name */}
+                                            {hospital?.hospitalId === null
+                                                ? hospital?.nameOfTheDoctor
+                                                : hospital?.hospitalId
+                                                      ?.nameOfhospitalOrClinic}
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                lineHeight: "19.2px",
+                                                fontFamily: "Lato",
+                                                color: "#706D6D",
+                                            }}
+                                        >
+                                            {hospital?.hospitalId?.location}
+                                        </Typography>
+                                    </Stack>
+                                </Stack>
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/dashboard/${hospital._id}`
+                                        )
+                                    }
+                                    variant="text"
+                                    sx={{
+                                        textTransform: "none",
+                                        fontSize: "16px",
+                                        fontFamily: "Lato",
+                                        fontWeight: "600",
+                                    }}
+                                >
+                                    Enter <EastIcon />
+                                </Button>
+                            </Stack>
+                        ))}
                     </Card>
                 </Stack>
             </Box>

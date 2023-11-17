@@ -34,9 +34,6 @@ const LabelStyle = styled("label")({
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
-    "& .MuiOutlinedInput-input": {
-        padding: "5px 10px",
-    },
     ["& input:disabled"]: {
         color: "#706D6D",
         backgroundColor: "#D9D9D9",

@@ -18,9 +18,6 @@ import { useSelector } from "react-redux";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
-//     "& .MuiOutlinedInput-input": {
-//         padding: "5px 10px",
-//     },
 //     ["& input"]: {
 //         // color: "white",
 //         fontFamily: "Lato",
@@ -79,18 +76,17 @@ const DuidDialog = ({
                 setInputValue(response.result);
                 return;
             }
-             
         } catch (e) {
-            if(e.status === "error" && e.statusCode === 403){
+            if (e.status === "error" && e.statusCode === 403) {
                 setError(true);
                 setDisableButton(false);
-               return setDoctorAlreadyExists(true);
-             }
-             if(e.status === "error" && e.statusCode === 404){
+                return setDoctorAlreadyExists(true);
+            }
+            if (e.status === "error" && e.statusCode === 404) {
                 setError(true);
                 setDisableButton(false);
-               return setInvalidDuid(true);
-             }
+                return setInvalidDuid(true);
+            }
             setDisableButton(false);
             setDisableButton(false);
             return toast.error(e.message);
@@ -148,9 +144,27 @@ const DuidDialog = ({
                         <TextField
                             id="duid"
                             placeholder="Enter DUID"
-                            onChange={(e) => setDuid(e.target.value) & setError(false)}
-                            error={err && !duid ? true : false || err && doctorAlreadyExist ? true : false || err && invalidDuid ? true : false}
-                            helperText={err && !duid ? "Please enter DUID" : "" || err && doctorAlreadyExist ? "This doctor is already exists in this hospital" : "" || err && invalidDuid ? "Invalid DUID" : ""}
+                            onChange={(e) =>
+                                setDuid(e.target.value) & setError(false)
+                            }
+                            error={
+                                err && !duid
+                                    ? true
+                                    : false || (err && doctorAlreadyExist)
+                                    ? true
+                                    : false || (err && invalidDuid)
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                err && !duid
+                                    ? "Please enter DUID"
+                                    : "" || (err && doctorAlreadyExist)
+                                    ? "This doctor is already exists in this hospital"
+                                    : "" || (err && invalidDuid)
+                                    ? "Invalid DUID"
+                                    : ""
+                            }
                             sx={{
                                 input: {
                                     height: "10px",

@@ -30,8 +30,12 @@ import Footer from "../../Footer/Footer";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { axiosClient, baseURL } from "../../../Utils/axiosClient";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { tab } from "../../../Store/tabSlice";
+import BookAppointmnetDetailsDialog from "../../Patient/BookAppointmnetDetailsDialog";
+import BookAppointmentDialogForPatient from "../../Patient/BookAppointmentDialogForPatient";
+import ConfirmAppointmentDialog from "../../Patient/ConfirmAppointmentDialog";
+import AppointmentConfirmDIalog from "../DoctorsList/AppointmentConfirmDIalog";
 
 const CarouselStyle = styled(Carousel)`
     width: 100%;
@@ -66,12 +70,91 @@ const responsive = {
 
 const DoctorInfo = () => {
     const { doctorsId } = useParams();
+    const { user } = useSelector((state) => state.auth);
     const [dates, setDates] = useState([]);
     const [activeDate, setActiveDate] = useState(false);
     const [slotTime, setSlotTime] = useState(false);
     const [dropDown, setDropDown] = useState(false);
     const [doctorsData, setDoctorsData] = useState({});
     const navigate = useNavigate();
+    const [activeCard, setActiveCard] = useState();
+    const [dateErr, setDateErr] = useState(false);
+    const [hospitalList, setHospitalList] = useState([]);
+    const [duid, setDuid] = useState("");
+
+    const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
+        nameOfTheDoctor: "",
+        doctorsId: "",
+        appointmentDate: "",
+        consultingTime: "",
+        hospitalId: "",
+        userid: user?._id,
+        doctorid: "",
+        name: "",
+        Age: "",
+        Gender: "",
+        phone: "",
+        AppointmentNotes: "",
+        AppointmentTime: "",
+        imgurl: "",
+    });
+
+    const [inputValue, setInputValue] = useState({
+        name: user?.name ? user.name : "",
+        age: user?.age ? user.age : "",
+        gender: user?.gender ? user.gender : "",
+        phone: user?.phone ? user.phone : "",
+        email: user?.email ? user.email : "",
+        AppointmentNotes: "",
+        appointmentDate: "",
+        AppointmentTime: "",
+        doctorid: bookingAppointmentDetails.doctorid,
+        userid: user?._id,
+    });
+
+    const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
+        useState(false);
+
+    const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
+        useState(false);
+    const [slotData, setSlotData] = useState([]);
+    const [slotsLoading, setSlotsLoading] = useState(false);
+    const [bookingAppointmentDialog, setBookAppointmentDialog] =
+        useState(false);
+    const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
+        useState(false);
+
+    const selectDoctor = (data) => {
+        console.log(data);
+        setBookingAppointmentDetails({
+            ...bookingAppointmentDetails,
+            nameOfTheDoctor: data.nameOfTheDoctor,
+            imgurl: data.imgurl,
+            doctorid: data._id,
+        });
+        setInputValue({ ...inputValue, doctorid: data._id });
+        setBookAppointmentDialog(true);
+    };
+
+    const getAvailableSlots = async () => {
+        try {
+            setSlotsLoading(true);
+            const response = await axiosClient.get(
+                `/v2/getAvailbleSlotsForAnUser/${bookingAppointmentDetails.doctorid}/${bookingAppointmentDetails.appointmentDate}`
+            );
+            if (response.status === "ok") {
+                setSlotsLoading(false);
+                return setSlotData(response.result);
+            }
+        } catch (error) {
+            setSlotsLoading(false);
+            console.log(error.message);
+        }
+    };
+
+    useEffect(() => {
+        getAvailableSlots();
+    }, [bookingAppointmentDetails.appointmentDate]);
 
     const handleDateSelect = (e, i) => {
         setActiveDate(true);
@@ -88,7 +171,7 @@ const DoctorInfo = () => {
         const monthStart = moment().startOf("day");
         const monthsDates = [];
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 7; i++) {
             const date = monthStart.clone().add(i, "days");
             monthsDates.push({
                 day: date.format("ddd").toUpperCase(),
@@ -112,14 +195,26 @@ const DoctorInfo = () => {
             console.log(response);
 
             if (response.status === "ok") {
-                return setDoctorsData(response.result);
+                setDuid(response.result.doctorid);
+                setDoctorsData(response.result);
+                try {
+                    const hospitaList = await axiosClient.get(
+                        `/v2/multipleloginprofile/${response?.result?.doctorid}`
+                    );
+                    if (hospitaList.status === "ok") {
+                        setHospitalList(hospitaList.result);
+                    }
+                    console.log(hospitaList);
+                    return;
+                } catch (error) {
+                    // setBookAppointmentButtonLoading(false);
+                    console.log(error);
+                }
             }
         } catch (error) {
             console.log(error.message);
         }
     };
-
-    
 
     useEffect(() => {
         getSingleDoctorDetails();
@@ -128,24 +223,6 @@ const DoctorInfo = () => {
     console.log(doctorsData?.reviews);
     const reviews = doctorsData?.reviews;
     console.log(reviews);
-    // const getSingleDoctorDetails = async() =>{
-    //     try {
-    //         const response = await axiosClient.get(
-    //             `/v2/getSingleDoctor/${doctorsId}`
-    //         );
-    //         console.log(response.result);
-    //         if (response.status === "ok") {
-    //             return setDoctorsData(response.result);
-    //         }
-    //     } catch (error) {
-    //         console.log(error.message);
-    //     }
-    // };
-    // }
-
-    // useEffect(()=>{
-    //     getSingleDoctorDetails()
-    // },[doctorsId])
 
     return (
         <>
@@ -158,9 +235,10 @@ const DoctorInfo = () => {
                     },
                     m: "0px auto",
                     p: 1,
+                    minHeight: "100vh",
                 }}
             >
-                <Stack
+                {/* <Stack
                     sx={{
                         background: {
                             xs: "#1F51C6",
@@ -201,7 +279,7 @@ const DoctorInfo = () => {
                             ),
                         }}
                     />
-                </Stack>
+                </Stack> */}
                 <Box
                     sx={{
                         display: { xs: "none", sm: "none", md: "flex" },
@@ -224,7 +302,8 @@ const DoctorInfo = () => {
                                 <img
                                     src={
                                         doctorsData.imgurl
-                                            ? doctorsData.imgurl : "/default.png"
+                                            ? doctorsData.imgurl
+                                            : "/default.png"
                                     }
                                     width={"118px"}
                                     height={"118px"}
@@ -392,121 +471,12 @@ const DoctorInfo = () => {
                                 );
                             })}
                         </Stack>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "30px",
-                                my: "20px",
-                            }}
-                        >
-                            Info
-                        </Typography>
-                        <Card
-                            sx={{
-                                p: "20px",
-                                boxShadow: "none",
-                                border: "1px solid #D9D9D9",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Box sx={{ width: "35%" }}>
-                                    <Typography
-                                        component="h6"
-                                        sx={{
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "22px",
-                                            lineHeight: "25.83px",
-                                        }}
-                                    >
-                                        Smilekraft Maxillofacial Surgery And
-                                        Dental Hospital
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            color: "#706D6D",
-                                            fontSize: "15px",
-                                            fontFamily: "Lato",
-                                            fontWeight: "400",
-                                            lineHeight: "18px",
-                                            my: "15px",
-                                        }}
-                                        component="p"
-                                        color="initial"
-                                    >
-                                        66/1, Ashish Apartments, 2nd Floor,
-                                        Abhyankar Marg Road., Landmark: Opposite
-                                        Anand Ashram Hotel, Nagpur
-                                    </Typography>
-                                    <img
-                                        src="/hospital-img1.png"
-                                        alt=""
-                                        style={{
-                                            margin: "5px",
-                                            borderRadius: "5px",
-                                        }}
-                                    />
-                                    <img
-                                        src="/hospital-img2.png"
-                                        alt=""
-                                        style={{
-                                            margin: "5px",
-                                            borderRadius: "5px",
-                                        }}
-                                    />
-                                    <img
-                                        src="/hospital-img3.png"
-                                        alt=""
-                                        style={{
-                                            margin: "5px",
-                                            borderRadius: "5px",
-                                        }}
-                                    />
-                                    <img
-                                        src="/hospital-img4.png"
-                                        alt=""
-                                        style={{
-                                            margin: "5px",
-                                            borderRadius: "5px",
-                                        }}
-                                    />
-                                </Box>
-                                <Box>
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            borderRadius: "25px",
-                                            background: "#15B912",
-                                            textTransform: "none",
-                                            px: "15px",
-                                            my: 1,
-                                            width: "190px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            boxShadow: "none"
-                                        }}
-                                    >
-                                        Book Appointment
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </Card>
                     </Box>
                     <Box
                         sx={{
-                            background: "yellow",
+                            // background: "yellow",
                             flex: 0.8,
-                            background: grey[300],
+                            // background: grey[300],
                             margin: "0 20px",
                             width: "394px",
                             height: "371px",
@@ -527,7 +497,7 @@ const DoctorInfo = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Book Appointment
+                                Hospitals List
                             </Typography>
                             <Divider
                                 sx={{
@@ -536,7 +506,103 @@ const DoctorInfo = () => {
                                     mx: "-25px",
                                 }}
                             />
-                            <Box
+                            {hospitalList.map((hospital, i) => (
+                                <Stack
+                                    key={i}
+                                    direction="row"
+                                    sx={{
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+
+                                        borderBottom: "1px solid #D9D9D9",
+                                        p: "5px",
+                                    }}
+                                >
+                                    <Stack
+                                        direction="row"
+                                        alignItems="center"
+                                        spacing="10px"
+                                    >
+                                        {/* <Badge badgeContent={4} color="primary"> */}
+                                        <Avatar
+                                            src={
+                                                hospital?.hospitalId === null
+                                                    ? hospital?.imgurl
+                                                    : hospital?.hospitalId
+                                                          ?.imgurl ||
+                                                      "/default.png"
+                                            }
+                                            sx={{
+                                                width: "58px",
+                                                height: "58px",
+                                            }}
+                                        />
+                                        {/* </Badge> */}
+                                        <Stack>
+                                            <Typography
+                                                sx={{
+                                                    lineHeight: "21.6px",
+                                                    fontFamily: "Lato",
+                                                    fontSize: "18px",
+                                                    fontWeight: "600",
+                                                }}
+                                            >
+                                                {hospital?.hospitalId === null
+                                                    ? hospital?.nameOfTheDoctor
+                                                    : hospital?.hospitalId
+                                                          ?.nameOfhospitalOrClinic}
+                                            </Typography>
+                                            <Stack direction="row">
+                                                <Box
+                                                    component="span"
+                                                    sx={{
+                                                        lineHeight: "19.2px",
+                                                        fontFamily: "Lato",
+                                                        color: "#706D6D",
+                                                    }}
+                                                >
+                                                    {hospital?.hospitalId ===
+                                                    null
+                                                        ? hospital?.connsultationFee
+                                                        : hospital?.hospitalId
+                                                              ?.connsultationFee}
+                                                </Box>
+                                                <Box
+                                                    component="span"
+                                                    sx={{
+                                                        lineHeight: "19.2px",
+                                                        fontFamily: "Lato",
+                                                        color: "#706D6D",
+                                                    }}
+                                                >
+                                                    {hospital?.hospitalId ===
+                                                    null
+                                                        ? hospital?.location
+                                                        : hospital?.hospitalId
+                                                              ?.location}
+                                                </Box>
+                                            </Stack>
+                                        </Stack>
+                                    </Stack>
+                                    <Button
+                                        onClick={() => selectDoctor(hospital)}
+                                        variant="contained"
+                                        sx={{
+                                            textTransform: "none",
+                                            p: "14px 42px",
+                                            height: "40px",
+                                            fontSize: "1rem",
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            borderRadius: "20px",
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        Book
+                                    </Button>
+                                </Stack>
+                            ))}
+                            {/* <Box
                                 sx={{
                                     display: "flex",
                                     flexWrap: "wrap",
@@ -544,123 +610,61 @@ const DoctorInfo = () => {
                                     userSelect: "none",
                                 }}
                             >
-                                {/* <CarouselStyle
-                                    responsive={responsive}
-                                    swipeable={true}
-                                    slidesToSlide={4}
-                                    arrows={false}
-                                > */}
                                 {dates.map((date, i) => (
                                     <Card
+                                        onClick={(e) => {
+                                            setActiveCard(i);
+                                            setDateErr(false);
+                                            const dateString =
+                                                e.target.innerText;
+                                            console.log();
+                                            const dateObject = dayjs(
+                                                dateString + dayjs().year()
+                                            );
+
+                                            const formattedDate =
+                                                dateObject.format("YYYY-MM-DD");
+                                            console.log(formattedDate);
+                                            setInputValue({
+                                                ...inputValue,
+                                                appointmentDate: formattedDate,
+                                            });
+                                            setBookingAppointmentDetails({
+                                                ...bookingAppointmentDetails,
+                                                appointmentDate: formattedDate,
+                                            });
+                                        }}
                                         sx={{
-                                            textAlign: "center",
                                             width: "50px",
-                                            margin: "5px",
+                                            textAlign: "center",
+                                            margin: "5px 8px",
                                             padding: "5px",
-                                            cursor: "pointer",
+                                            textTransform: "none",
+                                            fontFamily: "Lato",
+                                            fontWeight: "700",
+                                            fontSize: "12px",
+                                            boxShadow: "none",
                                             border: "1px solid #D9D9D9",
+                                            cursor: "pointer",
+                                            background:
+                                                activeCard === i
+                                                    ? "#1F51C6"
+                                                    : "#ffffff",
+                                            color:
+                                                activeCard === i
+                                                    ? "#ffffff"
+                                                    : " #000000",
                                         }}
                                         key={i}
                                     >
-                                        <p>{date.day}</p>
-                                        <p>{date.date}</p>
-                                        <p>{date.month}</p>
+                                        {date.day}
+                                        <br />
+                                        {date.date}
+                                        <br />
+                                        {date.month}
                                     </Card>
                                 ))}
-                                {/* </CarouselStyle> */}
-                            </Box>
-                            <Box marginTop={"20px"}>
-                                <Box sx={{ display: "flex" }}>
-                                    <Box textAlign={"center"} margin={"5px"}>
-                                        <Button
-                                            className="active button-style"
-                                            size="small"
-                                            variant="contained"
-                                            sx={{boxShadow:'none'}}
-                                        >
-                                            12:30 PM
-                                        </Button>
-                                        <Typography
-                                            component={"p"}
-                                            fontSize={"10px"}
-                                            className="slotAvailable"
-                                        >
-                                            2 slots available
-                                        </Typography>
-                                    </Box>
-                                    <Box textAlign={"center"} margin={"5px"}>
-                                        <Button
-                                            className="button-style"
-                                            size="small"
-                                            variant="contained"
-                                        >
-                                            12:30 PM
-                                        </Button>
-                                        <Typography
-                                            component={"p"}
-                                            fontSize={"10px"}
-                                            className="slotAvailable"
-                                        >
-                                            2 slots available
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Box style={{ display: "flex" }}>
-                                    <Box textAlign={"center"} margin={"5px"}>
-                                        <Button
-                                            className="button-style"
-                                            size="small"
-                                            variant="contained"
-                                        >
-                                            12:30 PM
-                                        </Button>
-                                        <Typography
-                                            component={"p"}
-                                            fontSize={"10px"}
-                                            className="slotAvailable"
-                                        >
-                                            2 slots available
-                                        </Typography>
-                                    </Box>
-                                    <Box textAlign={"center"} margin={"5px"}>
-                                        <Button
-                                            className="button-style"
-                                            size="small"
-                                            variant="contained"
-                                        >
-                                            12:30 PM
-                                        </Button>
-                                        <Typography
-                                            component={"p"}
-                                            fontSize={"10px"}
-                                            className="slotAvailable"
-                                        >
-                                            2 slots available
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Button
-                                    variant="contained"
-                                    size="medium"
-                                    sx={{
-                                        borderRadius: "25px",
-                                        background: "#15B912",
-                                        textTransform: "none",
-                                        px: "15px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "600",
-                                        fontSize: "16px",
-                                        my: 1,
-                                        boxShadow: "none",
-                                        // width: { xs: "100%", sm: "100%", md: "200px" },
-                                    }}
-                                    // onClick={() =>
-                                    //     navigate("/doctor/appointment/payment")
-                                    // }
-                                >
-                                    Book Appointment
-                                </Button>
-                            </Box>
+                            </Box> */}
                         </Card>
                     </Box>
                 </Box>
@@ -683,8 +687,8 @@ const DoctorInfo = () => {
                     >
                         <Avatar
                             src={
-                                doctorsData.doctorImg
-                                    ? `${baseURL}/Uploads/Hospital/DoctorImage/${doctorsData.doctorImg}`
+                                doctorsData?.imgurl
+                                    ? doctorsData.imgurl
                                     : "/default.png"
                             }
                             alt="img"
@@ -731,7 +735,6 @@ const DoctorInfo = () => {
                     </Stack>
                     <Card
                         sx={{
-                            padding: "10px",
                             border: "1px solid #D9D9D9",
                             mt: 2,
                             borderRadius: "7px",
@@ -743,42 +746,174 @@ const DoctorInfo = () => {
                             sx={{
                                 color: "#ffffff",
                                 background: "#1F51C6",
-                                m: -2,
+                                fontFamily: "Raleway",
+                                fontSize: "15px",
+                                // m: -2,
                                 p: 2,
                             }}
                         >
-                            Book Appointment
+                            Hospitals List
                         </Typography>
-                        <Box sx={{ marginTop: "25px" }}>
-                            <CarouselStyle
-                                responsive={responsive}
-                                swipeable={true}
-                                slidesToSlide={4}
+                        {hospitalList.map((hospital, i) => (
+                            <Stack
+                                key={i}
+                                direction="row"
+                                sx={{
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+
+                                    borderBottom: "1px solid #D9D9D9",
+                                    p: "5px",
+                                    // width: {
+                                    //     xs: "300px",
+                                    //     sm: "300px",
+                                    //     md: "603px",
+                                    // },
+                                }}
                             >
-                                {dates.map((date, i) => (
-                                    <Card
-                                        onClick={() => handleDateSelect(e, i)}
+                                <Stack
+                                    direction="row"
+                                    alignItems="center"
+                                    spacing="10px"
+                                >
+                                    {/* <Badge badgeContent={4} color="primary"> */}
+                                    <Avatar
+                                        src={
+                                            hospital?.hospitalId === null
+                                                ? hospital?.imgurl
+                                                : hospital?.hospitalId
+                                                      ?.imgurl || "/default.png"
+                                        }
                                         sx={{
-                                            textAlign: "center",
-                                            width: "50px",
-                                            margin: "5px",
-                                            p: "5px",
-                                            cursor: "pointer",
-                                            border: "1px solid #D9D9D9",
+                                            width: "58px",
+                                            height: "58px",
                                         }}
-                                        key={i}
-                                    >
-                                        {date.day}
-                                        <br />
-                                        {date.date}
-                                        <br />
-                                        {date.month}
-                                        <br />
-                                    </Card>
-                                ))}
-                            </CarouselStyle>
-                        </Box>
-                        <Box sx={{ mt: 2 }}>
+                                    />
+                                    {/* </Badge> */}
+                                    <Stack>
+                                        <Typography
+                                            sx={{
+                                                lineHeight: "21.6px",
+                                                fontFamily: "Lato",
+                                                fontSize: "18px",
+                                                fontWeight: "600",
+                                            }}
+                                        >
+                                            {hospital?.hospitalId === null
+                                                ? hospital?.nameOfTheDoctor
+                                                : hospital?.hospitalId
+                                                      ?.nameOfhospitalOrClinic}
+                                        </Typography>
+                                        <Stack direction="row">
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    lineHeight: "19.2px",
+                                                    fontFamily: "Lato",
+                                                    color: "#706D6D",
+                                                }}
+                                            >
+                                                {hospital?.hospitalId === null
+                                                    ? hospital?.connsultationFee
+                                                    : hospital?.hospitalId
+                                                          ?.connsultationFee}
+                                            </Box>
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    lineHeight: "19.2px",
+                                                    fontFamily: "Lato",
+                                                    color: "#706D6D",
+                                                }}
+                                            >
+                                                {hospital?.hospitalId === null
+                                                    ? hospital?.location
+                                                    : hospital?.hospitalId
+                                                          ?.location}
+                                            </Box>
+                                        </Stack>
+                                    </Stack>
+                                </Stack>
+                                <Button
+                                    onClick={() => selectDoctor(hospital)}
+                                    variant="contained"
+                                    sx={{
+                                        textTransform: "none",
+                                        p: "14px 42px",
+                                        height: "40px",
+                                        fontSize: "1rem",
+                                        fontFamily: "Lato",
+                                        fontWeight: "600",
+                                        borderRadius: "20px",
+                                        boxShadow: "none",
+                                    }}
+                                >
+                                    Book
+                                </Button>
+                            </Stack>
+                        ))}
+                        {/* <Box
+                            sx={{
+                                marginTop: "25px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                            }}
+                        >
+                            {dates.map((date, i) => (
+                                <Card
+                                    onClick={(e) => {
+                                        setActiveCard(i);
+                                        setDateErr(false);
+                                        const dateString = e.target.innerText;
+                                        console.log();
+                                        const dateObject = dayjs(
+                                            dateString + dayjs().year()
+                                        );
+
+                                        const formattedDate =
+                                            dateObject.format("YYYY-MM-DD");
+                                        console.log(formattedDate);
+                                        setInputValue({
+                                            ...inputValue,
+                                            appointmentDate: formattedDate,
+                                        });
+                                        setBookingAppointmentDetails({
+                                            ...bookingAppointmentDetails,
+                                            appointmentDate: formattedDate,
+                                        });
+                                    }}
+                                    sx={{
+                                        width: "50px",
+                                        textAlign: "center",
+                                        margin: "5px 8px",
+                                        padding: "5px",
+                                        textTransform: "none",
+                                        fontFamily: "Lato",
+                                        fontWeight: "700",
+                                        fontSize: "12px",
+                                        boxShadow: "none",
+                                        border: "1px solid #D9D9D9",
+                                        cursor: "pointer",
+                                        background:
+                                            activeCard === i
+                                                ? "#1F51C6"
+                                                : "#ffffff",
+                                        color:
+                                            activeCard === i
+                                                ? "#ffffff"
+                                                : " #000000",
+                                    }}
+                                    key={i}
+                                >
+                                    {date.day}
+                                    <br />
+                                    {date.date}
+                                    <br />
+                                    {date.month}
+                                </Card>
+                            ))}
+                        </Box> */}
+                        {/* <Box sx={{ mt: 2 }}>
                             <Stack
                                 direction="row"
                                 spacing={1}
@@ -883,7 +1018,7 @@ const DoctorInfo = () => {
                             >
                                 Book Appointment
                             </Button>
-                        </Box>
+                        </Box> */}
                     </Card>
                     <Card
                         onClick={() => setDropDown(!dropDown)}
@@ -915,26 +1050,7 @@ const DoctorInfo = () => {
                         }}
                     >
                         <Typography sx={{ color: "#706D6D" }}>
-                            Dr. Shashwat Magarkar is an Oral and Maxillofacial
-                            Surgeon working at Smilekraft, Dhantoli. He has a
-                            keen interest in Dental Implantology, Wisdom tooth
-                            Extraction, Fixed and Removable dentures, Root canal
-                            Treatment, Cosmetic Dentistry, Orthodontic
-                            treatment. He has specialized in Orthognathic
-                            Surgery, Cleft lip and palate surgery, Facial trauma
-                            surgery. He has received a Gold Medal in Oral and
-                            Maxillofacial Surgery. He has completed his
-                            graduation from Government Dental College &
-                            Hospital, Mumbai in 2007. Upon graduating from
-                            dental school, he completed Post-graduation in Oral
-                            & Maxillofacial Surgery in 2011. He also completed a
-                            1 year super specialty fellowship in Cleft and
-                            Craniofacial Surgery at Amrita Institute of Medical
-                            Sciences, Kochi. With his intrinsic goal and vision
-                            to provide a painless but comprehensive dental
-                            experience to his patients, Dr. Shashwat is always
-                            on the lookout for new and improved technology that
-                            would aid him in achieving this vision. [shrink]
+                            {doctorsData.description}
                         </Typography>
                     </Card>
                     <Card
@@ -1049,7 +1165,7 @@ const DoctorInfo = () => {
                             </Stack>
                         </Card>
                     </Stack>
-                    <Card
+                    {/* <Card
                         sx={{
                             display: "flex",
                             mt: 2,
@@ -1062,8 +1178,8 @@ const DoctorInfo = () => {
                         <Typography sx={{ flex: 1, fontWeight: 700 }}>
                             Info
                         </Typography>
-                    </Card>
-                    <Card
+                    </Card> */}
+                    {/* <Card
                         sx={{
                             p: 2,
                             mt: 2,
@@ -1104,9 +1220,66 @@ const DoctorInfo = () => {
                                 </Stack>
                             </Stack>
                         </Stack>
-                    </Card>
+                    </Card> */}
                 </Box>
             </Box>
+            <BookAppointmnetDetailsDialog
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                bookingAppointmentDetailsDialog={
+                    bookingAppointmentDetailsDialog
+                }
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+            />
+            <BookAppointmentDialogForPatient
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                bookingAppointmentDialog={bookingAppointmentDialog}
+                setBookAppointmentDialog={setBookAppointmentDialog}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+                confirmBookAppointmentDialog={confirmBookAppointmentDialog}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                slotData={slotData}
+                setSlotData={setSlotData}
+                slotsLoading={slotsLoading}
+            />
+            <ConfirmAppointmentDialog
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                confirmBookAppointmentDialog={confirmBookAppointmentDialog}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                bookingAppointmentDialog={bookingAppointmentDialog}
+                setBookAppointmentDialog={setBookAppointmentDialog}
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+            />
+            <AppointmentConfirmDIalog
+                setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                appointmentCofirmedDialog={appointmentCofirmedDialog}
+                openBookingAppointmentDialog={bookingAppointmentDialog}
+                setOpenBookingAppointmentDialog={setBookAppointmentDialog}
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+            />
             <Footer />
         </>
     );

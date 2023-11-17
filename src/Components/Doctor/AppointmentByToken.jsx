@@ -18,6 +18,9 @@ import { BiSolidPlusSquare } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { axiosClient } from "../../Utils/axiosClient";
 import { useSelector } from "react-redux";
+import "ldrs/dotPulse";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AppointmentByToken = ({
     dates,
@@ -27,6 +30,7 @@ const AppointmentByToken = ({
     setMarkAsHoliday,
     currentDate,
 }) => {
+    const { doctorid } = useParams();
     const { user } = useSelector((state) => state.auth);
     // const currentDate = moment().format("yyyy-MM-DD");
 
@@ -52,6 +56,9 @@ const AppointmentByToken = ({
     let count = 1;
     const [numOfStartTimes, setNumOfStartTimes] = useState(0);
 
+    const [acceptAppointmentByToken, setAcceptAppointmentByToken] =
+        useState(false);
+    const [switchLoading, setSwitchLoading] = useState(false);
     const slotDurations = [15, 30, 45, 60];
 
     useEffect(() => {
@@ -219,11 +226,33 @@ const AppointmentByToken = ({
         const a = year + "-" + month + "-" + date;
         console.log(a);
 
-        var formattedDate = moment(a).format("yyyy-MM-DD");
+        var formattedDate = moment(a).format("YYYY-MM-DD");
         console.log(formattedDate); // Output: "2023-11-13"
         // const formattedDate = moment.format(date)
 
         setSelectedDay({ currentDate: formattedDate, i });
+    };
+
+    const handleSwtichChange = async (e) => {
+        setSwitchLoading(true);
+        try {
+            const response = await axiosClient.put(
+                `/v2/editAcceptAppointmentByToken/${doctorid}`,
+                { acceptAppointmentByToken: !acceptAppointmentByToken }
+            );
+            console.log(response);
+            if (response.status === "ok") {
+                console.log(e.target.checked);
+                setSwitchLoading(false);
+                return setAcceptAppointmentByToken(
+                    response.result.acceptAppointmentByToken
+                );
+            }
+        } catch (error) {
+            setSwitchLoading(false);
+            console.log(error.message);
+            toast.error("Something went wrong");
+        }
     };
 
     const saveData = async () => {
@@ -260,24 +289,34 @@ const AppointmentByToken = ({
                     my: "15px",
                 }}
             >
-                <Switch
-                    // value={"enabled"}
-
-                    onChange={(e) =>
-                        setOnlineAppointmentEnabled(e.target.checked)
-                    }
-                />
-                <Box
-                    component="span"
-                    sx={{
-                        fontFamily: "Lato",
-                        fontWeight: "600",
-                        fontSize: "0.938rem",
-                        color: "#1F51C6",
-                    }}
-                >
-                    {onlineAppointmentEnabled ? "Enable" : "Disabled"}
-                </Box>
+                {switchLoading ? (
+                    <l-dot-pulse
+                        size="43"
+                        speed="1.3"
+                        color="#1F51C6"
+                    ></l-dot-pulse>
+                ) : (
+                    <>
+                        <Switch
+                            checked={
+                                acceptAppointmentByToken === true ? true : false
+                            }
+                            // value={acceptAppointmentBySlot}
+                            onChange={handleSwtichChange}
+                        />
+                        <Box
+                            component="span"
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "0.938rem",
+                                color: "#1F51C6",
+                            }}
+                        >
+                            {acceptAppointmentByToken ? "Enable" : "Disabled"}
+                        </Box>
+                    </>
+                )}
             </Box>
             <Card
                 sx={{
@@ -300,6 +339,11 @@ const AppointmentByToken = ({
                         <Box
                             key={i + 1}
                             component="button"
+                            disabled={
+                                acceptAppointmentByToken === false
+                                    ? true
+                                    : false
+                            }
                             onClick={() => handleSelectedDate(date, i)}
                             sx={{
                                 width: {
@@ -313,14 +357,27 @@ const AppointmentByToken = ({
                                     md: "57.39px",
                                 },
                                 background:
-                                    selectedDay.i === i ? "#1F51C6" : "#FFFFFF",
+                                    selectedDay.i === i &&
+                                    acceptAppointmentByToken === true
+                                        ? "#1F51C6"
+                                        : acceptAppointmentByToken === true
+                                        ? "#FFFFFF"
+                                        : "#D9D9D9",
                                 border:
                                     currentDate === date.day
                                         ? "2px solid #1F51C6"
                                         : "1px solid #706D6D8F",
                                 borderRadius: "3px",
                                 color:
-                                    selectedDay.i === i ? "#FFFFFF" : "#706D6D",
+                                    selectedDay.i === i
+                                        ? "#FFFFFF"
+                                        : acceptAppointmentByToken === true
+                                        ? "#706D6D"
+                                        : "#ffffff",
+                                cursor:
+                                    acceptAppointmentByToken === false
+                                        ? "no-drop"
+                                        : "pointer",
                                 userSelect: "none",
                             }}
                         >
@@ -384,7 +441,12 @@ const AppointmentByToken = ({
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
+                                    disabled={
+                                        markAsHoliday ||
+                                        acceptAppointmentByToken === false
+                                            ? true
+                                            : false
+                                    }
                                     sx={{
                                         width: {
                                             xs: "100%",
@@ -396,9 +458,11 @@ const AppointmentByToken = ({
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
                                         borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
+                                        background:
+                                            markAsHoliday ||
+                                            acceptAppointmentByToken === false
+                                                ? "#D9D9D9"
+                                                : "",
                                     }}
                                     placeholder="Choose Slot Duration"
                                     value={startTime}
@@ -476,7 +540,12 @@ const AppointmentByToken = ({
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
+                                    disabled={
+                                        markAsHoliday ||
+                                        acceptAppointmentByToken === false
+                                            ? true
+                                            : false
+                                    }
                                     sx={{
                                         width: {
                                             xs: "100%",
@@ -488,9 +557,11 @@ const AppointmentByToken = ({
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
                                         borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
+                                        background:
+                                            markAsHoliday ||
+                                            acceptAppointmentByToken === false
+                                                ? "#D9D9D9"
+                                                : "",
                                     }}
                                     placeholder="Choose Slot Duration"
                                     value={endTime}
@@ -526,7 +597,11 @@ const AppointmentByToken = ({
                                 {/* {numOfStartTimes === 0 && ( */}
                                 <Button
                                     disabled={
-                                        numOfStartTimes === 2 ? true : false
+                                        markAsHoliday ||
+                                        acceptAppointmentByToken === false ||
+                                        numOfStartTimes === 2
+                                            ? true
+                                            : false
                                     }
                                     onClick={() =>
                                         setNumOfStartTimes(
@@ -540,10 +615,12 @@ const AppointmentByToken = ({
                                             width: "28px",
                                             height: "28px",
                                             color:
+                                                markAsHoliday ||
+                                                acceptAppointmentByToken ===
+                                                    false ||
                                                 numOfStartTimes >= 2
                                                     ? "#D9D9D9"
                                                     : "#1F51C6",
-                                            // color: "#1F51C6",
                                         }}
                                     />
                                 </Button>

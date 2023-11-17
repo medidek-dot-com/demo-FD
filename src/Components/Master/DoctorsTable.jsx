@@ -33,8 +33,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditDoctorDialog from "./EditDoctorDialog";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import {HiPencil} from 'react-icons/hi'
-import {AiFillDelete} from 'react-icons/ai'
+import { HiPencil } from "react-icons/hi";
+import { AiFillDelete } from "react-icons/ai";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -75,11 +75,12 @@ const DoctorsTable = ({ search }) => {
         qulification: "",
         speciality: "",
         yearOfExprience: "",
-        enterEmailId: "",
-        enterPhoneNo: "",
+        email: "",
+        phone: "",
         connsultationFee: "",
         consultingTime: "",
         location: "",
+        imgurl: "",
         hospitalId: hospital_id,
     });
 
@@ -91,7 +92,7 @@ const DoctorsTable = ({ search }) => {
         const response = await axiosClient.get(
             `/v2/getAlldoctor/${hospital_id}?search=${search}`
         );
-       
+
         if (response.status === "ok") {
             return setDoctorsData(response.result);
         }
@@ -196,7 +197,9 @@ const DoctorsTable = ({ search }) => {
                                     <StyledTableCell>
                                         <Avatar
                                             src={
-                                                doctor?.imgurl ? doctor.imgurl : "/default.png"
+                                                doctor?.imgurl
+                                                    ? doctor.imgurl
+                                                    : "/default.png"
                                             }
                                             sx={{
                                                 width: "32px",
@@ -353,117 +356,118 @@ const DoctorsTable = ({ search }) => {
                     setInputValue={setInputValue}
                 />
             </Box>
-            <Box sx={{display:{xs:'block', sm:'block', md:'none'}}}>
-            {doctorsData.length > 0 ? (
-                doctorsData.map((doctor, i) => {
-                    return (
-                        <Box
-                            key={i}
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "8px",
-                            }}
-                        >
-                            <Card
-                                onClick={() =>
-                                    setAppointmentDropDown(
-                                        !appointmentDropDown
-                                    ) & setAciveCard(i)
-                                }
+            <Box sx={{ display: { xs: "block", sm: "block", md: "none" } }}>
+                {doctorsData.length > 0 ? (
+                    doctorsData.map((doctor, i) => {
+                        return (
+                            <Box
+                                key={i}
                                 sx={{
-                                    width: "100%",
                                     display: "flex",
-                                    justifyContent: "center",
-                                    mt: 1,
-                                    px: 2,
-                                    py: 1,
-                                    border: " 1px solid #D9D9D9",
-                                    boxShadow: "none",
-                                    backgroundColor: "#DCE3F6",
+                                    flexDirection: "column",
+                                    gap: "8px",
                                 }}
                             >
-                                <Typography
+                                <Card
+                                    onClick={() =>
+                                        setAppointmentDropDown(
+                                            !appointmentDropDown
+                                        ) & setAciveCard(i)
+                                    }
                                     sx={{
-                                        flex: 1,
-                                        fontWeight: 700,
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        mt: 1,
+                                        px: 2,
+                                        py: 1,
+                                        border: " 1px solid #D9D9D9",
+                                        boxShadow: "none",
+                                        backgroundColor: "#DCE3F6",
                                     }}
                                 >
-                                    {doctor.nameOfTheDoctor}
-                                </Typography>
-                                {appointmentDropDown && activeCard === i ? (
-                                    <KeyboardArrowUpIcon />
-                                ) : (
-                                    <KeyboardArrowDownIcon />
-                                )}
-                            </Card>
-                            <Card
-                                sx={{
-                                    p: "16px",
-                                    display:
-                                        appointmentDropDown && activeCard === i
-                                            ? "flex"
-                                            : "none",
-                                    flexDirection: "column",
-                                    gap: "10px",
-                                    boxShadow: "none",
-                                    border: "1px solid #D1D1D67A",
-                                }}
-                            >
-                                <Stack
-                                    direction="row"
-                                    justifyContent="space-between"
+                                    <Typography
+                                        sx={{
+                                            flex: 1,
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        {doctor.nameOfTheDoctor}
+                                    </Typography>
+                                    {appointmentDropDown && activeCard === i ? (
+                                        <KeyboardArrowUpIcon />
+                                    ) : (
+                                        <KeyboardArrowDownIcon />
+                                    )}
+                                </Card>
+                                <Card
+                                    sx={{
+                                        p: "16px",
+                                        display:
+                                            appointmentDropDown &&
+                                            activeCard === i
+                                                ? "flex"
+                                                : "none",
+                                        flexDirection: "column",
+                                        gap: "10px",
+                                        boxShadow: "none",
+                                        border: "1px solid #D1D1D67A",
+                                    }}
                                 >
-                                    <MobileViewCardTypographyStyle>
-                                        Name:{"  "}
-                                        <span
-                                            style={{
-                                                fontWeight: "600",
-                                                fontFamily: "Raleway",
-                                            }}
-                                        >
-                                            {doctor.nameOfTheDoctor}
-                                        </span>
-                                    </MobileViewCardTypographyStyle>
-                                    <MobileViewCardTypographyStyle>
-                                        Gender:{" "}
-                                        <span
-                                            style={{
-                                                fontWeight: "600",
-                                            }}
-                                        >
-                                            {doctor.gender}
-                                        </span>
-                                    </MobileViewCardTypographyStyle>
-                                </Stack>
-                                <Divider />
-                                <Stack
-                                    direction="row"
-                                    justifyContent="space-between"
-                                >
-                                    <MobileViewCardTypographyStyle>
-                                        Contact No:{" "}
-                                        <span
-                                            style={{
-                                                fontWeight: "600",
-                                            }}
-                                        >
-                                            {doctor.enterPhoneNo}
-                                        </span>
-                                    </MobileViewCardTypographyStyle>
-                                    <MobileViewCardTypographyStyle>
-                                        Speciality:{" "}
-                                        <span
-                                            style={{
-                                                fontWeight: "600",
-                                            }}
-                                        >
-                                            {doctor.speciality}
-                                        </span>
-                                    </MobileViewCardTypographyStyle>
-                                </Stack>
-                                <Divider />
-                                {/* <Stack
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="space-between"
+                                    >
+                                        <MobileViewCardTypographyStyle>
+                                            Name:{"  "}
+                                            <span
+                                                style={{
+                                                    fontWeight: "600",
+                                                    fontFamily: "Raleway",
+                                                }}
+                                            >
+                                                {doctor.nameOfTheDoctor}
+                                            </span>
+                                        </MobileViewCardTypographyStyle>
+                                        <MobileViewCardTypographyStyle>
+                                            Gender:{" "}
+                                            <span
+                                                style={{
+                                                    fontWeight: "600",
+                                                }}
+                                            >
+                                                {doctor.gender}
+                                            </span>
+                                        </MobileViewCardTypographyStyle>
+                                    </Stack>
+                                    <Divider />
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="space-between"
+                                    >
+                                        <MobileViewCardTypographyStyle>
+                                            Contact No:{" "}
+                                            <span
+                                                style={{
+                                                    fontWeight: "600",
+                                                }}
+                                            >
+                                                {doctor.enterPhoneNo}
+                                            </span>
+                                        </MobileViewCardTypographyStyle>
+                                        <MobileViewCardTypographyStyle>
+                                            Speciality:{" "}
+                                            <span
+                                                style={{
+                                                    fontWeight: "600",
+                                                }}
+                                            >
+                                                {doctor.speciality}
+                                            </span>
+                                        </MobileViewCardTypographyStyle>
+                                    </Stack>
+                                    <Divider />
+                                    {/* <Stack
                                     direction="row"
                                     justifyContent="space-between"
                                 >
@@ -487,58 +491,76 @@ const DoctorsTable = ({ search }) => {
                                         Status:{" "}
                                     </Box>
                                 </Stack> */}
-                                <Stack direction='row' spacing='8px'>
-                                    <Button
-                                        variant="contained"
-                                        onClick={() => editDoctor(doctor)}
-                                        sx={{
-                                           flex: 1,
-                                            borderRadius: "35px",
-                                            fontFamily: "Lato",
-                                            fontWeight: "600",
-                                            fontSize:'1rem',
-                                            textTransform: "none",
-                                            boxshadow:'none',
-                                            boxShadow: "none",
-                                            mt: "24px",
-                                        }}
-                                    >
-                                       <HiPencil size={20} style={{marginRight:'2px'}} /> Edit
-                                    </Button>
-                                    <Button
-                                     onClick={() =>
-                                        handleRemoveClick(
-                                            doctor._id,
-                                            doctor.nameOfTheDoctor
-                                        )
-                                    }
-                                        variant="contained"
-                                        sx={{
-                                           flex: 1,
-                                            borderRadius: "35px",
-                                            fontFamily: "Lato",
-                                            fontWeight: "600",
-                                            fontSize:'1rem',
-                                            boxshadow:'none',
-                                            textTransform: "none",
-                                            boxShadow: "none",
-                                            mt: "24px",
-                                            backgroundColor:'#B92612',
-                                            ':hover': {
-                                                backgroundColor:'#9e2515'
+                                    <Stack direction="row" spacing="8px">
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => editDoctor(doctor)}
+                                            sx={{
+                                                flex: 1,
+                                                borderRadius: "35px",
+                                                fontFamily: "Lato",
+                                                fontWeight: "600",
+                                                fontSize: "1rem",
+                                                textTransform: "none",
+                                                boxshadow: "none",
+                                                boxShadow: "none",
+                                                mt: "24px",
+                                            }}
+                                        >
+                                            <HiPencil
+                                                size={20}
+                                                style={{ marginRight: "2px" }}
+                                            />{" "}
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            onClick={() =>
+                                                handleRemoveClick(
+                                                    doctor._id,
+                                                    doctor.nameOfTheDoctor
+                                                )
                                             }
-                                        }}
-                                    >
-                                       <AiFillDelete size={20} style={{marginRight:'2px'}}/> Remove
-                                    </Button>
-                                </Stack>
-                            </Card>
-                        </Box>
-                    );
-                })
-            ) : (
-                <Typography sx={{textAlign:'center', fontFamily:'Raleway', fontWeight:'600', fontSize:'1rem', color:'#383838'}}>No doctors Found</Typography>
-            )}
+                                            variant="contained"
+                                            sx={{
+                                                flex: 1,
+                                                borderRadius: "35px",
+                                                fontFamily: "Lato",
+                                                fontWeight: "600",
+                                                fontSize: "1rem",
+                                                boxshadow: "none",
+                                                textTransform: "none",
+                                                boxShadow: "none",
+                                                mt: "24px",
+                                                backgroundColor: "#B92612",
+                                                ":hover": {
+                                                    backgroundColor: "#9e2515",
+                                                },
+                                            }}
+                                        >
+                                            <AiFillDelete
+                                                size={20}
+                                                style={{ marginRight: "2px" }}
+                                            />{" "}
+                                            Remove
+                                        </Button>
+                                    </Stack>
+                                </Card>
+                            </Box>
+                        );
+                    })
+                ) : (
+                    <Typography
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "1rem",
+                            color: "#383838",
+                        }}
+                    >
+                        No doctors Found
+                    </Typography>
+                )}
             </Box>
         </>
     );

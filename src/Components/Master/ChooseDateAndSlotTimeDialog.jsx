@@ -18,7 +18,6 @@ import { useState } from "react";
 import { useEffect } from "react";
 import styled from "@emotion/styled";
 import moment from "moment";
-import "ldrs/dotPulse";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -32,11 +31,13 @@ const ListBoxStyle = styled(Box)`
     cursor: pointer;
 `;
 
-const BookAppointmentDialogForPatient = ({
-    bookingAppointmentDialog,
-    setBookAppointmentDialog,
+const ChooseDateAndSlotTimeDialog = ({
+    chooseDateAndTimeDialog,
+    setChooseDateAndTimeDialog,
     bookingAppointmentDetails,
     setBookingAppointmentDetails,
+    getDateAndTime,
+    setGetDateAndTime,
     confirmBookAppointmentDialog,
     setConfirmBookAppointmentDialog,
     setBookAppointmentDetailsDialog,
@@ -44,20 +45,21 @@ const BookAppointmentDialogForPatient = ({
     setSlotData,
     inputValue,
     setInputValue,
-    slotsLoading,
 }) => {
     const [activeCard, setActiveCard] = useState();
     const [dateErr, setDateErr] = useState(false);
     const [dates, setDates] = useState([]);
     const [selectedTime, setSelectedTime] = useState(null);
+    console.log(slotData);
+
     const handleButtonClick = (slot, i) => {
         console.log(slot);
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
         });
-        setInputValue({
-            ...inputValue,
+        setGetDateAndTime({
+            ...getDateAndTime,
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
         });
         setSelectedTime(i);
@@ -90,9 +92,11 @@ const BookAppointmentDialogForPatient = ({
     return (
         <>
             <Dialog
-                open={bookingAppointmentDialog}
+                open={chooseDateAndTimeDialog}
                 onClose={() => {
-                    return setBookAppointmentDialog(false) & setDateErr(false);
+                    return (
+                        setChooseDateAndTimeDialog(false) & setDateErr(false)
+                    );
                 }}
                 maxWidth={"md"}
                 sx={{ margin: " 0 auto" }}
@@ -109,10 +113,10 @@ const BookAppointmentDialogForPatient = ({
                     }}
                 >
                     Book Appointment
-                    {bookingAppointmentDialog ? (
+                    {chooseDateAndTimeDialog ? (
                         <IconButton
                             aria-label="close"
-                            onClick={() => setBookAppointmentDialog(false)}
+                            onClick={() => setChooseDateAndTimeDialog(false)}
                             sx={{
                                 // position: "absolute",
                                 // right: 8,
@@ -155,12 +159,8 @@ const BookAppointmentDialogForPatient = ({
                                     const formattedDate =
                                         dateObject.format("YYYY-MM-DD");
                                     console.log(formattedDate);
-                                    setInputValue({
-                                        ...inputValue,
-                                        appointmentDate: formattedDate,
-                                    });
-                                    setBookingAppointmentDetails({
-                                        ...bookingAppointmentDetails,
+                                    setGetDateAndTime({
+                                        ...getDateAndTime,
                                         appointmentDate: formattedDate,
                                     });
                                 }}
@@ -199,7 +199,7 @@ const BookAppointmentDialogForPatient = ({
                         <Box
                             component="span"
                             sx={{
-                                color: "red",
+                                color: "#B92612",
                                 fontFamily: "Lato",
                                 fontSize: "18px",
                                 fontWeight: "500",
@@ -218,18 +218,8 @@ const BookAppointmentDialogForPatient = ({
                             // gap:'35px'
                         }}
                     >
-                        {slotsLoading && (
-                            <l-dot-pulse
-                                size="43"
-                                speed="1.3"
-                                color="#1F51C6"
-                            ></l-dot-pulse>
-                        )}
-
-                        {slotData[0] === "doctor not available for this date" &&
-                        slotsLoading === false ? (
-                            // Default values shown
-
+                        {slotData[0] ===
+                        "doctor not available for this date" ? (
                             <Typography
                                 sx={{
                                     color: "#B92612",
@@ -333,7 +323,7 @@ const BookAppointmentDialogForPatient = ({
                             textTransform: "none",
                         }}
                         onClick={() => {
-                            if (!bookingAppointmentDetails.appointmentDate) {
+                            if (!getDateAndTime.appointmentDate) {
                                 return setDateErr(true);
                             }
 
@@ -348,4 +338,4 @@ const BookAppointmentDialogForPatient = ({
     );
 };
 
-export default BookAppointmentDialogForPatient;
+export default ChooseDateAndSlotTimeDialog;

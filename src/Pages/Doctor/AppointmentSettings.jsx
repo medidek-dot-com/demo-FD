@@ -121,7 +121,7 @@ const OptionStyle = styled("option")({
 });
 
 const AppointmentSettings = () => {
-    const { hospital_id, doctor_id } = useParams();
+    const { doctorid } = useParams();
     const dispatch = useDispatch();
 
     const [activeTab, setActiveTab] = useState(4);
@@ -198,7 +198,7 @@ const AppointmentSettings = () => {
         const date = selectedDay.currentDate;
         try {
             const response = await axiosClient.get(
-                `/v2/getSlotDetailForDoctorForPerticularDate/${user._id}/${date}`
+                `/v2/getSlotDetailForDoctorForPerticularDate/${doctorid}/${date}`
             );
             setOnlineSlotsData(response.result);
             console.log(response);
@@ -211,7 +211,7 @@ const AppointmentSettings = () => {
             const date = selectedDay.currentDate;
             try {
                 const response = await axiosClient.get(
-                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${user._id}/${date}`
+                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctorid}/${date}`
                 );
                 setTokenSlotsData(response.result);
                 return console.log(response);
@@ -307,9 +307,8 @@ const AppointmentSettings = () => {
                 >
                     <Button
                         onClick={() =>
-                            navigate(
-                                `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
+                            navigate(`/doctor/dashboard/${doctorid}`) &
+                            setMenu(false)
                         }
                         sx={{
                             color: "#ffffff",
@@ -323,9 +322,8 @@ const AppointmentSettings = () => {
                     </Button>
                     <Button
                         onClick={() =>
-                            navigate(
-                                `/doctor/appointments/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
+                            navigate(`/doctor/appointments/${doctorid}`) &
+                            setMenu(false)
                         }
                         sx={{
                             color: "#ffffff",
@@ -354,7 +352,7 @@ const AppointmentSettings = () => {
                     </Button>
                     <Button
                         onClick={() =>
-                            navigate(`/doctor/edit-profile/${user._id}`) &
+                            navigate(`/doctor/edit-profile/${doctorid}`) &
                             setMenu(false)
                         }
                         sx={{
@@ -469,7 +467,7 @@ const AppointmentSettings = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                            `/doctor/dashboard/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -502,7 +500,7 @@ const AppointmentSettings = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                            `/doctor/appointments/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -533,7 +531,7 @@ const AppointmentSettings = () => {
                             >
                                 <Button
                                     onClick={() =>
-                                        navigate(`/doctor/courses/${doctor_id}`)
+                                        navigate(`/doctor/courses/${user?._id}`)
                                     }
                                     variant="text"
                                     sx={{
@@ -597,7 +595,7 @@ const AppointmentSettings = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointment-settings/${user._id}`
+                                            `/doctor/appointment-settings/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -746,9 +744,6 @@ const AppointmentSettings = () => {
                                             borderBottomLeftRadius: "5px",
                                         }}
                                     >
-                                        <IoRadioButtonOn
-                                            style={{ marginRight: "4px" }}
-                                        />
                                         Online Appointments
                                     </Button>
                                     <Button
@@ -793,93 +788,6 @@ const AppointmentSettings = () => {
                                         Appointments by token
                                     </Button>
                                 </Stack>
-                                {/* <Box
-                                    sx={{
-                                        display: "flex",
-                                        justifyContent: "start",
-                                        alignItems: "center",
-                                        my: "15px",
-                                    }}
-                                >
-                                    <Switch
-                                        // value={"enabled"}
-
-                                        onChange={(e) =>
-                                            setOnlineAppointmentEnabled(
-                                                e.target.checked
-                                            )
-                                        }
-                                    />
-                                    <Box
-                                        component="span"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "600",
-                                            fontSize: "0.938rem",
-                                            color: "#1F51C6",
-                                        }}
-                                    >
-                                        {onlineAppointmentEnabled
-                                            ? "Enable"
-                                            : "Disabled"}
-                                    </Box>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        sx={{
-                                            color: "#ffffff",
-                                            background: "#1F51C6",
-                                            width: "147px",
-                                            height: "40px",
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                            borderRadius: "5px",
-                                        }}
-                                        value={view}
-                                        onChange={(e) =>
-                                            setView(e.target.value)
-                                        }
-                                    >
-                                        <MenuItem
-                                            value="Weekly view"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            Weekly view
-                                        </MenuItem>
-                                        <MenuItem
-                                            value="Calandar View"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            Calandar View
-                                        </MenuItem>
-                                    </Select>
-                                    <select
-                                        style={{
-                                            color: "#ffffff",
-                                            background: "#1F51C6",
-                                            padding: "10px",
-                                            fontSize: "1rem",
-                                            borderRadius: "5px",
-                                            marginLeft: "auto"
-                                        }}
-                                    >
-                                        <OptionStyle value="Weekly view">
-                                            Weekly view
-                                        </OptionStyle>
-                                        <OptionStyle value="Calandar View">
-                                            Calandar View
-                                        </OptionStyle>
-                                    </select>
-                                </Box> */}
 
                                 {appointmentByToken ? (
                                     <>
@@ -929,6 +837,7 @@ const AppointmentSettings = () => {
                                                 setMarkAsHoliday={
                                                     setMarkAsHoliday
                                                 }
+                                                onlineSlotData={onlineSlotData}
                                                 selectedDay={selectedDay}
                                                 setSelectedDay={setSelectedDay}
                                                 currentDate={currentDate}

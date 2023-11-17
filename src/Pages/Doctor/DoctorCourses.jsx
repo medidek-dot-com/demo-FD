@@ -108,7 +108,7 @@ const LabelStyle = styled("label")({
 });
 
 const DoctorCourses = () => {
-    const { hospital_id, doctor_id } = useParams();
+    const { doctorid } = useParams();
     const dispatch = useDispatch();
 
     const [activeTab, setActiveTab] = useState(3);
@@ -136,7 +136,6 @@ const DoctorCourses = () => {
         connsultationFee: numberOfHospitals[0]?.connsultationFee,
         consultingTime: numberOfHospitals[0]?.consultingTime,
         location: numberOfHospitals[0]?.location,
-        hospitalId: hospital_id,
     });
 
     const [inputImage, setInputImage] = useState("");
@@ -230,10 +229,7 @@ const DoctorCourses = () => {
                     />
                 </Stack>
                 <Avatar
-                    src={
-                        user?.imgurl ? user.imgurl
-                            : "/default.png"
-                    }
+                    src={user?.imgurl ? user.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -254,9 +250,8 @@ const DoctorCourses = () => {
                 >
                     <Button
                         onClick={() =>
-                            navigate(
-                                `/doctor/dashboard/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
+                            navigate(`/doctor/dashboard/${doctorid}`) &
+                            setMenu(false)
                         }
                         sx={{
                             color: "#ffffff",
@@ -270,9 +265,8 @@ const DoctorCourses = () => {
                     </Button>
                     <Button
                         onClick={() =>
-                            navigate(
-                                `/doctor/appointments/${hospital_id}/${doctor_id}`
-                            ) & setMenu(false)
+                            navigate(`/doctor/appointments/${doctorid}`) &
+                            setMenu(false)
                         }
                         sx={{
                             color: "#ffffff",
@@ -295,9 +289,9 @@ const DoctorCourses = () => {
                             fontSize: "1.5rem",
                             textTransform: "none",
                             lineHeight: "28.8px",
-                            ':hover':{
+                            ":hover": {
                                 background: "#ffffff",
-                                }
+                            },
                         }}
                     >
                         Medical Courses
@@ -320,7 +314,7 @@ const DoctorCourses = () => {
                     <Button
                         onClick={() =>
                             navigate(
-                                `/doctor/appointment-settings/${user._id}`
+                                `/doctor/appointment-settings/${doctorid}`
                             ) & setMenu(false)
                         }
                         sx={{
@@ -376,8 +370,7 @@ const DoctorCourses = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl ? user.imgurl
-                            : "/default.png"
+                                    user?.imgurl ? user.imgurl : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -403,7 +396,7 @@ const DoctorCourses = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                            DUID :- {user.doctorid}
+                                DUID :- {user.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -415,13 +408,13 @@ const DoctorCourses = () => {
                         >
                             <Box
                                 sx={{
-                                    width: "100%"
+                                    width: "100%",
                                 }}
                             >
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/dashboard/${hospital_id}/${doctor_id}`
+                                            `/doctor/dashboard/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -454,7 +447,7 @@ const DoctorCourses = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointments/${hospital_id}/${doctor_id}`
+                                            `/doctor/appointments/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -481,12 +474,12 @@ const DoctorCourses = () => {
                             <Box
                                 sx={{
                                     width: "100%",
-                                    background:"#ffffff"
+                                    background: "#ffffff",
                                 }}
                             >
                                 <Button
                                     onClick={() =>
-                                        navigate(`/doctor/courses/${doctor_id}`)
+                                        navigate(`/doctor/courses/${user?._id}`)
                                     }
                                     variant="text"
                                     sx={{
@@ -511,7 +504,7 @@ const DoctorCourses = () => {
                             </Box>
                             <Box
                                 sx={{
-                                    width: "100%"
+                                    width: "100%",
                                 }}
                             >
                                 <Button
@@ -549,7 +542,7 @@ const DoctorCourses = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointment-settings/${user._id}`
+                                            `/doctor/appointment-settings/${doctorid}`
                                         )
                                     }
                                     variant="text"
@@ -694,7 +687,8 @@ const DoctorCourses = () => {
                                 <Card
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/course/details/${user._id}/${val._id}`, {state : allCourse}
+                                            `/doctor/course/details/${user._id}/${val._id}`,
+                                            { state: allCourse }
                                         )
                                     }
                                     key={i}
@@ -773,7 +767,7 @@ const DoctorCourses = () => {
                                                         fontSize: "15px",
                                                         fontWeight: "600",
                                                     }}
-                                                    to={`/medical-course/${val._id}/details`}
+                                                    to={`/doctor/course/details/${user._id}/${val._id}`}
                                                 >
                                                     Read More
                                                 </Link>
@@ -877,7 +871,7 @@ const DoctorCourses = () => {
                                                     variant="contained"
                                                     onClick={() =>
                                                         navigate(
-                                                            "/medical-course/course_id/details"
+                                                            `/doctor/course/details/${user._id}/${val._id}`
                                                         )
                                                     }
                                                     sx={{

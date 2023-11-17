@@ -14,7 +14,12 @@ import { axiosClient } from "../../Utils/axiosClient";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { baseURL } from "../../Utils/axiosClient";
 
-const DoctorProfileCard = ({ getUpcomingAppointmentsData, doctorDetails }) => {
+const DoctorProfileCard = ({
+    getUpcomingAppointmentsData,
+    doctorDetails,
+    setChooseDateAndTimeDialog,
+    setAppointmentSettingDialog,
+}) => {
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     // const [doctorDetails, setDoctorsDetails] = useState({});
 
@@ -107,6 +112,11 @@ const DoctorProfileCard = ({ getUpcomingAppointmentsData, doctorDetails }) => {
                                 fontFamily: "Lato",
                                 fontWeight: "600",
                                 lineHeight: "18px",
+                                display: {
+                                    xs: "none",
+                                    sm: "none",
+                                    md: "block",
+                                },
                             }}
                         >
                             {doctorDetails.description}
@@ -114,12 +124,27 @@ const DoctorProfileCard = ({ getUpcomingAppointmentsData, doctorDetails }) => {
                         <Rating value={5} readOnly />
                     </Box>
                 </Stack>
-                <Box sx={{ width: { xs: "100%", sm: "100%", md: "193.71px" } }}>
+                <Box
+                    sx={{
+                        width: {
+                            xs: "100%",
+                            sm: "100%",
+                            md: "fit-content",
+                        },
+                        display: { xs: "none", sm: "none", md: "flex" },
+                        flexDirection: {
+                            xs: "column",
+                            sm: "column",
+                            md: "row",
+                        },
+                        gap: "10px",
+                    }}
+                >
                     <Button
-                        onClick={() => setBookAppointmentDialog(true)}
+                        onClick={() => setChooseDateAndTimeDialog(true)}
                         variant="contained"
+                        size="small"
                         sx={{
-                            m: 1,
                             background: "#15B912",
                             textTransform: "none",
                             width: { xs: "100%", sm: "100%", md: "200px" },
@@ -131,13 +156,84 @@ const DoctorProfileCard = ({ getUpcomingAppointmentsData, doctorDetails }) => {
                             fontWeight: "600",
                             fontSize: "1.125rem",
                             boxShadow: "none",
-                            display: { xs: "none", sm: "none", md: "block" },
                         }}
                     >
                         Book Appointment
                     </Button>
+                    <Button
+                        onClick={() => setAppointmentSettingDialog(true)}
+                        variant="contained"
+                        size="small"
+                        sx={{
+                            background: "#1F51C6",
+                            textTransform: "none",
+                            width: { xs: "100%", sm: "100%", md: "200px" },
+                            borderRadius: "35px",
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "1.125rem",
+                            boxShadow: "none",
+                        }}
+                    >
+                        Change Settings
+                    </Button>
                 </Box>
             </Card>
+            <Box
+                sx={{
+                    mt: "20px",
+                    width: {
+                        xs: "100%",
+                        sm: "100%",
+                        md: "fit-content",
+                    },
+                    display: { xs: "flex", sm: "flex", md: "none" },
+                    flexDirection: {
+                        xs: "column",
+                        sm: "column",
+                        md: "row",
+                    },
+                    gap: "10px",
+                }}
+            >
+                <Button
+                    onClick={() => setChooseDateAndTimeDialog(true)}
+                    variant="contained"
+                    size="small"
+                    sx={{
+                        background: "#15B912",
+                        textTransform: "none",
+                        width: { xs: "100%", sm: "100%", md: "200px" },
+                        borderRadius: "35px",
+                        "&:hover": {
+                            background: "#148512",
+                        },
+                        fontFamily: "Raleway",
+                        fontWeight: "600",
+                        fontSize: "1.125rem",
+                        boxShadow: "none",
+                    }}
+                >
+                    Book Appointment
+                </Button>
+                <Button
+                    onClick={() => setAppointmentSettingDialog(true)}
+                    variant="contained"
+                    size="small"
+                    sx={{
+                        background: "#1F51C6",
+                        textTransform: "none",
+                        width: { xs: "100%", sm: "100%", md: "200px" },
+                        borderRadius: "35px",
+                        fontFamily: "Raleway",
+                        fontWeight: "600",
+                        fontSize: "1.125rem",
+                        boxShadow: "none",
+                    }}
+                >
+                    Change Settings
+                </Button>
+            </Box>
             <BookAppointmentDialog
                 bookAppointmentDialog={bookAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}

@@ -24,6 +24,7 @@ import {
 import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -37,7 +38,7 @@ const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.body}`]: {
         fontFamily: "Lato",
         fontWeight: "600",
-        fontSize: "16px",
+        fontSize: "1rem",
         textAlign: "center",
         color: "#383838",
     },
@@ -49,8 +50,7 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     color: "#383838",
 });
 
-
-const   PendingAppointmentsTableForLoggedInDoctor = ({
+const PendingAppointmentsTableForLoggedInDoctor = ({
     pendingAppointmentsData,
     getPendingAppointmentsData,
 }) => {
@@ -127,7 +127,7 @@ const   PendingAppointmentsTableForLoggedInDoctor = ({
                                 >
                                     <StyledTableCell>{i + 1}</StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {appointment.age}
@@ -136,13 +136,23 @@ const   PendingAppointmentsTableForLoggedInDoctor = ({
                                         {appointment.gender}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.phoneNumber}
+                                        {appointment.phone}
                                     </StyledTableCell>
+                                    <TableCell
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "1rem",
+                                            textAlign: "center",
+                                            color: "#383838",
+                                        }}
+                                    >
+                                        {appointment.AppointmentTime}
+                                    </TableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentTime}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {appointment.appointmentDate}
+                                        {moment(
+                                            appointment.appointmentDate
+                                        ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
@@ -266,10 +276,10 @@ const   PendingAppointmentsTableForLoggedInDoctor = ({
                     </TableBody>
                 </Table>
             </Box>
-            
+
             <Stack
                 sx={{
-                    display: { xs: "block", sm: "block", md: "none" }
+                    display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
                 {pendingAppointmentsData?.length > 0 ? (
@@ -307,7 +317,7 @@ const   PendingAppointmentsTableForLoggedInDoctor = ({
                                             fontWeight: 700,
                                         }}
                                     >
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </Typography>
                                     {appointmentDropDown && activeCard === i ? (
                                         <KeyboardArrowUpIcon />
@@ -341,7 +351,7 @@ const   PendingAppointmentsTableForLoggedInDoctor = ({
                                                     fontFamily: "Raleway",
                                                 }}
                                             >
-                                                {appointment.patientName}
+                                                {appointment.name}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -367,7 +377,7 @@ const   PendingAppointmentsTableForLoggedInDoctor = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.phoneNumber}
+                                                {appointment.phone}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -393,7 +403,9 @@ const   PendingAppointmentsTableForLoggedInDoctor = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.appointmentDate}
+                                                {moment(
+                                                    appointment.appointmentDate
+                                                ).format("DD-MM-YYYY")}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <Box

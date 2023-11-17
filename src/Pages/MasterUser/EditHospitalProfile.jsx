@@ -35,9 +35,6 @@ const StackStyle = styled(Stack)(({ theme }) => ({
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
-    "& .MuiOutlinedInput-input": {
-        padding: "5px 10px",
-    },
     ["& input"]: {
         // color: "white",
         fontFamily: "Lato",
@@ -86,7 +83,6 @@ const EditHospitalProfile = () => {
     const [disableButton, setDisableButton] = useState(false);
     const [imageValues, setImageValues] = useState("");
     const dispatch = useDispatch();
-
 
     useEffect(() => {
         dispatch(tab(null));
@@ -193,22 +189,23 @@ const EditHospitalProfile = () => {
                             display: { xs: "none", sm: "none", md: "block" },
                         }}
                     >
-                        <Typography variant="h3"
-                        sx={{
-                            fontFamily: "Raleway",
-                            fontWeight: "700",
-                            color: "#383838",
-                        }}
+                        <Typography
+                            variant="h3"
+                            sx={{
+                                fontFamily: "Raleway",
+                                fontWeight: "700",
+                                color: "#383838",
+                            }}
                         >
                             Create or edit Hospital Profile
                         </Typography>
-                        <Typography 
-                         sx={{
-                            color: "#706D6D",
-                            fontFamily: "Lato",
-                            fontWeight: "500",
-                            fontSize: "1rem",
-                        }}
+                        <Typography
+                            sx={{
+                                color: "#706D6D",
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "1rem",
+                            }}
                         >
                             Enter Your details in the given form to create a
                             Hospital Profile. By doing so, you’ll be able to add
@@ -228,8 +225,7 @@ const EditHospitalProfile = () => {
                                 <Avatar
                                     src={
                                         (preview && preview) ||
-                                        (user?.imgurl &&
-                                            user.imgurl) ||
+                                        (user?.imgurl && user.imgurl) ||
                                         "/default.png"
                                     }
                                     alt="img"
@@ -394,35 +390,35 @@ const EditHospitalProfile = () => {
                                 </StackStyle>
                             </Box>
                             <LoadingButton
-                            size="small"
-                            fullWidth
-                            type="submit"
-                            loading={disableButton}
-                            variant="contained"
-                            sx={{
-                                flex: 0.3,
-                                width: {
-                                    xs: "100%",
-                                    sm: "100%",
-                                    md: "364.69px",
-                                },
-                                my: 2,
-                                mx: "auto",
-                                display: "block",
-                                boxShadow: "none",
-                            }}
-                        >
-                            <span
-                                style={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "700",
-                                    fontSize: "1rem",
-                                    textTransform: "none",
+                                size="small"
+                                fullWidth
+                                type="submit"
+                                loading={disableButton}
+                                variant="contained"
+                                sx={{
+                                    flex: 0.3,
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "364.69px",
+                                    },
+                                    my: 2,
+                                    mx: "auto",
+                                    display: "block",
+                                    boxShadow: "none",
                                 }}
                             >
-                                Update Profile
-                            </span>
-                        </LoadingButton>
+                                <span
+                                    style={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "700",
+                                        fontSize: "1rem",
+                                        textTransform: "none",
+                                    }}
+                                >
+                                    Update Profile
+                                </span>
+                            </LoadingButton>
                         </form>
                     </Card>
                 </Box>

@@ -30,7 +30,11 @@ const StackStyle = styled(Stack)(({ theme }) => ({
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
-
+    ["& input:disabled"]: {
+        color: "#706D6D",
+        backgroundColor: "#D9D9D9",
+        cursor: "no-drop",
+    },
     ["& input"]: {
         // color: "white",
         fontFamily: "Lato",
@@ -133,12 +137,11 @@ const EditDoctorDialog = ({
             !inputValue.qulification ||
             !inputValue.speciality ||
             !inputValue.yearOfExprience ||
-            !inputValue.enterEmailId ||
+            !inputValue.email ||
             // !inputImage ||
-            !inputValue.enterPhoneNo ||
+            !inputValue.phone ||
             !inputValue.connsultationFee ||
-            !inputValue.consultingTime ||
-            !inputValue.location ||
+            !inputValue.description ||
             !inputValue.hospitalId
         ) {
             setError(true);
@@ -150,13 +153,12 @@ const EditDoctorDialog = ({
         data.append("qulification", inputValue.qulification);
         data.append("speciality", inputValue.speciality);
         data.append("yearOfExprience", inputValue.yearOfExprience);
-        data.append("enterEmailId", inputValue.enterEmailId);
-        data.append("enterPhoneNo", inputValue.enterPhoneNo);
+        data.append("email", inputValue.email);
+        data.append("phone", inputValue.phone);
         data.append("connsultationFee", inputValue.connsultationFee);
-        data.append("consultingTime", inputValue.consultingTime);
-        data.append("hospitalId", inputValue.hospitalId);
-        data.append("location", inputValue.location);
-        data.append("doctorImg", inputImage || inputValue.doctorImg);
+        data.append("doctorid", inputValue.doctorid);
+        data.append("description", inputValue.description);
+        data.append("image", inputImage || inputValue?.imgurl);
 
         // console.log(data);
         try {
@@ -215,7 +217,7 @@ const EditDoctorDialog = ({
         <>
             <Dialog
                 open={editDoctorDialog}
-                onClose={() => setEditDoctorDialog(false)}
+                onClose={() => setEditDoctorDialog(false) & setPreview("")}
                 maxWidth={"md"}
                 sx={{ margin: " 0 auto" }}
             >
@@ -232,7 +234,9 @@ const EditDoctorDialog = ({
                     {editDoctorDialog ? (
                         <IconButton
                             aria-label="close"
-                            onClick={() => setEditDoctorDialog(false)}
+                            onClick={() =>
+                                setEditDoctorDialog(false) & setPreview("")
+                            }
                             sx={{
                                 position: "absolute",
                                 right: 8,
@@ -244,7 +248,8 @@ const EditDoctorDialog = ({
                         </IconButton>
                     ) : null}
                 </DialogTitle>
-                <DialogContent dividers style={{ margin: "10px" }}>
+                <Divider />
+                <DialogContent sx={{ margin: "10px" }}>
                     <form onSubmit={handleSubmit}>
                         <Stack
                             direction={"row"}
@@ -253,8 +258,7 @@ const EditDoctorDialog = ({
                             <img
                                 src={
                                     (preview && preview) ||
-                                    (inputValue.doctorImg &&
-                                        `${baseURL}/uploads/Hospital/DoctorImage/${inputValue.doctorImg}`) ||
+                                    (inputValue.imgurl && inputValue.imgurl) ||
                                     "/default.png"
                                 }
                                 alt="user"
@@ -266,16 +270,13 @@ const EditDoctorDialog = ({
                             <Box>
                                 <Typography
                                     my={1}
-                                    color={
-                                        err && !inputImage ? "red" : "#706D6D"
-                                    }
-                                    width="200px"
-                                    lineHeight="20px"
                                     sx={{
+                                        width: "200px",
                                         fontFamily: "Lato",
                                         fontWeight: "500",
                                         fontSize: "0.8rem",
                                         lineHeight: "14.4px",
+                                        color: "#706D6D",
                                     }}
                                 >
                                     {(err && inputImage) ||
@@ -294,10 +295,30 @@ const EditDoctorDialog = ({
                                 >
                                     Change Profile photo
                                 </FormLabel>
+                                <Box
+                                    sx={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "600",
+                                        fontSize: {
+                                            xs: "0.75rem",
+                                            sm: "0.75rem",
+                                            md: "0.938rem",
+                                        },
+                                        color: "#1F51C6",
+                                    }}
+                                >
+                                    DUID:{" "}
+                                    <Box
+                                        component="span"
+                                        sx={{ color: "#000000" }}
+                                    >
+                                        {inputValue.doctorid}
+                                    </Box>
+                                </Box>
                                 <input
                                     type="file"
                                     id="hospitalImg"
-                                    name="photo"
+                                    name="imgurl"
                                     style={{ display: "none" }}
                                     onChange={getUserImage}
                                 />
@@ -320,6 +341,7 @@ const EditDoctorDialog = ({
                                     id="DoctorName"
                                     name="nameOfTheDoctor"
                                     fullWidth
+                                    disabled
                                     placeholder="Ex. Dr. John Doe"
                                     error={
                                         err &&
@@ -343,6 +365,7 @@ const EditDoctorDialog = ({
                                     id="qualification"
                                     name="qulification"
                                     fullWidth
+                                    disabled
                                     placeholder="Ex. MBBS. MD"
                                     error={
                                         err && !inputValue?.qulification && true
@@ -364,6 +387,7 @@ const EditDoctorDialog = ({
                                     id="speciality"
                                     name="speciality"
                                     fullWidth
+                                    disabled
                                     placeholder="Ex. ENT"
                                     error={
                                         err && !inputValue?.speciality && true
@@ -385,6 +409,7 @@ const EditDoctorDialog = ({
                                     id="experience"
                                     name="yearOfExprience"
                                     fullWidth
+                                    disabled
                                     placeholder="Ex. 5 Years"
                                     error={
                                         err &&
@@ -406,39 +431,37 @@ const EditDoctorDialog = ({
                                 </LabelStyle>
                                 <TextFieldStyle
                                     id="mailId"
-                                    name="enterEmailId"
+                                    name="email"
                                     fullWidth
+                                    disabled
                                     placeholder="doctor@gmail.com"
-                                    error={
-                                        err && !inputValue?.enterEmailId && true
-                                    }
+                                    error={err && !inputValue?.email && true}
                                     helperText={
                                         err &&
-                                        !inputValue?.enterEmailId &&
+                                        !inputValue?.email &&
                                         "Please enter your email"
                                     }
-                                    value={inputValue?.enterEmailId}
+                                    value={inputValue?.email}
                                     onChange={handleChange}
                                 />
                             </StackStyle>
                             <StackStyle>
-                                <LabelStyle htmlFor="phoneNo">
+                                <LabelStyle htmlFor="phone">
                                     Enter Phone No
                                 </LabelStyle>
                                 <TextFieldStyle
                                     id="phoneNo"
                                     name="enterPhoneNo"
                                     fullWidth
+                                    disabled
                                     placeholder="Ex 99112240477"
-                                    error={
-                                        err && !inputValue?.enterPhoneNo && true
-                                    }
+                                    error={err && !inputValue?.phone && true}
                                     helperText={
                                         err &&
-                                        !inputValue?.enterPhoneNo &&
+                                        !inputValue?.phone &&
                                         "Please enter your phone number"
                                     }
-                                    value={inputValue?.enterPhoneNo}
+                                    value={inputValue?.phone}
                                     onChange={handleChange}
                                 />
                             </StackStyle>
@@ -483,29 +506,28 @@ const EditDoctorDialog = ({
                                 />
                             </StackStyle>
                             <StackStyle>
-                                <LabelStyle htmlFor="consultingTime">
-                                    Consulting Time
+                                <LabelStyle htmlFor="description">
+                                    Enter Description
                                 </LabelStyle>
                                 <TextFieldStyle
-                                    id="consultingTime"
-                                    name="consultingTime"
+                                    id="description"
+                                    name="description"
                                     fullWidth
-                                    placeholder="Ex 2PM to 5PM"
+                                    disabled
+                                    placeholder="Enter Description"
                                     error={
-                                        err &&
-                                        !inputValue?.consultingTime &&
-                                        true
+                                        err && !inputValue.description && true
                                     }
                                     helperText={
                                         err &&
-                                        !inputValue?.consultingTime &&
-                                        "Please enter OPD Hrs"
+                                        !inputValue.description &&
+                                        "Please enter Doctor's description"
                                     }
-                                    value={inputValue?.consultingTime}
+                                    value={inputValue.description}
                                     onChange={handleChange}
                                 />
                             </StackStyle>
-                            <StackStyle>
+                            {/* <StackStyle>
                                 <LabelStyle htmlFor="location">
                                     Full Address
                                 </LabelStyle>
@@ -523,7 +545,7 @@ const EditDoctorDialog = ({
                                     value={inputValue?.location}
                                     onChange={handleChange}
                                 />
-                            </StackStyle>
+                            </StackStyle> */}
                         </Box>
                         <LoadingButton
                             size="small"
@@ -532,13 +554,13 @@ const EditDoctorDialog = ({
                             // loadingPosition="end"
                             variant="contained"
                             sx={{
-                                margin: "10px auto",
+                                marginTop: "25px",
                                 textTransform: "none",
                                 display: "block",
                                 width: "100%",
                                 borderRadius: "63px",
                                 height: "40px",
-                                boxshadow: "none",
+                                boxshadow: "none !important",
                             }}
                         >
                             <span
@@ -546,13 +568,13 @@ const EditDoctorDialog = ({
                                     fontFamily: "Lato",
                                     fontWeight: "700",
                                     fontSize: "17px",
-                                    boxshadow: "none",
+                                    boxshadow: "none !important",
                                 }}
                             >
                                 Save Details
                             </span>
                         </LoadingButton>
-                        <Button
+                        {/* <Button
                             onClick={() => setChangePasswordDialog(true)}
                             variant="outlined"
                             sx={{
@@ -571,7 +593,7 @@ const EditDoctorDialog = ({
                             }}
                         >
                             Change Password
-                        </Button>
+                        </Button> */}
                     </form>
                 </DialogContent>
             </Dialog>
@@ -744,7 +766,7 @@ const EditDoctorDialog = ({
                             Change Password
                         </Button>
                         <Button
-                        onClick={()=>setChangePasswordDialog(false)}
+                            onClick={() => setChangePasswordDialog(false)}
                             variant="outlined"
                             sx={{
                                 textTransform: "none",

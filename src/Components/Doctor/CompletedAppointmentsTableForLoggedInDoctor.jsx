@@ -26,6 +26,7 @@ import { FiUpload } from "react-icons/fi";
 import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -50,7 +51,6 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     fontWeight: "700",
     color: "#383838",
 });
-
 
 const CompletedAppointmentsTableForLoggedInDoctor = ({
     completeAppointmentsData,
@@ -84,10 +84,10 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
     return (
         <>
             <Box
-            sx={{
-                overflow: "auto",
-                display: { xs: "none", sm: "none", md: "block" },
-            }}
+                sx={{
+                    overflow: "auto",
+                    display: { xs: "none", sm: "none", md: "block" },
+                }}
             >
                 <Table
                     sx={{
@@ -128,7 +128,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                 >
                                     <StyledTableCell>{i + 1}</StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {appointment.age}
@@ -137,13 +137,15 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                         {appointment.gender}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.phoneNumber}
+                                        {appointment.phone}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentTime}
+                                        {appointment.AppointmentTime}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentDate}
+                                        {moment(
+                                            appointment.appointmentDate
+                                        ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
@@ -250,7 +252,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                     display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
-                  {completeAppointmentsData?.length > 0 ? (
+                {completeAppointmentsData?.length > 0 ? (
                     completeAppointmentsData.map((appointment, i) => {
                         return (
                             <Box
@@ -285,7 +287,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                             fontWeight: 700,
                                         }}
                                     >
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </Typography>
                                     {appointmentDropDown && activeCard === i ? (
                                         <KeyboardArrowUpIcon />
@@ -319,7 +321,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                                     fontFamily: "Raleway",
                                                 }}
                                             >
-                                                {appointment.patientName}
+                                                {appointment.name}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -345,7 +347,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.phoneNumber}
+                                                {appointment.phone}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -371,7 +373,9 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.appointmentDate}
+                                                {moment(
+                                                    appointment.appointmentDate
+                                                ).format("DD-MM-YYYY")}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <Box
@@ -483,8 +487,16 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                         );
                     })
                 ) : (
-                    <Typography sx={{textAlign:'center', fontFamily: "Lato",
-                    fontWeight: "600", mt:'10px'}}>No Appointments For Today</Typography>
+                    <Typography
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            mt: "10px",
+                        }}
+                    >
+                        No Appointments For Today
+                    </Typography>
                 )}
             </Stack>
         </>

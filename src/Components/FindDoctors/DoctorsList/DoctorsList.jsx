@@ -48,6 +48,7 @@ import BookAppointmentDialogForPatient from "../../Patient/BookAppointmentDialog
 import ConfirmAppointmentDialog from "../../Patient/ConfirmAppointmentDialog";
 import BookAppointmnetDetailsDialog from "../../Patient/BookAppointmnetDetailsDialog";
 import FindDoctorsSkeleton from "../../Skeleton/FindDoctorsSkeleton";
+import "ldrs/dotPulse";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -192,14 +193,17 @@ const DoctorsList = () => {
     // const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({})
     const [bookingAppointmentDialog, setBookAppointmentDialog] =
         useState(false);
+
     const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
         useState(false);
     const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
         useState(false);
     const [open, setOpen] = useState(false);
     const [slotData, setSlotData] = useState([]);
-
+    const [slotsLoading, setSlotsLoading] = useState(false);
     const [isloading, setIsLoading] = useState(false);
+    // const [bookAppointmentButtonLoading, setBookAppointmentButtonLoading] =
+    //     useState(false);
 
     const dispatch = useDispatch();
 
@@ -224,13 +228,16 @@ const DoctorsList = () => {
     };
     const getAvailableSlots = async () => {
         try {
+            setSlotsLoading(true);
             const response = await axiosClient.get(
                 `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${bookingAppointmentDetails.appointmentDate}`
             );
             if (response.status === "ok") {
+                setSlotsLoading(false);
                 return setSlotData(response.result);
             }
         } catch (error) {
+            setSlotsLoading(false);
             console.log(error.message);
         }
     };
@@ -277,6 +284,7 @@ const DoctorsList = () => {
             });
             return false;
         }
+        // setBookAppointmentButtonLoading(true);
         try {
             const response = await axiosClient.get(
                 `/v2/multipleloginprofile/${duid}`
@@ -284,10 +292,12 @@ const DoctorsList = () => {
             if (response.status === "ok") {
                 setHospitalList(response.result);
                 setHospitalListDialog(true);
+                // setBookAppointmentButtonLoading(false);
             }
             console.log(response);
             return;
         } catch (error) {
+            // setBookAppointmentButtonLoading(false);
             console.log(error);
         }
 
@@ -666,6 +676,15 @@ const DoctorsList = () => {
                                     }}
                                 >
                                     Book Appointment
+                                    {/* {bookAppointmentButtonLoading ? (
+                                        <l-dot-pulse
+                                            size="43"
+                                            speed="1.3"
+                                            color="#1F51C6"
+                                        ></l-dot-pulse>
+                                    ) : (
+                                        "Book Appointment"
+                                    )} */}
                                 </Button>
                             </Box>
                         </Card>
@@ -703,6 +722,7 @@ const DoctorsList = () => {
                     setInputValue={setInputValue}
                     slotData={slotData}
                     setSlotData={setSlotData}
+                    slotsLoading={slotsLoading}
                 />
                 <ConfirmAppointmentDialog
                     inputValue={inputValue}

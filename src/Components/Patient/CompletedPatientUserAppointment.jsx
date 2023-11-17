@@ -19,12 +19,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 import ThankYouDialog from "./ThankYouDialog";
 import moment from "moment";
+import ReviewComponet from "./ReviewComponet";
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
-    "& .MuiOutlinedInput-input": {
-        padding: "5px 10px",
-    },
     padding: "15px",
     ["& div"]: {
         padding: "5px",
@@ -59,7 +57,11 @@ const TextFieldStyle = styled(TextField)({
     },
 });
 
-const CompletedPatientUserAppointment = ({ completeAppointmentsData, isLoading, setIsLoading }) => {
+const CompletedPatientUserAppointment = ({
+    completeAppointmentsData,
+    isLoading,
+    setIsLoading,
+}) => {
     const [reviewDialog, setReviewDialog] = useState(false);
     const [thankYouDialog, setThankYouDialog] = useState(false);
     const navigate = useNavigate();
@@ -145,10 +147,40 @@ const CompletedPatientUserAppointment = ({ completeAppointmentsData, isLoading, 
                                             md: "auto",
                                         },
                                         display: "flex",
-                                        justifyContent: "flex-end",
+                                        gap: "15px",
                                         alignItems: "center",
                                     }}
                                 >
+                                    <Button
+                                        variant="contained"
+                                        onClick={() =>
+                                            navigate(
+                                                "/tracking/view-completed-appointment/appointmentId"
+                                            )
+                                        }
+                                        size="small"
+                                        sx={{
+                                            borderRadius: "25px",
+                                            height: "40px",
+                                            fontSize: "16px",
+                                            fontFamily: "Lato",
+                                            fontWeight: {
+                                                xs: "semibold",
+                                                sm: "semibold",
+                                                md: "700",
+                                            },
+                                            textTransform: "none",
+                                            px: "16px",
+                                            width: {
+                                                xs: "100%",
+                                                sm: "100%",
+                                                md: "210px",
+                                            },
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        View Details
+                                    </Button>
                                     <Button
                                         variant="contained"
                                         onClick={() => setReviewDialog(true)}
@@ -158,7 +190,11 @@ const CompletedPatientUserAppointment = ({ completeAppointmentsData, isLoading, 
                                             height: "40px",
                                             fontSize: "16px",
                                             fontFamily: "Lato",
-                                            fontWeight: "semibold",
+                                            fontWeight: {
+                                                xs: "semibold",
+                                                sm: "600",
+                                                md: "700",
+                                            },
                                             textTransform: "none",
                                             px: "16px",
                                             width: {
@@ -273,7 +309,11 @@ const CompletedPatientUserAppointment = ({ completeAppointmentsData, isLoading, 
                     </Box>
                 </Card> */}
             </Stack>
-            <Dialog
+            <ReviewComponet
+                reviewDialog={reviewDialog}
+                setReviewDialog={setReviewDialog}
+            />
+            {/* <Dialog
                 open={reviewDialog}
                 onClose={() => setReviewDialog(false)}
                 maxWidth={"md"}
@@ -356,7 +396,7 @@ const CompletedPatientUserAppointment = ({ completeAppointmentsData, isLoading, 
                         Post Review
                     </Button>
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
             <ThankYouDialog
                 thankYouDialog={thankYouDialog}
                 setThankYouDialog={setThankYouDialog}

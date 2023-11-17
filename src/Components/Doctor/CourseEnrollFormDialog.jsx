@@ -36,9 +36,6 @@ const StackStyle = styled(Stack)(({ theme }) => ({
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
-    "& .MuiOutlinedInput-input": {
-        padding: "5px 10px",
-    },
     ["& input"]: {
         // color: "white",
         fontFamily: "Lato",
@@ -167,8 +164,8 @@ const CourseEnrollFormDialog = ({
                 ) : null}
             </DialogTitle>
             {/* <hr /> */}
-            <Divider/>
-            <DialogContent sx={{  }}>
+            <Divider />
+            <DialogContent sx={{}}>
                 <form onSubmit={handleSubmit}>
                     <Stack sx={{ position: "relative" }}>
                         <LabelStyle>Name of the course</LabelStyle>

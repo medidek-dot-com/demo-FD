@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {useParams, useNavigate} from 'react-router-dom'
+import { useParams, useNavigate } from "react-router-dom";
 import {
     Box,
     Button,
@@ -22,20 +22,16 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const StackStyle = styled(Stack)(({ theme})=>({
-    width:'48%',
-    margin:'5px',
-    [theme.breakpoints.between("xs", "sm")]:{
-        width:'100%'
-    }
-    
+const StackStyle = styled(Stack)(({ theme }) => ({
+    width: "48%",
+    margin: "5px",
+    [theme.breakpoints.between("xs", "sm")]: {
+        width: "100%",
+    },
 }));
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
-    "& .MuiOutlinedInput-input": {
-        padding: "5px 10px",
-    },
     ["& input"]: {
         // color: "white",
         fontFamily: "Lato",
@@ -65,12 +61,15 @@ const LabelStyle = styled("label")({
     color: "#383838",
 });
 
-const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => {
-
-    const {hospital_id} = useParams();
+const AddStuffDialog = ({
+    addStaffDialog,
+    setAddStaffDialog,
+    getStaffData,
+}) => {
+    const { hospital_id } = useParams();
     const navigate = useNavigate();
     const [inputValue, setInputValue] = useState({
-        nameOfStaff:"",
+        nameOfStaff: "",
         designation: "",
         email: "",
         phone: "",
@@ -82,7 +81,6 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
     const [preview, setPreview] = useState("");
     const [err, setError] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
-
 
     useEffect(() => {
         if (inputImage) {
@@ -100,15 +98,14 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
         setInputImage(e.target.files[0]);
     };
 
-
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (
             !inputValue.nameOfStaff ||
             !inputValue.designation ||
             !inputValue.email ||
             !inputValue.gender ||
-            !inputValue.phone 
+            !inputValue.phone
         ) {
             setError(true);
             return false;
@@ -118,27 +115,23 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
         data.append("nameOfStaff", inputValue.nameOfStaff);
         data.append("designation", inputValue.designation);
         data.append("email", inputValue.email);
-        data.append("phone", inputValue.phone );
-        data.append("gender", inputValue.gender );
-        data.append("image", inputImage );
-        data.append("hospitalId", hospital_id );
+        data.append("phone", inputValue.phone);
+        data.append("gender", inputValue.gender);
+        data.append("image", inputImage);
+        data.append("hospitalId", hospital_id);
 
         // console.log(data);
         try {
-            const response = await axiosClient.post('/v2/addstaff', data);
-            if (response.status === 'ok') {
-                toast.success("Staff added successfully")
+            const response = await axiosClient.post("/v2/addstaff", data);
+            if (response.status === "ok") {
+                toast.success("Staff added successfully");
                 setAddStaffDialog(false);
                 getStaffData();
-                
-        }
+            }
         } catch (error) {
             console.log(error);
         }
-
     };
-
-
 
     return (
         <Dialog
@@ -148,7 +141,7 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
             sx={{ margin: " 0 auto" }}
         >
             <DialogTitle>
-            Add Supporting Staff
+                Add Supporting Staff
                 {addStaffDialog ? (
                     <IconButton
                         aria-label="close"
@@ -172,7 +165,7 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                             alt="user"
                             width={60}
                             height={60}
-                            style={{borderRadius:'50%'}}
+                            style={{ borderRadius: "50%" }}
                         />
 
                         <Box>
@@ -186,8 +179,10 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                     fontSize: "0.75rem",
                                     lineHeight: "14.4px",
                                 }}
-                                >
-                                {err && inputImage ? 'Please Pick a photo from your computer' : ""}
+                            >
+                                {err && inputImage
+                                    ? "Please Pick a photo from your computer"
+                                    : ""}
                                 Pick a photo from your computer
                             </Typography>
 
@@ -216,7 +211,7 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                     >
                         <StackStyle>
                             <LabelStyle htmlFor="staffName">
-                            Name of the staff
+                                Name of the staff
                             </LabelStyle>
                             <TextFieldStyle
                                 id="staffName"
@@ -225,14 +220,16 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 placeholder="Ex.  John Doe"
                                 error={err && !inputValue.nameOfStaff && true}
                                 helperText={
-                                    err && !inputValue.nameOfStaff && "Please enter staff's name"
+                                    err &&
+                                    !inputValue.nameOfStaff &&
+                                    "Please enter staff's name"
                                 }
                                 onChange={handleChange}
                             />
                         </StackStyle>
-                        <StackStyle >
+                        <StackStyle>
                             <LabelStyle htmlFor="designation">
-                            Designation
+                                Designation
                             </LabelStyle>
                             <TextFieldStyle
                                 id="designation"
@@ -241,14 +238,16 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 placeholder="Nurse/Compounder/Support Staff"
                                 error={err && !inputValue.designation && true}
                                 helperText={
-                                    err && !inputValue.designation && "Please enter staff's designation"
+                                    err &&
+                                    !inputValue.designation &&
+                                    "Please enter staff's designation"
                                 }
                                 onChange={handleChange}
                             />
                         </StackStyle>
                         <StackStyle>
                             <LabelStyle htmlFor="email">
-                            Enter Email Id
+                                Enter Email Id
                             </LabelStyle>
                             <TextFieldStyle
                                 id="email"
@@ -257,14 +256,16 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 placeholder="doctor@gmail.com"
                                 error={err && !inputValue.email && true}
                                 helperText={
-                                    err && !inputValue.email && "Please enter staff's name"
+                                    err &&
+                                    !inputValue.email &&
+                                    "Please enter staff's name"
                                 }
                                 onChange={handleChange}
                             />
                         </StackStyle>
                         <StackStyle>
                             <LabelStyle htmlFor="phone">
-                            Enter Phone No
+                                Enter Phone No
                             </LabelStyle>
                             <TextFieldStyle
                                 id="phone"
@@ -273,15 +274,15 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 placeholder="Ex 99112240477"
                                 error={err && !inputValue.phone && true}
                                 helperText={
-                                    err && !inputValue.phone && "Please enter staff's phone"
+                                    err &&
+                                    !inputValue.phone &&
+                                    "Please enter staff's phone"
                                 }
                                 onChange={handleChange}
                             />
                         </StackStyle>
                         <StackStyle>
-                            <LabelStyle htmlFor="gender">
-                            Gender
-                            </LabelStyle>
+                            <LabelStyle htmlFor="gender">Gender</LabelStyle>
                             <TextFieldStyle
                                 id="gender"
                                 name="gender"
@@ -289,7 +290,9 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                                 placeholder="Ex. Male"
                                 error={err && !inputValue.gender && true}
                                 helperText={
-                                    err && !inputValue.gender && "Please enter staff's phone"
+                                    err &&
+                                    !inputValue.gender &&
+                                    "Please enter staff's phone"
                                 }
                                 onChange={handleChange}
                             />
@@ -301,7 +304,7 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker defaultValue={dayjs('2022-04-17')} />
                             </LocalizationProvider> */}
-                            {/* <TextFieldStyle
+                        {/* <TextFieldStyle
                                 id="dob"
                                 name="dob"
                                 type="date"
@@ -318,53 +321,52 @@ const AddStuffDialog = ({ addStaffDialog, setAddStaffDialog, getStaffData }) => 
                             <LabelStyle htmlFor="password">
                                 Password(can be edited later)
                             </LabelStyle>
-                            <Stack direction={'row'}>
+                            <Stack direction={"row"}>
                                 <TextFieldStyle
-                                disabled
+                                    disabled
                                     id="password"
                                     name="password"
                                     fullWidth
                                     placeholder="Auto generated Password"
                                     value="medidekPass@123"
-                                    sx={{background:"#D9D9D9"}}
+                                    sx={{ background: "#D9D9D9" }}
                                     onChange={handleChange}
                                 />
                             </Stack>
                         </StackStyle>
-                        
                     </Box>
                     <LoadingButton
-                            size="small"
-                            fullWidth
-                            type="submit"
-                            loading={disableButton}
-                            variant="contained"
-                            sx={{
-                                flex: 0.3,
-                                width: {
-                                    xs: "100%",
-                                    sm: "100%",
-                                    md: "364.69px",
-                                },
-                                my: 2,
-                                mx: "auto",
-                                display: "block",
-                                boxShadow: "none",
-                                borderRadius:"41px"
+                        size="small"
+                        fullWidth
+                        type="submit"
+                        loading={disableButton}
+                        variant="contained"
+                        sx={{
+                            flex: 0.3,
+                            width: {
+                                xs: "100%",
+                                sm: "100%",
+                                md: "364.69px",
+                            },
+                            my: 2,
+                            mx: "auto",
+                            display: "block",
+                            boxShadow: "none",
+                            borderRadius: "41px",
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                fontSize: "1rem",
+                                textTransform: "none",
                             }}
                         >
-                            <span
-                                style={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "700",
-                                    fontSize: "1rem",
-                                    textTransform: "none",
-                                }}
-                            >
-                                Add Staff
-                            </span>
-                        </LoadingButton>
-                        {/* <Button type="submit" variant="contained" sx={{ flex: 0.3, mt:2, textTransform:'none', display:'block', margin:'10px auto', width:'200px' }}>
+                            Add Staff
+                        </span>
+                    </LoadingButton>
+                    {/* <Button type="submit" variant="contained" sx={{ flex: 0.3, mt:2, textTransform:'none', display:'block', margin:'10px auto', width:'200px' }}>
                             Add Doctor
                         </Button> */}
                 </form>

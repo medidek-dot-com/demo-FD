@@ -20,6 +20,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useDispatch } from "react-redux";
 import { tab } from "../../Store/tabSlice";
+import ChooseDateAndSlotTimeDialog from "../../Components/Master/ChooseDateAndSlotTimeDialog";
+import AppointmentSettingDialog from "../../Components/Master/AppointmentSettingDialog";
 
 const WrapperStyle = styled(Box)(({ theme }) => ({
     width: "calc(100% - 100px)",
@@ -39,7 +41,16 @@ const MasterUserDoctorDetails = () => {
     const [appointments, setAppointments] = useState([]);
     const [doctorDetails, setDoctorsDetails] = useState({});
     const [reviews, setReviews] = useState([]);
-
+    const [appointmentSettingDialog, setAppointmentSettingDialog] =
+        useState(false);
+    const [chooseDateAndTimeDialog, setChooseDateAndTimeDialog] =
+        useState(false);
+    const [getDateAndTime, setGetDateAndTime] = useState({
+        appointmentDate: "",
+        AppointmentTime: "",
+    });
+    const [slotData, setSlotData] = useState([]);
+    console.log(getDateAndTime);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -47,9 +58,7 @@ const MasterUserDoctorDetails = () => {
     }, []);
 
     const getDoctorDetails = async () => {
-        const response = await axiosClient.get(
-            `/v2/singledoctor/${doctor_id}`
-        );
+        const response = await axiosClient.get(`/v2/singledoctor/${doctor_id}`);
         setDoctorsDetails(response.result);
         setReviews(response.result.reviews);
     };
@@ -67,18 +76,41 @@ const MasterUserDoctorDetails = () => {
         getDoctorDetails();
     }, []);
 
+    const getAvailableSlots = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${getDateAndTime.appointmentDate}`
+            );
+            if (response.status === "ok") {
+                return setSlotData(response.result);
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
+    useEffect(() => {
+        getAvailableSlots();
+    }, [getDateAndTime.appointmentDate]);
+
     return (
         <>
             <WrapperStyle>
                 <DoctorProfileCard
-                    setBookAppointmentDialog={setBookAppointmentDialog}
+                    setChooseDateAndTimeDialog={setChooseDateAndTimeDialog}
                     getUpcomingAppointmentsData={getUpcomingAppointmentsData}
                     doctorDetails={doctorDetails}
+                    setAppointmentSettingDialog={setAppointmentSettingDialog}
                 />
 
                 <Typography
                     my={2}
-                    sx={{ display: { xs: "none", sm: "none", md: "block" }, fontFamily:"Raleway", fontWeight:"600", fontSize:"1.375rem" }}
+                    sx={{
+                        display: { xs: "none", sm: "none", md: "block" },
+                        fontFamily: "Raleway",
+                        fontWeight: "600",
+                        fontSize: "1.375rem",
+                    }}
                 >
                     Reviews
                 </Typography>
@@ -105,7 +137,7 @@ const MasterUserDoctorDetails = () => {
                                 },
                             }}
                         >
-                             <Card
+                            <Card
                                 sx={{
                                     display: "flex",
                                     justifyContent: "space-between",
@@ -130,14 +162,20 @@ const MasterUserDoctorDetails = () => {
                                         }}
                                     />
                                     <Box ml={2}>
-                                        <Typography sx={{fontFamily:"Raleway", fontWeight:"500", fontSize:"1.191rem"}}>
+                                        <Typography
+                                            sx={{
+                                                fontFamily: "Raleway",
+                                                fontWeight: "500",
+                                                fontSize: "1.191rem",
+                                            }}
+                                        >
                                             Ashwini Hingolikar
                                         </Typography>
                                         <Typography
                                             sx={{
                                                 color: "#706D6D",
-                                                fontFamily:"Lato",
-                                                fontWeight:"500",
+                                                fontFamily: "Lato",
+                                                fontWeight: "500",
                                                 fontSize: "0.9rem",
                                             }}
                                         >
@@ -149,437 +187,174 @@ const MasterUserDoctorDetails = () => {
                                     <Rating value={5} readOnly />
                                 </Box>
                             </Card>
-                            {/* <Card
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    p: 3,
-                                    alignItems: "center",
-                                    border: "1px solid #D9D9D9",
-                                    boxShadow: "none",
-                                    borderRadius: "7px",
-                                    flexDirection: { xs: "column", sm: "row" },
-                                    mb: 1,
-                                }}
-                            >
-                                <Stack
-                                    direction={{ xs: "column", sm: "row" }}
-                                    alignItems={"c"}
-                                >
-                                    <img
-                                        src="/doctor.png"
-                                        alt="img"
-                                        style={{
-                                            width: "50px",
-                                            height: "50px",
-                                            borderRadius: "50%",
-                                        }}
-                                    />
-                                    <Box ml={2}>
-                                        <Typography>
-                                            Ashwini Hingolikar
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: "#706D6D",
-                                                fontSize: "0.9rem",
-                                            }}
-                                        >
-                                            Best Medical app! Easy to use.
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                                <Box>
-                                    <Rating value={5} readOnly />
-                                </Box>
-                            </Card>
-                            <Card
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    p: 3,
-                                    alignItems: "center",
-                                    border: "1px solid #D9D9D9",
-                                    boxShadow: "none",
-                                    borderRadius: "7px",
-                                    flexDirection: { xs: "column", sm: "row" },
-                                    mb: 1,
-                                }}
-                            >
-                                <Stack
-                                    direction={{ xs: "column", sm: "row" }}
-                                    alignItems={"c"}
-                                >
-                                    <img
-                                        src="/doctor.png"
-                                        alt="img"
-                                        style={{
-                                            width: "50px",
-                                            height: "50px",
-                                            borderRadius: "50%",
-                                        }}
-                                    />
-                                    <Box ml={2}>
-                                        <Typography>
-                                            Ashwini Hingolikar
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: "#706D6D",
-                                                fontSize: "0.9rem",
-                                            }}
-                                        >
-                                            Best Medical app! Easy to use.
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                                <Box>
-                                    <Rating value={5} readOnly />
-                                </Box>
-                            </Card>
-                            <Card
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    p: 3,
-                                    alignItems: "center",
-                                    border: "1px solid #D9D9D9",
-                                    boxShadow: "none",
-                                    borderRadius: "7px",
-                                    flexDirection: { xs: "column", sm: "row" },
-                                    mb: 1,
-                                }}
-                            >
-                                <Stack
-                                    direction={{ xs: "column", sm: "row" }}
-                                    alignItems={"c"}
-                                >
-                                    <img
-                                        src="/doctor.png"
-                                        alt="img"
-                                        style={{
-                                            width: "50px",
-                                            height: "50px",
-                                            borderRadius: "50%",
-                                        }}
-                                    />
-                                    <Box ml={2}>
-                                        <Typography>
-                                            Ashwini Hingolikar
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: "#706D6D",
-                                                fontSize: "0.9rem",
-                                            }}
-                                        >
-                                            Best Medical app! Easy to use.
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                                <Box>
-                                    <Rating value={5} readOnly />
-                                </Box>
-                            </Card>
-                            <Card
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    width: "100%",
-                                    p: 3,
-                                    alignItems: "center",
-                                    border: "1px solid #D9D9D9",
-                                    boxShadow: "none",
-                                    borderRadius: "7px",
-                                    flexDirection: { xs: "column", sm: "row" },
-                                    mb: 1,
-                                }}
-                            >
-                                <Stack
-                                    direction={{ xs: "column", sm: "row" }}
-                                    alignItems={"c"}
-                                >
-                                    <img
-                                        src="/doctor.png"
-                                        alt="img"
-                                        style={{
-                                            width: "50px",
-                                            height: "50px",
-                                            borderRadius: "50%",
-                                        }}
-                                    />
-                                    <Box ml={2}>
-                                        <Typography>
-                                            Ashwini Hingolikar
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: "#706D6D",
-                                                fontSize: "0.9rem",
-                                            }}
-                                        >
-                                            Best Medical app! Easy to use.
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                                <Box>
-                                    <Rating value={5} readOnly />
-                                </Box>
-                            </Card> */}
                         </Box>
                         {/* For Mobile View */}
-                        <Box sx={{display:{xs:"block", sm:"block", md:"none"}}}>
-                        <Card
-                            onClick={() => setAboutDropDown(!aboutDropDown)}
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                mt: 2,
-                                px: 2,
-                                py: 1,
-                                border: " 1px solid #D9D9D9",
-                                boxShadow: "none",
-                            }}
-                        >
-                            <Typography
-                                sx={{
-                                    flex: 1,
-                                    fontWeight: 700,
-                                    fontFamily: "Raleway",
-                                    fontSize: { md: "1rem" },
-                                }}
-                            >
-                                About Doctor
-                            </Typography>
-                            {aboutDropDown ? (
-                                <KeyboardArrowUpIcon />
-                            ) : (
-                                <KeyboardArrowDownIcon />
-                            )}
-                        </Card>
-                        <Card
-                            sx={{
-                                p: 2,
-                                mt: 2,
-                                border: " 1px solid #D9D9D9",
-                                boxShadow: "none",
-                                display: aboutDropDown ? "block" : "none",
-                            }}
-                        >
-                            <Typography
-                                sx={{
-                                    color: "#000000BD",
-                                    maxHeight: "50vh",
-                                    overflow: "auto",
-                                    fontFamily: "Lato",
-                                    fontWeight: "400",
-                                    fontSize: "15px",
-                                }}
-                            >
-                                {doctorDetails.description}
-                            </Typography>
-                        </Card>
-                        <Card
-                            onClick={() =>
-                                setReviewAboutDropDown(!reviewDropDown)
-                            }
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                mt: 2,
-                                px: 2,
-                                py: 1,
-                                border: " 1px solid #D9D9D9",
-                                boxShadow: "none",
-                            }}
-                        >
-                            <Typography
-                                sx={{
-                                    flex: 1,
-                                    fontWeight: 700,
-                                    fontFamily: "Raleway",
-                                }}
-                            >
-                                Reviews
-                            </Typography>
-                            {reviewDropDown ? (
-                                <KeyboardArrowUpIcon />
-                            ) : (
-                                <KeyboardArrowDownIcon />
-                            )}
-                        </Card>
                         <Box
                             sx={{
-                                display: reviewDropDown ? "block" : "none",
-                                maxHeight: "50vh",
-                                overflow: "auto",
-                            }}
-                        >
-                            {reviews?.length > 0 ? (
-                                reviews.map((review, i) => {
-                                    return (
-                                        <Card
-                                            key={i}
-                                            sx={{
-                                                width: "100%",
-                                                p: 1,
-                                                mt: 1,
-                                                border: " 1px solid #D9D9D9",
-                                                boxShadow: "none",
-                                                display: "flex",
-                                                gap: 1,
-                                                alignItems: "center",
-                                            }}
-                                        >
-                                            <Avatar src="/doctor.png" />
-                                            <Stack>
-                                                <Typography
-                                                    sx={{
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        fontWeight: 500,
-                                                        fontFamily: "Raleway",
-                                                        fontSize: "0.891rem",
-                                                    }}
-                                                >
-                                                    {review.name}{" "}
-                                                    <Box
-                                                        component="span"
-                                                        sx={{
-                                                            color: "#D9D9D978",
-                                                        }}
-                                                    >
-                                                        {" "}
-                                                        &nbsp;|&nbsp;
-                                                    </Box>
-                                                    <Rating
-                                                        value={Number(
-                                                            review.rating
-                                                        )}
-                                                        readOnly
-                                                    />
-                                                </Typography>
-                                                <Typography
-                                                    sx={{
-                                                        fontSize: "0.8rem",
-                                                        fontFamily: "Raleway",
-                                                        fontWeight: "500",
-                                                        color: "#383838",
-                                                    }}
-                                                >
-                                                    {review.masseage}
-                                                </Typography>
-                                            </Stack>
-                                        </Card>
-                                    );
-                                })
-                            ) : (
-                                <Typography>hello</Typography>
-                            )}
-                        </Box>
-                        </Box>
-                        {/* Mobile View End  */}
-
-                        {/* <Typography sx={{ mt: 2 }}>Info</Typography>
-                        <Card
-                            sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                width: "100%",
-                                p: 3,
-                                alignItems: "center",
-                                border: "1px solid #D9D9D9",
-                                boxShadow: "none",
-                                borderRadius: "7px",
-                                flexDirection: {
-                                    xs: "column",
-                                    sm: "column",
-                                    md: "row",
+                                display: {
+                                    xs: "block",
+                                    sm: "block",
+                                    md: "none",
                                 },
-                                mt: 2,
                             }}
                         >
-                            <Stack direction={"column"}>
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "43%",
-                                        },
-                                        lineHeight: "25px",
-                                        fontWeight: "600",
-                                    }}
-                                >
-                                    Smilekraft Maxillofacial Surgery And Dental
-                                    Hospital
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        color: "#706D6D",
-                                        fontSize: "0.9rem",
-                                        width: "38%",
-                                        lineHeight: "25px",
-                                        mt: 1,
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "43%",
-                                        },
-                                    }}
-                                >
-                                    66/1, Ashish Apartments, 2nd Floor,
-                                    Abhyankar Marg Road., Landmark: Opposite
-                                    Anand Ashram Hotel, Nagpur
-                                </Typography>
-                                <Stack direction={"row"} gap={1} mt={1}>
-                                    <img src="/hospital-img1.png" alt="" />
-                                    <img src="/hospital-img2.png" alt="" />
-                                    <img src="/hospital-img3.png" alt="" />
-                                    <img src="/hospital-img4.png" alt="" />
-                                </Stack>
-                            </Stack>
-                            <Box
+                            <Card
+                                onClick={() => setAboutDropDown(!aboutDropDown)}
                                 sx={{
-                                    width: {
-                                        xs: "100%",
-                                        sm: "100%",
-                                        md: "200px",
-                                    },
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    mt: 2,
+                                    px: 2,
+                                    py: 1,
+                                    border: " 1px solid #D9D9D9",
+                                    boxShadow: "none",
                                 }}
                             >
-                                <Button
-                                    onClick={() =>
-                                        setBookAppointmentDialog(true)
-                                    }
-                                    variant="contained"
+                                <Typography
                                     sx={{
-                                        m: 1,
-                                        background: "#15B912",
-                                        textTransform: "none",
-                                        borderRadius: "35px",
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "200px",
-                                        },
-                                        "&:hover": {
-                                            background: "#148512",
-                                        },
+                                        flex: 1,
+                                        fontWeight: 700,
+                                        fontFamily: "Raleway",
+                                        fontSize: { md: "1rem" },
                                     }}
                                 >
-                                    Book Appointment
-                                </Button>
+                                    About Doctor
+                                </Typography>
+                                {aboutDropDown ? (
+                                    <KeyboardArrowUpIcon />
+                                ) : (
+                                    <KeyboardArrowDownIcon />
+                                )}
+                            </Card>
+                            <Card
+                                sx={{
+                                    p: 2,
+                                    mt: 2,
+                                    border: " 1px solid #D9D9D9",
+                                    boxShadow: "none",
+                                    display: aboutDropDown ? "block" : "none",
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        color: "#000000BD",
+                                        maxHeight: "50vh",
+                                        overflow: "auto",
+                                        fontFamily: "Lato",
+                                        fontWeight: "400",
+                                        fontSize: "15px",
+                                    }}
+                                >
+                                    {doctorDetails.description}
+                                </Typography>
+                            </Card>
+                            <Card
+                                onClick={() =>
+                                    setReviewAboutDropDown(!reviewDropDown)
+                                }
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    mt: 2,
+                                    px: 2,
+                                    py: 1,
+                                    border: " 1px solid #D9D9D9",
+                                    boxShadow: "none",
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        flex: 1,
+                                        fontWeight: 700,
+                                        fontFamily: "Raleway",
+                                    }}
+                                >
+                                    Reviews
+                                </Typography>
+                                {reviewDropDown ? (
+                                    <KeyboardArrowUpIcon />
+                                ) : (
+                                    <KeyboardArrowDownIcon />
+                                )}
+                            </Card>
+                            <Box
+                                sx={{
+                                    display: reviewDropDown ? "block" : "none",
+                                    maxHeight: "50vh",
+                                    overflow: "auto",
+                                }}
+                            >
+                                {reviews?.length > 0 ? (
+                                    reviews.map((review, i) => {
+                                        return (
+                                            <Card
+                                                key={i}
+                                                sx={{
+                                                    width: "100%",
+                                                    p: 1,
+                                                    mt: 1,
+                                                    border: " 1px solid #D9D9D9",
+                                                    boxShadow: "none",
+                                                    display: "flex",
+                                                    gap: 1,
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <Avatar src="/doctor.png" />
+                                                <Stack>
+                                                    <Typography
+                                                        sx={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            fontWeight: 500,
+                                                            fontFamily:
+                                                                "Raleway",
+                                                            fontSize:
+                                                                "0.891rem",
+                                                        }}
+                                                    >
+                                                        {review.name}{" "}
+                                                        <Box
+                                                            component="span"
+                                                            sx={{
+                                                                color: "#D9D9D978",
+                                                            }}
+                                                        >
+                                                            {" "}
+                                                            &nbsp;|&nbsp;
+                                                        </Box>
+                                                        <Rating
+                                                            value={Number(
+                                                                review.rating
+                                                            )}
+                                                            readOnly
+                                                        />
+                                                    </Typography>
+                                                    <Typography
+                                                        sx={{
+                                                            fontSize: "0.8rem",
+                                                            fontFamily:
+                                                                "Raleway",
+                                                            fontWeight: "500",
+                                                            color: "#383838",
+                                                        }}
+                                                    >
+                                                        {review.masseage}
+                                                    </Typography>
+                                                </Stack>
+                                            </Card>
+                                        );
+                                    })
+                                ) : (
+                                    <Typography>hello</Typography>
+                                )}
                             </Box>
-                        </Card> */}
+                        </Box>
+                        {/* Mobile View End  */}
                     </Box>
-
                     <Card
                         sx={{
                             width: "400px",
@@ -697,99 +472,6 @@ const MasterUserDoctorDetails = () => {
                                 </Typography>
                             )}
                         </Box>
-                        {/* <Card
-                            sx={{
-                                mx: 2,
-                                my: "3px",
-                                background: "#DCE3F6",
-                                border: "1px solid #D9D9D9",
-                                boxShadow: "none",
-                                borderRadius: "5px",
-                            }}
-                        >
-                            <Stack
-                                direction={"row"}
-                                sx={{ m: 1, alignItems: "center" }}
-                            >
-                                <Fab size="small" color="primary">
-                                    2
-                                </Fab>
-
-                                <Box ml={1}>
-                                    <Typography>John Snow</Typography>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "0.9rem",
-                                            color: "#706D6D",
-                                        }}
-                                    >
-                                        Appointment at: 12:00PM
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                        </Card>
-                        <Card
-                            sx={{
-                                mx: 2,
-                                my: "3px",
-                                background: "#DCE3F6",
-                                border: "1px solid #D9D9D9",
-                                boxShadow: "none",
-                                borderRadius: "5px",
-                            }}
-                        >
-                            <Stack
-                                direction={"row"}
-                                sx={{ m: 1, alignItems: "center" }}
-                            >
-                                <Fab size="small" color="primary">
-                                    3
-                                </Fab>
-
-                                <Box ml={1}>
-                                    <Typography>John Snow</Typography>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "0.9rem",
-                                            color: "#706D6D",
-                                        }}
-                                    >
-                                        Appointment at: 12:00PM
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                        </Card>
-                        <Card
-                            sx={{
-                                mx: 2,
-                                my: "3px",
-                                background: "#DCE3F6",
-                                border: "1px solid #D9D9D9",
-                                boxShadow: "none",
-                                borderRadius: "5px",
-                            }}
-                        >
-                            <Stack
-                                direction={"row"}
-                                sx={{ m: 1, alignItems: "center" }}
-                            >
-                                <Fab size="small" color="primary">
-                                    4
-                                </Fab>
-
-                                <Box ml={1}>
-                                    <Typography>John Snow</Typography>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "0.9rem",
-                                            color: "#706D6D",
-                                        }}
-                                    >
-                                        Appointment at: 12:00PM
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                        </Card> */}
 
                         {appointments.length > 0 && (
                             <Box
@@ -839,10 +521,23 @@ const MasterUserDoctorDetails = () => {
                     </Card>
                 </Box>
             </WrapperStyle>
+            <ChooseDateAndSlotTimeDialog
+                chooseDateAndTimeDialog={chooseDateAndTimeDialog}
+                setChooseDateAndTimeDialog={setChooseDateAndTimeDialog}
+                getDateAndTime={getDateAndTime}
+                setGetDateAndTime={setGetDateAndTime}
+                slotData={slotData}
+                setSlotData={setSlotData}
+            />
             <BookAppointmentDialog
                 bookAppointmentDialog={bookAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
+                getDateAndTime={getDateAndTime}
                 getUpcomingAppointmentsData={getUpcomingAppointmentsData}
+            />
+            <AppointmentSettingDialog
+                appointmentSettingDialog={appointmentSettingDialog}
+                setAppointmentSettingDialog={setAppointmentSettingDialog}
             />
             <Footer />
         </>

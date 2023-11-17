@@ -54,7 +54,6 @@ const SearchFeildStyle = styled(TextField)({
 });
 
 const DatePickerStyle = styled(MobileDatePicker)({
-    color: "red",
     [`& input`]: {
         color: "#383838",
         fontFamily: "Lato",
@@ -63,7 +62,7 @@ const DatePickerStyle = styled(MobileDatePicker)({
         textAlign: "center",
     },
     [`& div`]: {
-        height: "32px",
+        height: "41px",
     },
     [`& fieldset`]: {
         borderRadius: "31px",
@@ -111,7 +110,9 @@ const Appoinments = () => {
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     const [mobileActiveTab, setMobileActiveTab] = useState(1);
-
+    const [date, setDate] = useState(dayjs());
+    const farmattedDate = dayjs(date).format("DD-MM-YYYY");
+    console.log(farmattedDate);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -355,6 +356,7 @@ const Appoinments = () => {
                                 fontSize: "16px",
                                 borderRadius: "35px",
                                 color: activeTab === 1 ? "#ffffff" : "#383838",
+                                boxShadow: "none",
                             }}
                         >
                             Upcoming
@@ -371,6 +373,7 @@ const Appoinments = () => {
                                 fontSize: "16px",
                                 borderRadius: "35px",
                                 color: activeTab === 2 ? "#ffffff" : "#383838",
+                                boxShadow: "none",
                             }}
                         >
                             Completed
@@ -387,6 +390,7 @@ const Appoinments = () => {
                                 fontSize: "16px",
                                 borderRadius: "35px",
                                 color: activeTab === 3 ? "#ffffff" : "#383838",
+                                boxShadow: "none",
                             }}
                         >
                             Missed
@@ -405,6 +409,7 @@ const Appoinments = () => {
                                 fontSize: "16px",
                                 borderRadius: "35px",
                                 color: "#383838",
+                                boxShadow: "none",
                             }}
                         >
                             <GiPauseButton
@@ -428,6 +433,7 @@ const Appoinments = () => {
                                 fontSize: "16px",
                                 borderRadius: "35px",
                                 color: "#383838",
+                                boxShadow: "none",
                             }}
                         >
                             <FaStop
@@ -443,8 +449,10 @@ const Appoinments = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePickerStyle
+                                format="DD-MM-YYYY"
+                                value={date}
+                                onChange={(val) => setDate(val)}
                                 sx={{ width: "144px" }}
-                                defaultValue={dayjs()}
                             />
                         </LocalizationProvider>
                     </Stack>

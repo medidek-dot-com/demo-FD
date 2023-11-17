@@ -25,6 +25,11 @@ import { MdDelete } from "react-icons/md";
 import { Bs0Circle } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { axiosClient } from "../../Utils/axiosClient";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import "ldrs/dotPulse";
+
+// Default values shown
 
 // const [hour, minutes] = startTime.split(":");
 // const parts = startTime.split(" ");
@@ -36,6 +41,7 @@ let pmPart;
 
 const OnlineAppointmentsComponent = ({
     dates,
+    onlineSlotData,
     setHolidayDialog,
     view,
     markAsHoliday,
@@ -51,7 +57,7 @@ const OnlineAppointmentsComponent = ({
     console.log(selectedDay);
     let c;
     let d;
-
+    const { doctorid } = useParams();
     const { user } = useSelector((state) => state.auth);
     const [slotDurationTime, setSlotDurationTime] = useState("15 min");
 
@@ -77,9 +83,10 @@ const OnlineAppointmentsComponent = ({
     const [endTime3, setEndTime3] = useState("");
     const [endTimes3, setEndTimes3] = useState([]);
 
-    const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
-        useState(false);
-
+    const [acceptAppointmentBySlot, setAcceptAppointmentBySlot] = useState(
+        onlineSlotData ? true : false
+    );
+    const [switchLoading, setSwitchLoading] = useState(false);
     const slotDurations = [15, 30, 45, 60];
 
     useEffect(() => {
@@ -245,6 +252,27 @@ const OnlineAppointmentsComponent = ({
 
     //To here
 
+    const handleSwtichChange = async (e) => {
+        setSwitchLoading(true);
+        try {
+            const response = await axiosClient.put(
+                `/v2/editAcceptAppointmentBySlot/${doctorid}`,
+                { acceptAppointmentBySlot: !acceptAppointmentBySlot }
+            );
+            console.log(response);
+            if (response.status === "ok") {
+                console.log(e.target.checked);
+                setSwitchLoading(false);
+                return setAcceptAppointmentBySlot(
+                    response.result.acceptAppointmentBySlot
+                );
+            }
+        } catch (error) {
+            setSwitchLoading(false);
+            toast.error("Something went wrong");
+        }
+    };
+
     const saveData = async () => {
         try {
             const response = await axiosClient.post("/v2/creatSlotForDoctor", {
@@ -257,7 +285,7 @@ const OnlineAppointmentsComponent = ({
                 Endtime3: endTime3,
                 isholiday: markAsHoliday,
                 date: selectedDay.currentDate,
-                doctorid: user._id,
+                doctorid: doctorid,
             });
             getOnlineSlotDetailForDoctorForPerticularDate();
             console.log(response.result);
@@ -377,27 +405,39 @@ const OnlineAppointmentsComponent = ({
                     display: "flex",
                     justifyContent: "start",
                     alignItems: "center",
+                    gap: "5px",
                     my: "15px",
                 }}
             >
-                <Switch
-                    // value={"enabled"}
+                {switchLoading ? (
+                    <l-dot-pulse
+                        size="43"
+                        speed="1.3"
+                        color="#1F51C6"
+                    ></l-dot-pulse>
+                ) : (
+                    <>
+                        <Switch
+                            checked={
+                                acceptAppointmentBySlot === true ? true : false
+                            }
+                            // value={acceptAppointmentBySlot}
+                            onChange={handleSwtichChange}
+                        />
+                        <Box
+                            component="span"
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "0.938rem",
+                                color: "#1F51C6",
+                            }}
+                        >
+                            {acceptAppointmentBySlot ? "Enable" : "Disabled"}
+                        </Box>
+                    </>
+                )}
 
-                    onChange={(e) =>
-                        setOnlineAppointmentEnabled(e.target.checked)
-                    }
-                />
-                <Box
-                    component="span"
-                    sx={{
-                        fontFamily: "Lato",
-                        fontWeight: "600",
-                        fontSize: "0.938rem",
-                        color: "#1F51C6",
-                    }}
-                >
-                    {onlineAppointmentEnabled ? "Enable" : "Disabled"}
-                </Box>
                 {/* <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
@@ -483,6 +523,9 @@ const OnlineAppointmentsComponent = ({
                         <Box
                             key={i + 1}
                             component="button"
+                            disabled={
+                                acceptAppointmentBySlot === false ? true : false
+                            }
                             onClick={() => handleSelectedDate(date, i)}
                             sx={{
                                 width: {
@@ -496,14 +539,27 @@ const OnlineAppointmentsComponent = ({
                                     md: "57.39px",
                                 },
                                 background:
-                                    selectedDay.i === i ? "#1F51C6" : "#FFFFFF",
+                                    selectedDay.i === i &&
+                                    acceptAppointmentBySlot === true
+                                        ? "#1F51C6"
+                                        : acceptAppointmentBySlot === true
+                                        ? "#FFFFFF"
+                                        : "#D9D9D9",
                                 border:
                                     currentDate === date.day
                                         ? "2px solid #1F51C6"
                                         : "1px solid #706D6D8F",
                                 borderRadius: "3px",
                                 color:
-                                    selectedDay.i === i ? "#FFFFFF" : "#706D6D",
+                                    selectedDay.i === i
+                                        ? "#FFFFFF"
+                                        : acceptAppointmentBySlot === true
+                                        ? "#706D6D"
+                                        : "#ffffff",
+                                cursor:
+                                    acceptAppointmentBySlot === false
+                                        ? "no-drop"
+                                        : "pointer",
                                 userSelect: "none",
                             }}
                         >
@@ -567,7 +623,12 @@ const OnlineAppointmentsComponent = ({
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
+                                    disabled={
+                                        markAsHoliday ||
+                                        acceptAppointmentBySlot === false
+                                            ? true
+                                            : false
+                                    }
                                     sx={{
                                         width: {
                                             xs: "100%",
@@ -579,9 +640,11 @@ const OnlineAppointmentsComponent = ({
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
                                         borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
+                                        background:
+                                            markAsHoliday ||
+                                            acceptAppointmentBySlot === false
+                                                ? "#D9D9D9"
+                                                : "",
                                     }}
                                     placeholder="Choose Slot Duration"
                                     value={slotDuration}
@@ -663,7 +726,12 @@ const OnlineAppointmentsComponent = ({
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
+                                    disabled={
+                                        markAsHoliday ||
+                                        acceptAppointmentBySlot === false
+                                            ? true
+                                            : false
+                                    }
                                     sx={{
                                         width: {
                                             xs: "100%",
@@ -675,9 +743,11 @@ const OnlineAppointmentsComponent = ({
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
                                         borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
+                                        background:
+                                            markAsHoliday ||
+                                            acceptAppointmentBySlot === false
+                                                ? "#D9D9D9"
+                                                : "",
                                     }}
                                     placeholder="Choose Slot Duration"
                                     value={startTime}
@@ -755,7 +825,12 @@ const OnlineAppointmentsComponent = ({
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
+                                    disabled={
+                                        markAsHoliday ||
+                                        acceptAppointmentBySlot === false
+                                            ? true
+                                            : false
+                                    }
                                     sx={{
                                         width: {
                                             xs: "100%",
@@ -767,9 +842,11 @@ const OnlineAppointmentsComponent = ({
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
                                         borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
+                                        background:
+                                            markAsHoliday ||
+                                            acceptAppointmentBySlot === false
+                                                ? "#D9D9D9"
+                                                : "",
                                     }}
                                     placeholder="Choose Slot Duration"
                                     value={endTime}
@@ -805,7 +882,11 @@ const OnlineAppointmentsComponent = ({
                                 {/* {numOfStartTimes === 0 && ( */}
                                 <Button
                                     disabled={
-                                        numOfStartTimes === 2 ? true : false
+                                        markAsHoliday ||
+                                        acceptAppointmentBySlot === false ||
+                                        numOfStartTimes === 2
+                                            ? true
+                                            : false
                                     }
                                     onClick={() =>
                                         setNumOfStartTimes(
@@ -819,6 +900,9 @@ const OnlineAppointmentsComponent = ({
                                             width: "28px",
                                             height: "28px",
                                             color:
+                                                markAsHoliday ||
+                                                acceptAppointmentBySlot ===
+                                                    false ||
                                                 numOfStartTimes >= 2
                                                     ? "#D9D9D9"
                                                     : "#1F51C6",
@@ -1380,6 +1464,11 @@ const OnlineAppointmentsComponent = ({
                             /> */}
                             <IconButton
                                 id="markAsHoliday"
+                                disabled={
+                                    acceptAppointmentBySlot === false
+                                        ? true
+                                        : false
+                                }
                                 sx={{
                                     ":hover": {
                                         background: "none",
@@ -1398,7 +1487,11 @@ const OnlineAppointmentsComponent = ({
                                     <BiRadioCircle
                                         style={{
                                             fontSize: "2rem",
-                                            color: "#1F51C6",
+                                            color:
+                                                acceptAppointmentBySlot ===
+                                                false
+                                                    ? "#D9D9D9"
+                                                    : "#1F51C6",
                                         }}
                                     />
                                 )}
@@ -1418,6 +1511,9 @@ const OnlineAppointmentsComponent = ({
                         </Stack>
                         <Button
                             onClick={() => setHolidayDialog(true)}
+                            disabled={
+                                acceptAppointmentBySlot === false ? true : false
+                            }
                             sx={{
                                 lineHeight: "21.13px",
                                 // color: "#ffffff",
@@ -1440,6 +1536,9 @@ const OnlineAppointmentsComponent = ({
                     <Button
                         variant="contained"
                         onClick={saveData}
+                        disabled={
+                            acceptAppointmentBySlot === false ? true : false
+                        }
                         sx={{
                             boxShadow: "none",
                             borderRadius: "29px",

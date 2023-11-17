@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+    Routes,
+    Route,
+    useLocation,
+    useNavigate,
+    useParams,
+} from "react-router-dom";
 import Home from "./Pages/Patient/Home";
 
 import SignIn from "./Pages/Patient/SignIn";
@@ -34,7 +40,11 @@ import Management from "./Pages/MasterUser/Management";
 import MasterDoctors from "./Pages/MasterUser/MasterDoctors";
 import Appoinments from "./Pages/MasterUser/Appoinments";
 import MasterNavBar from "./Components/Master/MasterNavBar";
-import { KEY_ACCESS_TOKEN, MASTER_USER, getItem } from "./Utils/localStorageManager";
+import {
+    KEY_ACCESS_TOKEN,
+    MASTER_USER,
+    getItem,
+} from "./Utils/localStorageManager";
 import Footer from "./Components/Footer/Footer";
 import SignUpVarify from "./Pages/Patient/SignUpVarify";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,24 +65,24 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import MedicalRecords from "./Pages/Patient/MedicalRecords";
 import DoctorCourses from "./Pages/Doctor/DoctorCourses";
 import DoctorCourseDetails from "./Pages/Doctor/DoctorCourseDetails";
-import AppointmentSettings from './Pages/Doctor/AppointmentSettings'
+import AppointmentSettings from "./Pages/Doctor/AppointmentSettings";
+import ViewPatientCompletedAppointment from "./Pages/Patient/ViewPatientCompletedAppointment";
 
 const App = () => {
-
-    const { isLoggedIn, user,  } = useSelector((state) => state.auth);
+    const { isLoggedIn, user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
 
-    const {email, hospital_id, doctor_id} = useParams()
+    const { email, hospital_id, doctor_id } = useParams();
     const location = useLocation();
     const [showNavbar, setShowNavBar] = useState(false);
     // const masterUser = getItem(MASTER_USER);
     const accessToken = getItem(KEY_ACCESS_TOKEN);
 
-    useEffect(()=>{
-        if(!accessToken){
-        dispatch(logout());
+    useEffect(() => {
+        if (!accessToken) {
+            dispatch(logout());
         }
-    },[accessToken]) 
+    }, [accessToken]);
 
     useEffect(() => {
         if (
@@ -85,7 +95,8 @@ const App = () => {
             location.pathname == "/user/signin" ||
             location.pathname == "/user/signup" ||
             location.pathname == "/forgot-password" ||
-            location.pathname == `/doctor/dashboard/${hospital_id}/${doctor_id}` ||
+            location.pathname ==
+                `/doctor/dashboard/${hospital_id}/${doctor_id}` ||
             location.pathname == `/master/login/verify/${email}`
         ) {
             setShowNavBar(false);
@@ -113,142 +124,143 @@ const App = () => {
                     p: 1,
                 }}
             > */}
-                <Routes>
-                    {/* Routes For Patient Starts From Here */}
-                    {/* <Route path="/nav" element={<NavBarWrapper />} /> */}
-                    <Route path="/" element={<Home />} />
-                    <Route path='/medidek/terms&PrivacyPolicy' element={<MedidekTerms />} />
-                    <Route path="/user/signup" element={<SignUp />} />
-                    <Route
-                        path="/user/signup/varify/:email"
-                        element={<SignUpVarify />}
-                    />
-                    <Route path="/user/signin" element={<SignIn />} />
-                    <Route path="/user/profile" element={<UserProfile />} />
-                    <Route
-                        path="/user/profile/edit/:id"
-                        element={<EditPetientProfile />}
-                    />
-                    <Route path="/find-doctors" element={<FindDoctors />} />
-                    <Route path="/doctors" element={<DoctorsList />} />
-                    <Route
-                        path="/doctor/details/:doctorsId"
-                        element={<DoctorInfo />}
-                    />
-                    <Route
-                        path="/doctor/appointment/payment"
-                        element={<Payment />}
-                    />
-                    <Route path="/tracking" element={<Tracking />} />
-                    <Route path="/tracking/view-appointment/:appointmentId" element={<ViewPetiantAppointment />} />
-                    <Route path="/user/upload/records" element={<MedicalRecords />} />
+            <Routes>
+                {/* Routes For Patient Starts From Here */}
+                {/* <Route path="/nav" element={<NavBarWrapper />} /> */}
+                <Route path="/" element={<Home />} />
+                <Route
+                    path="/medidek/terms&PrivacyPolicy"
+                    element={<MedidekTerms />}
+                />
+                <Route path="/user/signup" element={<SignUp />} />
+                <Route
+                    path="/user/signup/varify/:email"
+                    element={<SignUpVarify />}
+                />
+                <Route path="/user/signin" element={<SignIn />} />
+                <Route path="/user/profile" element={<UserProfile />} />
+                <Route
+                    path="/user/profile/edit/:id"
+                    element={<EditPetientProfile />}
+                />
+                <Route path="/find-doctors" element={<FindDoctors />} />
+                <Route path="/doctors" element={<DoctorsList />} />
+                <Route
+                    path="/doctor/details/:doctorsId"
+                    element={<DoctorInfo />}
+                />
+                <Route
+                    path="/doctor/appointment/payment"
+                    element={<Payment />}
+                />
+                <Route path="/tracking" element={<Tracking />} />
+                <Route
+                    path="/tracking/view-appointment/:appointmentId"
+                    element={<ViewPetiantAppointment />}
+                />
+                <Route
+                    path="/tracking/view-completed-appointment/:appointmentId"
+                    element={<ViewPatientCompletedAppointment />}
+                />
+                <Route
+                    path="/user/upload/records"
+                    element={<MedicalRecords />}
+                />
 
-                    <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/medical-courses" element={<MedicalCourses />} />
+                <Route
+                    path="/medical-course/:course_id/details"
+                    element={<CourseDetails />}
+                />
+
+                {/* Master User Routes Starts From Here */}
+
+                <Route element={<RequireUser isLoggedIn={isLoggedIn} />}>
                     <Route
-                        path="/medical-courses"
-                        element={<MedicalCourses />}
+                        path="/master/user/profile/:hospital_id"
+                        element={<MasterUserProfile />}
                     />
                     <Route
-                        path="/medical-course/:course_id/details"
-                        element={<CourseDetails />}
+                        path="/master/user/profile/edit/:hospital_id"
+                        element={<EditHospitalProfile />}
                     />
-
-                    {/* Master User Routes Starts From Here */}
-
-                    <Route element={<RequireUser isLoggedIn={isLoggedIn} />}>
-                        <Route
-                            path="/master/user/profile/:hospital_id"
-                            element={<MasterUserProfile />}
-                        />
-                        <Route
-                            path="/master/user/profile/edit/:hospital_id"
-                            element={<EditHospitalProfile />}
-                        />
-                        <Route
-                            path="/master/user/home/:hospital_id"
-                            element={<MhomePage />}
-                        />
-                        <Route
-                            path="/master/user/management/doctors/:hospital_id"
-                            element={<Management />}
-                        />
-                        <Route
-                            path="/master/user/management/staff/:hospital_id"
-                            element={<ManageStaff />}
-                        />
-                        <Route
-                            path="/master/user/doctors/:hospital_id"
-                            element={<MasterDoctors />}
-                        />
-                        <Route
-                            path="/master/user/appointments/:hospital_id"
-                            element={<Appoinments />}
-                        />
-                        <Route
-                            path="/master/user/doctor/details/:hospital_id/:doctor_id"
-                            element={<MasterUserDoctorDetails />}
-                        />
-                        <Route
-                            path="/master/user/doctor/confirmAppointment/:id"
-                            element={<MasterUserDoctorAppointments />}
-                        />
-                        <Route
-                            path="/master/user/doctor/appointments/:hospital_id/:doctor_id"
-                            element={<MasterUserDoctorAppointments />}
-                        />
-                        <Route
-                            path="/doctor/select-hospital"
-                            element={<SelectHospital />}
-                        />
-                        <Route
-                            path="/doctor/dashboard/:hospital_id/:doctor_id"
-                            element={<MUDDashboard />}
-                        />
-                        <Route
-                            path="/doctor/appointments/:hospital_id/:doctor_id"
-                            element={<DoctorAppointments />}
-                        />
-                        <Route
-                            path="/doctor/courses/:doctor_id"
-                            element={<DoctorCourses />}
-                        />
-                        <Route
-                            path="/doctor/course/details/:doctor_id/:course_id"
-                            element={<DoctorCourseDetails />}
-                        />
-                        <Route
-                            path="/doctor/appointment-settings/:doctor_id"
-                            element={<AppointmentSettings />}
-                        />
-                        <Route
-                            path="/doctor/edit-profile/:doctor_id"
-                            element={<DoctorEditProfile />}
-                        />
-                    </Route>
-                    <Route path="*" element={<NotFound />} />
-                    {/* <Route
+                    <Route
+                        path="/master/user/home/:hospital_id"
+                        element={<MhomePage />}
+                    />
+                    <Route
+                        path="/master/user/management/doctors/:hospital_id"
+                        element={<Management />}
+                    />
+                    <Route
+                        path="/master/user/management/staff/:hospital_id"
+                        element={<ManageStaff />}
+                    />
+                    <Route
+                        path="/master/user/doctors/:hospital_id"
+                        element={<MasterDoctors />}
+                    />
+                    <Route
+                        path="/master/user/appointments/:hospital_id"
+                        element={<Appoinments />}
+                    />
+                    <Route
+                        path="/master/user/doctor/details/:hospital_id/:doctor_id"
+                        element={<MasterUserDoctorDetails />}
+                    />
+                    <Route
+                        path="/master/user/doctor/confirmAppointment/:id"
+                        element={<MasterUserDoctorAppointments />}
+                    />
+                    <Route
+                        path="/master/user/doctor/appointments/:hospital_id/:doctor_id"
+                        element={<MasterUserDoctorAppointments />}
+                    />
+                    <Route
+                        path="/doctor/select-hospital"
+                        element={<SelectHospital />}
+                    />
+                    <Route
+                        path="/doctor/dashboard/:doctorid"
+                        element={<MUDDashboard />}
+                    />
+                    <Route
+                        path="/doctor/appointments/:doctorid"
+                        element={<DoctorAppointments />}
+                    />
+                    <Route
+                        path="/doctor/courses/:doctorid"
+                        element={<DoctorCourses />}
+                    />
+                    <Route
+                        path="/doctor/course/details/:doctorid/:course_id"
+                        element={<DoctorCourseDetails />}
+                    />
+                    <Route
+                        path="/doctor/appointment-settings/:doctorid"
+                        element={<AppointmentSettings />}
+                    />
+                    <Route
+                        path="/doctor/edit-profile/:doctorid"
+                        element={<DoctorEditProfile />}
+                    />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+                {/* <Route
                         element={<OnlyIfNotLoggedIn isLoggedIn={isLoggedIn} user={user} />}
                     > */}
-                        <Route path="/master/signin" element={<MsignIn />} />
-                        <Route path="/master/signup" element={<MsignUp />} />
-                        <Route
-                            path="/doctor/signin"
-                            element={<DoctorSignIn />}
-                        />
-                        <Route
-                            path="/doctor/signup"
-                            element={<DoctorSignUp />}
-                        />
-                    {/* </Route> */}
-                    <Route
-                        path="/master/login/verify/:email"
-                        element={<OtpScreen />}
-                    />
-                    <Route
-                        path="/forgot-password"
-                        element={<ForgotPassword />}
-                    />
-                </Routes>
+                <Route path="/master/signin" element={<MsignIn />} />
+                <Route path="/master/signup" element={<MsignUp />} />
+                <Route path="/doctor/signin" element={<DoctorSignIn />} />
+                <Route path="/doctor/signup" element={<DoctorSignUp />} />
+                {/* </Route> */}
+                <Route
+                    path="/master/login/verify/:email"
+                    element={<OtpScreen />}
+                />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+            </Routes>
             {/* </Box> */}
 
             {/* {showNavbar && <Footer />} */}
