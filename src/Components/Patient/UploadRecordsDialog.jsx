@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import {
     Box,
+    Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -10,6 +11,11 @@ import {
     Typography,
 } from "@mui/material";
 import { FiUpload } from "react-icons/fi";
+import { axiosClient } from "../../Utils/axiosClient";
+import { useSelector } from "react-redux";
+import { LoadingButton } from "@mui/lab";
+import { toast } from "react-toastify";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const handleDrop = (event) => {
     event.preventDefault();
@@ -23,16 +29,76 @@ const UploadRecordsDialog = ({
     uploadPrescriptionDialog,
     setUploadPrescriptionDialog,
 }) => {
+    const { user } = useSelector((state) => state.auth);
+    const [prescription, setPrescription] = useState("");
+    const [err, setError] = useState(false);
+    const [disableButton, setDisableButton] = useState(false);
+    const [sizeError, setSizeError] = useState(false);
+    const [fileTypeError, setFileTypeError] = useState(false);
+
     const handleDrop = (event) => {
         event.preventDefault();
 
         // Handle the dropped files here
-        const files = event.dataTransfer.files;
-        console.log(files);
+        setError(false);
+        setSizeError(false);
+        setFileTypeError(false);
+        console.log(event.dataTransfer.files[0]);
+        console.log(event.dataTransfer.files[0].type);
+        setPrescription(event.dataTransfer.files[0]);
     };
 
     const onDragOver = (event) => {
         event.preventDefault();
+    };
+
+    const handleChange = (e) => {
+        setPrescription(e.target.files[0]);
+        console.log(e.target.files[0]);
+        setError(false);
+        setSizeError(false);
+        setFileTypeError(false);
+    };
+
+    const uploadPrescription = async () => {
+        if (!prescription) {
+            setError(true);
+            return;
+        }
+        if (prescription.size > 5242880) {
+            setSizeError(true);
+            return;
+        }
+        console.log(prescription.type !== "image/jpeg");
+
+        if (
+            prescription.type === "image/jpeg" ||
+            prescription.type === "application/pdf" ||
+            prescription.type === "image/png"
+        ) {
+            // setFileTypeError(false);
+            setDisableButton(true);
+            const data = new FormData();
+            data.append("image", prescription);
+            try {
+                const response = await axiosClient.post(
+                    `/v2/uploadRecord/${user._id}`,
+                    data
+                );
+                if (response.status === "ok") {
+                    setUploadPrescriptionDialog(false);
+                    console.log(response);
+                    return setDisableButton(false);
+                }
+            } catch (error) {
+                toast.error("Something went wrong");
+            }
+
+            // return;
+        }
+        if (prescription.type == "image/jpeg") {
+            return console.log("htt bccc");
+        }
     };
 
     return (
@@ -101,18 +167,92 @@ const UploadRecordsDialog = ({
                         onDrop={handleDrop}
                         onDragOver={onDragOver}
                     >
-                        <input
-                            type="file"
-                            id="input"
-                            style={{ display: "none" }}
-                            onChange={(e) => console.log(e.target.files[0])}
-                        />
-                        <FiUpload
-                            fontSize="32.27px"
-                            style={{ color: "#1F51C6" }}
-                        />{" "}
-                        Drop or Upload
+                        {prescription ? (
+                            <Typography
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "0.938rem",
+                                    color: "#1F51C6",
+                                    lineHeight: "18px",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {prescription.name}
+                                <IconButton
+                                    onClick={() => setPrescription("")}
+                                    sx={{
+                                        ":hover": {
+                                            background: "none",
+                                        },
+                                    }}
+                                >
+                                    <CancelIcon
+                                        sx={{
+                                            color: "#B92612",
+                                        }}
+                                    />
+                                </IconButton>
+                            </Typography>
+                        ) : (
+                            <>
+                                <input
+                                    type="file"
+                                    id="input"
+                                    accept=".pdf, .doc, .docx, .jpg, .png"
+                                    style={{ display: "none" }}
+                                    onChange={handleChange}
+                                />
+                                <FiUpload
+                                    fontSize="32.27px"
+                                    style={{ color: "#1F51C6" }}
+                                />{" "}
+                                Drop or Upload
+                            </>
+                        )}
                     </Box>
+                    {err && (
+                        <Typography
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "0.938rem",
+                                color: "#B92612",
+                                lineHeight: "18px",
+                                textAlign: "center",
+                            }}
+                        >
+                            Please choose file!
+                        </Typography>
+                    )}
+                    {sizeError && (
+                        <Typography
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "0.938rem",
+                                color: "#B92612",
+                                lineHeight: "18px",
+                                textAlign: "center",
+                            }}
+                        >
+                            File size should be less then 5 MB
+                        </Typography>
+                    )}
+                    {fileTypeError && (
+                        <Typography
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "0.938rem",
+                                color: "#B92612",
+                                lineHeight: "18px",
+                                textAlign: "center",
+                            }}
+                        >
+                            Only PDF, JPG, PNG files are accepted
+                        </Typography>
+                    )}
                     <Typography
                         sx={{
                             fontFamily: "Lato",
@@ -135,6 +275,43 @@ const UploadRecordsDialog = ({
                     >
                         Maximum Size: 5MB
                     </Typography>
+                    <LoadingButton
+                        size="small"
+                        fullWidth
+                        onClick={uploadPrescription}
+                        loading={disableButton}
+                        // loadingPosition="end"
+                        variant="contained"
+                        sx={{
+                            textTransform: "none",
+                            borderRadius: "25px",
+                            boxShadow: "none",
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "1rem",
+                            }}
+                        >
+                            Upload
+                        </span>
+                    </LoadingButton>
+                    {/* <Button
+                        variant="contained"
+                        onClick={uploadPrescription}
+                        sx={{
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            fontSize: "1rem",
+                            textTransform: "none",
+                            borderRadius: "25px",
+                            boxShadow: "none",
+                        }}
+                    >
+                        Upload
+                    </Button> */}
                 </DialogContent>
             </Dialog>
         </>

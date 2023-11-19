@@ -25,14 +25,11 @@ const CardStyled = styled(Card)`
 const ButtonStyle = styled(Button)`
     text-transform: none;
     font-family: Lato;
-    font-weight:700;
+    font-weight: 700;
 `;
 
 const Section_I = () => {
-
     const navigate = useNavigate();
-
-
 
     return (
         <>
@@ -49,8 +46,8 @@ const Section_I = () => {
                 <Box
                     sx={{
                         flex: 1,
-                        mx: 1,
-                        pb: "20px",
+                        mx: "16px",
+                        p: "40px 16px",
                         background: {
                             xs: "#DCE3F6",
                             sm: "#DCE3F6",
@@ -75,14 +72,14 @@ const Section_I = () => {
                     }}
                 >
                     <Typography
-                        fontSize={{ xs: "1.3rem", sm: "1.5rem", md: "1.8rem" }}
+                        fontSize={{ xs: "1.5rem", sm: "1.5rem", md: "1.8rem" }}
                         variant={"h4"}
                         sx={{
                             fontWeight: 700,
-                            mt: "40px",
+                            // mt: "40px",
                             fontFamily: "Raleway",
                             alignSelf: "start",
-                        width:{xs:"100%",sm:"100%",md:"60%"},
+                            width: { xs: "100%", sm: "100%", md: "60%" },
                         }}
                     >
                         Quick Solution For Scheduling With Doctor
@@ -94,12 +91,11 @@ const Section_I = () => {
                             fontFamily: "Lato",
                             fontWeight: 500,
                             fontSize: {
-                                xs: "0.9rem",
-                                sm: "1rem",
+                                xs: "0.875rem",
+                                sm: "0.875rem",
                                 md: "1rem",
                             },
-                        width:{xs:"100%",sm:"100%",md:"75%"},
-
+                            width: { xs: "100%", sm: "100%", md: "75%" },
                         }}
                     >
                         Welcome to Medidek, your ultimate destination for
@@ -115,12 +111,12 @@ const Section_I = () => {
                             borderRadius: "25px",
                             display: { xs: "none", sm: "none", md: "flex" },
                             px: 2,
-                            mt:'16px',
+                            mt: "16px",
                             width: "172px",
                             height: "44px",
                             fontWeight: "600",
                             fontFamily: "raleway",
-                            boxShadow:"none"
+                            boxShadow: "none",
                         }}
                     >
                         Book Now
@@ -151,12 +147,27 @@ const Section_I = () => {
                             >
                                 <FaStethoscope />
                             </Avatar>
-                            <Typography variant="h6" sx={{color:"#383838", fontWeight:"600", fontFamily:"Raleway"}}>Find Doctors</Typography>
-                            <Typography sx={{color:"#706D6D", fontWeight:"500", fontFamily:"Lato"}}>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    color: "#383838",
+                                    fontWeight: "600",
+                                    fontFamily: "Raleway",
+                                }}
+                            >
+                                Find Doctors
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: "#706D6D",
+                                    fontWeight: "500",
+                                    fontFamily: "Lato",
+                                }}
+                            >
                                 Find Top-notch Doctors near you with just one
                                 Click!
                             </Typography>
-                            <ButtonStyle onClick={()=>navigate('/doctors')}>
+                            <ButtonStyle onClick={() => navigate("/doctors")}>
                                 See more <CallMadeIcon />
                             </ButtonStyle>
                         </CardStyled>
@@ -169,8 +180,23 @@ const Section_I = () => {
                             >
                                 <img src="/Vector.svg" alt="img" />
                             </Avatar>
-                            <Typography variant="h6" sx={{color:"#383838", fontWeight:"600", fontFamily:"Raleway"}}>Medical Records</Typography>
-                            <Typography sx={{color:"#706D6D", fontWeight:"500", fontFamily:"Lato"}}>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    color: "#383838",
+                                    fontWeight: "600",
+                                    fontFamily: "Raleway",
+                                }}
+                            >
+                                Medical Records
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: "#706D6D",
+                                    fontWeight: "500",
+                                    fontFamily: "Lato",
+                                }}
+                            >
                                 Find Top-notch Doctors near you with just one
                                 Click!
                             </Typography>
@@ -192,8 +218,23 @@ const Section_I = () => {
                             >
                                 <img src="/notebook.svg" alt="img" />
                             </Avatar>
-                            <Typography variant="h6" sx={{color:"#383838", fontWeight:"600", fontFamily:"Raleway"}}>Schedule Appointment</Typography>
-                            <Typography sx={{color:"#706D6D", fontWeight:"500", fontFamily:"Lato"}}>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    color: "#383838",
+                                    fontWeight: "600",
+                                    fontFamily: "Raleway",
+                                }}
+                            >
+                                Schedule Appointment
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: "#706D6D",
+                                    fontWeight: "500",
+                                    fontFamily: "Lato",
+                                }}
+                            >
                                 Find Top-notch Doctors near you with just one
                                 Click!
                             </Typography>
@@ -210,8 +251,23 @@ const Section_I = () => {
                             >
                                 <img src="/iconoir_clock.svg" alt="img" />
                             </Avatar>
-                            <Typography variant="h6" sx={{color:"#383838", fontWeight:"600", fontFamily:"Raleway"}}>Appointment Tracking</Typography>
-                            <Typography sx={{color:"#706D6D", fontWeight:"500", fontFamily:"Lato"}}>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    color: "#383838",
+                                    fontWeight: "600",
+                                    fontFamily: "Raleway",
+                                }}
+                            >
+                                Appointment Tracking
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    color: "#706D6D",
+                                    fontWeight: "500",
+                                    fontFamily: "Lato",
+                                }}
+                            >
                                 Find Top-notch Doctors near you with just one
                                 Click!
                             </Typography>
@@ -221,7 +277,6 @@ const Section_I = () => {
                         </CardStyled>
                     </Stack>
                 </Stack>
-                
             </Box>
         </>
     );

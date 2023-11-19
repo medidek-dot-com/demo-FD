@@ -128,7 +128,7 @@ const AppointmentConfirmDIalog = ({
                         }}
                     >
                         Appointment Confirmed With{" "}
-                        {bookingAppointmentDetails?.nameOfTheDoctor}!
+                        {confirmedAppointmentData?.doctorid.nameOfTheDoctor}!
                     </Typography>
                     <Stack
                         direction={{ xs: "column", sm: "column", md: "row" }}

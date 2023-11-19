@@ -39,19 +39,23 @@ const LabelStyle = styled("label")({
 });
 
 const AppointmentConfirmDialog = ({
-    appointementConfirmDialog,
-    setAppointmentConfirmDialog,
+    // appointementConfirmDialog,
+    // setAppointmentConfirmDialog,
     bookingAppoinmtmentData,
     setInputValue,
     setError,
+    confirmedAppointmentData,
+    appointmentCofirmedDialog,
+    setAppointmentCofirmedDialog,
+    setHospitalListDialog,
 }) => {
     // const [err, setError] = useState(false);
 
     return (
         <Dialog
-            open={appointementConfirmDialog}
+            open={appointmentCofirmedDialog}
             onClose={() => {
-                setAppointmentConfirmDialog(false);
+                setAppointmentCofirmedDialog(false);
                 setInputValue({
                     patientName: "",
                     age: "",
@@ -67,11 +71,11 @@ const AppointmentConfirmDialog = ({
         >
             <DialogTitle sx={{ fontWeight: "600", color: "#15B912" }}>
                 Booking Confirmation
-                {appointementConfirmDialog ? (
+                {appointmentCofirmedDialog ? (
                     <IconButton
                         aria-label="close"
                         onClick={() => {
-                            setAppointmentConfirmDialog(false);
+                            setAppointmentCofirmedDialog(false);
                             setInputValue({
                                 patientName: "",
                                 age: "",
@@ -116,7 +120,8 @@ const AppointmentConfirmDialog = ({
                             },
                         }}
                     >
-                        Appointment Confirmed for {bookingAppoinmtmentData.patientName}!
+                        Appointment Confirmed for{" "}
+                        {confirmedAppointmentData?.doctorid?.nameOfTheDoctor}!
                     </Typography>
                     <Stack
                         direction={{ xs: "column", sm: "column", md: "row" }}
@@ -125,21 +130,21 @@ const AppointmentConfirmDialog = ({
                         <Typography sx={{ lineHeight: "20px" }}>
                             Name :-{" "}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {bookingAppoinmtmentData.patientName}
+                                {confirmedAppointmentData.name}
                             </Box>
                         </Typography>
                         <Typography sx={{ lineHeight: "20px" }}>
                             Age :- {""}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {bookingAppoinmtmentData.age}
+                                {confirmedAppointmentData.age}
                             </Box>
                         </Typography>
-                        <Typography sx={{ lineHeight: "20px" }}>
+                        {/* <Typography sx={{ lineHeight: "20px" }}>
                             Token no:
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {bookingAppoinmtmentData.token}
+                                {confirmedAppointmentData.token}
                             </Box>
-                        </Typography>
+                        </Typography> */}
                     </Stack>
                     <Stack
                         direction={{ xs: "column", sm: "column", md: "row" }}
@@ -148,13 +153,13 @@ const AppointmentConfirmDialog = ({
                         <Typography sx={{ lineHeight: "20px" }}>
                             Gender :-{" "}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {bookingAppoinmtmentData.gender}
+                                {confirmedAppointmentData.gender}
                             </Box>
                         </Typography>
                         <Typography sx={{ lineHeight: "20px" }}>
                             Phone No.{" "}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {bookingAppoinmtmentData.phoneNumber}
+                                {confirmedAppointmentData.phone}
                             </Box>
                         </Typography>
                     </Stack>

@@ -22,6 +22,7 @@ import moment from "moment";
 import { axiosClient } from "../../Utils/axiosClient";
 import AppointmentAreadyExistDialogComponent from "../FindDoctors/DoctorsList/AppointmentAreadyExistDialogComponent";
 import { LoadingButton } from "@mui/lab";
+import AppointmentConfirmDialog from "../Master/AppointmentConfirmDialog";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -39,14 +40,17 @@ const ConfirmAppointmentDialog = ({
     setHospitalListDialog,
     inputValue,
     setInputValue,
-    setAppointmentCofirmedDialog,
     setBookAppointmentDetailsDialog,
-    confirmedAppointmentData,
-    setConfirmedAppointmentData,
 }) => {
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
     const [disableButton, setDisableButton] = useState(false);
+    const [confirmedAppointmentData, setConfirmedAppointmentData] = useState(
+        {}
+    );
+
+    const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
+        useState(false);
 
     const bookAppointment = async () => {
         setDisableButton(true);
@@ -63,9 +67,9 @@ const ConfirmAppointmentDialog = ({
                 setDisableButton(false);
                 setBookAppointmentDialog(false);
                 setConfirmBookAppointmentDialog(false);
-                setHospitalListDialog(false);
                 setBookAppointmentDialog(false);
                 setBookAppointmentDetailsDialog(false);
+                setHospitalListDialog(false);
             }
         } catch (error) {
             if (
@@ -78,10 +82,11 @@ const ConfirmAppointmentDialog = ({
                 setDisableButton(false);
                 setBookAppointmentDialog(false);
                 setConfirmBookAppointmentDialog(false);
-                setHospitalListDialog(false);
                 setBookAppointmentDialog(false);
-                setBookAppointmentDetailsDialog(false);
+                setHospitalListDialog(false);
+                return setBookAppointmentDetailsDialog(false);
             }
+            setDisableButton(false);
             console.log(error);
         }
     };
@@ -249,6 +254,13 @@ const ConfirmAppointmentDialog = ({
                 setAppointmentAlreadyExistDialog={
                     setAppointmentAlreadyExistDialog
                 }
+            />
+            <AppointmentConfirmDialog
+                confirmedAppointmentData={confirmedAppointmentData}
+                appointmentCofirmedDialog={appointmentCofirmedDialog}
+                setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                setInputValue={setInputValue}
+                setHospitalListDialog={setHospitalListDialog}
             />
         </>
     );

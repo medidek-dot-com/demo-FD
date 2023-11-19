@@ -33,7 +33,7 @@ const Section_II = () => {
                 direction={{ xs: "column", sm: "column", md: "row", lg: "row" }}
                 sx={{
                     justifyContent: "space-between",
-                    alignItems: "center",
+                    // alignItems: { xs: "start", sm: "start", md: "center" },
                     my: 4,
                 }}
                 spacing={2}
@@ -42,15 +42,25 @@ const Section_II = () => {
                     sx={{
                         flex: 1,
                         display: "flex",
+                        alignSelf: "start",
                         justifyContent: "center",
-                        alignItems: "flex-end",
+                        alignItems: "flex-start",
                     }}
                 >
-                    <img
+                    <Box
+                        component="img"
                         src="/hand image.png"
                         alt="img"
-                        height={"300px"}
-                        style={{ alignSelf: "flex-end" }}
+                        sx={{
+                            justifySelf: {
+                                xs: "start",
+                                sm: "start",
+                                md: "end",
+                            },
+                            width: { xs: "256px", sm: "256px", md: "535px" },
+                            height: { xs: "259px", sm: "259px", md: "541px" },
+                            marginBottom: "-40px",
+                        }}
                     />
                 </Box>
                 <Box
@@ -58,7 +68,7 @@ const Section_II = () => {
                         flex: 1,
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: {xs:"center", sm:"center", md:"end"},
+                        alignItems: { xs: "center", sm: "center", md: "end" },
                         justifyContent: "center",
                         background: {
                             xs: "#1F51C6",
@@ -66,26 +76,26 @@ const Section_II = () => {
                             md: "none",
                         },
                         borderRadius: "10px",
-                        // p:'20px'
+                        py: "20px",
                     }}
                 >
                     <Typography
                         fontSize={{ xs: "1.5rem", sm: "2.5rem" }}
                         sx={{
                             fontWeight: "600",
-                            fontFamily:"Raleway",
+                            fontFamily: "Raleway",
                             color: {
                                 xs: "#ffffff",
                                 sm: "#ffffff",
                                 md: "#000000",
                             },
-                            textAlign:{
+                            textAlign: {
                                 xs: "center",
                                 sm: "center",
                                 md: "right",
                                 lg: "right",
                             },
-                            px:'16px'
+                            px: "16px",
                         }}
                     >
                         Download the Medidek app
@@ -99,10 +109,10 @@ const Section_II = () => {
                             lg: "right",
                         }}
                         sx={{
-                            fontSize: "16px",
+                            fontSize: "14px",
                             px: "5px",
-                            fontFamily:"Lato",
-                            fontWeight:"500",
+                            fontFamily: "Lato",
+                            fontWeight: "500",
                             my: 1,
                             color: {
                                 xs: "#D9D9D9",
@@ -121,9 +131,9 @@ const Section_II = () => {
                         sx={{
                             borderRadius: "20px",
                             textTransform: "none",
-                            fontFamily:"Raleway",
-                            fontWeight:"600",
-                            fontSize:"16px",
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "16px",
                             px: 2,
                             alignSelf: {
                                 xs: "center",
@@ -141,11 +151,10 @@ const Section_II = () => {
                                 sm: "#000000",
                                 md: "#ffffff",
                             },
-                            boxShadow:"none"
+                            boxShadow: "none",
                         }}
                     >
-                        <BsGooglePlay /> &nbsp;
-                        Google Play
+                        <BsGooglePlay /> &nbsp; Google Play
                     </Button>
                 </Box>
             </Stack>

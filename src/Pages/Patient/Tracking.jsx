@@ -17,6 +17,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import { tab } from "../../Store/tabSlice";
 import CompletedPatientUserAppointment from "../../Components/Patient/CompletedPatientUserAppointment";
 import MissedPatientUserAppointment from "../../Components/Patient/MissedPatientUserAppointment";
+import ReviewComponet from "../../Components/Patient/ReviewComponet";
 
 const AutocompleteStyle = styled(Autocomplete)({
     "& input::placeholder": {
@@ -45,6 +46,7 @@ const Tracking = () => {
     const [completeAppointmentsData, setCompleteAppointmentsData] = useState(
         []
     );
+    console.log(completeAppointmentsData);
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -86,7 +88,7 @@ const Tracking = () => {
         );
         setIsLoading(false);
         setCompleteAppointmentsData(response.result);
-        console.log(response);
+        return console.log(response);
     };
     const getMissedAppointmentsData = async () => {
         setIsLoading(true);
@@ -230,6 +232,11 @@ const Tracking = () => {
                     />
                 )}
             </Box>
+            {/* <ReviewComponet
+                reviewDialog={reviewDialog}
+                completeAppointmentsData={completeAppointmentsData}
+                setReviewDialog={setReviewDialog}
+            /> */}
             <Footer />
         </>
     );

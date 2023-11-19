@@ -16,6 +16,10 @@ import {
 } from "@mui/material";
 import styled from "@emotion/styled";
 import CloseIcon from "@mui/icons-material/Close";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { axiosClient } from "../../Utils/axiosClient";
+import ThankYouDialog from "./ThankYouDialog";
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
@@ -53,7 +57,41 @@ const TextFieldStyle = styled(TextField)({
     },
 });
 
-const ReviewComponet = ({ reviewDialog, setReviewDialog }) => {
+const ReviewComponet = ({
+    reviewDialog,
+    setReviewDialog,
+    completeAppointmentsData,
+    doctorid,
+}) => {
+    const { user } = useSelector((state) => state.auth);
+    const [rating, setRating] = useState();
+    const [message, setMessage] = useState("");
+    const [err, setError] = useState(false);
+    const [thankYouDialog, setThankYouDialog] = useState(false);
+    console.log(doctorid);
+    const postReview = async () => {
+        if (!rating || !message) {
+            console.log("error hai");
+            return setError(true);
+        }
+        try {
+            const response = await axiosClient.post(
+                `/v2/reviewCreation/${doctorid}/${user?._id}`,
+                {
+                    rating,
+                    message,
+                }
+            );
+            if (response.status === "ok") {
+                console.log(response);
+                setReviewDialog(false);
+                setThankYouDialog(true);
+            }
+        } catch (error) {
+            return toast.error(error.message);
+        }
+    };
+
     return (
         <>
             <Dialog
@@ -103,7 +141,7 @@ const ReviewComponet = ({ reviewDialog, setReviewDialog }) => {
                             Rate Appointment{" "}
                             <span style={{ color: "#EA4335" }}>*</span>
                         </Typography>
-                        <Rating />
+                        <Rating onChange={(e, val) => setRating(val)} />
                     </Stack>
                     <Stack spacing="8px" sx={{ mt: "27.28px" }}>
                         <Typography
@@ -117,14 +155,16 @@ const ReviewComponet = ({ reviewDialog, setReviewDialog }) => {
                             Leave a Review
                         </Typography>
                         <TextFieldStyle
+                            onChange={(e) => setMessage(e.target.value)}
                             rows={4}
                             multiline
                             placeholder="Type your review here."
-                            sx={{}}
                         />
                     </Stack>
                     <Button
                         fullWidth
+                        onClick={postReview}
+                        disabled={rating ? false : true}
                         sx={{
                             textTransform: "none",
                             borderRadius: "29px",
@@ -140,6 +180,10 @@ const ReviewComponet = ({ reviewDialog, setReviewDialog }) => {
                     </Button>
                 </DialogContent>
             </Dialog>
+            <ThankYouDialog
+                thankYouDialog={thankYouDialog}
+                setThankYouDialog={setThankYouDialog}
+            />
         </>
     );
 };

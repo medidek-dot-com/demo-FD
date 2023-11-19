@@ -125,7 +125,6 @@ const DoctorInfo = () => {
         useState(false);
 
     const selectDoctor = (data) => {
-        console.log(data);
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
             nameOfTheDoctor: data.nameOfTheDoctor,
@@ -158,7 +157,6 @@ const DoctorInfo = () => {
 
     const handleDateSelect = (e, i) => {
         setActiveDate(true);
-        console.log(e.target.innerText);
     };
 
     const dispatch = useDispatch();
@@ -192,7 +190,6 @@ const DoctorInfo = () => {
             const response = await axiosClient.get(
                 `/v2/singledoctor/${doctorsId}`
             );
-            console.log(response);
 
             if (response.status === "ok") {
                 setDuid(response.result.doctorid);
@@ -204,7 +201,6 @@ const DoctorInfo = () => {
                     if (hospitaList.status === "ok") {
                         setHospitalList(hospitaList.result);
                     }
-                    console.log(hospitaList);
                     return;
                 } catch (error) {
                     // setBookAppointmentButtonLoading(false);
@@ -220,9 +216,9 @@ const DoctorInfo = () => {
         getSingleDoctorDetails();
     }, [doctorsId]);
 
-    console.log(doctorsData?.reviews);
-    const reviews = doctorsData?.reviews;
-    console.log(reviews);
+    // console.log(
+    //     doctorsData?.reviews.map((review) => review)
+    // );
 
     return (
         <>
@@ -389,87 +385,98 @@ const DoctorInfo = () => {
                         >
                             Reviews
                         </Typography>
+                        {/* This is Web view */}
                         <Stack spacing={2}>
-                            {reviews?.map((review, i) => {
-                                return (
-                                    <Card
-                                        key={i}
-                                        sx={{
-                                            p: "15px",
-                                            height: "104px",
-                                            boxShadow: "none",
-                                            border: "1px solid #D9D9D9",
-                                        }}
-                                    >
-                                        <Box
+                            {doctorsData &&
+                                doctorsData.reviews?.map((review, i) => {
+                                    return (
+                                        <Card
+                                            key={i}
                                             sx={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "center",
+                                                p: "15px",
+                                                height: "104px",
+                                                boxShadow: "none",
+                                                border: "1px solid #D9D9D9",
                                             }}
                                         >
                                             <Box
-                                                style={{
+                                                sx={{
                                                     display: "flex",
+                                                    justifyContent:
+                                                        "space-between",
                                                     alignItems: "center",
                                                 }}
                                             >
-                                                <Avatar
-                                                    src="/client.png"
-                                                    sx={{
-                                                        width: "69.88px",
-                                                        height: "69.88px",
-                                                    }}
-                                                />
-
                                                 <Box
                                                     style={{
-                                                        marginInline: "10px",
+                                                        display: "flex",
+                                                        alignItems: "center",
                                                     }}
                                                 >
-                                                    <Typography
-                                                        variant="subtitle2"
+                                                    <Avatar
+                                                        src={
+                                                            review.userid.imgurl
+                                                        }
                                                         sx={{
-                                                            fontFamily:
-                                                                "Raleway",
-                                                            fontSize: "19.06px",
-                                                            fontWeight: "500",
-                                                            color: "#000000",
-                                                            lineHeight:
-                                                                "22.38px",
+                                                            width: "69.88px",
+                                                            height: "69.88px",
+                                                        }}
+                                                    />
+
+                                                    <Box
+                                                        style={{
+                                                            marginInline:
+                                                                "10px",
                                                         }}
                                                     >
-                                                        {review.name}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="caption"
+                                                        <Typography
+                                                            variant="subtitle2"
+                                                            sx={{
+                                                                fontFamily:
+                                                                    "Raleway",
+                                                                fontSize:
+                                                                    "19.06px",
+                                                                fontWeight:
+                                                                    "500",
+                                                                color: "#000000",
+                                                                lineHeight:
+                                                                    "22.38px",
+                                                            }}
+                                                        >
+                                                            {review.userid.name}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="caption"
+                                                            sx={{
+                                                                fontFamily:
+                                                                    "Raleway",
+                                                                fontSize:
+                                                                    "19.06px",
+                                                                fontWeight:
+                                                                    "400",
+                                                                color: "#000000",
+                                                                lineHeight:
+                                                                    "24.78px",
+                                                            }}
+                                                        >
+                                                            {review.message}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                                <Box>
+                                                    <Rating
+                                                        name="read-only"
+                                                        value={review.rating}
+                                                        readOnly
                                                         sx={{
-                                                            fontFamily:
-                                                                "Raleway",
-                                                            fontSize: "19.06px",
-                                                            fontWeight: "400",
-                                                            color: "#000000",
-                                                            lineHeight:
-                                                                "24.78px",
+                                                            fontSize: "2rem",
                                                         }}
-                                                    >
-                                                        Best Medical app! Easy
-                                                        to use.
-                                                    </Typography>
+                                                    />
                                                 </Box>
                                             </Box>
-                                            <Box>
-                                                <Rating
-                                                    name="read-only"
-                                                    value={5}
-                                                    readOnly
-                                                    sx={{ fontSize: "2rem" }}
-                                                />
-                                            </Box>
-                                        </Box>
-                                    </Card>
-                                );
-                            })}
+                                        </Card>
+                                    );
+                                })}
                         </Stack>
                     </Box>
                     <Box
@@ -1053,6 +1060,7 @@ const DoctorInfo = () => {
                             {doctorsData.description}
                         </Typography>
                     </Card>
+                    {/* This is Mobile view */}
                     <Card
                         sx={{
                             display: "flex",
@@ -1067,61 +1075,62 @@ const DoctorInfo = () => {
                             Reviews
                         </Typography>
                     </Card>
-                    <Stack spacing={1}>
-                        {reviews
-                            ? reviews.map((review) => {
-                                  return (
-                                      <Card
-                                          sx={{
-                                              p: 2,
-                                              mt: 2,
-                                              border: " 1px solid #D9D9D9",
-                                              boxShadow: "none",
-                                          }}
-                                      >
-                                          <Stack
-                                              direction="row"
-                                              spacing={1}
-                                              alignItems="center"
-                                          >
-                                              <Avatar
-                                                  alt="Remy Sharp"
-                                                  src="/client.png"
-                                              />
-                                              <Stack spacing={-0.6}>
-                                                  <Typography
-                                                      sx={{
-                                                          display: "flex",
-                                                          alignItems: "center",
-                                                          fontWeight: 600,
-                                                      }}
-                                                  >
-                                                      {review.name} &nbsp;{" "}
-                                                      <Rating
-                                                          name="read-only"
-                                                          value={review.rating}
-                                                          readOnly
-                                                      />
-                                                  </Typography>
-                                                  <Typography
-                                                      sx={{
-                                                          display: "flex",
-                                                          alignItems: "center",
-                                                          fontSize: "0.6rem",
-                                                          fontWeight: 600,
-                                                          color: "#383838",
-                                                      }}
-                                                  >
-                                                      {review.masseage}
-                                                  </Typography>
-                                              </Stack>
-                                          </Stack>
-                                      </Card>
-                                  );
-                              })
-                            : null}
 
-                        <Card
+                    <Stack spacing={1} sx={{ mt: 1 }}>
+                        {doctorsData &&
+                            doctorsData.reviews?.map((review, i) => {
+                                return (
+                                    <Card
+                                        key={i}
+                                        sx={{
+                                            p: 2,
+                                            mt: 2,
+                                            border: " 1px solid #D9D9D9",
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        <Stack
+                                            direction="row"
+                                            spacing={1}
+                                            alignItems="center"
+                                        >
+                                            <Avatar
+                                                alt="Remy Sharp"
+                                                src={review.userid.imgurl}
+                                            />
+                                            <Stack spacing={-0.6}>
+                                                <Typography
+                                                    sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        fontWeight: 600,
+                                                    }}
+                                                >
+                                                    {review.userid.name} &nbsp;{" "}
+                                                    <Rating
+                                                        name="read-only"
+                                                        value={review.rating}
+                                                        readOnly
+                                                    />
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        fontSize: "0.6rem",
+                                                        fontWeight: 600,
+                                                        color: "#383838",
+                                                    }}
+                                                >
+                                                    {review.message}
+                                                </Typography>
+                                            </Stack>
+                                        </Stack>
+                                    </Card>
+                                );
+                            })}
+
+                        {/* <Card
                             sx={{
                                 p: 2,
                                 mt: 2,
@@ -1163,7 +1172,7 @@ const DoctorInfo = () => {
                                     </Typography>
                                 </Stack>
                             </Stack>
-                        </Card>
+                        </Card> */}
                     </Stack>
                     {/* <Card
                         sx={{
@@ -1271,7 +1280,8 @@ const DoctorInfo = () => {
                 }
                 setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
             />
-            <AppointmentConfirmDIalog
+            {/* <AppointmentConfirmDIalog
+                setConfirmedAppointmentData={setConfirmedAppointmentData}
                 setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                 appointmentCofirmedDialog={appointmentCofirmedDialog}
                 openBookingAppointmentDialog={bookingAppointmentDialog}
@@ -1279,7 +1289,7 @@ const DoctorInfo = () => {
                 bookingAppointmentDetails={bookingAppointmentDetails}
                 inputValue={inputValue}
                 setInputValue={setInputValue}
-            />
+            /> */}
             <Footer />
         </>
     );

@@ -17,17 +17,17 @@ const ExploreWrapper = styled(Box)`
     // margin-right: 20px;
 `;
 
-const UlStyle = styled('ul')({
-    listStyle:'none',
-    display:'flex',
-    flexDirection:'column',
-    gap:'16px',
-})
+const UlStyle = styled("ul")({
+    listStyle: "none",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+});
 
-const LiStyle = styled('li')({
-    cursor:'pointer',
-    fontFamily: 'Lato'
-})
+const LiStyle = styled("li")({
+    cursor: "pointer",
+    fontFamily: "Lato",
+});
 
 const Footer = () => {
     return (
@@ -43,29 +43,38 @@ const Footer = () => {
                     color: "#ffffff",
                     // pr:"20px",
                     minHeight: "253px",
-                    px:'16px'
+                    px: "16px",
                     // flexWrap: "wrap",
                 }}
             >
                 <Box
                     sx={{
                         alignSelf: {
-                            xs: "flex-start",
-                            sm: "flex-start",
+                            xs: "center",
+                            sm: "center",
                             md: "center",
                         },
                     }}
                 >
-                    <img
+                    <Box
+                        component="img"
                         src="/MedidekWhite.png"
                         alt="logo-img"
-                        style={{ width: "185px", height: "90px" }}
+                        sx={{ width: "185px", height: "90px" }}
                     />
                 </Box>
                 <Stack
                     direction="row"
                     spacing={{ xs: 1, sm: 1.5, md: 5 }}
-                    sx={{ justifyContent: {xs:"space-evenly", sm:"space-between", md:"end"}, width:'100%', flexWrap:'wrap' }}
+                    sx={{
+                        justifyContent: {
+                            xs: "space-evenly",
+                            sm: "space-between",
+                            md: "end",
+                        },
+                        width: "100%",
+                        flexWrap: "wrap",
+                    }}
                 >
                     <UlStyle>
                         <LiStyle>Home</LiStyle>
@@ -81,10 +90,7 @@ const Footer = () => {
                         <LiStyle>Cancellation Policy</LiStyle>
                     </UlStyle>
                     {/* <Stack spacing={{ xs: "5px", sm: "7px", md: "10px" }}> */}
-                    <Stack
-                        direction="row"
-                        justifyContent="center"
-                    >
+                    <Stack direction="row" justifyContent="center">
                         <IconButton
                             target="_"
                             href="https://instagram.com/medidekofficial?igshid=MzRlODBiNWFlZA=="

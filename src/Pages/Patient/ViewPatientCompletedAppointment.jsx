@@ -4,20 +4,43 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { useDispatch } from "react-redux";
 import { tab } from "../../Store/tabSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import UploadRecordsDialog from "../../Components/Patient/UploadRecordsDialog";
 import ReviewComponet from "../../Components/Patient/ReviewComponet";
+import { axiosClient } from "../../Utils/axiosClient";
+import moment from "moment";
 
 const ViewPatientCompletedAppointment = () => {
     const dispatch = useDispatch();
+    const { appointmentId } = useParams();
+    const navigate = useNavigate();
 
     const [uploadPrescriptionDialog, setUploadPrescriptionDialog] =
         useState(false);
-
-    const navigate = useNavigate();
+    const [appointmentDetails, setAppointmentDetails] = useState({});
 
     const [reviewDialog, setReviewDialog] = useState(false);
+    const [doctorid, setDoctorId] = useState("");
+
+    const getPendingAppointmentsData = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getsingleappointmentbyid/${appointmentId}/completed`
+            );
+            if (response.status === "ok") {
+                console.log(response.result);
+                setDoctorId(response.result.doctorid._id);
+                return setAppointmentDetails(response.result);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        getPendingAppointmentsData();
+    }, [appointmentId]);
 
     useEffect(() => {
         dispatch(tab(2));
@@ -143,7 +166,7 @@ const ViewPatientCompletedAppointment = () => {
                                         color: "#383838",
                                     }}
                                 >
-                                    #02484746
+                                    {appointmentDetails?._id}
                                 </span>
                             </Box>
                         </Stack>
@@ -161,137 +184,115 @@ const ViewPatientCompletedAppointment = () => {
                             ></Box> 
                     </Stack> */}
 
-                        <Stack alignSelf="start">
-                            <Box
-                                component="span"
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: "2px",
-                                }}
-                            >
-                                <Box component="span" sx={{ display: "flex" }}>
-                                    <CheckCircleIcon color="success" sx={{}} />{" "}
-                                </Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        // alignSelf:'start',
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                            </Box>
-                            <Box
-                                component="span"
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: "2px",
-                                }}
-                            >
-                                <Box component="span" sx={{ display: "flex" }}>
-                                    <CheckCircleIcon color="success" sx={{}} />{" "}
-                                </Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        // alignSelf:'start',
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        width: "2px",
-                                        height: "6px",
-                                        background: "#1F51C6",
-                                        alignSelf: "center",
-                                    }}
-                                ></Box>
-                            </Box>
-                            <Box
-                                component="span"
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: "2px",
-                                }}
-                            >
-                                <Box component="span" sx={{ display: "flex" }}>
-                                    <CheckCircleIcon color="success" sx={{}} />{" "}
-                                </Box>
-                            </Box>
-                        </Stack>
+                        <Box sx={{ mt: "35px" }}>
+                            <Stack direction="row" sx={{ gap: "5px" }}>
+                                <Stack sx={{ gap: "2px" }}>
+                                    <CheckCircleIcon color="success" />
+                                    {[...Array(5)].map((_, index) => (
+                                        <Box
+                                            key={index}
+                                            sx={{
+                                                width: "2px",
+                                                height: "6px",
+                                                background: "#1F51C6",
+                                                alignSelf: "center",
+                                            }}
+                                        ></Box>
+                                    ))}
+                                </Stack>
+                                <Stack>
+                                    <Box
+                                        component="p"
+                                        sx={{
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        Appoitment Confirm with dr{" "}
+                                        {
+                                            appointmentDetails?.doctorid
+                                                ?.nameOfTheDoctor
+                                        }
+                                    </Box>
+                                    <Box
+                                        component="p"
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "0.813rem",
+                                            color: "#706D6D",
+                                        }}
+                                    >
+                                        @{appointmentDetails?.AppointmentTime}{" "}
+                                        {moment(
+                                            appointmentDetails.appointmentDate
+                                        ).format("MMM DD YYYY")}
+                                    </Box>
+                                </Stack>
+                            </Stack>
+                            <Stack direction="row" sx={{ gap: "5px" }}>
+                                <Stack sx={{ gap: "2px" }}>
+                                    <CheckCircleIcon color="success" />
+                                    {[...Array(5)].map((_, index) => (
+                                        <Box
+                                            key={index}
+                                            sx={{
+                                                width: "2px",
+                                                height: "6px",
+                                                background: "#1F51C6",
+                                                alignSelf: "center",
+                                            }}
+                                        ></Box>
+                                    ))}
+                                </Stack>
+                                <Stack>
+                                    <Box
+                                        component="p"
+                                        sx={{
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        Dr{" "}
+                                        {
+                                            appointmentDetails?.doctorid
+                                                ?.nameOfTheDoctor
+                                        }{" "}
+                                        will start appointments
+                                    </Box>
+                                    <Box
+                                        component="p"
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "0.813rem",
+                                            color: "#706D6D",
+                                        }}
+                                    >
+                                        @12:00 PM, Sept 5, 2021
+                                    </Box>
+                                </Stack>
+                            </Stack>
+                            <Stack direction="row" sx={{ gap: "5px" }}>
+                                <Stack sx={{ gap: "2px" }}>
+                                    <CheckCircleIcon color="success" />
+                                </Stack>
+                                <Stack>
+                                    <Box
+                                        component="p"
+                                        sx={{
+                                            fontFamily: "Raleway",
+                                            fontWeight: "600",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        Appointment Completed
+                                    </Box>
+                                </Stack>
+                            </Stack>
+                        </Box>
                     </Box>
                     <Stack
                         direction={{ xs: "column", sm: "column", md: "row" }}
@@ -351,6 +352,7 @@ const ViewPatientCompletedAppointment = () => {
             <ReviewComponet
                 reviewDialog={reviewDialog}
                 setReviewDialog={setReviewDialog}
+                doctorid={doctorid}
             />
             <UploadRecordsDialog
                 uploadPrescriptionDialog={uploadPrescriptionDialog}

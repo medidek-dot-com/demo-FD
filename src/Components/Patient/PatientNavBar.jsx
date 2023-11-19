@@ -30,14 +30,18 @@ import { logout } from "../../Store/authSlice";
 import CloseIcon from "@mui/icons-material/Close";
 import { tab } from "../../Store/tabSlice";
 
+const TabStyle = styled(Tab)({
+    color: "#383838",
+    fontFamily: "Lato",
+    fontSize: "20px",
+    fontWeight: "semibold",
+    textTransform: "none",
 
-const TabStyle = styled(Tab)`
-    color: #383838;
-    font-size: 18px;
-    font-weight: 600;
-    fontfamily: Lato;
-    text-transform: none;
-`;
+    "&.Mui-selected": {
+        fontWeight: "700",
+    },
+});
+
 const LogoStyle = styled("img")(({ theme }) => ({
     display: "none",
     cursor: "pointer",
@@ -57,7 +61,7 @@ const StyledToolbar = styled(Toolbar)({
     justifyContent: "space-between",
 });
 
-// const LinkStyle = styled(Link)`
+// const LinkStyle = styled(Link)`;
 //     text-decoration: none;
 //     color: #383838;
 // `;
@@ -312,7 +316,7 @@ const PatientNavBar = () => {
 
                     <Avatar
                         sx={{ width: "44px", height: "44px" }}
-                        src={user?.img ? user?.img : "/patientDefault.png"}
+                        src={user?.imgurl ? user.imgurl : "/patientDefault.png"}
                         onClick={() => setUserSetting(!userSetting)}
                     />
                     <Menu
@@ -373,8 +377,6 @@ const PatientNavBar = () => {
                     </Menu>
                 </StyledToolbar>
             </AppBar>
-            
-             
         </>
     );
 };

@@ -383,6 +383,7 @@ const DoctorsList = () => {
                     </Typography>
                     <Stack>
                         <AutocompleteStyle
+                            disabled
                             size="small"
                             disablePortal
                             popupIcon={
@@ -414,6 +415,7 @@ const DoctorsList = () => {
                     </Stack>
                     <Stack>
                         <AutocompleteStyle
+                            disabled
                             disablePortal
                             // onChange={(e, v) => setSpeciality(v)}
                             size="small"
@@ -482,7 +484,7 @@ const DoctorsList = () => {
                                 boxShadow: "none",
                                 // height: "170px",
                                 border: "1px solid #D9D9D9",
-                                p: "25px",
+                                p: { xs: "16px", sm: "16px", md: "25px" },
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: {
@@ -495,6 +497,7 @@ const DoctorsList = () => {
                                     sm: "column",
                                     md: "row",
                                 },
+                                gap: "10px",
                             }}
                         >
                             <Stack
@@ -514,17 +517,28 @@ const DoctorsList = () => {
                                                 : "/default.png"
                                         }
                                         alt="img"
-                                        sx={{ width: "118px", height: "118px" }}
+                                        sx={{
+                                            width: {
+                                                xs: "62px",
+                                                sm: "62px",
+                                                md: "118px",
+                                            },
+                                            height: {
+                                                xs: "62px",
+                                                sm: "62px",
+                                                md: "118px",
+                                            },
+                                        }}
                                     />
                                 </Box>
-                                <Box sx={{ mx: 1 }}>
+                                <Stack sx={{ mx: 1 }}>
                                     <Typography
                                         variant="h6"
                                         fontWeight="600"
                                         sx={{
                                             fontFamily: "Raleway",
                                             lineHeight: "25.83px",
-                                            mb: "8px",
+                                            // mb: "8px",
                                         }}
                                         fontSize={{
                                             xs: "1rem",
@@ -565,7 +579,7 @@ const DoctorsList = () => {
                                                 sm: "1.4rem",
                                                 md: "1.1rem",
                                             },
-                                            mb: "8px",
+                                            // mb: "8px",
                                         }}
                                     >
                                         <Rating
@@ -625,13 +639,14 @@ const DoctorsList = () => {
                                             fontFamily: "Lato",
                                             fontSize: "15px",
                                             fontWeight: "semi-bold",
+                                            lineHeight: "18px",
                                             color: "#706D6D",
                                         }}
                                     >
                                         ₹{doctor.connsultationFee} Consultation
                                         fee
                                     </Typography>
-                                </Box>
+                                </Stack>
                             </Stack>
                             <Box
                                 sx={{
@@ -756,7 +771,7 @@ const DoctorsList = () => {
                     bookingAppointmentDetails={bookingAppointmentDetails}
                     setDoctor_id={setDoctor_id}
                 />
-                <AppointmentConfirmDIalog
+                {/* <AppointmentConfirmDIalog
                     confirmedAppointmentData={confirmedAppointmentData}
                     setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                     appointmentCofirmedDialog={appointmentCofirmedDialog}
@@ -767,7 +782,7 @@ const DoctorsList = () => {
                     bookingAppointmentDetails={bookingAppointmentDetails}
                     inputValue={inputValue}
                     setInputValue={setInputValue}
-                />
+                /> */}
             </Box>
             <Footer />
         </>

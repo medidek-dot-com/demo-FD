@@ -113,7 +113,6 @@ const EditPetientProfile = () => {
         email: user?.email,
         dateOfBirth: user?.dateOfBirth ? user?.dateOfBirth : "",
         phone: user?.phone,
-        dateOfBirth: user?.age ? user?.dateOfBirth : "",
         gender: user?.gender,
     });
 
@@ -137,7 +136,7 @@ const EditPetientProfile = () => {
         console.log(response.result.user);
         if (response.status === "ok") {
             setInputValue(response.result);
-            setImageValues(response.result.img);
+            setImageValues(response.result.imgurl);
         }
     };
 
@@ -167,7 +166,8 @@ const EditPetientProfile = () => {
             !inputValue.name ||
             !inputValue.email ||
             !inputValue.dateOfBirth ||
-            !inputValue.phone
+            !inputValue.phone ||
+            !inputValue.gender
         ) {
             setError(true);
             return false;
@@ -178,14 +178,15 @@ const EditPetientProfile = () => {
         formData.append("email", inputValue.email);
         formData.append("dateOfBirth", inputValue.dateOfBirth);
         formData.append("phone", inputValue.phone);
-        formData.append("img", inputImage || imageValues);
+        formData.append("gender", inputValue.gender);
+        formData.append("image", inputImage || imageValues);
 
         try {
             const response = await axiosClient.put(
                 `/v2/updateuserpatient/${id}`,
                 formData
             );
-            console.log(response);
+            console.log(response.result);
             if (response.status === "ok") {
                 dispatch(updateUserData(response.result));
 
@@ -252,7 +253,7 @@ const EditPetientProfile = () => {
                                 <Avatar
                                     src={
                                         (preview && preview) ||
-                                        (user?.img && user?.img) ||
+                                        (user?.imgurl && user?.imgurl) ||
                                         "/default.png"
                                     }
                                     alt="img"

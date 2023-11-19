@@ -62,9 +62,17 @@ const CompletedPatientUserAppointment = ({
     isLoading,
     setIsLoading,
 }) => {
-    const [reviewDialog, setReviewDialog] = useState(false);
+    console.log(completeAppointmentsData);
     const [thankYouDialog, setThankYouDialog] = useState(false);
+    const [reviewDialog, setReviewDialog] = useState(false);
+    // const [completeAppointment, setCompleteAppointmentDetails] = useState({});
+    const [doctorid, setDoctorId] = useState("");
     const navigate = useNavigate();
+    const handleReviewButtonClick = (appoientment) => {
+        setDoctorId(appoientment?.doctorid._id);
+        console.log(appoientment);
+        setReviewDialog(true);
+    };
     return (
         <>
             <Stack spacing="15px">
@@ -153,11 +161,12 @@ const CompletedPatientUserAppointment = ({
                                 >
                                     <Button
                                         variant="contained"
-                                        onClick={() =>
-                                            navigate(
-                                                "/tracking/view-completed-appointment/appointmentId"
-                                            )
-                                        }
+                                        onClick={() => {
+                                            console.log(appointment._id) &
+                                                navigate(
+                                                    `/tracking/view-completed-appointment/${appointment._id}`
+                                                );
+                                        }}
                                         size="small"
                                         sx={{
                                             borderRadius: "25px",
@@ -183,7 +192,9 @@ const CompletedPatientUserAppointment = ({
                                     </Button>
                                     <Button
                                         variant="contained"
-                                        onClick={() => setReviewDialog(true)}
+                                        onClick={() =>
+                                            handleReviewButtonClick(appointment)
+                                        }
                                         size="small"
                                         sx={{
                                             borderRadius: "25px",
@@ -310,6 +321,8 @@ const CompletedPatientUserAppointment = ({
                 </Card> */}
             </Stack>
             <ReviewComponet
+                doctorid={doctorid}
+                completeAppointmentsData={completeAppointmentsData}
                 reviewDialog={reviewDialog}
                 setReviewDialog={setReviewDialog}
             />

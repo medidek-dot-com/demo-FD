@@ -51,7 +51,6 @@ const BookAppointmentDialogForPatient = ({
     const [dates, setDates] = useState([]);
     const [selectedTime, setSelectedTime] = useState(null);
     const handleButtonClick = (slot, i) => {
-        console.log(slot);
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
@@ -61,10 +60,6 @@ const BookAppointmentDialogForPatient = ({
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
         });
         setSelectedTime(i);
-        console.log({
-            ...bookingAppointmentDetails,
-            AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
-        });
     };
 
     const getWeekDates = () => {
@@ -147,14 +142,12 @@ const BookAppointmentDialogForPatient = ({
                                     setActiveCard(i);
                                     setDateErr(false);
                                     const dateString = e.target.innerText;
-                                    console.log();
                                     const dateObject = dayjs(
                                         dateString + dayjs().year()
                                     );
 
                                     const formattedDate =
                                         dateObject.format("YYYY-MM-DD");
-                                    console.log(formattedDate);
                                     setInputValue({
                                         ...inputValue,
                                         appointmentDate: formattedDate,

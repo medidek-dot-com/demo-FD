@@ -63,7 +63,7 @@ const StyledToolbar = styled(Toolbar)({
 const TabStyle = styled(Tab)`
     color: #383838;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: bold;
     fontfamily: Lato;
     text-transform: none;
 `;
@@ -343,10 +343,7 @@ const MasterNavBar = () => {
                     </Tabs>
                     {isLoggedIn ? (
                         <Avatar
-                            src={
-                                user?.imgurl ? user.imgurl
-                                    : "/default.png"
-                            }
+                            src={user?.imgurl ? user.imgurl : "/default.png"}
                             onClick={() => setUserSetting(!userSetting)}
                         />
                     ) : (

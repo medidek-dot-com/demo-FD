@@ -102,6 +102,7 @@ export const axiosClient = axios.create({
 });
 
 export const baseURL = "https://medidekdemobackend.onrender.com";
+// export const baseURL = "https://medidekdemobackend.onrender.com";
 
 axiosClient.interceptors.request.use((request) => {
     const accessToken = getItem(KEY_ACCESS_TOKEN);
