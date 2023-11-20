@@ -153,6 +153,9 @@ const EditAppointmentDialog = ({
 
     const getAvailableSlots = async () => {
         try {
+            if (!appointmentDetails?.doctorid?._id) {
+                return false;
+            }
             const response = await axiosClient.get(
                 `/v2/getAvailbleSlotsForAnUser/${appointmentDetails?.doctorid?._id}/${inputValue.appointmentDate}`
             );
@@ -210,7 +213,7 @@ const EditAppointmentDialog = ({
                 onClose={() => {
                     return setEditAppointmentDialog(false);
                 }}
-                maxWidth={"md"}
+                maxWidth={"lg"}
                 sx={{ margin: " 0 auto" }}
             >
                 <DialogTitle
@@ -801,7 +804,7 @@ const EditAppointmentDialog = ({
                             sx={{
                                 background: "#1F51C6",
                                 // margin: "20px 10px",
-                                width: "100%",
+                                // width: "100%",
                                 borderRadius: "40px",
                                 boxShadow: "none",
                                 fontFamily: "Lato",

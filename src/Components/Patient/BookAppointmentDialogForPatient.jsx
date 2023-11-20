@@ -10,6 +10,8 @@ import {
     ListItem,
     Button,
     Typography,
+    Stack,
+    Divider,
 } from "@mui/material";
 import dayjs from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,6 +21,21 @@ import { useEffect } from "react";
 import styled from "@emotion/styled";
 import moment from "moment";
 import "ldrs/dotPulse";
+
+const DialogStyle = styled(Dialog)({
+    ".MuiDialog-paper": {
+        margin: "10px",
+    },
+    // ["& div:first-child"]:{
+    //     // marginInline:"8px"
+    // },
+    // ["& .MuiDialog-container:nth-of-type(1)"]: {
+    //     marginInline: "16px",
+    // },
+    // ["& .abhay  div:nth-child(2)"]:{
+    //     marginInline:"16px"
+    // }
+});
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -61,12 +78,13 @@ const BookAppointmentDialogForPatient = ({
         });
         setSelectedTime(i);
     };
+    const [appointmentByToken, setAppointmentByToken] = useState(false);
 
     const getWeekDates = () => {
         const monthStart = moment().startOf("day");
         const monthsDates = [];
 
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 7; i++) {
             const date = monthStart.clone().add(i, "days");
             monthsDates.push({
                 day: date.format("ddd").toUpperCase(),
@@ -84,13 +102,13 @@ const BookAppointmentDialogForPatient = ({
 
     return (
         <>
-            <Dialog
+            <DialogStyle
                 open={bookingAppointmentDialog}
                 onClose={() => {
                     return setBookAppointmentDialog(false) & setDateErr(false);
                 }}
                 maxWidth={"md"}
-                sx={{ margin: " 0 auto" }}
+                // sx={{ margin: " 0 auto" }}
             >
                 <DialogTitle
                     sx={{
@@ -119,20 +137,105 @@ const BookAppointmentDialogForPatient = ({
                         </IconButton>
                     ) : null}
                 </DialogTitle>
+                <Divider />
                 <DialogContent
-                    dividers
                     sx={{
-                        margin: "10px",
+                        marginTop: "10px",
                         display: "flex",
+                        gap: "20px",
                         flexDirection: "column",
-                        alignItems: "center",
+                        // alignItems: "center",
                     }}
                 >
+                    <Stack
+                        direction="row"
+                        sx={{
+                            border: "1px solid #D9D9D9",
+                            borderRadius: "6px",
+                        }}
+                    >
+                        <Button
+                            variant={!appointmentByToken ? "contained" : "text"}
+                            onClick={() => setAppointmentByToken(false)}
+                            sx={{
+                                boxShadow: "none",
+                                textTransform: "none",
+                                py: "10px",
+                                px: {
+                                    xs: "16px",
+                                    sm: "26px",
+                                    md: "47px",
+                                },
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1.15rem",
+                                },
+                                // width: "100%",
+                                lineHeight: "24px",
+                                // height: {
+                                //     xs: "40px",
+                                //     sm: "40px",
+                                //     md: "50px",
+                                // },
+                                background: !appointmentByToken
+                                    ? "#1F51C6"
+                                    : "#FFFFFF",
+                                color: !appointmentByToken
+                                    ? "#ffffff"
+                                    : "#706D6D",
+                                borderRadius: "0",
+                                borderTopLeftRadius: "5px",
+                                borderBottomLeftRadius: "5px",
+                            }}
+                        >
+                            Online Appointments
+                        </Button>
+                        <Button
+                            variant={appointmentByToken ? "contained" : "text"}
+                            onClick={() => setAppointmentByToken(true)}
+                            sx={{
+                                boxShadow: "none",
+                                textTransform: "none",
+                                py: "10px",
+                                px: {
+                                    xs: "16px",
+                                    sm: "26px",
+                                    md: "57px",
+                                },
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1.25rem",
+                                },
+                                lineHeight: "24px",
+                                // width: "100%",
+                                // height: {
+                                //     xs: "40px",
+                                //     sm: "40px",
+                                //     md: "50px",
+                                // },
+                                color: appointmentByToken
+                                    ? "#FFFFFF"
+                                    : "#706D6D",
+                                background: appointmentByToken
+                                    ? "#1F51C6"
+                                    : "#FFFFFF",
+                            }}
+                        >
+                            Appointments by token
+                        </Button>
+                    </Stack>
                     <Box
                         sx={{
                             display: "flex",
                             flexWrap: "wrap",
-                            marginTop: "20px",
+                            // marginTop: "10px",
+                            gap: "10px",
                             userSelect: "none",
                         }}
                     >
@@ -160,7 +263,7 @@ const BookAppointmentDialogForPatient = ({
                                 sx={{
                                     width: "50px",
                                     textAlign: "center",
-                                    margin: "5px 8px",
+                                    // marginInline: "5px",
                                     padding: "5px",
                                     textTransform: "none",
                                     fontFamily: "Lato",
@@ -196,83 +299,113 @@ const BookAppointmentDialogForPatient = ({
                                 fontFamily: "Lato",
                                 fontSize: "18px",
                                 fontWeight: "500",
+                                textAlign: "center",
                             }}
                         >
                             Please choose date!
                         </Box>
                     )}
 
-                    <List
-                        style={{
-                            display: "flex",
-                            marginTop: "20px",
-                            flexWrap: "wrap",
-                            maxWidth: "589px",
-                            // gap:'35px'
-                        }}
-                    >
-                        {slotsLoading && (
-                            <l-dot-pulse
-                                size="43"
-                                speed="1.3"
-                                color="#1F51C6"
-                            ></l-dot-pulse>
-                        )}
-
-                        {slotData[0] === "doctor not available for this date" &&
-                        slotsLoading === false ? (
-                            // Default values shown
-
+                    {appointmentByToken ? (
+                        <Box sx={{ display: "flex", gap: "10px" }}>
                             <Typography
                                 sx={{
-                                    color: "#B92612",
                                     fontFamily: "Lato",
-                                    fontSize: "14px",
-                                    fontWeight: "500",
+                                    fontWeight: "600",
+                                    fontSize: "0.938rem",
+                                    lineHeight: "18px",
+                                    color: "#383838",
                                 }}
                             >
-                                Doctor not available for this date
+                                Availability:
                             </Typography>
-                        ) : (
-                            slotData?.map((slot, i) => (
-                                <ListBoxStyle key={i}>
-                                    <Button
-                                        onClick={() =>
-                                            handleButtonClick(slot, i)
-                                        }
-                                        variant={
-                                            selectedTime == i
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            borderRadius: "3px",
-                                            color:
+                            <Typography
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "0.938rem",
+                                    lineHeight: "18px",
+                                    color: "#1F51C6",
+                                }}
+                            >
+                                9:00AM- 4:00PM
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <List
+                            sx={{
+                                display: "flex",
+                                marginTop: "20px",
+                                flexWrap: "wrap",
+                                maxWidth: "589px",
+                                // gap:'35px'
+                            }}
+                        >
+                            {slotsLoading && (
+                                <l-dot-pulse
+                                    size="43"
+                                    speed="1.3"
+                                    color="#1F51C6"
+                                ></l-dot-pulse>
+                            )}
+
+                            {slotData[0] ===
+                                "doctor not available for this date" &&
+                            slotsLoading === false ? (
+                                // Default values shown
+
+                                <Typography
+                                    sx={{
+                                        color: "#B92612",
+                                        fontFamily: "Lato",
+                                        fontSize: "14px",
+                                        fontWeight: "500",
+                                        marginInline: "auto",
+                                    }}
+                                >
+                                    Doctor not available for this date
+                                </Typography>
+                            ) : (
+                                slotData?.map((slot, i) => (
+                                    <ListBoxStyle key={i}>
+                                        <Button
+                                            onClick={() =>
+                                                handleButtonClick(slot, i)
+                                            }
+                                            variant={
                                                 selectedTime == i
-                                                    ? "#ffffff"
-                                                    : "#706D6D",
-                                            border: "1px solid #706D6D8F",
-                                            fontWeight: "600",
-                                            fontSize: "15px",
-                                            fontFamily: "Lato",
-                                            display: "block",
-                                            boxShadow: "none",
-                                            cursor: "pointer",
-                                            " :hover": {
-                                                background: "#none",
+                                                    ? "contained"
+                                                    : "outlined"
+                                            }
+                                            sx={{
+                                                borderRadius: "3px",
+                                                color:
+                                                    selectedTime == i
+                                                        ? "#ffffff"
+                                                        : "#706D6D",
+                                                border: "1px solid #706D6D8F",
+                                                fontWeight: "600",
+                                                fontSize: "15px",
+                                                fontFamily: "Lato",
+                                                display: "block",
                                                 boxShadow: "none",
-                                            },
-                                        }}
-                                    >
-                                        {slot.startTime} - {slot.endTime}
-                                        {/* {
+                                                cursor: "pointer",
+                                                " :hover": {
+                                                    background: "#none",
+                                                    boxShadow: "none",
+                                                },
+                                            }}
+                                        >
+                                            {slot.startTime} - {slot.endTime}
+                                            {/* {
                                               bookingAppointmentDetails.consultingTime
                                           } */}
-                                    </Button>
-                                </ListBoxStyle>
-                            ))
-                        )}
-                    </List>
+                                        </Button>
+                                    </ListBoxStyle>
+                                ))
+                            )}
+                        </List>
+                    )}
 
                     {/* <ListBoxStyle>
                         <Button
@@ -317,26 +450,29 @@ const BookAppointmentDialogForPatient = ({
                         variant="contained"
                         sx={{
                             background: "#1F51C6",
-                            margin: "20px 10px",
-                            width: "90%",
+                            marginBottom: "10px",
+                            // width: "100%",
                             borderRadius: "40px",
                             boxShadow: "none",
                             fontFamily: "Lato",
                             fontWeight: "700",
+                            fontSize: "1.063rem",
                             textTransform: "none",
+                            height: "40px",
                         }}
                         onClick={() => {
                             if (!bookingAppointmentDetails.appointmentDate) {
+                                console.log("date nhi aa rhi");
                                 return setDateErr(true);
                             }
-
+                            console.log("date aa rhi");
                             setBookAppointmentDetailsDialog(true);
                         }}
                     >
                         Next
                     </Button>
                 </DialogContent>
-            </Dialog>
+            </DialogStyle>
         </>
     );
 };

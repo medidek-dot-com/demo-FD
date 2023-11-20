@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Avatar,
     Box,
@@ -17,8 +17,107 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import moment from "moment";
+import BookAppointmentDialogForPatient from "./BookAppointmentDialogForPatient";
+import { useSelector } from "react-redux";
+import { axiosClient } from "../../Utils/axiosClient";
+import BookAppointmnetDetailsDialog from "./BookAppointmnetDetailsDialog";
+import ConfirmRescheduleDialog from "./ConfirmRescheduleDialog";
 
-const MissedPatientUserAppointment = ({ missedAppointmentsData, isLoading, setIsLoading }) => {
+const MissedPatientUserAppointment = ({
+    missedAppointmentsData,
+    getPendingAppointmentsData,
+    getMissedAppointmentsData,
+    isLoading,
+    setIsLoading,
+}) => {
+    const { user } = useSelector((state) => state.auth);
+    const currentDate = moment().format("YYYY-MM-DD");
+
+    const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
+        nameOfTheDoctor: "",
+        doctorsId: "",
+        appointmentDate: currentDate,
+        consultingTime: "",
+        hospitalId: "",
+        userid: user?._id,
+        doctorid: "",
+        name: "",
+        Age: "",
+        Gender: "",
+        phone: "",
+        AppointmentNotes: "",
+        AppointmentTime: "",
+        imgurl: "",
+        appointmentId: "",
+    });
+
+    const [appointmentDetails, setAppointmentDetails] = useState({});
+
+    let [inputValue, setInputValue] = useState({
+        name: "",
+        age: "",
+        gender: "",
+        phone: "",
+        AppointmentNotes: "",
+        appointmentDate: "",
+        AppointmentTime: "",
+        doctorid: "",
+        userid: user?._id,
+        status: "pending",
+    });
+    const [bookingAppointmentDialog, setBookAppointmentDialog] =
+        useState(false);
+    const [slotData, setSlotData] = useState([]);
+    const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
+        useState(false);
+    const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
+        useState(false);
+
+    const handleReschedule = (appointment) => {
+        console.log(appointment);
+        setAppointmentDetails(appointment);
+        setBookingAppointmentDetails({
+            ...bookingAppointmentDetails,
+            nameOfTheDoctor: appointment.doctorid.nameOfTheDoctor,
+            imgurl: appointment.doctorid.imgurl,
+            doctorid: appointment.doctorid._id,
+            appointmentId: appointment._id,
+        });
+        setInputValue({
+            ...inputValue,
+            name: appointment.name,
+            age: appointment.age,
+            gender: appointment.gender,
+            phone: appointment.phone,
+            AppointmentNotes: appointment.AppointmentNotes,
+            doctorid: appointment.doctorid._id,
+        });
+        setBookAppointmentDialog(true);
+    };
+
+    const getAvailableSlots = async () => {
+        try {
+            // setSlotsLoading(true);
+            if (!appointmentDetails?.doctorid?._id) {
+                return false;
+            }
+            const response = await axiosClient.get(
+                `/v2/getAvailbleSlotsForAnUser/${appointmentDetails?.doctorid?._id}/${bookingAppointmentDetails.appointmentDate}`
+            );
+            if (response.status === "ok") {
+                // setSlotsLoading(false);
+                return setSlotData(response.result);
+            }
+        } catch (error) {
+            // setSlotsLoading(false);
+            console.log(error.message);
+        }
+    };
+
+    useEffect(() => {
+        getAvailableSlots();
+    }, [bookingAppointmentDetails.appointmentDate]);
+
     return (
         <>
             {missedAppointmentsData.length > 0 ? (
@@ -103,7 +202,9 @@ const MissedPatientUserAppointment = ({ missedAppointmentsData, isLoading, setIs
                             >
                                 <Button
                                     variant="contained"
-                                    onClick={() => setReviewDialog(true)}
+                                    onClick={() =>
+                                        handleReschedule(appointment)
+                                    }
                                     size="small"
                                     sx={{
                                         borderRadius: "25px",
@@ -137,9 +238,64 @@ const MissedPatientUserAppointment = ({ missedAppointmentsData, isLoading, setIs
                         textAlign: "center",
                     }}
                 >
-                    No Upcoming Appointment Found
+                    No Missed Appointments Found
                 </Typography>
             )}
+            <BookAppointmentDialogForPatient
+                missedAppointmentsData={missedAppointmentsData}
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                bookingAppointmentDialog={bookingAppointmentDialog}
+                setBookAppointmentDialog={setBookAppointmentDialog}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+                confirmBookAppointmentDialog={confirmBookAppointmentDialog}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                slotData={slotData}
+                setSlotData={setSlotData}
+                // slotsLoading={slotsLoading}
+            />
+
+            <BookAppointmnetDetailsDialog
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                bookingAppointmentDetailsDialog={
+                    bookingAppointmentDetailsDialog
+                }
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+            />
+            <ConfirmRescheduleDialog
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                confirmBookAppointmentDialog={confirmBookAppointmentDialog}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                bookingAppointmentDialog={bookingAppointmentDialog}
+                setBookAppointmentDialog={setBookAppointmentDialog}
+                // hospitalListDialog={hospitalListDialog}
+                // setHospitalListDialog={setHospitalListDialog}
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                appointmentDetails={appointmentDetails}
+                getPendingAppointmentsData={getPendingAppointmentsData}
+                getMissedAppointmentsData={getMissedAppointmentsData}
+                // setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+            />
         </>
     );
 };

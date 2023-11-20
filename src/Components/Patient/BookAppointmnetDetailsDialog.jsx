@@ -63,12 +63,15 @@ const TextFieldStyle = styled(TextField)({
 });
 
 const DialogStyle = styled(Dialog)({
+    ".MuiDialog-paper": {
+        margin: "10px",
+    },
     // ["& div:first-child"]:{
     //     // marginInline:"8px"
     // },
-    ["& .MuiDialog-container:nth-of-type(1)"]: {
-        marginInline: "16px",
-    },
+    // ["& .MuiDialog-container:nth-of-type(1)"]: {
+    //     marginInline: "16px",
+    // },
     // ["& .abhay  div:nth-child(2)"]:{
     //     marginInline:"16px"
     // }
@@ -133,7 +136,7 @@ const BookAppointmnetDetailsDialog = ({
                         alignItems: "center",
                     }}
                 >
-                    Book Appointment
+                    Book Appointment dcs
                     {bookingAppointmentDetailsDialog ? (
                         <IconButton
                             aria-label="close"

@@ -28,6 +28,7 @@ const handleDrop = (event) => {
 const UploadRecordsDialog = ({
     uploadPrescriptionDialog,
     setUploadPrescriptionDialog,
+    getMedicalRecord,
 }) => {
     const { user } = useSelector((state) => state.auth);
     const [prescription, setPrescription] = useState("");
@@ -86,6 +87,8 @@ const UploadRecordsDialog = ({
                     data
                 );
                 if (response.status === "ok") {
+                    getMedicalRecord();
+                    setPrescription("");
                     setUploadPrescriptionDialog(false);
                     console.log(response);
                     return setDisableButton(false);

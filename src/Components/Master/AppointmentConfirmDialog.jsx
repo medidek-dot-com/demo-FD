@@ -57,9 +57,9 @@ const AppointmentConfirmDialog = ({
             onClose={() => {
                 setAppointmentCofirmedDialog(false);
                 setInputValue({
-                    patientName: "",
+                    name: "",
                     age: "",
-                    phoneNumber: "",
+                    phone: "",
                     gender: "",
                     appointmentDate: "",
                     appointmentTime: "",
@@ -77,9 +77,9 @@ const AppointmentConfirmDialog = ({
                         onClick={() => {
                             setAppointmentCofirmedDialog(false);
                             setInputValue({
-                                patientName: "",
+                                name: "",
                                 age: "",
-                                phoneNumber: "",
+                                phone: "",
                                 gender: "",
                                 appointmentDate: "",
                                 appointmentTime: "",

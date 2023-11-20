@@ -22,7 +22,8 @@ import moment from "moment";
 import { axiosClient } from "../../Utils/axiosClient";
 import AppointmentAreadyExistDialogComponent from "../FindDoctors/DoctorsList/AppointmentAreadyExistDialogComponent";
 import { LoadingButton } from "@mui/lab";
-import AppointmentConfirmDialog from "../Master/AppointmentConfirmDialog";
+import AppointmentConfirmDIalog from "../FindDoctors/DoctorsList/AppointmentConfirmDIalog";
+// import AppointmentConfirmDialog from "../Master/AppointmentConfirmDialog";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -30,7 +31,7 @@ const ListItemsStyling = styled(ListItem)`
     padding: 5px 20px;
 `;
 
-const ConfirmAppointmentDialog = ({
+const ConfirmRescheduleDialog = ({
     confirmBookAppointmentDialog,
     setConfirmBookAppointmentDialog,
     hospitalListDialog,
@@ -41,6 +42,8 @@ const ConfirmAppointmentDialog = ({
     inputValue,
     setInputValue,
     setBookAppointmentDetailsDialog,
+    getPendingAppointmentsData,
+    getMissedAppointmentsData,
 }) => {
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
@@ -55,21 +58,33 @@ const ConfirmAppointmentDialog = ({
     const bookAppointment = async () => {
         setDisableButton(true);
         try {
-            const response = await axiosClient.post(
-                "/v2/bookAppointment",
+            const response = await axiosClient.put(
+                `/v2/editAppointment/${bookingAppointmentDetails.appointmentId}`,
                 inputValue
             );
             console.log(response);
             if (response.status === "ok") {
                 console.log("yaaha tk");
+                getPendingAppointmentsData();
+                getMissedAppointmentsData();
                 setConfirmedAppointmentData(response.result);
                 setAppointmentCofirmedDialog(true);
+                setInputValue({
+                    ...inputValue,
+                    name: "",
+                    age: "",
+                    gender: "",
+                    phone: "",
+                    AppointmentNotes: "",
+                    appointmentDate: "",
+                    AppointmentTime: "",
+                    doctorid: "",
+                });
                 setDisableButton(false);
                 setBookAppointmentDialog(false);
                 setConfirmBookAppointmentDialog(false);
                 setBookAppointmentDialog(false);
                 setBookAppointmentDetailsDialog(false);
-                setHospitalListDialog(false);
             }
         } catch (error) {
             if (
@@ -83,9 +98,8 @@ const ConfirmAppointmentDialog = ({
                 setBookAppointmentDialog(false);
                 setConfirmBookAppointmentDialog(false);
                 setBookAppointmentDialog(false);
-                setBookAppointmentDetailsDialog(false);
-
-                return setHospitalListDialog(false);
+                setHospitalListDialog(false);
+                return setBookAppointmentDetailsDialog(false);
             }
             setDisableButton(false);
             console.log(error);
@@ -256,15 +270,16 @@ const ConfirmAppointmentDialog = ({
                     setAppointmentAlreadyExistDialog
                 }
             />
-            <AppointmentConfirmDialog
+            <AppointmentConfirmDIalog
                 confirmedAppointmentData={confirmedAppointmentData}
                 appointmentCofirmedDialog={appointmentCofirmedDialog}
                 setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                 setInputValue={setInputValue}
                 setHospitalListDialog={setHospitalListDialog}
+                nameOfTheDoctor={bookingAppointmentDetails.nameOfTheDoctor}
             />
         </>
     );
 };
 
-export default ConfirmAppointmentDialog;
+export default ConfirmRescheduleDialog;

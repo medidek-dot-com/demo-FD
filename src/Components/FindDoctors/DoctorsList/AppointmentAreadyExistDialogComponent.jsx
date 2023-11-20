@@ -19,6 +19,21 @@ import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CancelIcon from "@mui/icons-material/Cancel";
 
+const DialogStyle = styled(Dialog)({
+    ".MuiDialog-paper": {
+        margin: "10px",
+    },
+    // ["& div:first-child"]:{
+    //     // marginInline:"8px"
+    // },
+    // ["& .MuiDialog-container:nth-of-type(1)"]: {
+    //     marginInline: "16px",
+    // },
+    // ["& .abhay  div:nth-child(2)"]:{
+    //     marginInline:"16px"
+    // }
+});
+
 const StackStyle = styled(Stack)(({ theme }) => ({
     width: "48%",
     margin: "5px",
@@ -45,7 +60,7 @@ const AppointmentAreadyExistDialogComponent = ({
     // const [err, setError] = useState(false);
 
     return (
-        <Dialog
+        <DialogStyle
             open={appointmentAlreadyExistDialog}
             onClose={() => {
                 setAppointmentAlreadyExistDialog(false);
@@ -80,9 +95,9 @@ const AppointmentAreadyExistDialogComponent = ({
                         onClick={() => {
                             setAppointmentAlreadyExistDialog(false);
                             setInputValue({
-                                patientName: "",
+                                name: "",
                                 age: "",
-                                phoneNumber: "",
+                                phone: "",
                                 gender: "",
                                 appointmentDate: "",
                                 appointmentTime: "",
@@ -164,7 +179,7 @@ const AppointmentAreadyExistDialogComponent = ({
                     </Link>
                 </Typography>
             </DialogContent>
-        </Dialog>
+        </DialogStyle>
     );
 };
 

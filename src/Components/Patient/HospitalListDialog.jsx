@@ -13,6 +13,22 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { axiosClient } from "../../Utils/axiosClient";
 import { useSelector } from "react-redux";
+import styled from "@emotion/styled";
+
+const DialogStyle = styled(Dialog)({
+    ".MuiDialog-paper": {
+        margin: "0px",
+    },
+    // ["& div:first-child"]:{
+    //     // marginInline:"8px"
+    // },
+    // ["& .MuiDialog-container:nth-of-type(1)"]: {
+    //     marginInline: "16px",
+    // },
+    // ["& .abhay  div:nth-child(2)"]:{
+    //     marginInline:"16px"
+    // }
+});
 
 const HospitalListDialog = ({
     hospitalList,
@@ -64,7 +80,7 @@ const HospitalListDialog = ({
     // }, []);
     return (
         <>
-            <Dialog open={hospitalListDialog} maxWidth={"md"}>
+            <DialogStyle open={hospitalListDialog} maxWidth={"md"}>
                 <DialogTitle
                     open={hospitalListDialog}
                     onClose={() => setDuidDialog(false)}
@@ -194,7 +210,7 @@ const HospitalListDialog = ({
                         </Stack>
                     ))}
                 </DialogContent>
-            </Dialog>
+            </DialogStyle>
         </>
     );
 };

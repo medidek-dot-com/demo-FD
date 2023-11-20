@@ -47,9 +47,9 @@ const BookAppointmentDialog = ({
         useState(false);
     const { hospital_id, doctor_id } = useParams();
     const [inputValue, setInputValue] = useState({
-        patientName: "",
+        name: "",
         age: "",
-        phoneNumber: "",
+        phone: "",
         gender: "",
         appointmentDate: "",
         appointmentTime: "",
@@ -65,9 +65,9 @@ const BookAppointmentDialog = ({
     const bookAppointment = async (e) => {
         e.preventDefault();
         if (
-            !inputValue.patientName ||
+            !inputValue.name ||
             !inputValue.age ||
-            !inputValue.phoneNumber ||
+            !inputValue.phone ||
             !inputValue.gender ||
             !inputValue.appointmentDate ||
             !inputValue.appointmentTime
@@ -81,7 +81,7 @@ const BookAppointmentDialog = ({
                 "/v2/createAppointmentByHospitals",
                 inputValue
             );
-            console.log("this is appointment booking responce",response);
+            console.log("this is appointment booking responce", response);
             if (response.status === "ok") {
                 toast.success(
                     `Appoinment booked successfully for ${inputValue.patientName}`
@@ -198,12 +198,10 @@ const BookAppointmentDialog = ({
                                 </LabelStyle>
                                 <TextFieldStyle
                                     id="email"
-                                    name="phoneNumber"
+                                    name="phone"
                                     fullWidth
                                     placeholder="Ex. 9911224455"
-                                    error={
-                                        err && !inputValue.phoneNumber && true
-                                    }
+                                    error={err && !inputValue.phone && true}
                                     helperText={
                                         err &&
                                         !inputValue.phoneNumber &&
@@ -226,7 +224,8 @@ const BookAppointmentDialog = ({
                                     helperText={
                                         err &&
                                         !inputValue.gender &&
-                                        "Please enter patient's gender"}
+                                        "Please enter patient's gender"
+                                    }
                                     value={inputValue.gender}
                                     onChange={handleChange}
                                 />

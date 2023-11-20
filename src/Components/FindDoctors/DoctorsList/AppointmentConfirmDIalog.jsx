@@ -44,9 +44,9 @@ const AppointmentConfirmDIalog = ({
     setAppointmentCofirmedDialog,
     bookingAppointmentDetails,
     setInputValue,
+    nameOfTheDoctor,
 }) => {
     // const [err, setError] = useState(false);
-    console.log(confirmedAppointmentData);
     return (
         <Dialog
             open={appointmentCofirmedDialog}
@@ -83,14 +83,13 @@ const AppointmentConfirmDIalog = ({
                         onClick={() => {
                             setAppointmentCofirmedDialog(false);
                             setInputValue({
-                                patientName: "",
+                                name: "",
                                 age: "",
-                                phoneNumber: "",
+                                phone: "",
                                 gender: "",
                                 appointmentDate: "",
                                 appointmentTime: "",
                             });
-                            setError(false);
                         }}
                         sx={{
                             // position: "absolute",
@@ -127,8 +126,7 @@ const AppointmentConfirmDIalog = ({
                             },
                         }}
                     >
-                        Appointment Confirmed With{" "}
-                        {confirmedAppointmentData?.doctorid.nameOfTheDoctor}!
+                        Appointment Confirmed With {nameOfTheDoctor}!
                     </Typography>
                     <Stack
                         direction={{ xs: "column", sm: "column", md: "row" }}

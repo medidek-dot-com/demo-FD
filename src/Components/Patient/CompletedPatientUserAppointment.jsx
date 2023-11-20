@@ -62,7 +62,6 @@ const CompletedPatientUserAppointment = ({
     isLoading,
     setIsLoading,
 }) => {
-    console.log(completeAppointmentsData);
     const [thankYouDialog, setThankYouDialog] = useState(false);
     const [reviewDialog, setReviewDialog] = useState(false);
     // const [completeAppointment, setCompleteAppointmentDetails] = useState({});
@@ -70,7 +69,6 @@ const CompletedPatientUserAppointment = ({
     const navigate = useNavigate();
     const handleReviewButtonClick = (appoientment) => {
         setDoctorId(appoientment?.doctorid._id);
-        console.log(appoientment);
         setReviewDialog(true);
     };
     return (
@@ -162,10 +160,9 @@ const CompletedPatientUserAppointment = ({
                                     <Button
                                         variant="contained"
                                         onClick={() => {
-                                            console.log(appointment._id) &
-                                                navigate(
-                                                    `/tracking/view-completed-appointment/${appointment._id}`
-                                                );
+                                            navigate(
+                                                `/tracking/view-completed-appointment/${appointment._id}`
+                                            );
                                         }}
                                         size="small"
                                         sx={{

@@ -46,7 +46,7 @@ const Tracking = () => {
     const [completeAppointmentsData, setCompleteAppointmentsData] = useState(
         []
     );
-    console.log(completeAppointmentsData);
+
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -78,7 +78,6 @@ const Tracking = () => {
             `/v2/getPendingAppointmentForPatient/${user?._id}`
         );
         setIsLoading(false);
-        console.log(response.result);
         return setPendingAppointmentsData(response.result);
     };
     const getCompleteAppointmentsData = async () => {
@@ -88,16 +87,19 @@ const Tracking = () => {
         );
         setIsLoading(false);
         setCompleteAppointmentsData(response.result);
-        return console.log(response);
+        return;
     };
     const getMissedAppointmentsData = async () => {
         setIsLoading(true);
-        const response = await axiosClient.get(
-            `/v2/getMissedAppointment/${user._id}`
-        );
-        setIsLoading(false);
-        setMissedAppointmentsData(response.result);
-        console.log(response);
+        try {
+            const response = await axiosClient.get(
+                `/v2/getMissedAppointment/${user._id}`
+            );
+            setIsLoading(false);
+            setMissedAppointmentsData(response.result);
+        } catch (error) {
+            console.log(error.message);
+        }
     };
 
     // useEffect(() => {
@@ -229,6 +231,8 @@ const Tracking = () => {
                         missedAppointmentsData={missedAppointmentsData}
                         isLoading={isLoading}
                         setIsLoading={setIsLoading}
+                        getPendingAppointmentsData={getPendingAppointmentsData}
+                        getMissedAppointmentsData={getMissedAppointmentsData}
                     />
                 )}
             </Box>
