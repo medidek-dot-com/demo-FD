@@ -111,6 +111,7 @@ const DoctorInfo = () => {
         AppointmentTime: "",
         doctorid: bookingAppointmentDetails.doctorid,
         userid: user?._id,
+        role: user?.role,
     });
 
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =

@@ -185,6 +185,7 @@ const DoctorsList = () => {
         AppointmentTime: "",
         doctorid: bookingAppointmentDetails.doctorid,
         userid: user?._id,
+        role: user?.role,
     });
 
     const [selectedTime, setSelectedTime] = useState();

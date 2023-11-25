@@ -18,6 +18,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import moment from "moment";
 
 const StackStyle = styled(Stack)(({ theme }) => ({
     width: "48%",
@@ -220,6 +221,45 @@ const AppointmentConfirmDIalog = ({
                             Phone No :-{" "}
                             <Box component="span" sx={{ color: "#383838" }}>
                                 {confirmedAppointmentData?.phone}
+                            </Box>
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: "#1F51C6",
+                                lineHeight: "20px",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1rem",
+                                },
+                            }}
+                        >
+                            AppointmentTime :-{" "}
+                            <Box component="span" sx={{ color: "#383838" }}>
+                                {confirmedAppointmentData?.AppointmentTime}
+                            </Box>
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: "#1F51C6",
+                                lineHeight: "20px",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1rem",
+                                },
+                            }}
+                        >
+                            Appointment Date :-{" "}
+                            <Box component="span" sx={{ color: "#383838" }}>
+                                {moment(
+                                    confirmedAppointmentData?.appointmentDate,
+                                    "YYYY-MM-DD"
+                                ).format("DD-MM_YYYY")}
                             </Box>
                         </Typography>
                     </Stack>

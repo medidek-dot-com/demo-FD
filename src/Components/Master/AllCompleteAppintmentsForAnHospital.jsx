@@ -25,7 +25,7 @@ import { FiUpload } from "react-icons/fi";
 import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -127,7 +127,7 @@ const AllCompleteAppintmentsForAnHospital = ({
                                 >
                                     <StyledTableCell>{i + 1}</StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {appointment.age}
@@ -136,22 +136,30 @@ const AllCompleteAppintmentsForAnHospital = ({
                                         {appointment.gender}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.phoneNumber}
+                                        {appointment.phone}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.doctorsId.nameOfTheDoctor}
+                                        {appointment.doctorid.nameOfTheDoctor}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentTime}
+                                        {appointment.AppointmentTime}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentDate}
+                                        {moment(
+                                            appointment.appointmentDate
+                                        ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        <Select
+                                        <Box
+                                            component="span"
+                                            sx={{ color: "#15B912" }}
+                                        >
+                                            Completed
+                                        </Box>
+                                        {/* <Select
                                             sx={{
                                                 color: "#15B912",
                                                 fontFamily: "Lato",
@@ -217,7 +225,7 @@ const AllCompleteAppintmentsForAnHospital = ({
                                             >
                                                 Missed
                                             </MenuItem>
-                                        </Select>
+                                        </Select> */}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         <label
@@ -252,7 +260,7 @@ const AllCompleteAppintmentsForAnHospital = ({
                     display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
-                  {completeAppointmentsData?.length > 0 ? (
+                {completeAppointmentsData?.length > 0 ? (
                     completeAppointmentsData.map((appointment, i) => {
                         return (
                             <Box
@@ -287,7 +295,7 @@ const AllCompleteAppintmentsForAnHospital = ({
                                             fontWeight: 700,
                                         }}
                                     >
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </Typography>
                                     {appointmentDropDown && activeCard === i ? (
                                         <KeyboardArrowUpIcon />
@@ -321,7 +329,7 @@ const AllCompleteAppintmentsForAnHospital = ({
                                                     fontFamily: "Raleway",
                                                 }}
                                             >
-                                                {appointment.patientName}
+                                                {appointment.name}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -347,7 +355,7 @@ const AllCompleteAppintmentsForAnHospital = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.phoneNumber}
+                                                {appointment.phone}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -373,7 +381,9 @@ const AllCompleteAppintmentsForAnHospital = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.appointmentDate}
+                                                {moment(
+                                                    appointment.appointmentDate
+                                                ).format("DD-MM-YYYY")}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <Box
@@ -384,7 +394,7 @@ const AllCompleteAppintmentsForAnHospital = ({
                                             }}
                                         >
                                             Status:{" "}
-                                            <Select
+                                            {/* <Select
                                                 sx={{
                                                     color: "#383838",
                                                     fontFamily: "Lato",
@@ -454,14 +464,15 @@ const AllCompleteAppintmentsForAnHospital = ({
                                                 >
                                                     Missed
                                                 </MenuItem>
-                                            </Select>
-                                            {/* <span
-                                                        style={{
-                                                            fontWeight: "600",
-                                                        }}
-                                                    >
-                                                        Male
-                                                    </span> */}
+                                            </Select> */}
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    color: "#15B912",
+                                                }}
+                                            >
+                                                Completed
+                                            </Box>
                                         </Box>
                                     </Stack>
 
@@ -485,8 +496,16 @@ const AllCompleteAppintmentsForAnHospital = ({
                         );
                     })
                 ) : (
-                    <Typography sx={{textAlign:'center', fontFamily: "Lato",
-                    fontWeight: "600", mt:'10px'}}>No Appointments For Today</Typography>
+                    <Typography
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            mt: "10px",
+                        }}
+                    >
+                        No Appointments For Today
+                    </Typography>
                 )}
             </Stack>
         </>

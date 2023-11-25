@@ -193,7 +193,7 @@ const CompletedAppointmentsTableForMobile = ({
                                             }}
                                         >
                                             Status:{" "}
-                                            <Select
+                                            {/* <Select
                                                 sx={{
                                                     color: "#383838",
                                                     fontFamily: "Lato",
@@ -263,14 +263,15 @@ const CompletedAppointmentsTableForMobile = ({
                                                 >
                                                     Missed
                                                 </MenuItem>
-                                            </Select>
-                                            {/* <span
-                                                        style={{
-                                                            fontWeight: "600",
-                                                        }}
-                                                    >
-                                                        Male
-                                                    </span> */}
+                                            </Select> */}
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    color: "#15B912",
+                                                }}
+                                            >
+                                                Completed
+                                            </Box>
                                         </Box>
                                     </Stack>
 

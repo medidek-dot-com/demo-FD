@@ -49,6 +49,7 @@ const ChooseDateAndSlotTimeDialog = ({
     setBookAppointmentDetailsDialog,
     inputValue,
     setInputValue,
+    datedumb,
 }) => {
     const [activeCard, setActiveCard] = useState();
     const [dateErr, setDateErr] = useState(false);
@@ -377,7 +378,7 @@ const ChooseDateAndSlotTimeDialog = ({
                                         textAlign: "center",
                                     }}
                                 >
-                                    Please choose date!
+                                    Please choose Date And Time!
                                 </Box>
                             )}
                         </>
@@ -506,7 +507,11 @@ const ChooseDateAndSlotTimeDialog = ({
                             height: "40px",
                         }}
                         onClick={() => {
-                            if (!bookingAppointmentDetails.appointmentDate) {
+                            if (
+                                !bookingAppointmentDetails.appointmentDate ||
+                                !bookingAppointmentDetails.AppointmentTime ||
+                                !datedumb
+                            ) {
                                 console.log("date nhi aa rhi");
                                 return setDateErr(true);
                             }

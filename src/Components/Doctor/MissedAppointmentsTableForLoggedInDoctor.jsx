@@ -101,7 +101,7 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                         <TableRow
                             sx={{ position: "sticky", top: "10px", zIndex: 1 }}
                         >
-                            <StyledTableCell>Token No.</StyledTableCell>
+                            <StyledTableCell>Sr. No.</StyledTableCell>
                             <StyledTableCell>Patient's Name</StyledTableCell>
                             <StyledTableCell>Age</StyledTableCell>
                             <StyledTableCell>Gender</StyledTableCell>

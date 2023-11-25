@@ -111,6 +111,8 @@ const AddStuffDialog = ({
             return false;
         }
 
+        setDisableButton(true);
+
         const data = new FormData();
         data.append("nameOfStaff", inputValue.nameOfStaff);
         data.append("designation", inputValue.designation);
@@ -124,12 +126,14 @@ const AddStuffDialog = ({
         try {
             const response = await axiosClient.post("/v2/addstaff", data);
             if (response.status === "ok") {
+                await getStaffData();
                 toast.success("Staff added successfully");
                 setAddStaffDialog(false);
-                getStaffData();
+                setDisableButton(false);
             }
         } catch (error) {
             console.log(error);
+            toast.error("something went wrong");
         }
     };
 

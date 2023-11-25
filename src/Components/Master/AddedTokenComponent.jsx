@@ -76,6 +76,11 @@ const AddedTokenComponent = ({
                                 border: "1px solid #D9D9D9",
                                 borderRadius: "6px",
                                 p: "16px",
+                                background:
+                                    doctorDetails?.acceptAppointments ===
+                                    "bySlot"
+                                        ? "#D9D9D9"
+                                        : "#ffffff",
                             }}
                         >
                             <Box
@@ -167,6 +172,11 @@ const AddedTokenComponent = ({
                                     border: "1px solid #D9D9D9",
                                     borderRadius: "6px",
                                     p: "16px",
+                                    background:
+                                        doctorDetails?.acceptAppointments ===
+                                        "bySlot"
+                                            ? "#D9D9D9"
+                                            : "#ffffff",
                                 }}
                             >
                                 <Box
@@ -259,6 +269,11 @@ const AddedTokenComponent = ({
                                     border: "1px solid #D9D9D9",
                                     borderRadius: "6px",
                                     p: "16px",
+                                    background:
+                                        doctorDetails?.acceptAppointments ===
+                                        "bySlot"
+                                            ? "#D9D9D9"
+                                            : "#ffffff",
                                 }}
                             >
                                 <Box
@@ -347,6 +362,11 @@ const AddedTokenComponent = ({
                     </Stack>
                     <Button
                         variant="contained"
+                        disabled={
+                            doctorDetails?.acceptAppointments === "bySlot"
+                                ? true
+                                : false
+                        }
                         onClick={() => setEditTokenSetting(true)}
                         sx={{
                             width: "100%",

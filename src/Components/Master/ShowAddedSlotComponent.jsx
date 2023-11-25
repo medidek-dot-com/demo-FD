@@ -11,8 +11,13 @@ import {
     Typography,
 } from "@mui/material";
 
-const ShowAddedSlotComponent = ({ onlineSlotData, setEditSlotSetting }) => {
+const ShowAddedSlotComponent = ({
+    onlineSlotData,
+    setEditSlotSetting,
+    doctorDetails,
+}) => {
     console.log(onlineSlotData);
+    console.log(doctorDetails);
     return (
         <>
             <Stack
@@ -48,6 +53,11 @@ const ShowAddedSlotComponent = ({ onlineSlotData, setEditSlotSetting }) => {
                                         border: "1px solid #D9D9D9",
                                         borderRadius: "5px",
                                         lineHeight: "18px",
+                                        background:
+                                            doctorDetails?.acceptAppointments ===
+                                            "byToken"
+                                                ? "#D9D9D9"
+                                                : "#ffffff",
                                     }}
                                 >
                                     {onlineSlotData?.slotduration} Mins
@@ -68,6 +78,11 @@ const ShowAddedSlotComponent = ({ onlineSlotData, setEditSlotSetting }) => {
                                     border: "1px solid #D9D9D9",
                                     borderRadius: "6px",
                                     p: "16px",
+                                    background:
+                                        doctorDetails?.acceptAppointments ===
+                                        "byToken"
+                                            ? "#D9D9D9"
+                                            : "#ffffff",
                                 }}
                             >
                                 <Box
@@ -159,6 +174,11 @@ const ShowAddedSlotComponent = ({ onlineSlotData, setEditSlotSetting }) => {
                                         border: "1px solid #D9D9D9",
                                         borderRadius: "6px",
                                         p: "16px",
+                                        background:
+                                            doctorDetails?.acceptAppointments ===
+                                            "byToken"
+                                                ? "#D9D9D9"
+                                                : "#ffffff",
                                     }}
                                 >
                                     <Box
@@ -251,6 +271,11 @@ const ShowAddedSlotComponent = ({ onlineSlotData, setEditSlotSetting }) => {
                                         border: "1px solid #D9D9D9",
                                         borderRadius: "6px",
                                         p: "16px",
+                                        background:
+                                            doctorDetails?.acceptAppointments ===
+                                            "byToken"
+                                                ? "#D9D9D9"
+                                                : "#ffffff",
                                     }}
                                 >
                                     <Box
@@ -357,6 +382,11 @@ const ShowAddedSlotComponent = ({ onlineSlotData, setEditSlotSetting }) => {
                 <Button
                     variant="contained"
                     onClick={() => setEditSlotSetting(true)}
+                    disabled={
+                        doctorDetails?.acceptAppointments === "byToken"
+                            ? true
+                            : false
+                    }
                     sx={{
                         width: "100%",
                         boxShadow: "none",

@@ -6,6 +6,7 @@ const AddedSlotComponent = ({
     onlineSlotData,
     getOnlineSlotDetailForDoctorForPerticularDate,
     selectedSlotDate,
+    doctorDetails,
 }) => {
     const [editSlotSetting, setEditSlotSetting] = useState(false);
 
@@ -19,11 +20,13 @@ const AddedSlotComponent = ({
                     }
                     selectedSlotDate={selectedSlotDate}
                     onlineSlotData={onlineSlotData}
+                    doctorDetails={doctorDetails}
                 />
             ) : (
                 <ShowAddedSlotComponent
                     onlineSlotData={onlineSlotData}
                     setEditSlotSetting={setEditSlotSetting}
+                    doctorDetails={doctorDetails}
                 />
             )}
         </>

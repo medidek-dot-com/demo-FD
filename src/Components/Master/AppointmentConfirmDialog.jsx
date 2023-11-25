@@ -61,10 +61,10 @@ const AppointmentConfirmDialog = ({
                     age: "",
                     phone: "",
                     gender: "",
-                    appointmentDate: "",
-                    appointmentTime: "",
+                    // appointmentDate: "",
+                    // appointmentTime: "",
                 });
-                setError(false);
+                // setError(false);
             }}
             maxWidth={"md"}
             sx={{ margin: " 0 auto", borderRadius: "10px" }}
@@ -81,10 +81,10 @@ const AppointmentConfirmDialog = ({
                                 age: "",
                                 phone: "",
                                 gender: "",
-                                appointmentDate: "",
-                                appointmentTime: "",
+                                // appointmentDate: "",
+                                // appointmentTime: "",
                             });
-                            setError(false);
+                            // setError(false);
                         }}
                         sx={{
                             position: "absolute",

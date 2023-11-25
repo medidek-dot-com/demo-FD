@@ -145,11 +145,13 @@ const EditDoctorDialog = ({
             !inputValue.phone ||
             !inputValue.connsultationFee ||
             !inputValue.description ||
+            !inputValue.acceptAppointments ||
             !inputValue.hospitalId
         ) {
             setError(true);
             return false;
         }
+        setDisableButton(true);
 
         const data = new FormData();
         data.append("nameOfTheDoctor", inputValue.nameOfTheDoctor);
@@ -161,24 +163,27 @@ const EditDoctorDialog = ({
         data.append("connsultationFee", inputValue.connsultationFee);
         data.append("doctorid", inputValue.doctorid);
         data.append("description", inputValue.description);
+        data.append("acceptAppointments", inputValue.acceptAppointments);
         data.append("image", inputImage || inputValue?.imgurl);
 
         // console.log(data);
         try {
             const response = await axiosClient.put(
-                `/v2/editDoctorProfile/${singleDoctorsData._id}`,
+                `/v2/editDoctorfile/${singleDoctorsData._id}`,
                 data
             );
             console.log(response);
             if (response.status === "ok") {
                 // navigate(`/master/user/home/${uuid.id}`);
+                await getDoctorsData();
                 setEditDoctorDialog(false);
-                getDoctorsData();
                 toast.success("Doctor's Data update successfully");
+                setDisableButton(false);
                 return;
             }
         } catch (e) {
             toast.error(e.message);
+            setDisableButton(false);
         }
     };
 
@@ -595,18 +600,18 @@ const EditDoctorDialog = ({
                             </StackStyle> */}
                         </Box>
                         <LoadingButton
-                            size="small"
+                            // size="small"
                             type="submit"
                             loading={disableButton}
                             // loadingPosition="end"
                             variant="contained"
                             sx={{
-                                marginTop: "25px",
+                                // marginTop: "25px",
                                 textTransform: "none",
                                 display: "block",
                                 width: "100%",
                                 borderRadius: "63px",
-                                height: "40px",
+                                // height: "40px",
                                 boxshadow: "none !important",
                             }}
                         >
@@ -615,7 +620,7 @@ const EditDoctorDialog = ({
                                     fontFamily: "Lato",
                                     fontWeight: "700",
                                     fontSize: "17px",
-                                    boxshadow: "none !important",
+                                    boxshadow: "none",
                                 }}
                             >
                                 Save Details

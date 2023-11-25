@@ -43,6 +43,8 @@ import Footer from "../../Components/Footer/Footer";
 import { PlayArrow } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { tab } from "../../Store/tabSlice";
+import moment from "moment";
+import { toast } from "react-toastify";
 
 const SearchFeildStyle = styled(TextField)({
     "& .css-1kzw815-MuiInputBase-root-MuiOutlinedInput-root": {
@@ -110,7 +112,7 @@ const Appoinments = () => {
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     const [mobileActiveTab, setMobileActiveTab] = useState(1);
-    const [date, setDate] = useState(dayjs());
+    const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
     const farmattedDate = dayjs(date).format("DD-MM-YYYY");
     console.log(farmattedDate);
     const dispatch = useDispatch();
@@ -119,15 +121,15 @@ const Appoinments = () => {
         dispatch(tab(3));
     }, []);
 
-    useEffect(() => {
-        getDoctorsData();
-    }, []);
+    // useEffect(() => {
+    //     getDoctorsData();
+    // }, []);
 
-    const doctorslist = pendingAppointmentsData.map(
-        (doctorKaNaam) => doctorKaNaam.doctorsId?.nameOfTheDoctor
-    );
+    // const doctorslist = pendingAppointmentsData.map(
+    //     (doctorKaNaam) => doctorKaNaam.doctorsId?.nameOfTheDoctor
+    // );
 
-    console.log("Ye hai doctors ki ids", doctorslist);
+    // console.log("Ye hai doctors ki ids", doctorslist);
     // const getAllAppointments = async()=>{
     //     const response = await axiosClient.get(
     //         `/v2//getAllAppointmentsForPerticularHospital/${hospital_id}?status=${status}`
@@ -138,58 +140,63 @@ const Appoinments = () => {
     //     console.log("this is all appointment data",response);
     // }
 
-    const getDoctorsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getDoctorsforHospital/${hospital_id}`
-        );
-        console.log(response);
-        if (response.status === "ok") {
-            return setDoctor(response.result);
-        }
-    };
+    // const getDoctorsData = async () => {
+    //     const response = await axiosClient.get(
+    //         `/v2/getDoctorsforHospital/${hospital_id}`
+    //     );
+    //     console.log(response);
+    //     if (response.status === "ok") {
+    //         return setDoctor(response.result);
+    //     }
+    // };
 
-    const handleChange = (val) => {
-        console.log(val);
-        setDoctorData(val);
-        setSearch(val._id);
-        setShowDoctorCard(true);
-    };
+    // const handleChange = (val) => {
+    //     console.log(val);
+    //     setDoctorData(val);
+    //     setSearch(val._id);
+    //     setShowDoctorCard(true);
+    // };
 
-    useEffect(() => {
-        if (doctorData) {
-            setDoctor([doctorData]);
-        } else {
-            getDoctorsData();
-        }
-    }, [doctorData]);
+    // useEffect(() => {
+    //     if (doctorData) {
+    //         setDoctor([doctorData]);
+    //     } else {
+    //         getDoctorsData();
+    //     }
+    // }, [doctorData]);
 
     const getPendingAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getAllAppointmentsForPerticularHospital/${hospital_id}?search=${search}`
+            `/v2/getAllAppointmentsForPerticularHospital/${hospital_id}/${date}`
         );
         setPendingAppointmentsData(response.result);
         console.log(response.result);
     };
     const getCompleteAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getCompleteAppointmentsForHospital/${hospital_id}?search=${search}`
+            `/v2/getCompleteAppointmentsForHospital/${hospital_id}/${date}`
         );
         setCompleteAppointmentsData(response.result);
         console.log(response);
     };
     const getMissedAppointmentsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getMissedAppointmentsForHospital/${hospital_id}?search=${search}`
-        );
-        setMissedAppointmentsData(response.result);
-        console.log(response);
+        try {
+            const response = await axiosClient.get(
+                `/v2/getMissedAppointmentsForHospital/${hospital_id}/${date}`
+            );
+            setMissedAppointmentsData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error.message);
+            toast.error("something went wrong");
+        }
     };
 
     useEffect(() => {
         getPendingAppointmentsData();
         getCompleteAppointmentsData();
         getMissedAppointmentsData();
-    }, []);
+    }, [date]);
 
     return (
         <>
@@ -211,11 +218,11 @@ const Appoinments = () => {
                         disablePortal
                         popupIcon={<img src="/search.svg" alt="img" />}
                         id="combo-box-demo"
-                        options={doctor}
-                        onChange={(e, val) => handleChange(val)}
-                        getOptionLabel={(doctor) =>
-                            doctor.nameOfTheDoctor || ""
-                        }
+                        // options={doctor}
+                        // onChange={(e, val) => handleChange(val)}
+                        // getOptionLabel={(doctor) =>
+                        //     doctor.nameOfTheDoctor || ""
+                        // }
                         sx={{ width: "491px" }}
                         renderInput={(params) => (
                             <TextField
@@ -450,9 +457,10 @@ const Appoinments = () => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePickerStyle
                                 format="DD-MM-YYYY"
-                                value={date}
-                                onChange={(val) => setDate(val)}
-                                sx={{ width: "144px" }}
+                                onChange={(e) =>
+                                    setDate(moment(e.$d).format("YYYY-MM-DD"))
+                                }
+                                defaultValue={dayjs()}
                             />
                         </LocalizationProvider>
                     </Stack>
@@ -598,13 +606,17 @@ const Appoinments = () => {
                     <Box>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePickerStyleForMobile
+                                format="DD-MM-YYYY"
+                                onChange={(e) =>
+                                    setDate(moment(e.$d).format("YYYY-MM-DD"))
+                                }
+                                defaultValue={dayjs()}
                                 sx={{
                                     width: "120px",
                                     backgroundColor: "#1F51C6",
                                     color: "#ffffff",
                                     borderRadius: "50px",
                                 }}
-                                defaultValue={dayjs()}
                             />
                         </LocalizationProvider>
                     </Box>

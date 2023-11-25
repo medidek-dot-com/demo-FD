@@ -104,7 +104,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                         sx={{ position: "sticky", top: "10px", zIndex: 1 }}
                     >
                         <TableRow>
-                            <StyledTableCell>Token No.</StyledTableCell>
+                            <StyledTableCell>Sr. No.</StyledTableCell>
                             <StyledTableCell>Patient's Name</StyledTableCell>
                             <StyledTableCell>Age</StyledTableCell>
                             <StyledTableCell>Gender</StyledTableCell>
@@ -151,7 +151,13 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                         Edit
                                     </StyledTableCell> */}
                                     <StyledTableCell>
-                                        <Select
+                                        <Box
+                                            component="span"
+                                            sx={{ color: "#15B912" }}
+                                        >
+                                            Completed
+                                        </Box>
+                                        {/* <Select
                                             sx={{
                                                 color: "#15B912",
                                                 fontFamily: "Lato",
@@ -235,7 +241,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                             >
                                                 Cancelled
                                             </MenuItem>
-                                        </Select>
+                                        </Select> */}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         <label
@@ -404,7 +410,13 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                             }}
                                         >
                                             Status:{" "}
-                                            <Select
+                                            <Box
+                                                component="span"
+                                                sx={{ color: "#15B912" }}
+                                            >
+                                                Completed
+                                            </Box>
+                                            {/* <Select
                                                 sx={{
                                                     color: "#383838",
                                                     fontFamily: "Lato",
@@ -474,7 +486,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                                 >
                                                     Missed
                                                 </MenuItem>
-                                            </Select>
+                                            </Select> */}
                                             {/* <span
                                                         style={{
                                                             fontWeight: "600",

@@ -240,8 +240,8 @@ const DoctorEditProfile = () => {
 
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
-        dispatch(logout());
         dispatch(logOutDoctor());
+        dispatch(logout());
         removeItem(KEY_ACCESS_TOKEN);
         window.location.replace("/");
     };

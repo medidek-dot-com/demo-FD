@@ -45,6 +45,7 @@ import { RxCross1 } from "react-icons/rx";
 import { BiSolidBook } from "react-icons/bi";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
 import moment from "moment";
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import { logOutDoctor } from "../../Store/doctorDataSlice";
 
 // const TextFieldStyle = styled(TextField)({
@@ -263,8 +264,8 @@ const MUDDashboard = () => {
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
         removeItem(KEY_ACCESS_TOKEN);
-        dispatch(logout());
         dispatch(logOutDoctor());
+        dispatch(logout());
         // navigate('/')
         // window.location.href = '/master/signin'
     };
@@ -1597,49 +1598,6 @@ const MUDDashboard = () => {
                                                             </Stack>
                                                             <Stack direction="row">
                                                                 <Tooltip
-                                                                    title="Cancel"
-                                                                    placement="top"
-                                                                    arrow
-                                                                >
-                                                                    <IconButton
-                                                                        disabled={
-                                                                            disableButton.loading &&
-                                                                            disableButton.i ==
-                                                                                i
-                                                                                ? true
-                                                                                : false
-                                                                        }
-                                                                        onClick={() =>
-                                                                            handleStatusChange(
-                                                                                appointment._id,
-                                                                                "cancelled",
-                                                                                "by doctor",
-                                                                                i
-                                                                            )
-                                                                        }
-                                                                        sx={{
-                                                                            p: 0,
-                                                                        }}
-                                                                    >
-                                                                        <CancelIcon
-                                                                            sx={{
-                                                                                fontSize:
-                                                                                    {
-                                                                                        xs: "20.84px",
-                                                                                        sm: "20.84px",
-                                                                                        md: "29.15px",
-                                                                                    },
-                                                                                color:
-                                                                                    disableButton.loading &&
-                                                                                    disableButton.i ==
-                                                                                        i
-                                                                                        ? "#D9D9D9"
-                                                                                        : "#B92612",
-                                                                            }}
-                                                                        />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                                <Tooltip
                                                                     title="Complete"
                                                                     placement="top"
                                                                     arrow
@@ -1651,11 +1609,7 @@ const MUDDashboard = () => {
                                                                 >
                                                                     <IconButton
                                                                         disabled={
-                                                                            disableButton.loading &&
-                                                                            disableButton.i ==
-                                                                                i
-                                                                                ? true
-                                                                                : false
+                                                                            true
                                                                         }
                                                                         sx={{
                                                                             p: 0,
@@ -1669,12 +1623,7 @@ const MUDDashboard = () => {
                                                                                         sm: "20.84px",
                                                                                         md: "29.15px",
                                                                                     },
-                                                                                color:
-                                                                                    disableButton.loading &&
-                                                                                    disableButton.i ==
-                                                                                        i
-                                                                                        ? "#D9D9D9"
-                                                                                        : "#15B912",
+                                                                                color: "#D9D9D9",
                                                                             }}
                                                                         />
                                                                     </IconButton>
@@ -1810,7 +1759,7 @@ const MUDDashboard = () => {
                                                             </Stack>
                                                             <Stack direction="row">
                                                                 <Tooltip
-                                                                    title="Cancel"
+                                                                    title="Pending"
                                                                     placement="top"
                                                                     arrow
                                                                 >
@@ -1834,7 +1783,7 @@ const MUDDashboard = () => {
                                                                             p: 0,
                                                                         }}
                                                                     >
-                                                                        <CancelIcon
+                                                                        <PendingActionsIcon
                                                                             sx={{
                                                                                 fontSize:
                                                                                     {
@@ -1847,7 +1796,7 @@ const MUDDashboard = () => {
                                                                                     disableButton.i ==
                                                                                         i
                                                                                         ? "#D9D9D9"
-                                                                                        : "#B92612",
+                                                                                        : "#1F51C6",
                                                                             }}
                                                                         />
                                                                     </IconButton>

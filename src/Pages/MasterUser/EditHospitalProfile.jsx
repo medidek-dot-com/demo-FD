@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Footer from "../../Components/Footer/Footer";
 import { tab } from "../../Store/tabSlice";
 import { LoadingButton } from "@mui/lab";
+import ChangePasswordDialogForAnHospital from "../../Components/Master/ChangePasswordDialogForAnHospital";
 
 const StackStyle = styled(Stack)(({ theme }) => ({
     width: "48%",
@@ -82,6 +83,7 @@ const EditHospitalProfile = () => {
     const [hospitalData, setHospitalData] = useState({});
     const [disableButton, setDisableButton] = useState(false);
     const [imageValues, setImageValues] = useState("");
+    const [changePasswordDialog, setChangePasswordDialog] = useState("");
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -390,18 +392,17 @@ const EditHospitalProfile = () => {
                                 </StackStyle>
                             </Box>
                             <LoadingButton
-                                size="small"
+                                // size="small"
                                 fullWidth
                                 type="submit"
                                 loading={disableButton}
                                 variant="contained"
                                 sx={{
-                                    flex: 0.3,
-                                    width: {
-                                        xs: "100%",
-                                        sm: "100%",
-                                        md: "364.69px",
-                                    },
+                                    // width: {
+                                    //     xs: "100%",
+                                    //     sm: "100%",
+                                    //     md: "364.69px",
+                                    // },
                                     my: 2,
                                     mx: "auto",
                                     display: "block",
@@ -419,11 +420,39 @@ const EditHospitalProfile = () => {
                                     Update Profile
                                 </span>
                             </LoadingButton>
+                            <Button
+                                onClick={() => setChangePasswordDialog(true)}
+                                variant="outlined"
+                                sx={{
+                                    backgroundColor: "#ffffff",
+                                    borderColor: "#D9D9D9",
+                                    color: "#383838",
+                                    marginY: "10px",
+                                    textTransform: "none",
+                                    display: "block",
+                                    width: "100%",
+                                    boxShadow: "none",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1.125rem",
+                                    // borderRadius: "53px",
+                                    ":hover": {
+                                        boxShadow: "none",
+                                        borderColor: "#D9D9D8",
+                                    },
+                                }}
+                            >
+                                Change Password
+                            </Button>
                         </form>
                     </Card>
                 </Box>
             </Box>
             <Footer />
+            <ChangePasswordDialogForAnHospital
+                changePasswordDialog={changePasswordDialog}
+                setChangePasswordDialog={setChangePasswordDialog}
+            />
         </>
     );
 };

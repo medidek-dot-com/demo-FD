@@ -39,6 +39,7 @@ import MissedAppointmentsTableForMobile from "../../Components/Master/MissedAppo
 import MissedAppointmentsTable from "../../Components/Master/MissedAppointmentsTable";
 import { useDispatch } from "react-redux";
 import { tab } from "../../Store/tabSlice";
+import { toast } from "react-toastify";
 
 const PaginationStyle = styled(Pagination)({
     "& .MuiPaginationItem-root.Mui-selected": {
@@ -101,14 +102,14 @@ const MasterUserDoctorAppointments = () => {
     const getPendingAppointmentsDataForPerticularDate = async () => {
         try {
             const response = await axiosClient.get(
-                `/v2/getPendingAppoinmentForDoctor/${doctor_id}/${date}`
+                `/v2/getPendingAppointmentForDoctor/${doctor_id}`
             );
             console.log(response);
             setPendingAppointmentsData(response.result);
             return;
         } catch (error) {
-            F;
             console.log(error);
+            toast.error("something went wrong");
         }
     };
 

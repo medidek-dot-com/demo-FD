@@ -20,7 +20,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import styled from "@emotion/styled";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { tab } from "../../Store/tabSlice";
 import ChooseDateAndSlotTimeDialog from "../../Components/Master/ChooseDateAndSlotTimeDialog";
 import AppointmentSettingDialog from "../../Components/Master/AppointmentSettingDialog";
@@ -35,7 +35,9 @@ const WrapperStyle = styled(Box)(({ theme }) => ({
     },
 }));
 
+let datedumb;
 const MasterUserDoctorDetails = () => {
+    const { user } = useSelector((state) => state.auth);
     const { hospital_id, doctor_id } = useParams();
     console.log(hospital_id, doctor_id);
     const navigate = useNavigate();
@@ -85,12 +87,12 @@ const MasterUserDoctorDetails = () => {
         age: "",
         gender: "",
         phone: "",
-        email: "",
         AppointmentNotes: "",
         appointmentDate: "",
         AppointmentTime: "",
         doctorid: doctor_id,
         userid: hospital_id,
+        role: user?.role,
     });
 
     const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
@@ -114,7 +116,7 @@ const MasterUserDoctorDetails = () => {
     const getPendingAppointmentsDataForPerticularDate = async () => {
         try {
             const response = await axiosClient.get(
-                `/v2/getPendingAppoinmentForDoctor/${doctor_id}/${date}`
+                `/v2/getPendingAppointmentForDoctor/${doctor_id}`
             );
             console.log(response.result);
             return setAppointments(response.result);
@@ -131,11 +133,13 @@ const MasterUserDoctorDetails = () => {
     const getAvailableSlots = async () => {
         try {
             setSlotsLoading(true);
+            datedumb = false;
             const response = await axiosClient.get(
                 `/v2/getAvailbleSlotsForAnUser/${bookingAppointmentDetails.doctorid}/${bookingAppointmentDetails.appointmentDate}`
             );
             if (response.status === "ok") {
                 setSlotsLoading(false);
+                datedumb = true;
                 return setSlotData(response.result);
             }
         } catch (error) {
@@ -604,6 +608,7 @@ const MasterUserDoctorDetails = () => {
                 slotsLoading={slotsLoading}
                 acceptAppointments={doctorDetails.acceptAppointments}
                 inputValue={inputValue}
+                datedumb={datedumb}
                 setInputValue={setInputValue}
                 bookingAppointmentDetails={bookingAppointmentDetails}
                 setBookingAppointmentDetails={setBookingAppointmentDetails}
@@ -638,6 +643,11 @@ const MasterUserDoctorDetails = () => {
                 setConfirmBookAppointmentDialog={
                     setConfirmBookAppointmentDialog
                 }
+                getPendingAppointmentsDataForPerticularDate={
+                    getPendingAppointmentsDataForPerticularDate
+                }
+                setChooseDateAndTimeDialog={setChooseDateAndTimeDialog}
+                doctorinfo={doctorDetails}
                 bookingAppointmentDetails={bookingAppointmentDetails}
                 bookingAppointmentDialog={bookAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}

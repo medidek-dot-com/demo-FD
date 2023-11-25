@@ -24,6 +24,7 @@ import {
 import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -56,7 +57,6 @@ const AllMissedAppintmentsForAnHospital = ({
     const [updatedStatus, setUpdatedStatus] = useState("pending");
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
     const [activeCard, setAciveCard] = useState();
-
 
     const handleStatusChange = async (id, status) => {
         console.log(updatedStatus, "this is id", id);
@@ -126,7 +126,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                 >
                                     <StyledTableCell>{i + 1}</StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {appointment.age}
@@ -135,16 +135,18 @@ const AllMissedAppintmentsForAnHospital = ({
                                         {appointment.gender}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.phoneNumber}
+                                        {appointment.phone}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.doctorsId.nameOfTheDoctor}
+                                        {appointment.doctorid.nameOfTheDoctor}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentTime}
+                                        {appointment.AppointmentTime}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentDate}
+                                        {moment(
+                                            appointment.appointmentDate
+                                        ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
@@ -273,7 +275,7 @@ const AllMissedAppintmentsForAnHospital = ({
                     display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
-                  {missedAppointmentsData?.length > 0 ? (
+                {missedAppointmentsData?.length > 0 ? (
                     missedAppointmentsData.map((appointment, i) => {
                         return (
                             <Box
@@ -308,7 +310,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                             fontWeight: 700,
                                         }}
                                     >
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </Typography>
                                     {appointmentDropDown && activeCard === i ? (
                                         <KeyboardArrowUpIcon />
@@ -342,7 +344,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                                     fontFamily: "Raleway",
                                                 }}
                                             >
-                                                {appointment.patientName}
+                                                {appointment.name}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -368,7 +370,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.phoneNumber}
+                                                {appointment.phone}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -394,7 +396,9 @@ const AllMissedAppintmentsForAnHospital = ({
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.appointmentDate}
+                                                {moment(
+                                                    appointment.appointmentDate
+                                                ).format("DD-MM-YYYY")}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <Box
@@ -483,8 +487,16 @@ const AllMissedAppintmentsForAnHospital = ({
                         );
                     })
                 ) : (
-                    <Typography sx={{textAlign:'center', fontFamily: "Lato",
-                    fontWeight: "600", mt:'10px'}}>No Appointments For Today</Typography>
+                    <Typography
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            mt: "10px",
+                        }}
+                    >
+                        No Appointments For Today
+                    </Typography>
                 )}
             </Stack>
         </>

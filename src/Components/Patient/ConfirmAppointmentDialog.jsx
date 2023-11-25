@@ -22,7 +22,9 @@ import moment from "moment";
 import { axiosClient } from "../../Utils/axiosClient";
 import AppointmentAreadyExistDialogComponent from "../FindDoctors/DoctorsList/AppointmentAreadyExistDialogComponent";
 import { LoadingButton } from "@mui/lab";
-import AppointmentConfirmDialog from "../Master/AppointmentConfirmDialog";
+// import AppointmentConfirmDialog from "../Master/AppointmentConfirmDialog";
+import { toast } from "react-toastify";
+import AppointmentConfirmDIalog from "../FindDoctors/DoctorsList/AppointmentConfirmDIalog";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -40,7 +42,10 @@ const ConfirmAppointmentDialog = ({
     setHospitalListDialog,
     inputValue,
     setInputValue,
+    doctorinfo,
     setBookAppointmentDetailsDialog,
+    setChooseDateAndTimeDialog,
+    getPendingAppointmentsDataForPerticularDate,
 }) => {
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
@@ -51,7 +56,9 @@ const ConfirmAppointmentDialog = ({
 
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
         useState(false);
-
+    {
+        console.log(inputValue);
+    }
     const bookAppointment = async () => {
         setDisableButton(true);
         try {
@@ -61,7 +68,6 @@ const ConfirmAppointmentDialog = ({
             );
             console.log(response);
             if (response.status === "ok") {
-                console.log("yaaha tk");
                 setConfirmedAppointmentData(response.result);
                 setAppointmentCofirmedDialog(true);
                 setDisableButton(false);
@@ -69,7 +75,11 @@ const ConfirmAppointmentDialog = ({
                 setConfirmBookAppointmentDialog(false);
                 setBookAppointmentDialog(false);
                 setBookAppointmentDetailsDialog(false);
-                setHospitalListDialog(false);
+                setHospitalListDialog && setHospitalListDialog(false);
+                setChooseDateAndTimeDialog && setChooseDateAndTimeDialog(false);
+                // window.location.reload();
+                (await getPendingAppointmentsDataForPerticularDate) &&
+                    getPendingAppointmentsDataForPerticularDate();
             }
         } catch (error) {
             if (
@@ -85,9 +95,12 @@ const ConfirmAppointmentDialog = ({
                 setBookAppointmentDialog(false);
                 setBookAppointmentDetailsDialog(false);
 
-                return setHospitalListDialog(false);
+                setChooseDateAndTimeDialog && setChooseDateAndTimeDialog(false);
+                setHospitalListDialog && setHospitalListDialog(false);
+                return;
             }
             setDisableButton(false);
+            toast.error("something is wrong");
             console.log(error);
         }
     };
@@ -144,8 +157,10 @@ const ConfirmAppointmentDialog = ({
                             lineHeight: "21.6px",
                         }}
                     >
-                        Are you sure you want to book appointment with Dr.{" "}
-                        {bookingAppointmentDetails.nameOfTheDoctor}?
+                        Are you sure you want to book appointment with Dr
+                        {bookingAppointmentDetails?.nameOfTheDoctor ||
+                            doctorinfo?.nameOfTheDoctor}
+                        &nbsp; ?
                     </Typography>
                     <Box
                         sx={{
@@ -256,13 +271,20 @@ const ConfirmAppointmentDialog = ({
                     setAppointmentAlreadyExistDialog
                 }
             />
-            <AppointmentConfirmDialog
+            <AppointmentConfirmDIalog
                 confirmedAppointmentData={confirmedAppointmentData}
                 appointmentCofirmedDialog={appointmentCofirmedDialog}
                 setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                 setInputValue={setInputValue}
                 setHospitalListDialog={setHospitalListDialog}
             />
+            {/* <AppointmentConfirmDIalog
+                confirmedAppointmentData={confirmedAppointmentData}
+                appointmentCofirmedDialog={appointmentCofirmedDialog}
+                setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                setInputValue={setInputValue}
+                setHospitalListDialog={setHospitalListDialog}
+            /> */}
         </>
     );
 };

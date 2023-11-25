@@ -142,7 +142,13 @@ const CompleteAppointmentsTable = ({
                                         Edit
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        <Select
+                                        <Box
+                                            component="span"
+                                            sx={{ color: "#15B912" }}
+                                        >
+                                            Completed
+                                        </Box>
+                                        {/* <Select
                                             sx={{
                                                 color: "#15B912",
                                                 fontFamily: "Lato",
@@ -208,7 +214,7 @@ const CompleteAppointmentsTable = ({
                                             >
                                                 Missed
                                             </MenuItem>
-                                        </Select>
+                                        </Select> */}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         <label

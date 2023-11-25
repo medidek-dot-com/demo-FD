@@ -19,6 +19,22 @@ import AppointmentByTokenComponent from "./AppointmentByTokenComponent";
 import OnlineAppointmentComponet from "./OnlineAppointmentComponet";
 import { axiosClient } from "../../Utils/axiosClient";
 import { useParams } from "react-router-dom";
+import styled from "@emotion/styled";
+
+const DialogStyle = styled(Dialog)({
+    ".MuiDialog-paper": {
+        margin: "10px",
+    },
+    // ["& div:first-child"]:{
+    //     // marginInline:"8px"
+    // },
+    // ["& .MuiDialog-container:nth-of-type(1)"]: {
+    //     marginInline: "16px",
+    // },
+    // ["& .abhay  div:nth-child(2)"]:{
+    //     marginInline:"16px"
+    // }
+});
 
 const AppointmentSettingDialog = ({
     appointmentSettingDialog,
@@ -109,7 +125,7 @@ const AppointmentSettingDialog = ({
     // }, []);
     return (
         <>
-            <Dialog
+            <DialogStyle
                 open={appointmentSettingDialog}
                 onClose={() => {
                     return setAppointmentSettingDialog(false);
@@ -121,8 +137,12 @@ const AppointmentSettingDialog = ({
                     sx={{
                         fontFamily: "Raleway",
                         fontWeight: "600",
-                        fontSize: "1.375rem",
-                        lineHeight: "14.4px",
+                        fontSize: {
+                            xs: "0.938rem",
+                            sm: "0.938rem",
+                            md: "1.375rem",
+                        },
+                        lineHeight: { xs: "25px", sm: "20px", md: "14.4px" },
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
@@ -248,7 +268,7 @@ const AppointmentSettingDialog = ({
                         />
                     )}
                 </DialogContent>
-            </Dialog>
+            </DialogStyle>
         </>
     );
 };

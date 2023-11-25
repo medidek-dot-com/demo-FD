@@ -14,6 +14,8 @@ import {
     TextField,
     Avatar,
     Typography,
+    Select,
+    MenuItem,
 } from "@mui/material";
 import dayjs from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,6 +31,31 @@ const LabelStyle = styled("label")({
     marginBottom: "5px",
     fontFamily: "Lato",
     fontWeight: "600",
+    color: "#383838",
+});
+
+const SelectFieldStyle = styled(Select)({
+    // [`& select`]: {
+    fontFamily: "Lato",
+    fontWeight: "600",
+    fontSize: "15px",
+    color: "#383838",
+    // },
+
+    "& .MuiOutlinedInput-input": {
+        padding: "10px 15px",
+    },
+    [`& p`]: {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "1rem",
+    },
+});
+
+const MenuItemStyle = styled(MenuItem)({
+    fontFamily: "Lato",
+    fontWeight: "600",
+    fontSize: "15px",
     color: "#383838",
 });
 
@@ -244,7 +271,26 @@ const BookAppointmnetDetailsDialog = ({
                                     Gender
                                     <span style={{ color: "#EA4335" }}>*</span>
                                 </LabelStyle>
-                                <TextFieldStyle
+                                <SelectFieldStyle
+                                    id="gender"
+                                    name="gender"
+                                    fullWidth
+                                    placeholder="Select Gender"
+                                    error={err && !inputValue.gender && true}
+                                    value={inputValue.gender}
+                                    onChange={handleChange}
+                                >
+                                    <MenuItemStyle value="male">
+                                        Male
+                                    </MenuItemStyle>
+                                    <MenuItemStyle value="female">
+                                        Female
+                                    </MenuItemStyle>
+                                    <MenuItemStyle value="other">
+                                        Other
+                                    </MenuItemStyle>
+                                </SelectFieldStyle>
+                                {/* <TextFieldStyle
                                     id="gender"
                                     name="gender"
                                     fullWidth
@@ -264,7 +310,7 @@ const BookAppointmnetDetailsDialog = ({
                                     onChange={(e) =>
                                         handleChange(e) & setError(false)
                                     }
-                                />
+                                /> */}
                             </Stack>
                             <Stack>
                                 <LabelStyle htmlFor="phone">
