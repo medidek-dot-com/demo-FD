@@ -13,6 +13,10 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import { LoadingButton } from "@mui/lab";
+import { axiosClient } from "../../Utils/axiosClient";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const ChangePasswordField = styled(TextField)({
     minWidth: "280px",
@@ -41,15 +45,18 @@ const ChangePasswordDialog = ({
     changePasswordDialog,
     setChangePasswordDialog,
 }) => {
+    const { user } = useSelector((state) => state.auth);
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [wrongPassword, setWrongPassword] = useState(false);
     const [passwordNotMatch, setPasswordNotMatch] = useState(false);
     const [err, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const changeDoctorPassword = async (e) => {
+    const changePassword = async (e) => {
         e.preventDefault();
+        console.log(oldPassword, newPassword, confirmPassword);
         if (!oldPassword || !newPassword || !confirmPassword) {
             return setError(true);
         }
@@ -58,28 +65,36 @@ const ChangePasswordDialog = ({
             setError(true);
             return setPasswordNotMatch(true);
         }
+        console.log("hello bccc");
+        setLoading(true);
         try {
+            console.log("hii bccc");
+
             const response = await axiosClient.put(
-                `/v2/changePasswordForDoctor/${inputValue._id}`,
+                `/v2/changepassword/${user?._id}`,
                 {
-                    oldPassword,
-                    newPassword,
+                    oldpassword: oldPassword,
+                    newpassword: newPassword,
+                    role: "DOCTOR",
                 }
             );
             if (response.status === "ok") {
                 setChangePasswordDialog(false);
+                setLoading(false);
                 return toast.success("password Changed successfully");
             } else if (
                 response.status === "error" &&
-                response.statusCode === 403
+                response.statusCode === 409
             ) {
-                setWrongPassword(true);
+                setLoading(false);
+                return setWrongPassword(true);
             }
         } catch (error) {
-            setOldPassword("");
-            setNewPassword("");
-            setConfirmPassword("");
+            // setOldPassword("");
+            // setNewPassword("");
+            // setConfirmPassword("");
             setError(true);
+            setLoading(false);
             setWrongPassword(error.message);
         }
     };
@@ -118,7 +133,7 @@ const ChangePasswordDialog = ({
                     ) : null}
                 </DialogTitle>
                 <Divider />
-                <form onSubmit={changeDoctorPassword}>
+                <form onSubmit={changePassword}>
                     <DialogContent
                         sx={{
                             display: "flex",
@@ -160,7 +175,8 @@ const ChangePasswordDialog = ({
                                 placeholder="Old Password"
                                 onChange={(e) =>
                                     setOldPassword(e.target.value) &
-                                    setError(false)
+                                    setError(false) &
+                                    setWrongPassword(false)
                                 }
                             />
                         </Stack>
@@ -197,7 +213,8 @@ const ChangePasswordDialog = ({
                                 placeholder="New Password"
                                 onChange={(e) =>
                                     setNewPassword(e.target.value) &
-                                    setError(false)
+                                    setError(false) &
+                                    setPasswordNotMatch(false)
                                 }
                             />
                         </Stack>
@@ -234,12 +251,39 @@ const ChangePasswordDialog = ({
                                 placeholder="Confirm New"
                                 onChange={(e) =>
                                     setConfirmPassword(e.target.value) &
-                                    setError(false)
+                                    setError(false) &
+                                    setPasswordNotMatch(false)
                                 }
                             />
                         </Stack>
-                        <Stack spacing="10px" sx={{width:'100%'}}>
-                            <Button
+                        <Stack spacing="10px" sx={{ width: "100%" }}>
+                            <LoadingButton
+                                size="small"
+                                fullWidth
+                                type="submit"
+                                // onClick={handleCLick}
+                                loading={loading}
+                                // loadingPosition="end"
+                                variant="contained"
+                                sx={{
+                                    mt: 2,
+                                    display: "flex",
+                                    borderRadius: 40,
+                                    textTransform: "none",
+                                    boxShadow: "none",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "700",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    Change Password
+                                </span>
+                            </LoadingButton>
+                            {/* <Button
                                 type="submit"
                                 variant="contained"
                                 sx={{
@@ -257,7 +301,7 @@ const ChangePasswordDialog = ({
                                 }}
                             >
                                 Change Password
-                            </Button>
+                            </Button> */}
                             <Button
                                 onClick={() => setChangePasswordDialog(false)}
                                 variant="outlined"

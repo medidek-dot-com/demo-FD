@@ -82,6 +82,7 @@ const BookAppointmnetDetailsDialog = ({
     setBookAppointmentDetailsDialog,
     bookingAppointmentDetails,
     setBookingAppointmentDetails,
+    doctorinfo,
     inputValue,
     setInputValue,
     setConfirmBookAppointmentDialog,
@@ -136,7 +137,7 @@ const BookAppointmnetDetailsDialog = ({
                         alignItems: "center",
                     }}
                 >
-                    Book Appointment dcs
+                    Book Appointment
                     {bookingAppointmentDetailsDialog ? (
                         <IconButton
                             aria-label="close"
@@ -379,7 +380,8 @@ const BookAppointmnetDetailsDialog = ({
                                     >
                                         <Avatar
                                             src={
-                                                bookingAppointmentDetails.imgurl
+                                                doctorinfo?.imgurl ||
+                                                bookingAppointmentDetails?.imgurl
                                             }
                                             sx={{
                                                 width: "51px",
@@ -403,9 +405,8 @@ const BookAppointmnetDetailsDialog = ({
                                                 }}
                                             >
                                                 Dr.{" "}
-                                                {
-                                                    bookingAppointmentDetails.nameOfTheDoctor
-                                                }
+                                                {doctorinfo?.nameOfTheDoctor ||
+                                                    bookingAppointmentDetails?.nameOfTheDoctor}
                                             </Typography>
                                             <Typography
                                                 sx={{

@@ -65,9 +65,11 @@ const MissedPatientUserAppointment = ({
         userid: user?._id,
         status: "pending",
     });
+    const [selectedTime, setSelectedTime] = useState(null);
     const [bookingAppointmentDialog, setBookAppointmentDialog] =
         useState(false);
     const [slotData, setSlotData] = useState([]);
+    const [activeCard, setActiveCard] = useState();
     const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
         useState(false);
     const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
@@ -99,6 +101,9 @@ const MissedPatientUserAppointment = ({
         try {
             // setSlotsLoading(true);
             if (!appointmentDetails?.doctorid?._id) {
+                return false;
+            }
+            if (!bookingAppointmentDetails.appointmentDate) {
                 return false;
             }
             const response = await axiosClient.get(
@@ -258,6 +263,10 @@ const MissedPatientUserAppointment = ({
                 setInputValue={setInputValue}
                 slotData={slotData}
                 setSlotData={setSlotData}
+                selectedTime={selectedTime}
+                setSelectedTime={setSelectedTime}
+                activeCard={activeCard}
+                setActiveCard={setActiveCard}
                 // slotsLoading={slotsLoading}
             />
 
@@ -284,6 +293,7 @@ const MissedPatientUserAppointment = ({
                     setConfirmBookAppointmentDialog
                 }
                 bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
                 bookingAppointmentDialog={bookingAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
                 // hospitalListDialog={hospitalListDialog}
@@ -294,6 +304,9 @@ const MissedPatientUserAppointment = ({
                 appointmentDetails={appointmentDetails}
                 getPendingAppointmentsData={getPendingAppointmentsData}
                 getMissedAppointmentsData={getMissedAppointmentsData}
+                setSelectedTime={setSelectedTime}
+                setSlotData={setSlotData}
+                setActiveCard={setActiveCard}
                 // setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
             />
         </>

@@ -42,6 +42,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import CoursesSkeleton from "../../Components/Doctor/Skeleton/CoursesSkeleton";
 import { BiSolidBook } from "react-icons/bi";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
+import { logOutDoctor } from "../../Store/doctorDataSlice";
 // import { BsFillCalendarFill } from "react-icons/bs";
 
 // const TextFieldStyle = styled(TextField)({
@@ -117,6 +118,7 @@ const DoctorCourses = () => {
     const [menu, setMenu] = useState(false);
 
     const { user } = useSelector((state) => state.auth);
+    const { doctor } = useSelector((state) => state.doctor);
     const [loading, setLoading] = useState(true);
     const numberOfHospitals = user;
 
@@ -171,6 +173,7 @@ const DoctorCourses = () => {
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
         dispatch(logout());
+        dispatch(logOutDoctor());
         removeItem(KEY_ACCESS_TOKEN);
         // navigate('/')
         // window.location.href = '/master/signin'
@@ -229,7 +232,7 @@ const DoctorCourses = () => {
                     />
                 </Stack>
                 <Avatar
-                    src={user?.imgurl ? user.imgurl : "/default.png"}
+                    src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -370,7 +373,9 @@ const DoctorCourses = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl ? user.imgurl : "/default.png"
+                                    doctor?.imgurl
+                                        ? doctor.imgurl
+                                        : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -384,7 +389,7 @@ const DoctorCourses = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {user.nameOfTheDoctor}
+                                Dr. {doctor.nameOfTheDoctor}
                             </Typography>
                             <Typography
                                 variant="h5"
@@ -396,7 +401,7 @@ const DoctorCourses = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                                DUID :- {user.doctorid}
+                                DUID :- {doctor.doctorid}
                             </Typography>
                         </Stack>
                         <Stack

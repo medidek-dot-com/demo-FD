@@ -130,13 +130,13 @@ const AppointmentConfirmDialog = ({
                         <Typography sx={{ lineHeight: "20px" }}>
                             Name :-{" "}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {confirmedAppointmentData.name}
+                                {confirmedAppointmentData?.name}
                             </Box>
                         </Typography>
                         <Typography sx={{ lineHeight: "20px" }}>
                             Age :- {""}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {confirmedAppointmentData.age}
+                                {confirmedAppointmentData?.age}
                             </Box>
                         </Typography>
                         {/* <Typography sx={{ lineHeight: "20px" }}>
@@ -153,13 +153,13 @@ const AppointmentConfirmDialog = ({
                         <Typography sx={{ lineHeight: "20px" }}>
                             Gender :-{" "}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {confirmedAppointmentData.gender}
+                                {confirmedAppointmentData?.gender}
                             </Box>
                         </Typography>
                         <Typography sx={{ lineHeight: "20px" }}>
                             Phone No.{" "}
                             <Box component="span" sx={{ color: "#1F51C6" }}>
-                                {confirmedAppointmentData.phone}
+                                {confirmedAppointmentData?.phone}
                             </Box>
                         </Typography>
                     </Stack>

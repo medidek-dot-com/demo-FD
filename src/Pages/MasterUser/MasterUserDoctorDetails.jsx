@@ -10,6 +10,8 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
+import moment from "moment";
+
 import Footer from "../../Components/Footer/Footer";
 import BookAppointmentDialog from "../../Components/Master/BookAppointmentDialog";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,6 +24,8 @@ import { useDispatch } from "react-redux";
 import { tab } from "../../Store/tabSlice";
 import ChooseDateAndSlotTimeDialog from "../../Components/Master/ChooseDateAndSlotTimeDialog";
 import AppointmentSettingDialog from "../../Components/Master/AppointmentSettingDialog";
+import BookAppointmnetDetailsDialog from "../../Components/Patient/BookAppointmnetDetailsDialog";
+import ConfirmAppointmentDialog from "../../Components/Patient/ConfirmAppointmentDialog";
 
 const WrapperStyle = styled(Box)(({ theme }) => ({
     width: "calc(100% - 100px)",
@@ -36,20 +40,64 @@ const MasterUserDoctorDetails = () => {
     console.log(hospital_id, doctor_id);
     const navigate = useNavigate();
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
+    const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
+        useState(false);
     const [aboutDropDown, setAboutDropDown] = useState(true);
     const [reviewDropDown, setReviewAboutDropDown] = useState(false);
     const [appointments, setAppointments] = useState([]);
     const [doctorDetails, setDoctorsDetails] = useState({});
+    const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
     const [reviews, setReviews] = useState([]);
+    const [slotsLoading, setSlotsLoading] = useState(false);
+    const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
+        useState(false);
+    // console.log(doctorDetails.acceptAppointments);
+
     const [appointmentSettingDialog, setAppointmentSettingDialog] =
         useState(false);
     const [chooseDateAndTimeDialog, setChooseDateAndTimeDialog] =
         useState(false);
+
     const [getDateAndTime, setGetDateAndTime] = useState({
         appointmentDate: "",
         AppointmentTime: "",
     });
+
+    const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
+        nameOfTheDoctor: "",
+        doctorsId: "",
+        appointmentDate: "",
+        consultingTime: "",
+        hospitalId: "",
+        userid: hospital_id,
+        doctorid: doctor_id,
+        name: "",
+        Age: "",
+        Gender: "",
+        phone: "",
+        AppointmentNotes: "",
+        AppointmentTime: "",
+        imgurl: "",
+    });
+
+    const [inputValue, setInputValue] = useState({
+        name: "",
+        age: "",
+        gender: "",
+        phone: "",
+        email: "",
+        AppointmentNotes: "",
+        appointmentDate: "",
+        AppointmentTime: "",
+        doctorid: doctor_id,
+        userid: hospital_id,
+    });
+
+    const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
+        useState(false);
+
     const [slotData, setSlotData] = useState([]);
+
     console.log(getDateAndTime);
     const dispatch = useDispatch();
 
@@ -63,42 +111,67 @@ const MasterUserDoctorDetails = () => {
         setReviews(response.result.reviews);
     };
 
-    const getUpcomingAppointmentsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getAppoinmentForDoctorInHospital/${hospital_id}/${doctor_id}`
-        );
-        setAppointments(response.result);
-        console.log(response);
+    const getPendingAppointmentsDataForPerticularDate = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getPendingAppoinmentForDoctor/${doctor_id}/${date}`
+            );
+            console.log(response.result);
+            return setAppointments(response.result);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
-        getUpcomingAppointmentsData();
+        getPendingAppointmentsDataForPerticularDate();
         getDoctorDetails();
     }, []);
 
     const getAvailableSlots = async () => {
         try {
+            setSlotsLoading(true);
             const response = await axiosClient.get(
-                `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${getDateAndTime.appointmentDate}`
+                `/v2/getAvailbleSlotsForAnUser/${bookingAppointmentDetails.doctorid}/${bookingAppointmentDetails.appointmentDate}`
             );
             if (response.status === "ok") {
+                setSlotsLoading(false);
                 return setSlotData(response.result);
             }
         } catch (error) {
+            setSlotsLoading(false);
             console.log(error.message);
         }
     };
 
     useEffect(() => {
         getAvailableSlots();
-    }, [getDateAndTime.appointmentDate]);
+    }, [bookingAppointmentDetails.appointmentDate]);
+
+    const getAvailableTokenTime = async () => {
+        try {
+            setSlotsLoading(true);
+            const response = await axiosClient.get(
+                `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${getDateAndTime.appointmentDate}`
+            );
+            if (response.status === "ok") {
+                setSlotsLoading(false);
+                return setSlotData(response.result);
+            }
+        } catch (error) {
+            setSlotsLoading(false);
+            console.log(error.message);
+        }
+    };
 
     return (
         <>
             <WrapperStyle>
                 <DoctorProfileCard
                     setChooseDateAndTimeDialog={setChooseDateAndTimeDialog}
-                    getUpcomingAppointmentsData={getUpcomingAppointmentsData}
+                    getUpcomingAppointmentsData={
+                        getPendingAppointmentsDataForPerticularDate
+                    }
                     doctorDetails={doctorDetails}
                     setAppointmentSettingDialog={setAppointmentSettingDialog}
                 />
@@ -430,7 +503,7 @@ const MasterUserDoctorDetails = () => {
                                                     boxShadow: "none",
                                                 }}
                                             >
-                                                {appointment.token}
+                                                {i + 1}
                                             </Fab>
                                             <Box ml={1}>
                                                 <Typography
@@ -440,7 +513,7 @@ const MasterUserDoctorDetails = () => {
                                                         fontSize: "1rem",
                                                     }}
                                                 >
-                                                    {appointment.patientName}
+                                                    {appointment.name}
                                                 </Typography>
                                                 <Typography
                                                     sx={{
@@ -452,7 +525,7 @@ const MasterUserDoctorDetails = () => {
                                                 >
                                                     Appointment at:{" "}
                                                     {
-                                                        appointment.appointmentTime
+                                                        appointment.AppointmentTime
                                                     }
                                                 </Typography>
                                             </Box>
@@ -528,16 +601,65 @@ const MasterUserDoctorDetails = () => {
                 setGetDateAndTime={setGetDateAndTime}
                 slotData={slotData}
                 setSlotData={setSlotData}
+                slotsLoading={slotsLoading}
+                acceptAppointments={doctorDetails.acceptAppointments}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+                bookingAppointmentDetailsDialog={
+                    bookingAppointmentDetailsDialog
+                }
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
             />
+            <BookAppointmnetDetailsDialog
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                bookingAppointmentDetailsDialog={
+                    bookingAppointmentDetailsDialog
+                }
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                doctorinfo={doctorDetails}
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+            />
+
+            <ConfirmAppointmentDialog
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                confirmBookAppointmentDialog={confirmBookAppointmentDialog}
+                setConfirmBookAppointmentDialog={
+                    setConfirmBookAppointmentDialog
+                }
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                bookingAppointmentDialog={bookAppointmentDialog}
+                setBookAppointmentDialog={setBookAppointmentDialog}
+                setBookAppointmentDetailsDialog={
+                    setBookAppointmentDetailsDialog
+                }
+                setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+            />
+
             <BookAppointmentDialog
                 bookAppointmentDialog={bookAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
                 getDateAndTime={getDateAndTime}
-                getUpcomingAppointmentsData={getUpcomingAppointmentsData}
+                getUpcomingAppointmentsData={
+                    getPendingAppointmentsDataForPerticularDate
+                }
             />
             <AppointmentSettingDialog
                 appointmentSettingDialog={appointmentSettingDialog}
                 setAppointmentSettingDialog={setAppointmentSettingDialog}
+                slotData={slotData}
+                doctorDetails={doctorDetails}
             />
             <Footer />
         </>

@@ -17,40 +17,96 @@ import moment from "moment";
 import { useEffect } from "react";
 import AppointmentByTokenComponent from "./AppointmentByTokenComponent";
 import OnlineAppointmentComponet from "./OnlineAppointmentComponet";
+import { axiosClient } from "../../Utils/axiosClient";
+import { useParams } from "react-router-dom";
 
 const AppointmentSettingDialog = ({
     appointmentSettingDialog,
     setAppointmentSettingDialog,
+    doctorDetails,
 }) => {
+    const { hospital_id, doctor_id } = useParams();
+
+    console.log(doctorDetails);
     const [appointmentByToken, setAppointmentByToken] = useState(false);
-    const [dates, setDates] = useState([]);
+    const [onlineSlotData, setOnlineSlotsData] = useState(null);
+    console.log("online slot data", onlineSlotData);
+    const [tokenSlotData, setTokenSlotsData] = useState(null);
+    // const [dates, setDates] = useState([]);
     const [currentMonth, setCurrentMonth] = useState(moment());
     const currentDate = moment().format("yyyy-MM-DD");
-    const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
+
+    const [selectedSlotDate, setSelectedSlotDate] = useState({
+        currentDate,
+        i: 0,
+    });
+
+    const [selectedTokenDate, setSelecteTokendDate] = useState({
+        currentDate,
+        i: 0,
+    });
+    // const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
     const [markAsHoliday, setMarkAsHoliday] = useState(false);
 
     const currentDay = moment().format("ddd");
 
-    const getWeekDates = () => {
-        const daysInMonth = currentMonth.daysInMonth();
-        const monthStart = moment().startOf("day");
-        const monthsDates = [];
-
-        for (let i = 0; i < 7; i++) {
-            const date = monthStart.clone().add(i, "days");
-            monthsDates.push({
-                day: date.format("ddd"),
-                date: date.format("DD"),
-                month: date.format("MMM"),
-                year: date.format("YYYY"),
-            });
+    const getOnlineSlotDetailForDoctorForPerticularDate = async () => {
+        const date = selectedSlotDate.currentDate;
+        try {
+            if (doctor_id) {
+                const response = await axiosClient.get(
+                    `/v2/getSlotDetailForDoctorForPerticularDate/${doctor_id}/${date}`
+                );
+                return setOnlineSlotsData(response.result);
+            }
+        } catch (error) {
+            console.log(error.message);
         }
-        setDates(monthsDates, currentDay);
     };
+    const getAppointmentByTokenSlotDetailForDoctorForPerticularDate =
+        async () => {
+            const date = selectedTokenDate.currentDate;
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctor_id}/${date}`
+                );
+                setTokenSlotsData(response.result);
+                return;
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
 
     useEffect(() => {
-        getWeekDates();
-    }, []);
+        getOnlineSlotDetailForDoctorForPerticularDate();
+    }, [selectedSlotDate, doctor_id]);
+
+    console.log("jbj", selectedSlotDate);
+
+    useEffect(() => {
+        getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
+    }, [selectedTokenDate, doctor_id]);
+    console.log("uydgcduichdi", selectedTokenDate);
+    // const getWeekDates = () => {
+    //     const daysInMonth = currentMonth.daysInMonth();
+    //     const monthStart = moment().startOf("day");
+    //     const monthsDates = [];
+
+    //     for (let i = 0; i < 7; i++) {
+    //         const date = monthStart.clone().add(i, "days");
+    //         monthsDates.push({
+    //             day: date.format("ddd"),
+    //             date: date.format("DD"),
+    //             month: date.format("MMM"),
+    //             year: date.format("YYYY"),
+    //         });
+    //     }
+    //     setDates(monthsDates, currentDay);
+    // };
+
+    // useEffect(() => {
+    //     getWeekDates();
+    // }, []);
     return (
         <>
             <Dialog
@@ -170,129 +226,27 @@ const AppointmentSettingDialog = ({
                             Appointments by token
                         </Button>
                     </Stack>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "start",
-                            alignItems: "center",
-                            my: "15px",
-                        }}
-                    >
-                        <Switch
-                            // value={"enabled"}
-
-                            onChange={(e) =>
-                                setOnlineAppointmentEnabled(e.target.checked)
+                    {appointmentByToken ? (
+                        <AppointmentByTokenComponent
+                            doctorDetails={doctorDetails}
+                            tokenSlotData={tokenSlotData}
+                            selectedTokenDate={selectedTokenDate}
+                            setSelecteTokendDate={setSelecteTokendDate}
+                            getAppointmentByTokenSlotDetailForDoctorForPerticularDate={
+                                getAppointmentByTokenSlotDetailForDoctorForPerticularDate
                             }
                         />
-                        <Box
-                            component="span"
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "600",
-                                fontSize: "0.938rem",
-                                color: "#1F51C6",
-                            }}
-                        >
-                            {/* {onlineAppointmentEnabled ? "Enable" : "Disabled"} */}
-                        </Box>
-                    </Box>
-                    <Card
-                        sx={{
-                            px: {
-                                xs: "16px",
-                                sm: "16px",
-                                md: "30px",
-                            },
-                            py: {
-                                xs: "25px",
-                                sm: "25px",
-                                md: "30px",
-                            },
-                            boxShadow: "none",
-                            border: "1px solid #D9D9D9",
-                        }}
-                    >
-                        <Stack
-                            direction="row"
-                            spacing={{ xs: "7px", sm: "7px", md: "12.61px" }}
-                            sx={{
-                                width: { xs: "100%", sm: "100%", md: "100%" },
-                                // background: "red",
-                            }}
-                        >
-                            {dates.map((date, i) => (
-                                <Box
-                                    key={i + 1}
-                                    component="button"
-                                    onClick={() => handleSelectedDate(date, i)}
-                                    sx={{
-                                        width: {
-                                            xs: "43.18px",
-                                            sm: "43.18px",
-                                            md: "57.39px",
-                                        },
-                                        height: {
-                                            xs: "43.18px",
-                                            sm: "43.18px",
-                                            md: "57.39px",
-                                        },
-                                        background:
-                                            selectedDay.i === i
-                                                ? "#1F51C6"
-                                                : "#FFFFFF",
-                                        border:
-                                            currentDate === date.day
-                                                ? "2px solid #1F51C6"
-                                                : "1px solid #706D6D8F",
-                                        borderRadius: "3px",
-                                        color:
-                                            selectedDay.i === i
-                                                ? "#FFFFFF"
-                                                : "#706D6D",
-                                        userSelect: "none",
-                                    }}
-                                >
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: {
-                                                xs: "0.938rem",
-                                                sm: "0.938rem",
-                                                md: "1.125rem",
-                                            },
-                                            lineHeight: "21.6px",
-                                        }}
-                                    >
-                                        {date.day}
-                                    </Typography>
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: {
-                                                xs: "0.938rem",
-                                                sm: "0.938rem",
-                                                md: "1.125rem",
-                                            },
-                                            lineHeight: "21.6px",
-                                        }}
-                                    >
-                                        {date.date}
-                                    </Typography>
-                                </Box>
-                            ))}
-                        </Stack>
-                        {appointmentByToken ? (
-                            <AppointmentByTokenComponent />
-                        ) : (
-                            <OnlineAppointmentComponet
-                                markAsHoliday={markAsHoliday}
-                                setMarkAsHoliday={setMarkAsHoliday}
-                            />
-                        )}
-                    </Card>
+                    ) : (
+                        <OnlineAppointmentComponet
+                            doctorDetails={doctorDetails}
+                            onlineSlotData={onlineSlotData}
+                            selectedSlotDate={selectedSlotDate}
+                            setSelectedSlotDate={setSelectedSlotDate}
+                            getOnlineSlotDetailForDoctorForPerticularDate={
+                                getOnlineSlotDetailForDoctorForPerticularDate
+                            }
+                        />
+                    )}
                 </DialogContent>
             </Dialog>
         </>

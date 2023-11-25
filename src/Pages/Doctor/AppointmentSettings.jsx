@@ -59,6 +59,7 @@ import OnlineAppointmentsComponent from "../../Components/Doctor/OnlineAppointme
 import AppointmentByToken from "../../Components/Doctor/AppointmentByToken";
 import OnlineAppointmentEditSettings from "../../Components/OnlineAppointmentEditSettings";
 import AppointmentByTokenEditSettings from "../../Components/Doctor/AppointmentByTokenEditSettings";
+import { logOutDoctor } from "../../Store/doctorDataSlice";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -130,11 +131,15 @@ const AppointmentSettings = () => {
         useState(false);
 
     const { user } = useSelector((state) => state.auth);
+    const { doctor } = useSelector((state) => state.doctor);
     const numberOfHospitals = user;
     const [dates, setDates] = useState([]);
     const currentDate = moment().format("yyyy-MM-DD");
-    console.log(currentDate);
     const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
+    const [tokenSelectedDay, setTokenSelectedDay] = useState({
+        currentDate,
+        i: 0,
+    });
     const [view, setView] = useState("Weekly view");
     const [holidayDialog, setHolidayDialog] = useState(false);
     const [markAsHoliday, setMarkAsHoliday] = useState(false);
@@ -143,6 +148,7 @@ const AppointmentSettings = () => {
     const [currentMonth, setCurrentMonth] = useState(moment());
     const [onlineSlotData, setOnlineSlotsData] = useState({});
     const [tokenSlotData, setTokenSlotsData] = useState({});
+    const [editSlottSetting, setEditSlottSetting] = useState(false);
 
     // const {hospital_id} = useParams();
     const navigate = useNavigate();
@@ -186,35 +192,31 @@ const AppointmentSettings = () => {
         const a = date + " " + month + " " + year;
         // console.log(a)
         const newDate = new Date(a);
-        console.log(newDate);
         let dateIndex = new Date(newDate);
         let dayIndex = dateIndex.getDay();
-        console.log(dayIndex);
 
         // const formattedDate = moment.format(date)
     };
-    console.log(selectedDay.currentDate);
     const getOnlineSlotDetailForDoctorForPerticularDate = async () => {
         const date = selectedDay.currentDate;
         try {
             const response = await axiosClient.get(
-                `/v2/getSlotDetailForDoctorForPerticularDate/${doctorid}/${date}`
+                `/v2/getSlotDetailForDoctorForPerticularDate/${doctor._id}/${date}`
             );
             setOnlineSlotsData(response.result);
-            console.log(response);
         } catch (error) {
             console.log(error.message);
         }
     };
     const getAppointmentByTokenSlotDetailForDoctorForPerticularDate =
         async () => {
-            const date = selectedDay.currentDate;
+            const date = tokenSelectedDay.currentDate;
             try {
                 const response = await axiosClient.get(
-                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctorid}/${date}`
+                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctor._id}/${date}`
                 );
                 setTokenSlotsData(response.result);
-                return console.log(response);
+                return;
             } catch (error) {
                 console.log(error.message);
             }
@@ -222,11 +224,15 @@ const AppointmentSettings = () => {
 
     useEffect(() => {
         getOnlineSlotDetailForDoctorForPerticularDate();
-        getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
     }, [selectedDay]);
+
+    useEffect(() => {
+        getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
+    }, [tokenSelectedDay]);
 
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
+        dispatch(logOutDoctor());
         dispatch(logout());
         removeItem(KEY_ACCESS_TOKEN);
         // navigate('/')
@@ -286,7 +292,7 @@ const AppointmentSettings = () => {
                     />
                 </Stack>
                 <Avatar
-                    src={user?.imgurl ? user.imgurl : "/default.png"}
+                    src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -423,7 +429,9 @@ const AppointmentSettings = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl ? user.imgurl : "/default.png"
+                                    doctor?.imgurl
+                                        ? doctor.imgurl
+                                        : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -437,7 +445,7 @@ const AppointmentSettings = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {user?.nameOfTheDoctor}
+                                Dr. {doctor?.nameOfTheDoctor}
                             </Typography>
                             <Typography
                                 variant="h5"
@@ -449,7 +457,7 @@ const AppointmentSettings = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                                DUID :- {user?.doctorid}
+                                DUID :- {doctor?.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -794,8 +802,12 @@ const AppointmentSettings = () => {
                                         {tokenSlotData ? (
                                             <AppointmentByTokenEditSettings
                                                 dates={dates}
-                                                selectedDay={selectedDay}
-                                                setSelectedDay={setSelectedDay}
+                                                tokenSelectedDay={
+                                                    tokenSelectedDay
+                                                }
+                                                setTokenSelectedDay={
+                                                    setTokenSelectedDay
+                                                }
                                                 currentDate={currentDate}
                                                 tokenSlotData={tokenSlotData}
                                             />
@@ -810,8 +822,12 @@ const AppointmentSettings = () => {
                                                 setMarkAsHoliday={
                                                     setMarkAsHoliday
                                                 }
-                                                selectedDay={selectedDay}
-                                                setSelectedDay={setSelectedDay}
+                                                tokenSelectedDay={
+                                                    tokenSelectedDay
+                                                }
+                                                setTokenSelectedDay={
+                                                    setTokenSelectedDay
+                                                }
                                                 currentDate={currentDate}
                                             />
                                         )}
@@ -825,6 +841,18 @@ const AppointmentSettings = () => {
                                                 setSelectedDay={setSelectedDay}
                                                 currentDate={currentDate}
                                                 onlineSlotData={onlineSlotData}
+                                                editSlottSetting={
+                                                    editSlottSetting
+                                                }
+                                                setEditSlottSetting={
+                                                    setEditSlottSetting
+                                                }
+                                                getOnlineSlotDetailForDoctorForPerticularDate={
+                                                    getOnlineSlotDetailForDoctorForPerticularDate
+                                                }
+                                                setHolidayDialog={
+                                                    setHolidayDialog
+                                                }
                                             />
                                         ) : (
                                             <OnlineAppointmentsComponent
@@ -843,6 +871,12 @@ const AppointmentSettings = () => {
                                                 currentDate={currentDate}
                                                 getOnlineSlotDetailForDoctorForPerticularDate={
                                                     getOnlineSlotDetailForDoctorForPerticularDate
+                                                }
+                                                editSlottSetting={
+                                                    editSlottSetting
+                                                }
+                                                setEditSlottSetting={
+                                                    setEditSlottSetting
                                                 }
                                             />
                                         )}

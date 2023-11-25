@@ -40,7 +40,7 @@ const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.body}`]: {
         fontFamily: "Lato",
         fontWeight: "600",
-        fontSize: "16px",
+        fontSize: "15px",
         textAlign: "center",
         color: "#383838",
     },
@@ -111,7 +111,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                             <StyledTableCell>Contact No.</StyledTableCell>
                             <StyledTableCell>Timing</StyledTableCell>
                             <StyledTableCell>Date</StyledTableCell>
-                            <StyledTableCell>Remove</StyledTableCell>
+                            {/* <StyledTableCell>Remove</StyledTableCell> */}
                             <StyledTableCell>Status</StyledTableCell>
                             <StyledTableCell>Prescription</StyledTableCell>
                         </TableRow>
@@ -147,9 +147,9 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                             appointment.appointmentDate
                                         ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
-                                    <StyledTableCell sx={{ color: "#1F51C6" }}>
+                                    {/* <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
-                                    </StyledTableCell>
+                                    </StyledTableCell> */}
                                     <StyledTableCell>
                                         <Select
                                             sx={{
@@ -216,6 +216,24 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                                 value={"missed"}
                                             >
                                                 Missed
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={() =>
+                                                    handleStatusChange(
+                                                        appointment._id,
+                                                        "missed"
+                                                    )
+                                                }
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "16px",
+                                                    textAlign: "center",
+                                                    color: "#EA4335",
+                                                }}
+                                                value={"cancelled"}
+                                            >
+                                                Cancelled
                                             </MenuItem>
                                         </Select>
                                     </StyledTableCell>

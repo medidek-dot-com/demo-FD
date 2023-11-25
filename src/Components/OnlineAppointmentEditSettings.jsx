@@ -11,37 +11,42 @@ import {
     Typography,
 } from "@mui/material";
 import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
+import EditSlotSetting from "./Doctor/EditSlotSetting";
 
 const OnlineAppointmentEditSettings = ({
     dates,
-    markAsHoliday,
-    setMarkAsHoliday,
     selectedDay,
     setSelectedDay,
     currentDate,
     onlineSlotData,
+    editSlottSetting,
+    setEditSlottSetting,
+    getOnlineSlotDetailForDoctorForPerticularDate,
+    setHolidayDialog,
 }) => {
     const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
         useState(true);
+    const [markAsHoliday, setMarkAsHoliday] = useState(false);
+
     // const [selectedDay, setSelectedDay] = useState(0);
     // const currentDate = moment().format("ddd");
 
-    const handleSelectedDate = (userDate, i) => {
+    const handleSelectedDate = async (userDate, i) => {
         const { date, month, year, day } = userDate;
         // console.log(day, date, month, year);
         const a = year + "-" + month + "-" + date;
         console.log(a);
 
-        var formattedDate = moment(a).format("yyyy-MM-DD");
+        var formattedDate = moment(a, "yyyy-MMM-DD").format("yyyy-MM-DD");
         console.log(formattedDate); // Output: "2023-11-13"
         // const formattedDate = moment.format(date)
-
+        await setEditSlottSetting(false);
         setSelectedDay({ currentDate: formattedDate, i });
     };
 
     return (
         <>
-            <Box
+            {/* <Box
                 sx={{
                     display: "flex",
                     justifyContent: "start",
@@ -61,7 +66,7 @@ const OnlineAppointmentEditSettings = ({
                 >
                     {onlineAppointmentEnabled ? "Enable" : "Disabled"}
                 </Box>
-            </Box>
+            </Box> */}
             <Card
                 sx={{
                     px: {
@@ -76,6 +81,7 @@ const OnlineAppointmentEditSettings = ({
                     },
                     boxShadow: "none",
                     border: "1px solid #D9D9D9",
+                    mt: "40px",
                 }}
             >
                 <Stack
@@ -145,343 +151,397 @@ const OnlineAppointmentEditSettings = ({
                         </Box>
                     ))}
                 </Stack>
-                <Stack
-                    spacing="25px"
-                    sx={{
-                        mt: "37px",
-                    }}
-                >
-                    <Stack spacing="12px">
-                        <Typography
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "500",
-                                fontSize: {
-                                    xs: "0.938rem",
-                                    sm: "0.938rem",
-                                    md: "1.125rem",
-                                },
-                                lineHeight: "18px",
-                            }}
-                        >
-                            Slot Duration:
-                        </Typography>
-                        <Stack direction="row">
-                            <Box
-                                component="span"
+                {!editSlottSetting ? (
+                    <Stack
+                        spacing="25px"
+                        sx={{
+                            mt: "37px",
+                        }}
+                    >
+                        {onlineSlotData?.isholiday === false ? (
+                            <>
+                                <Stack spacing="12px">
+                                    <Typography
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "500",
+                                            fontSize: {
+                                                xs: "0.938rem",
+                                                sm: "0.938rem",
+                                                md: "1.125rem",
+                                            },
+                                            lineHeight: "18px",
+                                        }}
+                                    >
+                                        Slot Duration:
+                                    </Typography>
+                                    <Stack direction="row">
+                                        <Box
+                                            component="span"
+                                            sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "500",
+                                                padding: "12px 23px",
+                                                border: "1px solid #D9D9D9",
+                                                borderRadius: "5px",
+                                                lineHeight: "18px",
+                                            }}
+                                        >
+                                            {onlineSlotData?.slotduration} Mins
+                                        </Box>
+                                    </Stack>
+                                </Stack>
+                                {/* This is main parent of slot 1, slot 2, slot 3 */}
+                                <Stack
+                                    direction="row"
+                                    sx={{
+                                        flexWrap: "wrap",
+                                        gap: "25px",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            position: "relative",
+                                            border: "1px solid #D9D9D9",
+                                            borderRadius: "6px",
+                                            p: "16px",
+                                        }}
+                                    >
+                                        <Box
+                                            component="span"
+                                            sx={{
+                                                position: "absolute",
+                                                top: "-15px",
+                                                backgroundColor: "#ffffff",
+                                                color: "#383838",
+                                                padding: "5px",
+                                                fontFamily: "Lato",
+                                                fontWeight: "600",
+                                                fontSize: {
+                                                    xs: "0.938rem",
+                                                    sm: "0.938rem",
+                                                    md: "15px",
+                                                },
+                                                lineHeight: "18px",
+                                            }}
+                                        >
+                                            Slot 1
+                                        </Box>
+                                        <Stack direction="row" spacing="20px">
+                                            <Stack spacing="12px">
+                                                <Typography
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "500",
+                                                        fontSize: {
+                                                            xs: "0.938rem",
+                                                            sm: "0.938rem",
+                                                            md: "1.125rem",
+                                                        },
+                                                        lineHeight: "18px",
+                                                    }}
+                                                >
+                                                    Start Time :
+                                                </Typography>
+                                                <Box
+                                                    component="span"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "500",
+                                                        padding: "12px 23px",
+                                                        border: "1px solid #D9D9D9",
+                                                        borderRadius: "5px",
+                                                        lineHeight: "18px",
+                                                    }}
+                                                >
+                                                    {onlineSlotData?.Starttime1}
+                                                </Box>
+                                            </Stack>
+                                            <Stack spacing="12px">
+                                                <Typography
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "500",
+                                                        fontSize: {
+                                                            xs: "0.938rem",
+                                                            sm: "0.938rem",
+                                                            md: "1.125rem",
+                                                        },
+                                                        lineHeight: "18px",
+                                                    }}
+                                                >
+                                                    End Time :
+                                                </Typography>
+
+                                                <Box
+                                                    component="span"
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "500",
+                                                        padding: "12px 23px",
+                                                        border: "1px solid #D9D9D9",
+                                                        borderRadius: "5px",
+                                                        lineHeight: "18px",
+                                                    }}
+                                                >
+                                                    {onlineSlotData?.Endtime1}
+                                                </Box>
+                                            </Stack>
+                                        </Stack>
+                                    </Box>
+                                    {onlineSlotData.Starttime2 != "" && (
+                                        <Box
+                                            sx={{
+                                                position: "relative",
+                                                border: "1px solid #D9D9D9",
+                                                borderRadius: "6px",
+                                                p: "16px",
+                                            }}
+                                        >
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    position: "absolute",
+                                                    top: "-15px",
+                                                    backgroundColor: "#ffffff",
+                                                    color: "#383838",
+                                                    padding: "5px",
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: {
+                                                        xs: "0.938rem",
+                                                        sm: "0.938rem",
+                                                        md: "15px",
+                                                    },
+                                                    lineHeight: "18px",
+                                                }}
+                                            >
+                                                Slot 2
+                                            </Box>
+                                            <Stack
+                                                direction="row"
+                                                spacing="20px"
+                                            >
+                                                <Stack spacing="12px">
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            fontSize: {
+                                                                xs: "0.938rem",
+                                                                sm: "0.938rem",
+                                                                md: "1.125rem",
+                                                            },
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        Start Time :
+                                                    </Typography>
+                                                    <Box
+                                                        component="span"
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            padding:
+                                                                "12px 23px",
+                                                            border: "1px solid #D9D9D9",
+                                                            borderRadius: "5px",
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        {
+                                                            onlineSlotData?.Starttime2
+                                                        }
+                                                    </Box>
+                                                </Stack>
+                                                <Stack spacing="12px">
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            fontSize: {
+                                                                xs: "0.938rem",
+                                                                sm: "0.938rem",
+                                                                md: "1.125rem",
+                                                            },
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        End Time :
+                                                    </Typography>
+
+                                                    <Box
+                                                        component="span"
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            padding:
+                                                                "12px 23px",
+                                                            border: "1px solid #D9D9D9",
+                                                            borderRadius: "5px",
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        {
+                                                            onlineSlotData?.Endtime2
+                                                        }
+                                                    </Box>
+                                                </Stack>
+                                            </Stack>
+                                        </Box>
+                                    )}
+                                    {onlineSlotData.Starttime3 != "" && (
+                                        <Box
+                                            sx={{
+                                                position: "relative",
+                                                border: "1px solid #D9D9D9",
+                                                borderRadius: "6px",
+                                                p: "16px",
+                                            }}
+                                        >
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    position: "absolute",
+                                                    top: "-15px",
+                                                    backgroundColor: "#ffffff",
+                                                    color: "#383838",
+                                                    padding: "5px",
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: {
+                                                        xs: "0.938rem",
+                                                        sm: "0.938rem",
+                                                        md: "15px",
+                                                    },
+                                                    lineHeight: "18px",
+                                                }}
+                                            >
+                                                Slot 3
+                                            </Box>
+                                            <Stack
+                                                direction="row"
+                                                spacing="20px"
+                                            >
+                                                <Stack spacing="12px">
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            fontSize: {
+                                                                xs: "0.938rem",
+                                                                sm: "0.938rem",
+                                                                md: "1.125rem",
+                                                            },
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        Start Time :
+                                                    </Typography>
+                                                    <Box
+                                                        component="span"
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            padding:
+                                                                "12px 23px",
+                                                            border: "1px solid #D9D9D9",
+                                                            borderRadius: "5px",
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        {
+                                                            onlineSlotData?.Starttime3
+                                                        }
+                                                    </Box>
+                                                </Stack>
+                                                <Stack spacing="12px">
+                                                    <Typography
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            fontSize: {
+                                                                xs: "0.938rem",
+                                                                sm: "0.938rem",
+                                                                md: "1.125rem",
+                                                            },
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        End Time :
+                                                    </Typography>
+
+                                                    <Box
+                                                        component="span"
+                                                        sx={{
+                                                            fontFamily: "Lato",
+                                                            fontWeight: "500",
+                                                            padding:
+                                                                "12px 23px",
+                                                            border: "1px solid #D9D9D9",
+                                                            borderRadius: "5px",
+                                                            lineHeight: "18px",
+                                                        }}
+                                                    >
+                                                        {
+                                                            onlineSlotData?.Endtime3
+                                                        }
+                                                    </Box>
+                                                </Stack>
+                                            </Stack>
+                                        </Box>
+                                    )}
+                                </Stack>{" "}
+                            </>
+                        ) : (
+                            <Typography
                                 sx={{
                                     fontFamily: "Lato",
                                     fontWeight: "500",
-                                    padding: "12px 23px",
-                                    border: "1px solid #D9D9D9",
-                                    borderRadius: "5px",
-                                    lineHeight: "18px",
-                                }}
-                            >
-                                {onlineSlotData?.slotduration} Mins
-                            </Box>
-                        </Stack>
-                    </Stack>
-                    {/* This is main parent of slot 1, slot 2, slot 3 */}
-                    <Stack
-                        direction="row"
-                        sx={{
-                            flexWrap: "wrap",
-                            gap: "25px",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                position: "relative",
-                                border: "1px solid #D9D9D9",
-                                borderRadius: "6px",
-                                p: "16px",
-                            }}
-                        >
-                            <Box
-                                component="span"
-                                sx={{
-                                    position: "absolute",
-                                    top: "-15px",
-                                    backgroundColor: "#ffffff",
-                                    color: "#383838",
-                                    padding: "5px",
-                                    fontFamily: "Lato",
-                                    fontWeight: "600",
                                     fontSize: {
                                         xs: "0.938rem",
                                         sm: "0.938rem",
-                                        md: "15px",
+                                        md: "1.125rem",
                                     },
-                                    lineHeight: "18px",
+                                    textAlign: "center",
                                 }}
                             >
-                                Slot 1
-                            </Box>
-                            <Stack direction="row" spacing="20px">
-                                <Stack spacing="12px">
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "500",
-                                            fontSize: {
-                                                xs: "0.938rem",
-                                                sm: "0.938rem",
-                                                md: "1.125rem",
-                                            },
-                                            lineHeight: "18px",
-                                        }}
-                                    >
-                                        Start Time :
-                                    </Typography>
-                                    <Box
-                                        component="span"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "500",
-                                            padding: "12px 23px",
-                                            border: "1px solid #D9D9D9",
-                                            borderRadius: "5px",
-                                            lineHeight: "18px",
-                                        }}
-                                    >
-                                        {onlineSlotData?.Starttime1}
-                                    </Box>
-                                </Stack>
-                                <Stack spacing="12px">
-                                    <Typography
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "500",
-                                            fontSize: {
-                                                xs: "0.938rem",
-                                                sm: "0.938rem",
-                                                md: "1.125rem",
-                                            },
-                                            lineHeight: "18px",
-                                        }}
-                                    >
-                                        End Time :
-                                    </Typography>
-
-                                    <Box
-                                        component="span"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "500",
-                                            padding: "12px 23px",
-                                            border: "1px solid #D9D9D9",
-                                            borderRadius: "5px",
-                                            lineHeight: "18px",
-                                        }}
-                                    >
-                                        {onlineSlotData?.Endtime1}
-                                    </Box>
-                                </Stack>
-                            </Stack>
-                        </Box>
-                        {onlineSlotData.Starttime2 != "" && (
-                            <Box
-                                sx={{
-                                    position: "relative",
-                                    border: "1px solid #D9D9D9",
-                                    borderRadius: "6px",
-                                    p: "16px",
-                                }}
-                            >
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        position: "absolute",
-                                        top: "-15px",
-                                        backgroundColor: "#ffffff",
-                                        color: "#383838",
-                                        padding: "5px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "600",
-                                        fontSize: {
-                                            xs: "0.938rem",
-                                            sm: "0.938rem",
-                                            md: "15px",
-                                        },
-                                        lineHeight: "18px",
-                                    }}
-                                >
-                                    Slot 2
-                                </Box>
-                                <Stack direction="row" spacing="20px">
-                                    <Stack spacing="12px">
-                                        <Typography
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                fontSize: {
-                                                    xs: "0.938rem",
-                                                    sm: "0.938rem",
-                                                    md: "1.125rem",
-                                                },
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            Start Time :
-                                        </Typography>
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                padding: "12px 23px",
-                                                border: "1px solid #D9D9D9",
-                                                borderRadius: "5px",
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            {onlineSlotData?.Starttime2}
-                                        </Box>
-                                    </Stack>
-                                    <Stack spacing="12px">
-                                        <Typography
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                fontSize: {
-                                                    xs: "0.938rem",
-                                                    sm: "0.938rem",
-                                                    md: "1.125rem",
-                                                },
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            End Time :
-                                        </Typography>
-
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                padding: "12px 23px",
-                                                border: "1px solid #D9D9D9",
-                                                borderRadius: "5px",
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            {onlineSlotData?.Endtime2}
-                                        </Box>
-                                    </Stack>
-                                </Stack>
-                            </Box>
+                                This is your holiday
+                            </Typography>
                         )}
-                        {onlineSlotData.Starttime3 != "" && (
-                            <Box
-                                sx={{
-                                    position: "relative",
-                                    border: "1px solid #D9D9D9",
-                                    borderRadius: "6px",
-                                    p: "16px",
-                                }}
-                            >
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        position: "absolute",
-                                        top: "-15px",
-                                        backgroundColor: "#ffffff",
-                                        color: "#383838",
-                                        padding: "5px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "600",
-                                        fontSize: {
-                                            xs: "0.938rem",
-                                            sm: "0.938rem",
-                                            md: "15px",
-                                        },
-                                        lineHeight: "18px",
-                                    }}
-                                >
-                                    Slot 3
-                                </Box>
-                                <Stack direction="row" spacing="20px">
-                                    <Stack spacing="12px">
-                                        <Typography
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                fontSize: {
-                                                    xs: "0.938rem",
-                                                    sm: "0.938rem",
-                                                    md: "1.125rem",
-                                                },
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            Start Time :
-                                        </Typography>
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                padding: "12px 23px",
-                                                border: "1px solid #D9D9D9",
-                                                borderRadius: "5px",
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            {onlineSlotData?.Starttime3}
-                                        </Box>
-                                    </Stack>
-                                    <Stack spacing="12px">
-                                        <Typography
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                fontSize: {
-                                                    xs: "0.938rem",
-                                                    sm: "0.938rem",
-                                                    md: "1.125rem",
-                                                },
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            End Time :
-                                        </Typography>
-
-                                        <Box
-                                            component="span"
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "500",
-                                                padding: "12px 23px",
-                                                border: "1px solid #D9D9D9",
-                                                borderRadius: "5px",
-                                                lineHeight: "18px",
-                                            }}
-                                        >
-                                            {onlineSlotData?.Endtime3}
-                                        </Box>
-                                    </Stack>
-                                </Stack>
-                            </Box>
-                        )}
+                        <Button
+                            variant="contained"
+                            onClick={() => setEditSlottSetting(true)}
+                            sx={{
+                                width: "100%",
+                                boxShadow: "none",
+                                borderRadius: "29px",
+                                textTransform: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                fontSize: "1.063rem",
+                                // mt: "24px",
+                            }}
+                        >
+                            Edit Settings
+                        </Button>
                     </Stack>
-                    <Button
-                        variant="contained"
-                        // onClick={saveData}
-                        sx={{
-                            width: "100%",
-                            boxShadow: "none",
-                            borderRadius: "29px",
-                            textTransform: "none",
-                            fontFamily: "Lato",
-                            fontWeight: "700",
-                            fontSize: "1.063rem",
-                            // mt: "24px",
-                        }}
-                    >
-                        Edit Settings
-                    </Button>
-                </Stack>
+                ) : (
+                    <EditSlotSetting
+                        dates={dates}
+                        markAsHoliday={markAsHoliday}
+                        setMarkAsHoliday={setMarkAsHoliday}
+                        selectedDay={selectedDay}
+                        setSelectedDay={setSelectedDay}
+                        currentDate={currentDate}
+                        onlineSlotData={onlineSlotData}
+                        getOnlineSlotDetailForDoctorForPerticularDate={
+                            getOnlineSlotDetailForDoctorForPerticularDate
+                        }
+                        setEditSlottSetting={setEditSlottSetting}
+                        setHolidayDialog={setHolidayDialog}
+                    />
+                )}
             </Card>
         </>
     );

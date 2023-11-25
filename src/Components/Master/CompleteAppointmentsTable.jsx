@@ -22,6 +22,7 @@ import {
 import { FiUpload } from "react-icons/fi";
 import { axiosClient } from "../../Utils/axiosClient";
 import CompletedAppointmentsTableForMobile from "./CompletedAppointmentsTableForMobile";
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -74,10 +75,10 @@ const CompleteAppointmentsTable = ({
     return (
         <>
             <Box
-            sx={{
-                overflow: "auto",
-                display: { xs: "none", sm: "none", md: "block" },
-            }}
+                sx={{
+                    overflow: "auto",
+                    display: { xs: "none", sm: "none", md: "block" },
+                }}
             >
                 <Table
                     sx={{
@@ -118,7 +119,7 @@ const CompleteAppointmentsTable = ({
                                 >
                                     <StyledTableCell>{i + 1}</StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {appointment.age}
@@ -127,13 +128,15 @@ const CompleteAppointmentsTable = ({
                                         {appointment.gender}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.phoneNumber}
+                                        {appointment.phone}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentTime}
+                                        {appointment.AppointmentTime}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentDate}
+                                        {moment(
+                                            appointment.appointmentDate
+                                        ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
@@ -235,7 +238,6 @@ const CompleteAppointmentsTable = ({
                     </TableBody>
                 </Table>
             </Box>
-            
         </>
     );
 };

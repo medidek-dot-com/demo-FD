@@ -24,6 +24,7 @@ import {
 import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -52,7 +53,24 @@ const MobileViewCardTypographyStyle = styled(Typography)({
 const statusComplete = { color: "#15B912", fontWeight: 600 };
 const statusPending = { color: "#000000", fontWeight: 600 };
 
-const   PendingAppointmentsTable = ({
+const handleStatusChange = async (id, status) => {
+    console.log(updatedStatus, "this is id", id);
+    try {
+        const response = await axiosClient.put(
+            `/v2/updateUserAppointmentStatus/${id}`,
+            { status }
+        );
+        if (response.status === "ok") {
+            getPendingAppointmentsData();
+        }
+        console.log(response);
+    } catch (error) {
+        console.log(error);
+    }
+    setUpdatedStatus(status);
+};
+
+const PendingAppointmentsTable = ({
     pendingAppointmentsData,
     getPendingAppointmentsData,
 }) => {
@@ -129,7 +147,7 @@ const   PendingAppointmentsTable = ({
                                 >
                                     <StyledTableCell>{i + 1}</StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         {appointment.age}
@@ -138,13 +156,15 @@ const   PendingAppointmentsTable = ({
                                         {appointment.gender}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.phoneNumber}
+                                        {appointment.phone}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentTime}
+                                        {appointment.AppointmentTime}
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        {appointment.appointmentDate}
+                                        {moment(
+                                            appointment.appointmentDate
+                                        ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
@@ -268,10 +288,10 @@ const   PendingAppointmentsTable = ({
                     </TableBody>
                 </Table>
             </Box>
-            
+
             <Stack
                 sx={{
-                    display: { xs: "block", sm: "block", md: "none" }
+                    display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
                 {pendingAppointmentsData?.length > 0 ? (

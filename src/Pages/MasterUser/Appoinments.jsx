@@ -397,7 +397,7 @@ const Appoinments = () => {
                         </Button>
                     </Stack>
                     <Stack direction={"row"} spacing={1}>
-                        <Button
+                        {/* <Button
                             onClick={() => setActiveTab(1)}
                             variant="outlined"
                             sx={{
@@ -421,8 +421,8 @@ const Appoinments = () => {
                                 }}
                             />
                             Pause Appointments
-                        </Button>
-                        <Button
+                        </Button> */}
+                        {/* <Button
                             variant="outlined"
                             sx={{
                                 textTransform: "none",
@@ -445,7 +445,7 @@ const Appoinments = () => {
                                 }}
                             />
                             Stop Appointments
-                        </Button>
+                        </Button> */}
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePickerStyle
@@ -473,7 +473,7 @@ const Appoinments = () => {
                             borderRadius: "5px",
                         }}
                     >
-                        <Button
+                        {/* <Button
                             sx={{
                                 height: "36px",
                                 color: "#ffffff",
@@ -485,7 +485,7 @@ const Appoinments = () => {
                         >
                             <PlayArrow sx={{ fontSize: "2rem", mr: "5px" }} />{" "}
                             Start Appointments
-                        </Button>
+                        </Button> */}
                     </Box>
                     <Box
                         sx={{
@@ -499,7 +499,7 @@ const Appoinments = () => {
                             borderRadius: "5px",
                         }}
                     >
-                        <Button
+                        {/* <Button
                             sx={{
                                 height: "36px",
                                 color: "#ffffff",
@@ -517,7 +517,7 @@ const Appoinments = () => {
                                 }}
                             />{" "}
                             Stop Appointments
-                        </Button>
+                        </Button> */}
                     </Box>
                 </Stack>
                 <Box

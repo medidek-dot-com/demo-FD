@@ -14,6 +14,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { FiUpload } from "react-icons/fi";
 import { axiosClient } from "../../Utils/axiosClient";
+import moment from "moment";
 
 const MobileViewCardTypographyStyle = styled(Typography)({
     fontFamily: "Raleway",
@@ -21,7 +22,10 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     color: "#383838",
 });
 
-const CompletedAppointmentsTableForMobile = ({ completeAppointmentsData, getCompleteAppointmentsData }) => {
+const CompletedAppointmentsTableForMobile = ({
+    completeAppointmentsData,
+    getCompleteAppointmentsData,
+}) => {
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
     const [activeCard, setAciveCard] = useState();
     const [updatedStatus, setUpdatedStatus] = useState("pending");
@@ -90,7 +94,7 @@ const CompletedAppointmentsTableForMobile = ({ completeAppointmentsData, getComp
                                             fontWeight: 700,
                                         }}
                                     >
-                                        {appointment.patientName}
+                                        {appointment.name}
                                     </Typography>
                                     {appointmentDropDown && activeCard === i ? (
                                         <KeyboardArrowUpIcon />
@@ -124,7 +128,7 @@ const CompletedAppointmentsTableForMobile = ({ completeAppointmentsData, getComp
                                                     fontFamily: "Raleway",
                                                 }}
                                             >
-                                                {appointment.patientName}
+                                                {appointment.name}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -150,7 +154,7 @@ const CompletedAppointmentsTableForMobile = ({ completeAppointmentsData, getComp
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.phoneNumber}
+                                                {appointment.phone}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>
@@ -176,7 +180,9 @@ const CompletedAppointmentsTableForMobile = ({ completeAppointmentsData, getComp
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {appointment.appointmentDate}
+                                                {moment(
+                                                    appointment.appointmentDate
+                                                ).format("DD-MM-YYYY")}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <Box
@@ -288,8 +294,16 @@ const CompletedAppointmentsTableForMobile = ({ completeAppointmentsData, getComp
                         );
                     })
                 ) : (
-                    <Typography sx={{textAlign:'center', fontFamily: "Lato",
-                    fontWeight: "600", mt:'10px'}}>No Appointments For Today</Typography>
+                    <Typography
+                        sx={{
+                            textAlign: "center",
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            mt: "10px",
+                        }}
+                    >
+                        No Appointments For Today
+                    </Typography>
                 )}
             </Stack>
         </>

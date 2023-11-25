@@ -131,6 +131,7 @@ const EditAppointmentDialog = ({
         AppointmentTime: "",
         doctorid: "",
         userid: user?._id,
+        status: "pending",
     });
     const [dates, setDates] = useState([]);
     const [slotData, setSlotData] = useState([]);
@@ -196,7 +197,7 @@ const EditAppointmentDialog = ({
             );
 
             if (response.status === "ok") {
-                getPendingAppointmentsData();
+                await getPendingAppointmentsData();
                 setEditAppointmentDialog(false);
                 setDisableButton(false);
             }

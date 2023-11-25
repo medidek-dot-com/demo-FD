@@ -35,6 +35,7 @@ const ConfirmRescheduleDialog = ({
     confirmBookAppointmentDialog,
     setConfirmBookAppointmentDialog,
     hospitalListDialog,
+    setBookingAppointmentDetails,
     bookingAppointmentDetails,
     bookingAppointmentDialog,
     setBookAppointmentDialog,
@@ -44,6 +45,9 @@ const ConfirmRescheduleDialog = ({
     setBookAppointmentDetailsDialog,
     getPendingAppointmentsData,
     getMissedAppointmentsData,
+    setSelectedTime,
+    setSlotData,
+    setActiveCard,
 }) => {
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
@@ -65,10 +69,12 @@ const ConfirmRescheduleDialog = ({
             console.log(response);
             if (response.status === "ok") {
                 console.log("yaaha tk");
+                setSelectedTime(null);
                 getPendingAppointmentsData();
                 getMissedAppointmentsData();
                 setConfirmedAppointmentData(response.result);
                 setAppointmentCofirmedDialog(true);
+                setActiveCard();
                 setInputValue({
                     ...inputValue,
                     name: "",
@@ -80,11 +86,30 @@ const ConfirmRescheduleDialog = ({
                     AppointmentTime: "",
                     doctorid: "",
                 });
+                setBookingAppointmentDetails({
+                    ...bookingAppointmentDetails,
+                    nameOfTheDoctor: "",
+                    doctorsId: "",
+                    appointmentDate: "",
+                    consultingTime: "",
+                    hospitalId: "",
+                    userid: "",
+                    doctorid: "",
+                    name: "",
+                    Age: "",
+                    Gender: "",
+                    phone: "",
+                    AppointmentNotes: "",
+                    AppointmentTime: "",
+                    imgurl: "",
+                    appointmentId: "",
+                });
                 setDisableButton(false);
                 setBookAppointmentDialog(false);
                 setConfirmBookAppointmentDialog(false);
                 setBookAppointmentDialog(false);
                 setBookAppointmentDetailsDialog(false);
+                setSlotData([]);
             }
         } catch (error) {
             if (
@@ -92,7 +117,7 @@ const ConfirmRescheduleDialog = ({
                 error.message === "Appointment is already exist"
             ) {
                 console.log("idhr tk");
-
+                setSelectedTime(null);
                 setAppointmentAlreadyExistDialog(true);
                 setDisableButton(false);
                 setBookAppointmentDialog(false);

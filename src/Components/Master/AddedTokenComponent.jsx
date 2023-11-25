@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import moment from "moment";
+import React from "react";
 import {
     Box,
     Button,
@@ -10,125 +9,53 @@ import {
     Switch,
     Typography,
 } from "@mui/material";
-import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
+import { useState } from "react";
+import EditTokenSettingComponent from "./EditTokenSettingComponent";
 
-const AppointmentByTokenEditSettings = ({
+const AddedTokenComponent = ({
     dates,
-    markAsHoliday,
-    setMarkAsHoliday,
-    tokenSelectedDay,
-    setTokenSelectedDay,
+    selectedDay,
+    setSelectedDay,
     currentDate,
     tokenSlotData,
+    markAsHoliday,
+    setMarkAsHoliday,
+    getAppointmentByTokenSlotDetailForDoctorForPerticularDate,
+    doctorDetails,
+    selectedTokenDate,
 }) => {
     const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
         useState(false);
+    const [editTokenSetting, setEditTokenSetting] = useState(false);
     // const [selectedDay, setSelectedDay] = useState(0);
     // const currentDate = moment().format("ddd");
 
-    const handleSelectedDate = (userDate, i) => {
-        const { date, month, year, day } = userDate;
-        // console.log(day, date, month, year);
-        const a = year + "-" + month + "-" + date;
-        console.log(a);
+    // const handleSelectedDate = (userDate, i) => {
+    //     const { date, month, year, day } = userDate;
+    //     // console.log(day, date, month, year);
+    //     const a = year + "-" + month + "-" + date;
+    //     console.log(a);
 
-        var formattedDate = moment(a).format("yyyy-MM-DD");
-        console.log(formattedDate); // Output: "2023-11-13"
-        // const formattedDate = moment.format(date)
+    //     var formattedDate = moment(a).format("yyyy-MM-DD");
+    //     console.log(formattedDate); // Output: "2023-11-13"
+    //     // const formattedDate = moment.format(date)
 
-        setTokenSelectedDay({ currentDate: formattedDate, i });
-    };
+    //     setSelectedDay({ currentDate: formattedDate, i });
+    // };
 
     return (
         <>
-            <Card
-                sx={{
-                    px: {
-                        xs: "16px",
-                        sm: "16px",
-                        md: "30px",
-                    },
-                    py: {
-                        xs: "25px",
-                        sm: "25px",
-                        md: "30px",
-                    },
-                    boxShadow: "none",
-                    border: "1px solid #D9D9D9",
-                    mt: "40px",
-                }}
-            >
-                <Stack
-                    direction="row"
-                    spacing={{ xs: "7px", sm: "7px", md: "12.61px" }}
-                    sx={{
-                        width: { xs: "100%", sm: "100%", md: "100%" },
-                        // background: "red",
-                    }}
-                >
-                    {dates.map((date, i) => (
-                        <Box
-                            key={i + 1}
-                            component="button"
-                            onClick={() => handleSelectedDate(date, i)}
-                            sx={{
-                                width: {
-                                    xs: "43.18px",
-                                    sm: "43.18px",
-                                    md: "57.39px",
-                                },
-                                height: {
-                                    xs: "43.18px",
-                                    sm: "43.18px",
-                                    md: "57.39px",
-                                },
-                                background:
-                                    tokenSelectedDay.i === i
-                                        ? "#1F51C6"
-                                        : "#FFFFFF",
-                                border:
-                                    currentDate === date.day
-                                        ? "2px solid #1F51C6"
-                                        : "1px solid #706D6D8F",
-                                borderRadius: "3px",
-                                color:
-                                    tokenSelectedDay.i === i
-                                        ? "#FFFFFF"
-                                        : "#706D6D",
-                                userSelect: "none",
-                            }}
-                        >
-                            <Typography
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "semibold",
-                                    fontSize: {
-                                        xs: "0.938rem",
-                                        sm: "0.938rem",
-                                        md: "1.125rem",
-                                    },
-                                    lineHeight: "21.6px",
-                                }}
-                            >
-                                {date.day}
-                            </Typography>
-                            <Typography
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "semibold",
-                                    fontSize: {
-                                        xs: "0.938rem",
-                                        sm: "0.938rem",
-                                        md: "1.125rem",
-                                    },
-                                    lineHeight: "21.6px",
-                                }}
-                            >
-                                {date.date}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Stack>
+            {editTokenSetting ? (
+                <EditTokenSettingComponent
+                    selectedTokenDate={selectedTokenDate}
+                    tokenSlotData={tokenSlotData}
+                    doctorDetails={doctorDetails}
+                    getAppointmentByTokenSlotDetailForDoctorForPerticularDate={
+                        getAppointmentByTokenSlotDetailForDoctorForPerticularDate
+                    }
+                    setEditTokenSetting={setEditTokenSetting}
+                />
+            ) : (
                 <Stack
                     spacing="25px"
                     sx={{
@@ -233,7 +160,7 @@ const AppointmentByTokenEditSettings = ({
                                 </Stack>
                             </Stack>
                         </Box>
-                        {tokenSlotData.Starttime2 !== "" && (
+                        {tokenSlotData?.Starttime2 !== "" && (
                             <Box
                                 sx={{
                                     position: "relative",
@@ -325,7 +252,7 @@ const AppointmentByTokenEditSettings = ({
                                 </Stack>
                             </Box>
                         )}
-                        {tokenSlotData.Starttime3 !== "" && (
+                        {tokenSlotData?.Starttime3 !== "" && (
                             <Box
                                 sx={{
                                     position: "relative",
@@ -420,7 +347,7 @@ const AppointmentByTokenEditSettings = ({
                     </Stack>
                     <Button
                         variant="contained"
-                        // onClick={saveData}
+                        onClick={() => setEditTokenSetting(true)}
                         sx={{
                             width: "100%",
                             boxShadow: "none",
@@ -435,9 +362,9 @@ const AppointmentByTokenEditSettings = ({
                         Edit Settings
                     </Button>
                 </Stack>
-            </Card>
+            )}
         </>
     );
 };
 
-export default AppointmentByTokenEditSettings;
+export default AddedTokenComponent;

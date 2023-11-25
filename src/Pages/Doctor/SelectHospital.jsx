@@ -9,10 +9,11 @@ import {
     Typography,
 } from "@mui/material";
 import EastIcon from "@mui/icons-material/East";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { axiosClient, baseURL } from "../../Utils/axiosClient";
 import styled from "@emotion/styled";
+import { selectedDoctorsData } from "../../Store/doctorDataSlice";
 
 const ImageStyle = styled("img")(({ theme }) => ({
     width: "136.66px",
@@ -28,7 +29,11 @@ const ImageStyle = styled("img")(({ theme }) => ({
 const SelectHospital = () => {
     const navigate = useNavigate();
     const { doctorid } = useParams();
+    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
+    // const {doctor} = useSelector((state) => state.doctor)
+    const { doctor } = useSelector((state) => state.doctor);
+    console.log(doctor);
     const [hospitalList, setHospitalList] = useState([]);
     const numberOfHospitals = user;
     // const doctordAndHospitalDetails = numberOfHospitals.map(hospital => hospital)
@@ -168,11 +173,12 @@ const SelectHospital = () => {
                                     </Stack>
                                 </Stack>
                                 <Button
-                                    onClick={() =>
+                                    onClick={() => {
+                                        dispatch(selectedDoctorsData(hospital));
                                         navigate(
                                             `/doctor/dashboard/${hospital._id}`
-                                        )
-                                    }
+                                        );
+                                    }}
                                     variant="text"
                                     sx={{
                                         textTransform: "none",

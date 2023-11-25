@@ -18,6 +18,9 @@ import {
     Select,
     MenuItem,
     Avatar,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
@@ -149,6 +152,7 @@ const AddDoctorsDialog = ({
         data.append("connsultationFee", inputValue.connsultationFee);
         data.append("doctorid", inputValue.doctorid);
         data.append("description", inputValue.description);
+        data.append("acceptAppointments", inputValue.acceptAppointments);
         data.append("image", inputImage || inputValue?.imgurl);
 
         // console.log(data);
@@ -360,7 +364,7 @@ const AddDoctorsDialog = ({
                             sx={{
                                 display: "flex",
                                 flexWrap: "wrap",
-                                justifyContent: "center",
+                                justifyContent: "space-between",
 
                                 mt: 2,
                             }}
@@ -554,6 +558,50 @@ const AddDoctorsDialog = ({
                                     value={inputValue.description}
                                     onChange={handleChange}
                                 />
+                            </StackStyle>
+                            <StackStyle>
+                                <LabelStyle htmlFor="acceptAppointments">
+                                    How would you like to accept appointments ?
+                                </LabelStyle>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-controlled-radio-buttons-group"
+                                    name="acceptAppointments"
+                                    value={inputValue.acceptAppointments}
+                                    onChange={handleChange}
+                                >
+                                    <FormControlLabel
+                                        value="byToken"
+                                        control={<Radio />}
+                                        label="By Token"
+                                        sx={{ fontFamily: "Lato" }}
+                                    />
+                                    <FormControlLabel
+                                        value="bySlot"
+                                        control={<Radio />}
+                                        label="By Slot"
+                                    />
+                                </RadioGroup>
+                                {/* <TextFieldStyle
+                                                id="acceptAppointments"
+                                                name="acceptAppointments"
+                                                fullWidth
+                                                placeholder="Enter Doctor’s Description"
+                                                error={
+                                                    err &&
+                                                    !inputValue.description &&
+                                                    true
+                                                }
+                                                helperText={
+                                                    err &&
+                                                    !inputValue.description &&
+                                                    "Please enter description"
+                                                }
+                                                value={inputValue.description}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
+                                            /> */}
                             </StackStyle>
                             {/* <StackStyle>
                             <LabelStyle htmlFor="Category1">

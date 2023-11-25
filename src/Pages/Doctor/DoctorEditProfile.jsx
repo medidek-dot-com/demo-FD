@@ -18,6 +18,9 @@ import {
     IconButton,
     Select,
     MenuItem,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import styled from "@emotion/styled";
@@ -46,6 +49,7 @@ import { RxCross1 } from "react-icons/rx";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
 import { BiSolidBook } from "react-icons/bi";
 import ChangePasswordDialog from "../../Components/Doctor/ChangePasswordDialog";
+import { logOutDoctor, updateDoctorsData } from "../../Store/doctorDataSlice";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -62,11 +66,22 @@ const TextFieldStyle = styled(TextField)({
         fontFamily: "Lato",
         fontWeight: "500",
         fontSize: "1rem",
+        border: "1px solid #D9D9D9",
+        borderRadius: "4px",
+    },
+    [`& fieldset`]: {
+        border: "none",
+    },
+    ["& input:disabled"]: {
+        color: "#706D6D",
+        backgroundColor: "#D9D9D9",
+        cursor: "no-drop",
+        border: "none",
     },
     [`& input[type = "number"]::-webkit-inner-spin-button`]: {
         display: "none",
     },
-    borderColor: "#DCE3F6",
+    // borderColor: "#DCE3F6",
     "& ::placeholder": {
         color: "#706D6D",
         fontFamily: "Lato",
@@ -109,6 +124,12 @@ const DoctorEditProfile = () => {
     const [categoryValue, setCategory1Value] = useState("");
 
     const { user } = useSelector((state) => state.auth);
+    const { doctor } = useSelector((state) => state.doctor);
+    console.log(doctor);
+    const isSelfDoctorId = doctor.hospitalId === null ? true : false;
+    console.log(doctor.hospitalId);
+    console.log(isSelfDoctorId);
+
     const numberOfHospitals = user;
 
     const getPendingAppointmentsData = async () => {
@@ -133,16 +154,19 @@ const DoctorEditProfile = () => {
 
     const [err, setError] = useState(false);
     // const propLocation = hospitalLocation
-
+    console.log(doctor);
     const [inputValue, setInputValue] = useState({
-        nameOfTheDoctor: user?.nameOfTheDoctor,
-        qulification: user?.qulification,
-        speciality: user?.speciality,
-        yearOfExprience: user?.yearOfExprience,
-        email: user?.email,
-        phone: user?.phone,
-        connsultationFee: user?.connsultationFee,
-        description: user?.description,
+        nameOfTheDoctor: doctor?.nameOfTheDoctor,
+        qulification: doctor?.qulification,
+        speciality: doctor?.speciality,
+        yearOfExprience: doctor?.yearOfExprience,
+        email: doctor?.email,
+        phone: doctor?.phone,
+        connsultationFee: doctor?.connsultationFee,
+        description: doctor?.description,
+        acceptAppointments: doctor?.acceptAppointments
+            ? doctor?.acceptAppointments
+            : "byToken",
     });
 
     const [inputImage, setInputImage] = useState("");
@@ -191,6 +215,7 @@ const DoctorEditProfile = () => {
         data.append("phone", inputValue.phone);
         data.append("connsultationFee", inputValue.connsultationFee);
         data.append("description", inputValue.description);
+        data.append("acceptAppointments", inputValue.acceptAppointments);
         data.append("image", inputImage || user?.imgurl);
 
         // console.log(data);
@@ -202,7 +227,7 @@ const DoctorEditProfile = () => {
             console.log(response.result);
             if (response.status === "ok") {
                 // navigate(`/master/user/home/${uuid.id}`);
-                dispatch(updateUserData(response.result));
+                dispatch(updateDoctorsData(response.result));
                 navigate(`/doctor/courses/${user?._id}`);
                 toast.success("Doctor added successfully");
 
@@ -216,6 +241,7 @@ const DoctorEditProfile = () => {
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
         dispatch(logout());
+        dispatch(logOutDoctor());
         removeItem(KEY_ACCESS_TOKEN);
         window.location.replace("/");
     };
@@ -272,7 +298,7 @@ const DoctorEditProfile = () => {
                     />
                 </Stack>
                 <Avatar
-                    src={user?.imgurl ? user.imgurl : "/default.png"}
+                    src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -414,7 +440,9 @@ const DoctorEditProfile = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl ? user.imgurl : "/default.png"
+                                    doctor?.imgurl
+                                        ? doctor.imgurl
+                                        : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -428,7 +456,7 @@ const DoctorEditProfile = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {user?.nameOfTheDoctor}
+                                Dr. {doctor?.nameOfTheDoctor}
                             </Typography>
                             <Typography
                                 variant="h5"
@@ -440,7 +468,7 @@ const DoctorEditProfile = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                                DUID :- {user.doctorid}
+                                DUID :- {doctor.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -720,8 +748,8 @@ const DoctorEditProfile = () => {
                                                 src={
                                                     preview
                                                         ? preview
-                                                        : user?.imgurl
-                                                        ? user.imgurl
+                                                        : doctor?.imgurl
+                                                        ? doctor.imgurl
                                                         : "/default.png"
                                                 }
                                                 alt="user"
@@ -770,6 +798,11 @@ const DoctorEditProfile = () => {
                                                     type="file"
                                                     id="hospitalImg"
                                                     name="photo"
+                                                    disabled={
+                                                        isSelfDoctorId
+                                                            ? false
+                                                            : true
+                                                    }
                                                     style={{ display: "none" }}
                                                     onChange={(e) =>
                                                         getUserImage(e)
@@ -779,6 +812,11 @@ const DoctorEditProfile = () => {
                                         </Stack>
                                         <Stack justifyContent="center" sx={{}}>
                                             <Button
+                                                onClick={(e) =>
+                                                    navigate(
+                                                        `/doctor/appointment-settings/${doctorid}`
+                                                    )
+                                                }
                                                 sx={{
                                                     fontSize: {
                                                         xs: "0.75rem",
@@ -812,7 +850,7 @@ const DoctorEditProfile = () => {
                                         sx={{
                                             display: "flex",
                                             flexWrap: "wrap",
-                                            justifyContent: "center",
+                                            justifyContent: "space-between",
                                             gap: "17px",
                                             mt: 2,
                                         }}
@@ -825,6 +863,11 @@ const DoctorEditProfile = () => {
                                                 id="DoctorName"
                                                 name="nameOfTheDoctor"
                                                 fullWidth
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 placeholder="Ex. Dr. John Doe"
                                                 error={
                                                     err &&
@@ -852,6 +895,11 @@ const DoctorEditProfile = () => {
                                                 id="qualification"
                                                 name="qulification"
                                                 fullWidth
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 placeholder="Ex. MBBS. MD"
                                                 error={
                                                     err &&
@@ -878,6 +926,11 @@ const DoctorEditProfile = () => {
                                                 name="speciality"
                                                 fullWidth
                                                 placeholder="Ex. ENT"
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 error={
                                                     err &&
                                                     !inputValue.speciality &&
@@ -903,6 +956,11 @@ const DoctorEditProfile = () => {
                                                 name="yearOfExprience"
                                                 fullWidth
                                                 placeholder="Ex. 5 Years"
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 error={
                                                     err &&
                                                     !inputValue.yearOfExprience &&
@@ -930,6 +988,11 @@ const DoctorEditProfile = () => {
                                                 name="email"
                                                 fullWidth
                                                 placeholder="doctor@gmail.com"
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 error={
                                                     err &&
                                                     !inputValue.email &&
@@ -955,6 +1018,11 @@ const DoctorEditProfile = () => {
                                                 name="phone"
                                                 fullWidth
                                                 placeholder="Ex 99112240477"
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 error={
                                                     err &&
                                                     !inputValue.phone &&
@@ -981,6 +1049,11 @@ const DoctorEditProfile = () => {
                                                 id="connsultationFee"
                                                 name="connsultationFee"
                                                 fullWidth
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 placeholder="Ex ₹500"
                                                 error={
                                                     err &&
@@ -1223,6 +1296,11 @@ const DoctorEditProfile = () => {
                                                 name="description"
                                                 fullWidth
                                                 placeholder="Enter Doctor’s Description"
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
                                                 error={
                                                     err &&
                                                     !inputValue.description &&
@@ -1238,6 +1316,53 @@ const DoctorEditProfile = () => {
                                                     handleChange(e)
                                                 }
                                             />
+                                        </StackStyle>
+                                        <StackStyle>
+                                            <LabelStyle htmlFor="acceptAppointments">
+                                                How would you like to accept
+                                                appointments ?
+                                            </LabelStyle>
+                                            <RadioGroup
+                                                row
+                                                aria-labelledby="demo-controlled-radio-buttons-group"
+                                                name="acceptAppointments"
+                                                value={
+                                                    inputValue.acceptAppointments
+                                                }
+                                                onChange={handleChange}
+                                            >
+                                                <FormControlLabel
+                                                    value="byToken"
+                                                    control={<Radio />}
+                                                    label="By Token"
+                                                    sx={{ fontFamily: "Lato" }}
+                                                />
+                                                <FormControlLabel
+                                                    value="bySlot"
+                                                    control={<Radio />}
+                                                    label="By Slot"
+                                                />
+                                            </RadioGroup>
+                                            {/* <TextFieldStyle
+                                                id="acceptAppointments"
+                                                name="acceptAppointments"
+                                                fullWidth
+                                                placeholder="Enter Doctor’s Description"
+                                                error={
+                                                    err &&
+                                                    !inputValue.description &&
+                                                    true
+                                                }
+                                                helperText={
+                                                    err &&
+                                                    !inputValue.description &&
+                                                    "Please enter description"
+                                                }
+                                                value={inputValue.description}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
+                                            /> */}
                                         </StackStyle>
                                         {/* <StackStyle>
                                             <LabelStyle htmlFor="location">

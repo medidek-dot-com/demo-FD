@@ -52,6 +52,7 @@ import MissedAppointmentsTableForLoggedInDoctor from "../../Components/Doctor/Mi
 import { BiSolidBook } from "react-icons/bi";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
 import moment from "moment";
+import { logOutDoctor } from "../../Store/doctorDataSlice";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -92,6 +93,22 @@ const LabelStyle = styled("label")({
     color: "#383838",
 });
 
+const DatePickerStyle = styled(MobileDatePicker)({
+    [`& input`]: {
+        color: "#383838",
+        fontFamily: "Lato",
+        fontWeight: "600",
+        fontSize: "14px",
+        textAlign: "center",
+    },
+    [`& div`]: {
+        height: "41px",
+    },
+    [`& fieldset`]: {
+        borderRadius: "31px",
+    },
+});
+
 const DatePickerStyleForMobile = styled(MobileDatePicker)({
     color: "red",
     [`& input`]: {
@@ -121,12 +138,14 @@ const DoctorAppointments = () => {
     const [selectValue, setSelectValue] = useState(1);
     const [completedAppointments, setCompletedAppointments] = useState(false);
     const [menu, setMenu] = useState(false);
+    const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
 
     const { user } = useSelector((state) => state.auth);
+    const { doctor } = useSelector((state) => state.doctor);
     const numberOfHospitals = user;
+    const [slotAppointment, setSlotAppointment] = useState("slotAppointments");
 
-    const date = moment().format("YYYY-MM-DD");
-    console.log(date);
+    // const date = moment().format("YYYY-MM-DD");
 
     const getPendingAppointmentsData = async () => {
         const response = await axiosClient.get(
@@ -136,13 +155,13 @@ const DoctorAppointments = () => {
     };
     const getCompleteAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getCompletedAppoinmentForDoctor/${doctorid}`
+            `/v2/getCompletedAppoinmentForDoctor/${doctorid}/${date}`
         );
         setCompleteAppointmentsData(response.result);
     };
     const getMissedAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getMissedAppoinmentForDoctor/${doctorid}`
+            `/v2/getMissedAppoinmentForDoctor/${doctorid}/${date}`
         );
         setMissedAppointmentsData(response.result);
         console.log(response);
@@ -152,7 +171,7 @@ const DoctorAppointments = () => {
         getPendingAppointmentsData();
         getCompleteAppointmentsData();
         getMissedAppointmentsData();
-    }, []);
+    }, [date]);
 
     const handleTabClick = (tabId) => {
         // Set the active button when it's clicked
@@ -255,6 +274,7 @@ const DoctorAppointments = () => {
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
         dispatch(logout());
+        dispatch(logOutDoctor());
         removeItem(KEY_ACCESS_TOKEN);
         // navigate('/')
         // window.location.href = '/master/signin'
@@ -313,11 +333,7 @@ const DoctorAppointments = () => {
                     />
                 </Stack>
                 <Avatar
-                    // src={
-                    //     numberOfHospitals[0]?.doctorImg
-                    //         ? `${baseURL}/Uploads/Hospital/DoctorImage/${numberOfHospitals[0]?.doctorImg}`
-                    //         : "/default.png"
-                    // }
+                    src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -458,7 +474,9 @@ const DoctorAppointments = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl ? user.imgurl : "/default.png"
+                                    doctor?.imgurl
+                                        ? doctor.imgurl
+                                        : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -472,7 +490,7 @@ const DoctorAppointments = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {user.nameOfTheDoctor}
+                                Dr. {doctor.nameOfTheDoctor}
                             </Typography>
                             <Typography
                                 variant="h5"
@@ -484,7 +502,7 @@ const DoctorAppointments = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                                DUID :- {user.doctorid}
+                                DUID :- {doctor.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -751,7 +769,12 @@ const DoctorAppointments = () => {
                             )}
                         </Box>
                         <Box sx={{ width: "100%" }}>
-                            <Box sx={{ display: "flex" }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                }}
+                            >
                                 <Stack
                                     direction={"row"}
                                     spacing={1}
@@ -763,6 +786,53 @@ const DoctorAppointments = () => {
                                         },
                                     }}
                                 >
+                                    <Select
+                                        sx={{
+                                            color: "#383838",
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "16px",
+                                            textAlign: "center",
+                                            background: "#1F51C6",
+                                            // p:'5px 10px',
+                                            borderRadius: "21px",
+                                            height: "41px",
+                                            color: "#FFFFFF",
+                                        }}
+                                        variant="outlined"
+                                        value={slotAppointment}
+                                        onChange={(e) =>
+                                            setSlotAppointment(e.target.value)
+                                        }
+                                    >
+                                        <MenuItem
+                                            onClick={() => setSelectValue(1)}
+                                            sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "600",
+                                                fontSize: "16px",
+                                                textAlign: "center",
+                                                color: "#383838",
+                                            }}
+                                            value="tokenAppointments"
+                                        >
+                                            Token Appointments
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() => setSelectValue(2)}
+                                            sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "600",
+                                                fontSize: "16px",
+                                                textAlign: "center",
+                                                color: "#383838",
+                                            }}
+                                            value="slotAppointments"
+                                        >
+                                            Slot Appointments
+                                        </MenuItem>
+                                    </Select>
+                                    <hr />
                                     <Button
                                         onClick={() => setSelectValue(1)}
                                         variant={
@@ -772,7 +842,7 @@ const DoctorAppointments = () => {
                                         }
                                         sx={{
                                             textTransform: "none",
-                                            width: "244px",
+                                            width: "119px",
                                             height: "41px",
                                             fontFamily: "Raleway",
                                             fontWeight: "600",
@@ -785,7 +855,7 @@ const DoctorAppointments = () => {
                                             boxShadow: "none",
                                         }}
                                     >
-                                        Upcoming Appointments
+                                        Upcoming
                                     </Button>
                                     <Button
                                         onClick={() => setSelectValue(2)}
@@ -796,7 +866,7 @@ const DoctorAppointments = () => {
                                         }
                                         sx={{
                                             textTransform: "none",
-                                            width: "244px",
+                                            width: "119px",
                                             height: "41px",
                                             fontFamily: "Raleway",
                                             fontWeight: "600",
@@ -809,7 +879,7 @@ const DoctorAppointments = () => {
                                             boxShadow: "none",
                                         }}
                                     >
-                                        Completed Appointments
+                                        Completed
                                     </Button>
                                     <Button
                                         onClick={() => setSelectValue(3)}
@@ -820,7 +890,7 @@ const DoctorAppointments = () => {
                                         }
                                         sx={{
                                             textTransform: "none",
-                                            width: "244px",
+                                            width: "119px",
                                             height: "41px",
                                             fontFamily: "Raleway",
                                             fontWeight: "600",
@@ -833,7 +903,7 @@ const DoctorAppointments = () => {
                                             boxShadow: "none",
                                         }}
                                     >
-                                        Missed Appointments
+                                        Missed
                                     </Button>
                                 </Stack>
                                 <Box
@@ -917,6 +987,14 @@ const DoctorAppointments = () => {
                                             dateAdapter={AdapterDayjs}
                                         >
                                             <DatePickerStyleForMobile
+                                                format="DD-MM-YYYY"
+                                                onChange={(e) =>
+                                                    setDate(
+                                                        moment(e.$d).format(
+                                                            "YYYY-MM-DD"
+                                                        )
+                                                    )
+                                                }
                                                 sx={{
                                                     width: "120px",
                                                     backgroundColor: "#1F51C6",
@@ -928,6 +1006,40 @@ const DoctorAppointments = () => {
                                         </LocalizationProvider>
                                     </Box>
                                 </Box>
+                                <Box
+                                    sx={{
+                                        display: {
+                                            xs: "none",
+                                            sm: "none",
+                                            md: "block",
+                                        },
+                                    }}
+                                >
+                                    <LocalizationProvider
+                                        dateAdapter={AdapterDayjs}
+                                    >
+                                        <DatePickerStyle
+                                            format="DD-MM-YYYY"
+                                            onChange={(e) =>
+                                                setDate(
+                                                    moment(e.$d).format(
+                                                        "YYYY-MM-DD"
+                                                    )
+                                                )
+                                            }
+                                            sx={
+                                                {
+                                                    // width: "120px",
+                                                    // // height: "41px",
+                                                    // backgroundColor: "#1F51C6",
+                                                    // color: "#ffffff",
+                                                    // borderRadius: "50px",
+                                                }
+                                            }
+                                            defaultValue={dayjs()}
+                                        />
+                                    </LocalizationProvider>
+                                </Box>
                             </Box>
                             {(selectValue === 1 && (
                                 <PendingAppointmentsTableForLoggedInDoctor
@@ -937,6 +1049,8 @@ const DoctorAppointments = () => {
                                     getPendingAppointmentsData={
                                         getPendingAppointmentsData
                                     }
+                                    slotAppointment={slotAppointment}
+                                    setSlotAppointment={setSlotAppointment}
                                 />
                             )) ||
                                 (selectValue === 2 && (

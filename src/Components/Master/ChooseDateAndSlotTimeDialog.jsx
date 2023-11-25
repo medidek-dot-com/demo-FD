@@ -10,6 +10,7 @@ import {
     ListItem,
     Button,
     Typography,
+    Stack,
 } from "@mui/material";
 import dayjs from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
@@ -34,15 +35,18 @@ const ListBoxStyle = styled(Box)`
 const ChooseDateAndSlotTimeDialog = ({
     chooseDateAndTimeDialog,
     setChooseDateAndTimeDialog,
-    bookingAppointmentDetails,
-    setBookingAppointmentDetails,
     getDateAndTime,
     setGetDateAndTime,
+    slotData,
+    setSlotData,
+    slotsLoading,
+    acceptAppointments,
+
+    bookingAppointmentDetails,
+    setBookingAppointmentDetails,
     confirmBookAppointmentDialog,
     setConfirmBookAppointmentDialog,
     setBookAppointmentDetailsDialog,
-    slotData,
-    setSlotData,
     inputValue,
     setInputValue,
 }) => {
@@ -58,8 +62,9 @@ const ChooseDateAndSlotTimeDialog = ({
             ...bookingAppointmentDetails,
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
         });
-        setGetDateAndTime({
-            ...getDateAndTime,
+
+        setInputValue({
+            ...inputValue,
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
         });
         setSelectedTime(i);
@@ -85,6 +90,9 @@ const ChooseDateAndSlotTimeDialog = ({
         setDates(monthsDates);
     };
 
+    const formatdate = moment().format("YYYY-MM-DD");
+
+    // Output the result
     useEffect(() => {
         getWeekDates();
     }, []);
@@ -129,45 +137,276 @@ const ChooseDateAndSlotTimeDialog = ({
                     ) : null}
                 </DialogTitle>
                 <DialogContent
-                    dividers
                     sx={{
-                        margin: "10px",
+                        marginTop: "10px",
                         display: "flex",
+                        gap: "20px",
                         flexDirection: "column",
-                        alignItems: "center",
+                        // alignItems: "center",
                     }}
                 >
-                    <Box
+                    {/* <Stack
+                        direction="row"
                         sx={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            marginTop: "20px",
-                            userSelect: "none",
+                            border: "1px solid #D9D9D9",
+                            borderRadius: "6px",
                         }}
                     >
-                        {dates.map((date, i) => (
+                        <Button
+                            variant={!appointmentByToken ? "contained" : "text"}
+                            onClick={() => setAppointmentByToken(false)}
+                            sx={{
+                                boxShadow: "none",
+                                textTransform: "none",
+                                py: "10px",
+                                px: {
+                                    xs: "16px",
+                                    sm: "26px",
+                                    md: "47px",
+                                },
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1.15rem",
+                                },
+                                // width: "100%",
+                                lineHeight: "24px",
+                                // height: {
+                                //     xs: "40px",
+                                //     sm: "40px",
+                                //     md: "50px",
+                                // },
+                                background: !appointmentByToken
+                                    ? "#1F51C6"
+                                    : "#FFFFFF",
+                                color: !appointmentByToken
+                                    ? "#ffffff"
+                                    : "#706D6D",
+                                borderRadius: "0",
+                                borderTopLeftRadius: "5px",
+                                borderBottomLeftRadius: "5px",
+                            }}
+                        >
+                            Online Appointments
+                        </Button>
+                        <Button
+                            variant={appointmentByToken ? "contained" : "text"}
+                            onClick={() => setAppointmentByToken(true)}
+                            sx={{
+                                boxShadow: "none",
+                                textTransform: "none",
+                                py: "10px",
+                                px: {
+                                    xs: "16px",
+                                    sm: "26px",
+                                    md: "57px",
+                                },
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: {
+                                    xs: "0.813rem",
+                                    sm: "0.813rem",
+                                    md: "1.25rem",
+                                },
+                                lineHeight: "24px",
+                                // width: "100%",
+                                // height: {
+                                //     xs: "40px",
+                                //     sm: "40px",
+                                //     md: "50px",
+                                // },
+                                color: appointmentByToken
+                                    ? "#FFFFFF"
+                                    : "#706D6D",
+                                background: appointmentByToken
+                                    ? "#1F51C6"
+                                    : "#FFFFFF",
+                            }}
+                        >
+                            Appointments by token
+                        </Button>
+                    </Stack> */}
+                    {acceptAppointments !== "byToken" ? (
+                        <>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    // marginTop: "10px",
+                                    gap: "10px",
+                                    userSelect: "none",
+                                }}
+                            >
+                                {dates.map((date, i) => (
+                                    <Card
+                                        onClick={(e) => {
+                                            setActiveCard(i);
+                                            setDateErr(false);
+                                            const dateString =
+                                                e.target.innerText;
+                                            const dateObject = dayjs(
+                                                dateString + dayjs().year()
+                                            );
+
+                                            const formattedDate =
+                                                dateObject.format("YYYY-MM-DD");
+                                            setInputValue({
+                                                ...inputValue,
+                                                appointmentDate: formattedDate,
+                                            });
+                                            setBookingAppointmentDetails({
+                                                ...bookingAppointmentDetails,
+                                                appointmentDate: formattedDate,
+                                            });
+                                        }}
+                                        sx={{
+                                            width: "50px",
+                                            textAlign: "center",
+                                            // marginInline: "5px",
+                                            padding: "5px",
+                                            textTransform: "none",
+                                            fontFamily: "Lato",
+                                            fontWeight: "700",
+                                            fontSize: "12px",
+                                            boxShadow: "none",
+                                            border: "1px solid #D9D9D9",
+                                            cursor: "pointer",
+                                            background:
+                                                activeCard === i
+                                                    ? "#1F51C6"
+                                                    : "#ffffff",
+                                            color:
+                                                activeCard === i
+                                                    ? "#ffffff"
+                                                    : " #000000",
+                                        }}
+                                        key={i}
+                                    >
+                                        {date.day}
+                                        <br />
+                                        {date.date}
+                                        <br />
+                                        {date.month}
+                                    </Card>
+                                ))}
+                            </Box>
+                            <List
+                                sx={{
+                                    display: "flex",
+                                    marginTop: "20px",
+                                    flexWrap: "wrap",
+                                    maxWidth: "589px",
+                                    // gap:'35px'
+                                }}
+                            >
+                                {slotsLoading && (
+                                    <l-dot-pulse
+                                        size="43"
+                                        speed="1.3"
+                                        color="#1F51C6"
+                                    ></l-dot-pulse>
+                                )}
+
+                                {slotData[0] ===
+                                    "doctor not available for this date" &&
+                                slotsLoading === false ? (
+                                    // Default values shown
+
+                                    <Typography
+                                        sx={{
+                                            color: "#B92612",
+                                            fontFamily: "Lato",
+                                            fontSize: "14px",
+                                            fontWeight: "500",
+                                            marginInline: "auto",
+                                        }}
+                                    >
+                                        Doctor not available for this date
+                                    </Typography>
+                                ) : (
+                                    slotData?.map((slot, i) => (
+                                        <ListBoxStyle key={i}>
+                                            <Button
+                                                onClick={() =>
+                                                    handleButtonClick(slot, i)
+                                                }
+                                                variant={
+                                                    selectedTime == i
+                                                        ? "contained"
+                                                        : "outlined"
+                                                }
+                                                sx={{
+                                                    borderRadius: "3px",
+                                                    color:
+                                                        selectedTime == i
+                                                            ? "#ffffff"
+                                                            : "#706D6D",
+                                                    border: "1px solid #706D6D8F",
+                                                    fontWeight: "600",
+                                                    fontSize: "15px",
+                                                    fontFamily: "Lato",
+                                                    display: "block",
+                                                    boxShadow: "none",
+                                                    cursor: "pointer",
+                                                    " :hover": {
+                                                        background: "#none",
+                                                        boxShadow: "none",
+                                                    },
+                                                }}
+                                            >
+                                                {slot.startTime} -{" "}
+                                                {slot.endTime}
+                                                {/* {
+                                              bookingAppointmentDetails.consultingTime
+                                          } */}
+                                            </Button>
+                                        </ListBoxStyle>
+                                    ))
+                                )}
+                            </List>
+                            {dateErr && (
+                                <Box
+                                    component="span"
+                                    sx={{
+                                        color: "red",
+                                        fontFamily: "Lato",
+                                        fontSize: "18px",
+                                        fontWeight: "500",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Please choose date!
+                                </Box>
+                            )}
+                        </>
+                    ) : (
+                        <Stack spacing="20px">
                             <Card
                                 onClick={(e) => {
                                     setActiveCard(i);
                                     setDateErr(false);
                                     const dateString = e.target.innerText;
-                                    console.log();
                                     const dateObject = dayjs(
                                         dateString + dayjs().year()
                                     );
 
                                     const formattedDate =
                                         dateObject.format("YYYY-MM-DD");
-                                    console.log(formattedDate);
-                                    setGetDateAndTime({
-                                        ...getDateAndTime,
+                                    setInputValue({
+                                        ...inputValue,
+                                        appointmentDate: formattedDate,
+                                    });
+                                    setBookingAppointmentDetails({
+                                        ...bookingAppointmentDetails,
                                         appointmentDate: formattedDate,
                                     });
                                 }}
                                 sx={{
                                     width: "50px",
                                     textAlign: "center",
-                                    margin: "5px 8px",
+                                    // marginInline: "5px",
                                     padding: "5px",
                                     textTransform: "none",
                                     fontFamily: "Lato",
@@ -176,100 +415,42 @@ const ChooseDateAndSlotTimeDialog = ({
                                     boxShadow: "none",
                                     border: "1px solid #D9D9D9",
                                     cursor: "pointer",
-                                    background:
-                                        activeCard === i
-                                            ? "#1F51C6"
-                                            : "#ffffff",
-                                    color:
-                                        activeCard === i
-                                            ? "#ffffff"
-                                            : " #000000",
+                                    background: "#1F51C6",
+                                    color: "#ffffff",
                                 }}
-                                key={i}
                             >
-                                {date.day}
+                                {moment(formatdate, "YYYY-MM-DD").format("ddd")}
                                 <br />
-                                {date.date}
+                                {moment(formatdate, "YYYY-MM-DD").format("DD")}
+                                {/* {todayDate} */}
                                 <br />
-                                {date.month}
+                                {moment(formatdate, "YYYY-MM-DD").format("MMM")}
+                                {/* {year} */}
                             </Card>
-                        ))}
-                    </Box>
-                    {dateErr && (
-                        <Box
-                            component="span"
-                            sx={{
-                                color: "#B92612",
-                                fontFamily: "Lato",
-                                fontSize: "18px",
-                                fontWeight: "500",
-                            }}
-                        >
-                            Please choose date!
-                        </Box>
-                    )}
-
-                    <List
-                        style={{
-                            display: "flex",
-                            marginTop: "20px",
-                            flexWrap: "wrap",
-                            maxWidth: "589px",
-                            // gap:'35px'
-                        }}
-                    >
-                        {slotData[0] ===
-                        "doctor not available for this date" ? (
                             <Typography
                                 sx={{
-                                    color: "#B92612",
                                     fontFamily: "Lato",
-                                    fontSize: "14px",
-                                    fontWeight: "500",
+                                    fontWeight: "600",
+                                    fontSize: "0.938rem",
+                                    lineHeight: "18px",
+                                    color: "#383838",
                                 }}
                             >
-                                Doctor not available for this date
+                                Availability:
                             </Typography>
-                        ) : (
-                            slotData?.map((slot, i) => (
-                                <ListBoxStyle key={i}>
-                                    <Button
-                                        onClick={() =>
-                                            handleButtonClick(slot, i)
-                                        }
-                                        variant={
-                                            selectedTime == i
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            borderRadius: "3px",
-                                            color:
-                                                selectedTime == i
-                                                    ? "#ffffff"
-                                                    : "#706D6D",
-                                            border: "1px solid #706D6D8F",
-                                            fontWeight: "600",
-                                            fontSize: "15px",
-                                            fontFamily: "Lato",
-                                            display: "block",
-                                            boxShadow: "none",
-                                            cursor: "pointer",
-                                            " :hover": {
-                                                background: "#none",
-                                                boxShadow: "none",
-                                            },
-                                        }}
-                                    >
-                                        {slot.startTime} - {slot.endTime}
-                                        {/* {
-                                              bookingAppointmentDetails.consultingTime
-                                          } */}
-                                    </Button>
-                                </ListBoxStyle>
-                            ))
-                        )}
-                    </List>
+                            <Typography
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "0.938rem",
+                                    lineHeight: "18px",
+                                    color: "#1F51C6",
+                                }}
+                            >
+                                9:00AM- 4:00PM
+                            </Typography>
+                        </Stack>
+                    )}
 
                     {/* <ListBoxStyle>
                         <Button
@@ -314,19 +495,22 @@ const ChooseDateAndSlotTimeDialog = ({
                         variant="contained"
                         sx={{
                             background: "#1F51C6",
-                            margin: "20px 10px",
-                            width: "90%",
+                            marginBottom: "10px",
+                            // width: "100%",
                             borderRadius: "40px",
                             boxShadow: "none",
                             fontFamily: "Lato",
                             fontWeight: "700",
+                            fontSize: "1.063rem",
                             textTransform: "none",
+                            height: "40px",
                         }}
                         onClick={() => {
-                            if (!getDateAndTime.appointmentDate) {
+                            if (!bookingAppointmentDetails.appointmentDate) {
+                                console.log("date nhi aa rhi");
                                 return setDateErr(true);
                             }
-
+                            console.log("date aa rhi");
                             setBookAppointmentDetailsDialog(true);
                         }}
                     >

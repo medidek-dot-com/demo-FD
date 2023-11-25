@@ -6,16 +6,33 @@ import {
     MenuItem,
     Button,
     IconButton,
+    Card,
+    Box,
+    Typography,
 } from "@mui/material";
 import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
 import { BiSolidPlusSquare } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
+import EditSlotComponent from "./EditSlotSettingComponent";
+import AddSlotComponent from "./AddSlotComponent";
+import AddedSlotComponent from "./AddedSlotComponent";
+import moment from "moment";
 
-const OnlineAppointmentComponet = ({ markAsHoliday, setMarkAsHoliday }) => {
+const OnlineAppointmentComponet = ({
+    markAsHoliday,
+    setMarkAsHoliday,
+    slotData,
+    doctorDetails,
+    onlineSlotData,
+    selectedSlotDate,
+    setSelectedSlotDate,
+    getOnlineSlotDetailForDoctorForPerticularDate,
+}) => {
     const [slotDuration, setSlotDuration] = useState(15);
     const slotDurations = [15, 30, 45, 60];
     let count = 1;
     const [numOfStartTimes, setNumOfStartTimes] = useState(0);
+    const [dates, setDates] = useState([]);
 
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
@@ -38,6 +55,36 @@ const OnlineAppointmentComponet = ({ markAsHoliday, setMarkAsHoliday }) => {
     const handleStartTimeChange = (event) => {
         setStartTime(event.target.value);
     };
+
+    const currentDay = moment().format("ddd");
+    const [currentMonth, setCurrentMonth] = useState(moment());
+    const currentDate = moment().format("yyyy-MM-DD");
+    // const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
+
+    // const [selectedTokenDay, setSelecteTokendDay] = useState({
+    //     currentDate,
+    //     i: 0,
+    // });
+    const getWeekDates = () => {
+        const daysInMonth = currentMonth.daysInMonth();
+        const monthStart = moment().startOf("day");
+        const monthsDates = [];
+
+        for (let i = 0; i < 7; i++) {
+            const date = monthStart.clone().add(i, "days");
+            monthsDates.push({
+                day: date.format("ddd"),
+                date: date.format("DD"),
+                month: date.format("MMM"),
+                year: date.format("YYYY"),
+            });
+        }
+        setDates(monthsDates, currentDay);
+    };
+
+    useEffect(() => {
+        getWeekDates();
+    }, []);
 
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
@@ -203,7 +250,7 @@ const OnlineAppointmentComponet = ({ markAsHoliday, setMarkAsHoliday }) => {
                 Starttime3: startTime3,
                 Endtime3: endTime3,
                 isholiday: markAsHoliday,
-                date: selectedDay.currentDate,
+                date: selectedSlotDate.currentDate,
                 doctorid: user._id,
             });
             getOnlineSlotDetailForDoctorForPerticularDate();
@@ -218,899 +265,138 @@ const OnlineAppointmentComponet = ({ markAsHoliday, setMarkAsHoliday }) => {
             console.log(error.message);
         }
     };
+    const handleSelectedDate = async (userDate, i) => {
+        const { date, month, year, day } = userDate;
+        const a = year + "-" + month + "-" + date;
 
+        var formattedDate = moment(a, "yyyy-MMM-DD").format("yyyy-MM-DD");
+        console.log(a);
+        // await setEditSlottSetting(false);
+        setSelectedSlotDate({ currentDate: formattedDate, i });
+    };
     return (
         <>
-            <Stack spacing="20px" sx={{ mt: "16.61px" }}>
-                <Stack
-                    direction={{
-                        xs: "column",
-                        sm: "column",
-                        md: "row",
-                    }}
-                >
-                    <Stack spacing="10.48px">
-                        <InputLabel
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "500",
-                                fontSize: "0.938rem",
-                                color: "#383838",
-                            }}
-                        >
-                            Choose Slot Duration
-                        </InputLabel>
-                        <Stack
-                            direction="row"
-                            spacing="20.02px"
-                            sx={{
-                                alignItems: "center",
-                            }}
-                        >
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                disabled={markAsHoliday ? true : false}
-                                sx={{
-                                    width: {
-                                        xs: "100%",
-                                        sm: "100%",
-                                        md: "262.93px",
-                                    },
-                                    height: "40px",
-                                    fontFamily: "Lato",
-                                    fontWeight: "semibold",
-                                    fontSize: "1rem",
-                                    borderRadius: "5px",
-                                    background: markAsHoliday ? "#D9D9D9" : "",
-                                }}
-                                placeholder="Choose Slot Duration"
-                                value={slotDuration}
-                                onChange={handleSlotDurationChange}
-                            >
-                                {slotDurations.map((duration, i) => (
-                                    <MenuItem
-                                        key={i}
-                                        value={duration}
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        {duration} min
-                                    </MenuItem>
-                                ))}
-
-                                {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                            </Select>
-                            <Button
-                                onClick={() => setHolidayDialog(true)}
-                                sx={{
-                                    lineHeight: "21.13px",
-                                    // color: "#ffffff",
-                                    borderRadius: "0",
-                                    textTransform: "none",
-                                    padding: 0,
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "1.125rem",
-                                    display: {
-                                        xs: "none",
-                                        sm: "none",
-                                        md: "block",
-                                    },
-                                }}
-                            >
-                                View Holiday List
-                            </Button>
-                        </Stack>
-                    </Stack>
-                </Stack>
-                <Stack
-                    spacing="20.02px"
-                    direction={{
-                        xs: "column",
-                        sm: "column",
-                        md: "row",
-                    }}
-                >
-                    <Stack spacing="10.48px">
-                        <InputLabel
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "500",
-                                fontSize: "0.938rem",
-                                color: "#383838",
-                            }}
-                        >
-                            Start Time
-                        </InputLabel>
-                        <Stack
-                            direction="row"
-                            sx={{
-                                alignItems: "center",
-                            }}
-                        >
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                disabled={markAsHoliday ? true : false}
-                                sx={{
-                                    width: {
-                                        xs: "100%",
-                                        sm: "100%",
-                                        md: "262.93px",
-                                    },
-                                    height: "40px",
-                                    fontFamily: "Lato",
-                                    fontWeight: "semibold",
-                                    fontSize: "1rem",
-                                    borderRadius: "5px",
-                                    background: markAsHoliday ? "#D9D9D9" : "",
-                                }}
-                                placeholder="Choose Slot Duration"
-                                value={startTime}
-                                onChange={handleStartTimeChange}
-                            >
-                                {Array.from(
-                                    { length: 1440 / slotDuration },
-                                    (_, index) => {
-                                        const minutes = index * slotDuration;
-                                        const time = new Date(
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            minutes
-                                        );
-                                        return (
-                                            <MenuItem
-                                                key={time.toTimeString()}
-                                                value={time.toLocaleTimeString(
-                                                    [],
-                                                    {
-                                                        hour: "2-digit",
-                                                        minute: "2-digit",
-                                                    }
-                                                )}
-                                                sx={{
-                                                    fontFamily: "Lato",
-                                                    fontWeight: "semibold",
-                                                    fontSize: "1rem",
-                                                }}
-                                            >
-                                                {time.toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })}
-                                            </MenuItem>
-                                        );
-                                    }
-                                )}
-                                {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                            </Select>
-                        </Stack>
-                    </Stack>
-                    <Stack spacing="10.48px">
-                        <InputLabel
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "500",
-                                fontSize: "0.938rem",
-                                color: "#383838",
-                            }}
-                        >
-                            End Time
-                        </InputLabel>
-                        <Stack
-                            direction="row"
-                            sx={{
-                                alignItems: "center",
-                            }}
-                        >
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                disabled={markAsHoliday ? true : false}
-                                sx={{
-                                    width: {
-                                        xs: "100%",
-                                        sm: "100%",
-                                        md: "262.93px",
-                                    },
-                                    height: "40px",
-                                    fontFamily: "Lato",
-                                    fontWeight: "semibold",
-                                    fontSize: "1rem",
-                                    borderRadius: "5px",
-                                    background: markAsHoliday ? "#D9D9D9" : "",
-                                }}
-                                placeholder="Choose Slot Duration"
-                                value={endTime}
-                                onChange={(event) =>
-                                    setEndTime(event.target.value)
-                                }
-                            >
-                                {endTimes.map((time) => (
-                                    <MenuItem
-                                        key={time}
-                                        value={time}
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        {time}
-                                    </MenuItem>
-                                ))}
-
-                                {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                            </Select>
-                            {/* {numOfStartTimes === 0 && ( */}
-                            <Button
-                                disabled={numOfStartTimes === 2 ? true : false}
-                                onClick={() =>
-                                    setNumOfStartTimes(numOfStartTimes + count)
-                                }
-                                sx={{ minWidth: "0px" }}
-                            >
-                                <BiSolidPlusSquare
-                                    style={{
-                                        width: "28px",
-                                        height: "28px",
-                                        color:
-                                            numOfStartTimes >= 2
-                                                ? "#D9D9D9"
-                                                : "#1F51C6",
-                                        // color: "#1F51C6",
-                                    }}
-                                />
-                            </Button>
-                            {/* <IconButton
-                                    disabled={numOfStartTimes === 0 ? true : false}
-                                    onClick={() => setNumOfStartTimes(1)}
-                                    sx={{
-                                        ":hover": {
-                                            background: "none",
-                                        },
-                                    }}
-                                >
-                                    <BiSolidPlusSquare
-                                        style={{
-                                            width: "28px",
-                                            height: "28px",
-                                            color: "#1F51C6",
-                                        }}
-                                    />
-
-                                    
-                                </IconButton> */}
-                            {/* )} */}
-                        </Stack>
-                    </Stack>
-                </Stack>
-                {numOfStartTimes >= 1 && (
-                    <Stack
-                        spacing="20.02px"
-                        direction={{
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        }}
-                    >
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                Start Time 2
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
-                                    }}
-                                    placeholder="Choose Slot Duration"
-                                    value={startTime2}
-                                    onChange={(e) =>
-                                        setStartTime2(e.target.value)
-                                    }
-                                >
-                                    {startTimes2.map((startTime, i) => (
-                                        <MenuItem
-                                            value={startTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {startTime}
-                                        </MenuItem>
-                                    ))}
-                                    {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                                </Select>
-                            </Stack>
-                        </Stack>
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                End Time
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
-                                    }}
-                                    placeholder="Choose Slot Duration"
-                                    value={endTime2}
-                                    onChange={(e) =>
-                                        setEndTime2(e.target.value)
-                                    }
-                                >
-                                    {endTimes2.map((endTime, i) => (
-                                        <MenuItem
-                                            value={endTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {endTime}
-                                        </MenuItem>
-                                    ))}
-
-                                    {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                                </Select>
-                                <Button
-                                    sx={{
-                                        minWidth: "0px",
-                                        height: "29px",
-                                    }}
-                                    onClick={() =>
-                                        setNumOfStartTimes(numOfStartTimes - 1)
-                                    }
-                                >
-                                    <MdDelete
-                                        style={{
-                                            color: "#ffffff",
-                                            width: "27.55px",
-                                            height: "29px",
-                                            borderRadius: "3px",
-                                            // padding: "7px",
-                                            background: "#B92612",
-                                        }}
-                                    />
-                                </Button>
-                                {/* <IconButton
-                                        onClick={() => setNumOfStartTimes(0)}
-                                        sx={{
-                                            background: "#B92612",
-                                            borderRadius: "3px",
-                                            width: "28px",
-                                            height: "29px",
-                                            ml: "10px",
-                                            ":hover": {
-                                                background: "#B92612",
-                                            },
-                                        }}
-                                    >
-                                        <MdDelete
-                                            style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                color: "#ffffff",
-                                            }}
-                                        />
-                                        
-                                    </IconButton> */}
-                            </Stack>
-                        </Stack>
-                    </Stack>
-                )}
-                {numOfStartTimes >= 2 && (
-                    <Stack
-                        spacing="20.02px"
-                        direction={{
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        }}
-                    >
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                Start Time 3
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
-                                    }}
-                                    placeholder="Choose Slot Duration"
-                                    value={startTime3}
-                                    onChange={(e) =>
-                                        setStartTime3(e.target.value)
-                                    }
-                                >
-                                    {startTimes3.map((time, i) => (
-                                        <MenuItem
-                                            value={time}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {time}
-                                        </MenuItem>
-                                    ))}
-                                    {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                                </Select>
-                            </Stack>
-                        </Stack>
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                End Time 3
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
-                                    }}
-                                    placeholder="Choose Slot Duration"
-                                    value={endTime3}
-                                    onChange={(e) =>
-                                        setEndTime3(e.target.value)
-                                    }
-                                >
-                                    {endTimes3.map((endTime, i) => (
-                                        <MenuItem
-                                            value={endTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {endTime}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                                <Button
-                                    sx={{
-                                        minWidth: "0px",
-                                        height: "29px",
-                                    }}
-                                    onClick={() =>
-                                        setNumOfStartTimes(numOfStartTimes - 1)
-                                    }
-                                >
-                                    <MdDelete
-                                        style={{
-                                            color: "#ffffff",
-                                            width: "27.55px",
-                                            height: "29px",
-                                            borderRadius: "3px",
-                                            // padding: "7px",
-                                            background: "#B92612",
-                                        }}
-                                    />
-                                </Button>
-                            </Stack>
-                        </Stack>
-                    </Stack>
-                )}
-                {numOfStartTimes >= 3 && (
-                    <Stack
-                        spacing="20.02px"
-                        direction={{
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        }}
-                    >
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                Start Time 3
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
-                                    }}
-                                    placeholder="Choose Slot Duration"
-                                    value={startTime}
-                                    onChange={(e) =>
-                                        setStartTime(e.target.value)
-                                    }
-                                >
-                                    {startTimeOptions.map((startTime, i) => (
-                                        <MenuItem
-                                            value={startTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {startTime}
-                                        </MenuItem>
-                                    ))}
-                                    {/* <MenuItem
-                                        value="Calandar View"
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        Calandar View
-                                    </MenuItem> */}
-                                </Select>
-                            </Stack>
-                        </Stack>
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                End Time
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={markAsHoliday ? true : false}
-                                    sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background: markAsHoliday
-                                            ? "#D9D9D9"
-                                            : "",
-                                    }}
-                                    placeholder="Choose Slot Duration"
-                                    value={endTime}
-                                    onChange={(e) => setEndTime(e.target.value)}
-                                >
-                                    {endTimeOptions.map((endTime, i) => (
-                                        <MenuItem
-                                            value={endTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {endTime}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                                <Button
-                                    sx={{
-                                        width: "0px",
-                                        height: "29px",
-                                    }}
-                                    onClick={() =>
-                                        setNumOfStartTimes(numOfStartTimes - 1)
-                                    }
-                                >
-                                    <MdDelete
-                                        style={{
-                                            color: "#ffffff",
-                                            width: "27.55px",
-                                            height: "29px",
-                                            borderRadius: "3px",
-                                            // padding: "7px",
-                                            background: "#B92612",
-                                        }}
-                                    />
-                                </Button>
-                            </Stack>
-                        </Stack>
-                    </Stack>
-                )}
-
+            <Card
+                sx={{
+                    px: {
+                        xs: "16px",
+                        sm: "16px",
+                        md: "30px",
+                    },
+                    py: {
+                        xs: "25px",
+                        sm: "25px",
+                        md: "30px",
+                    },
+                    boxShadow: "none",
+                    border: "1px solid #D9D9D9",
+                    mt: "40px",
+                }}
+            >
                 <Stack
                     direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
+                    sx={{
+                        width: { xs: "100%", sm: "100%", md: "100%" },
+                        flexWrap: "wrap",
+                        gap: { xs: "7px", sm: "7px", md: "12.61px" },
+                        // background: "red",
+                    }}
                 >
-                    <Stack direction="row" sx={{ alignItems: "center" }}>
-                        {/* <Radio
-                                // checked={selectedValue === 'a'}
-                                onChange={()=>console.log("Checked")}
-                                value="a"
-                                id="markAsHoliday"
-                                name="radio-buttons"
-                                inputProps={{
-                                    "aria-label": "A",
-                                }}
-                            /> */}
-                        <IconButton
-                            id="markAsHoliday"
+                    {dates.map((date, i) => (
+                        <Box
+                            key={i + 1}
+                            component="button"
+                            onClick={() => handleSelectedDate(date, i)}
                             sx={{
-                                ":hover": {
-                                    background: "none",
+                                width: {
+                                    xs: "43.18px",
+                                    sm: "43.18px",
+                                    md: "57.39px",
                                 },
-                            }}
-                            onClick={() => setMarkAsHoliday(!markAsHoliday)}
-                        >
-                            {markAsHoliday ? (
-                                <BiRadioCircleMarked
-                                    style={{
-                                        fontSize: "2rem",
-                                        color: "#1F51C6",
-                                    }}
-                                />
-                            ) : (
-                                <BiRadioCircle
-                                    style={{
-                                        fontSize: "2rem",
-                                        color: "#1F51C6",
-                                    }}
-                                />
-                            )}
-                        </IconButton>
-                        <InputLabel
-                            htmlFor="markAsHoliday"
-                            sx={{
-                                fontFamily: "Lato",
-                                fontWeight: "semibold",
-                                fontSize: "0.938rem",
-                                color: "#706D6D",
+                                height: {
+                                    xs: "43.18px",
+                                    sm: "43.18px",
+                                    md: "57.39px",
+                                },
+                                background:
+                                    selectedSlotDate.i === i &&
+                                    doctorDetails?.acceptAppointments ===
+                                        "bySlot"
+                                        ? "#1F51C6"
+                                        : doctorDetails?.acceptAppointments ===
+                                          "bySlot"
+                                        ? "#FFFFFF"
+                                        : "#D9D9D9",
+                                border:
+                                    currentDate === date.day
+                                        ? "2px solid #1F51C6"
+                                        : "1px solid #706D6D8F",
+                                borderRadius: "3px",
+                                color:
+                                    selectedSlotDate.i === i
+                                        ? "#FFFFFF"
+                                        : doctorDetails?.acceptAppointments ===
+                                          "bySlot"
+                                        ? "#706D6D"
+                                        : "#ffffff",
+                                cursor:
+                                    doctorDetails?.acceptAppointments ===
+                                    "bySlot"
+                                        ? "pointer"
+                                        : "no-drop",
                                 userSelect: "none",
                             }}
                         >
-                            Mark as Holiday
-                        </InputLabel>
-                    </Stack>
-                    <Button
-                        onClick={() => setHolidayDialog(true)}
-                        sx={{
-                            lineHeight: "21.13px",
-                            // color: "#ffffff",
-                            borderRadius: "0",
-                            textTransform: "none",
-                            padding: 0,
-                            fontFamily: "Lato",
-                            fontWeight: "500",
-                            fontSize: "0.75rem",
-                            display: {
-                                xs: "block",
-                                sm: "block",
-                                md: "none",
-                            },
-                        }}
-                    >
-                        View Holiday List
-                    </Button>
+                            <Typography
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "semibold",
+                                    fontSize: {
+                                        xs: "0.938rem",
+                                        sm: "0.938rem",
+                                        md: "1.125rem",
+                                    },
+                                    lineHeight: "21.6px",
+                                }}
+                            >
+                                {date.day}
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "semibold",
+                                    fontSize: {
+                                        xs: "0.938rem",
+                                        sm: "0.938rem",
+                                        md: "1.125rem",
+                                    },
+                                    lineHeight: "21.6px",
+                                }}
+                            >
+                                {date.date}
+                            </Typography>
+                        </Box>
+                    ))}
                 </Stack>
-                <Button
-                    variant="contained"
-                    onClick={saveData}
-                    sx={{
-                        boxShadow: "none",
-                        borderRadius: "29px",
-                        textTransform: "none",
-                        fontFamily: "Lato",
-                        fontWeight: "700",
-                        fontSize: "1.063rem",
-                    }}
-                >
-                    Save
-                </Button>
-            </Stack>
+                {onlineSlotData !== null ? (
+                    <AddedSlotComponent
+                        doctorDetails={doctorDetails}
+                        onlineSlotData={onlineSlotData}
+                        getOnlineSlotDetailForDoctorForPerticularDate={
+                            getOnlineSlotDetailForDoctorForPerticularDate
+                        }
+                        selectedSlotDate={selectedSlotDate}
+                    />
+                ) : (
+                    <AddSlotComponent
+                        doctorDetails={doctorDetails}
+                        selectedSlotDate={selectedSlotDate}
+                        getOnlineSlotDetailForDoctorForPerticularDate={
+                            getOnlineSlotDetailForDoctorForPerticularDate
+                        }
+                    />
+                )}
+            </Card>
         </>
     );
 };

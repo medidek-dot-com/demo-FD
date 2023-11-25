@@ -25,6 +25,8 @@ import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import moment from "moment";
+import SlotAppointmentsTable from "./SlotAppointmentsTable";
+import TokenAppointmentsTable from "./TokenAppointmentsTable";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -38,7 +40,7 @@ const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.body}`]: {
         fontFamily: "Lato",
         fontWeight: "600",
-        fontSize: "1rem",
+        fontSize: "15px",
         textAlign: "center",
         color: "#383838",
     },
@@ -53,35 +55,45 @@ const MobileViewCardTypographyStyle = styled(Typography)({
 const PendingAppointmentsTableForLoggedInDoctor = ({
     pendingAppointmentsData,
     getPendingAppointmentsData,
+    slotAppointment,
+    setSlotAppointment,
 }) => {
-    const [updatedStatus, setUpdatedStatus] = useState("pending");
-    const [appointmentDropDown, setAppointmentDropDown] = useState(false);
-    const [activeCard, setAciveCard] = useState();
+    // const [updatedStatus, setUpdatedStatus] = useState("pending");
+    // const [appointmentDropDown, setAppointmentDropDown] = useState(false);
+    // const [activeCard, setAciveCard] = useState();
 
-    console.log(pendingAppointmentsData);
-    const handleStatusChange = async (id, status) => {
-        console.log(updatedStatus, "this is id", id);
-        try {
-            const response = await axiosClient.put(
-                `/v2/updateUserAppointmentStatus/${id}`,
-                { status }
-            );
-            if (response.status === "ok") {
-                getPendingAppointmentsData();
-            }
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
-        setUpdatedStatus(status);
-    };
+    // console.log(pendingAppointmentsData);
+    // const handleStatusChange = async (id, status) => {
+    //     console.log(updatedStatus, "this is id", id);
+    //     try {
+    //         const response = await axiosClient.put(
+    //             `/v2/updateUserAppointmentStatus/${id}`,
+    //             { status }
+    //         );
+    //         if (response.status === "ok") {
+    //             getPendingAppointmentsData();
+    //         }
+    //         console.log(response);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    //     setUpdatedStatus(status);
+    // };
 
-    useEffect(() => {
-        getPendingAppointmentsData();
-    }, [updatedStatus]);
+    // useEffect(() => {
+    //     getPendingAppointmentsData();
+    // }, [updatedStatus]);
     return (
         <>
-            <Box
+            {slotAppointment === "slotAppointments" ? (
+                <SlotAppointmentsTable
+                    pendingAppointmentsData={pendingAppointmentsData}
+                    getPendingAppointmentsData={getPendingAppointmentsData}
+                />
+            ) : (
+                <TokenAppointmentsTable />
+            )}
+            {/* <Box
                 sx={{
                     overflow: "auto",
                     display: { xs: "none", sm: "none", md: "block" },
@@ -110,8 +122,7 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                             <StyledTableCell>Contact No.</StyledTableCell>
                             <StyledTableCell>Timing</StyledTableCell>
                             <StyledTableCell>Date</StyledTableCell>
-                            <StyledTableCell>Edit</StyledTableCell>
-                            <StyledTableCell>Remove</StyledTableCell>
+                            <StyledTableCell>Records</StyledTableCell>
                             <StyledTableCell>Status</StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -155,10 +166,7 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                                         ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
-                                        Edit
-                                    </StyledTableCell>
-                                    <StyledTableCell sx={{ color: "#B92612" }}>
-                                        Cancel
+                                        View
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         <Select
@@ -171,7 +179,6 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                                             }}
                                             variant="standard"
                                             value={appointment.status}
-                                            // onChange={(e) => handleChange(e, i)}
                                         >
                                             <MenuItem
                                                 onClick={() =>
@@ -227,6 +234,24 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                                             >
                                                 Missed
                                             </MenuItem>
+                                            <MenuItem
+                                                onClick={() =>
+                                                    handleStatusChange(
+                                                        appointment._id,
+                                                        "missed"
+                                                    )
+                                                }
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "16px",
+                                                    textAlign: "center",
+                                                    color: "#EA4335",
+                                                }}
+                                                value={"cancelled"}
+                                            >
+                                                Cancelled
+                                            </MenuItem>
                                         </Select>
                                     </StyledTableCell>
                                 </TableRow>
@@ -234,45 +259,6 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                         ) : (
                             <Typography>No Data</Typography>
                         )}
-                        {/* <TableRow
-                                sx={{
-                                    boxShadow:
-                                        "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
-                                }}
-                            >
-                                <StyledTableCell>1</StyledTableCell>
-                                <StyledTableCell>Johnny Doe</StyledTableCell>
-                                <StyledTableCell>54</StyledTableCell>
-                                <StyledTableCell>Male</StyledTableCell>
-                                <StyledTableCell>9911223344</StyledTableCell>
-                                <StyledTableCell>12:00 PM</StyledTableCell>
-                                <StyledTableCell>15/07/23</StyledTableCell>
-                                <StyledTableCell sx={{ color: "#1F51C6" }}>
-                                    Edit
-                                </StyledTableCell>
-                                <StyledTableCell sx={{ color: "#B92612" }}>
-                                    Cancel
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <Select
-                                        sx={
-                                            status == "Complete"
-                                                ? statusComplete
-                                                : statusPending
-                                        }
-                                        variant="standard"
-                                        value={status}
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value={"Pending"}>
-                                            Pending
-                                        </MenuItem>
-                                        <MenuItem value={"Complete"}>
-                                            Complete
-                                        </MenuItem>
-                                    </Select>
-                                </StyledTableCell>
-                            </TableRow> */}
                     </TableBody>
                 </Table>
             </Box>
@@ -423,14 +409,14 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                                                     fontWeight: "600",
                                                     fontSize: "14px",
                                                     textAlign: "center",
-                                                    // p:'5px 10px',
+                                                  
                                                     borderRadius: "21px",
                                                     height: "32px",
                                                     mr: "2px",
                                                 }}
                                                 variant="standard"
                                                 value={appointment.status}
-                                                // onChange={(e) => handleChange(e, i)}
+                                                
                                             >
                                                 <MenuItem
                                                     onClick={() =>
@@ -487,13 +473,7 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                                                     Missed
                                                 </MenuItem>
                                             </Select>
-                                            {/* <span
-                                                        style={{
-                                                            fontWeight: "600",
-                                                        }}
-                                                    >
-                                                        Male
-                                                    </span> */}
+                                            
                                         </Box>
                                     </Stack>
                                 </Card>
@@ -512,7 +492,7 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                         No Appointments For Today
                     </Typography>
                 )}
-            </Stack>
+            </Stack> */}
         </>
     );
 };

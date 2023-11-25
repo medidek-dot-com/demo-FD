@@ -21,6 +21,7 @@ import {
     styled,
     tableCellClasses,
 } from "@mui/material";
+import moment from "moment";
 import DoctorProfileCard from "../../Components/Master/DoctorProfileCard";
 import Footer from "../../Components/Footer/Footer";
 import CompleteAppointmentsTable from "../../Components/Master/CompleteAppointmentsTable";
@@ -68,6 +69,8 @@ const DatePickerStyle = styled(MobileDatePicker)({
 
 const MasterUserDoctorAppointments = () => {
     const { hospital_id, doctor_id } = useParams();
+    const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
+
     const [completedAppointments, setCompletedAppointments] = useState(1);
     const [appointments, setAppointments] = useState([]);
     const [pendingAppointmentsData, setPendingAppointmentsData] = useState([]);
@@ -85,46 +88,66 @@ const MasterUserDoctorAppointments = () => {
     }, []);
 
     const getDoctorDetails = async () => {
-        const response = await axiosClient.get(
-            `/v2/getSingleDoctor/${doctor_id}`
-        );
-        setDoctorsDetails(response.result);
+        try {
+            const response = await axiosClient.get(
+                `/v2/singledoctor/${doctor_id}`
+            );
+            setDoctorsDetails(response.result);
+        } catch (e) {
+            console.log(e);
+        }
     };
 
-    const getUpcomingAppointmentsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getAppoinmentForDoctorInHospital/${hospital_id}/${doctor_id}`
-        );
-        setAppointments(response.result);
-        console.log(response);
+    const getPendingAppointmentsDataForPerticularDate = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getPendingAppoinmentForDoctor/${doctor_id}/${date}`
+            );
+            console.log(response);
+            setPendingAppointmentsData(response.result);
+            return;
+        } catch (error) {
+            F;
+            console.log(error);
+        }
     };
-    const getPendingAppointmentsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getPendingAppointmentsForHospitalAndDoctors/${hospital_id}/${doctor_id}`
-        );
-        setPendingAppointmentsData(response.result);
-        console.log(response);
+
+    // const getPendingAppointmentsData = async () => {
+    //     const response = await axiosClient.get(
+    //         `/v2/getPendingAppointmentsForHospitalAndDoctors/${hospital_id}/${doctor_id}`
+    //     );
+    //     setPendingAppointmentsData(response.result);
+    //     console.log(response);
+    // };
+
+    const getCompleteAppointmentsDataForPerticularDate = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getCompletedAppoinmentForDoctor/${doctor_id}/${date}`
+            );
+            setCompleteAppointmentsData(response.result);
+        } catch (error) {
+            console.log(error);
+        }
     };
-    const getCompleteAppointmentsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getCompleteAppointmentsForHospitalAndDoctors/${hospital_id}/${doctor_id}`
-        );
-        setCompleteAppointmentsData(response.result);
-        console.log(response);
-    };
-    const getMissedAppointmentsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getMissedAppointmentsForHospitalAndDoctors/${hospital_id}/${doctor_id}`
-        );
-        setMissedAppointmentsData(response.result);
-        console.log(response);
+
+    const getMissedAppointmentsDataForPerticularDate = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getMissedAppoinmentForDoctor/${doctor_id}/${date}`
+            );
+            setMissedAppointmentsData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
-        getUpcomingAppointmentsData();
-        getPendingAppointmentsData();
-        getCompleteAppointmentsData();
-        getMissedAppointmentsData();
+        getPendingAppointmentsDataForPerticularDate();
+        // getPendingAppointmentsData();
+        getCompleteAppointmentsDataForPerticularDate();
+        getMissedAppointmentsDataForPerticularDate();
         getDoctorDetails();
     }, []);
 
@@ -177,12 +200,12 @@ const MasterUserDoctorAppointments = () => {
                             }}
                         />
                     </Box>
-                    <DoctorProfileCard
+                    {/* <DoctorProfileCard
                         getUpcomingAppointmentsData={
-                            getUpcomingAppointmentsData
+                            getPendingAppointmentsDataForPerticularDate
                         }
                         doctorDetails={doctorDetails}
-                    />
+                    /> */}
                     <Box sx={{ display: "flex", mt: 4 }}>
                         <Stack direction={"row"} gap={1} width="100%">
                             <Button
@@ -370,7 +393,7 @@ const MasterUserDoctorAppointments = () => {
                         <PendingAppointmentsTableForMobile
                             pendingAppointmentsData={pendingAppointmentsData}
                             getPendingAppointmentsData={
-                                getPendingAppointmentsData
+                                getPendingAppointmentsDataForPerticularDate
                             }
                         />
                     )) ||
@@ -380,7 +403,7 @@ const MasterUserDoctorAppointments = () => {
                                     completeAppointmentsData
                                 }
                                 getCompleteAppointmentsData={
-                                    getCompleteAppointmentsData
+                                    getCompleteAppointmentsDataForPerticularDate
                                 }
                             />
                         )) ||
@@ -388,7 +411,7 @@ const MasterUserDoctorAppointments = () => {
                             <MissedAppointmentsTableForMobile
                                 missedAppointmentsData={missedAppointmentsData}
                                 getMissedAppointmentsData={
-                                    getMissedAppointmentsData
+                                    getMissedAppointmentsDataForPerticularDate
                                 }
                             />
                         ))}
@@ -400,7 +423,7 @@ const MasterUserDoctorAppointments = () => {
                                     pendingAppointmentsData
                                 }
                                 getPendingAppointmentsData={
-                                    getPendingAppointmentsData
+                                    getPendingAppointmentsDataForPerticularDate
                                 }
                             />
                         )) ||
@@ -410,7 +433,7 @@ const MasterUserDoctorAppointments = () => {
                                         completeAppointmentsData
                                     }
                                     getCompleteAppointmentsData={
-                                        getCompleteAppointmentsData
+                                        getCompleteAppointmentsDataForPerticularDate
                                     }
                                 />
                             )) ||
@@ -420,7 +443,7 @@ const MasterUserDoctorAppointments = () => {
                                         missedAppointmentsData
                                     }
                                     getMissedAppointmentsData={
-                                        getMissedAppointmentsData
+                                        getMissedAppointmentsDataForPerticularDate
                                     }
                                 />
                             ))}

@@ -81,6 +81,7 @@ const DoctorsTable = ({ search }) => {
         consultingTime: "",
         location: "",
         imgurl: "",
+        acceptAppointments: "bySlot",
         hospitalId: hospital_id,
     });
 

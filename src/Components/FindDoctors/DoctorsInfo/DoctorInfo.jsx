@@ -81,6 +81,7 @@ const DoctorInfo = () => {
     const [dateErr, setDateErr] = useState(false);
     const [hospitalList, setHospitalList] = useState([]);
     const [duid, setDuid] = useState("");
+    const [selectedTime, setSelectedTime] = useState();
 
     const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
         nameOfTheDoctor: "",
@@ -1264,6 +1265,10 @@ const DoctorInfo = () => {
                 slotData={slotData}
                 setSlotData={setSlotData}
                 slotsLoading={slotsLoading}
+                activeCard={activeCard}
+                setActiveCard={setActiveCard}
+                selectedTime={selectedTime}
+                setSelectedTime={setSelectedTime}
             />
             <ConfirmAppointmentDialog
                 inputValue={inputValue}

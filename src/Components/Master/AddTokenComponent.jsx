@@ -22,37 +22,24 @@ import "ldrs/dotPulse";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "@emotion/styled";
+import EditTokenSettingComponent from "./EditTokenSettingComponent";
 
-const SelectStyle = styled(Select)({
-    ["& input:disabled"]: {
-        color: "#706D6D",
-        backgroundColor: "red",
-        // backgroundColor: "#D9D9D9",
-        cursor: "no-drop",
-        border: "none",
-    },
-});
-
-const AppointmentByToken = ({
-    dates,
-    setHolidayDialog,
-    view,
-    markAsHoliday,
+const AddTokenComponent = ({
+    setSelecteTokendDate,
     setMarkAsHoliday,
-    currentDate,
-    tokenSelectedDay,
-    setTokenSelectedDay,
+    markAsHoliday,
+    selectedTokenDate,
+    doctorDetails,
+    getAppointmentByTokenSlotDetailForDoctorForPerticularDate,
 }) => {
-    const { doctorid } = useParams();
+    const { doctor_id } = useParams();
     const { user } = useSelector((state) => state.auth);
-    const { doctor } = useSelector((state) => state.doctor);
 
-    console.log(doctor.acceptAppointments);
     // const currentDate = moment().format("yyyy-MM-DD");
 
     const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
         useState(false);
-    const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
+    // const [selectedDay, setSelectedDay] = useState({ currentDate, i: 0 });
     const [startTime, setStartTime] = useState("12:00 AM");
 
     const [startTime2, setStartTime2] = useState("");
@@ -210,18 +197,18 @@ const AppointmentByToken = ({
     };
     //To here
 
-    const handleSelectedDate = (userDate, i) => {
-        const { date, month, year, day } = userDate;
-        // console.log(day, date, month, year);
-        const a = year + "-" + month + "-" + date;
-        console.log(a);
+    // const handleSelectedDate = (userDate, i) => {
+    //     const { date, month, year, day } = userDate;
+    //     // console.log(day, date, month, year);
+    //     const a = year + "-" + month + "-" + date;
+    //     console.log(a);
 
-        var formattedDate = moment(a).format("YYYY-MM-DD");
-        console.log(formattedDate); // Output: "2023-11-13"
-        // const formattedDate = moment.format(date)
+    //     var formattedDate = moment(a).format("YYYY-MM-DD");
+    //     console.log(formattedDate); // Output: "2023-11-13"
+    //     // const formattedDate = moment.format(date)
 
-        setTokenSelectedDay({ currentDate: formattedDate, i });
-    };
+    //     selectedTokenDate({ currentDate: formattedDate, i });
+    // };
 
     const handleSwtichChange = async (e) => {
         setSwitchLoading(true);
@@ -254,16 +241,19 @@ const AppointmentByToken = ({
                 Endtime2: endTime2,
                 Starttime3: startTime3,
                 Endtime3: endTime3,
-                date: selectedDay.currentDate,
-                doctorid: user._id,
+                date: selectedTokenDate.currentDate,
+                doctorid: doctor_id,
             });
             console.log(response.result);
-            setStartTime("");
-            setStartTime2("");
-            setStartTime3("");
-            setEndTime("");
-            setEndTime2("");
-            setEndTime3("");
+            if (response.status === "ok") {
+                setStartTime("");
+                setStartTime2("");
+                setStartTime3("");
+                setEndTime("");
+                setEndTime2("");
+                setEndTime3("");
+                await getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
+            }
         } catch (error) {
             console.log(error.message);
         }
@@ -271,210 +261,110 @@ const AppointmentByToken = ({
 
     return (
         <>
-            <Card
-                sx={{
-                    px: {
-                        xs: "16px",
-                        sm: "16px",
-                        md: "30px",
-                    },
-                    py: {
-                        xs: "25px",
-                        sm: "25px",
-                        md: "30px",
-                    },
-                    boxShadow: "none",
-                    border: "1px solid #D9D9D9",
-                    mt: "40px",
-                }}
-            >
-                <Stack direction="row" spacing="12.61px" sx={{}}>
-                    {dates.map((date, i) => (
-                        <Box
-                            key={i + 1}
-                            component="button"
-                            onClick={() => handleSelectedDate(date, i)}
-                            disabled={
-                                doctor.acceptAppointments === "bySlot"
-                                    ? true
-                                    : false
-                            }
+            <Stack spacing="20px" sx={{ mt: "16.61px" }}>
+                <Stack
+                    spacing="20.02px"
+                    direction={{
+                        xs: "column",
+                        sm: "column",
+                        md: "row",
+                    }}
+                >
+                    <Stack spacing="10.48px">
+                        <InputLabel
                             sx={{
-                                width: {
-                                    xs: "43.18px",
-                                    sm: "43.18px",
-                                    md: "57.39px",
-                                },
-                                height: {
-                                    xs: "43.18px",
-                                    sm: "43.18px",
-                                    md: "57.39px",
-                                },
-                                background:
-                                    tokenSelectedDay.i === i &&
-                                    doctor.acceptAppointments === "byToken"
-                                        ? "#1F51C6"
-                                        : doctor.acceptAppointments ===
-                                          "byToken"
-                                        ? "#FFFFFF"
-                                        : "#D9D9D9",
-                                border:
-                                    currentDate === date.day
-                                        ? "2px solid #1F51C6"
-                                        : "1px solid #706D6D8F",
-                                borderRadius: "3px",
-                                color:
-                                    tokenSelectedDay.i === i
-                                        ? "#FFFFFF"
-                                        : doctor.acceptAppointments ===
-                                          "byToken"
-                                        ? "#706D6D"
-                                        : "#ffffff",
-                                cursor:
-                                    doctor.acceptAppointments === "byToken"
-                                        ? "pointer"
-                                        : "no-drop",
-                                userSelect: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "0.938rem",
+                                color: "#383838",
                             }}
                         >
-                            <Typography
+                            Start Time
+                        </InputLabel>
+                        <Stack
+                            direction="row"
+                            sx={{
+                                alignItems: "center",
+                            }}
+                        >
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                disabled={
+                                    markAsHoliday ||
+                                    doctorDetails.acceptAppointments ===
+                                        "byToken"
+                                        ? false
+                                        : true
+                                }
                                 sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "262.93px",
+                                    },
+                                    height: "40px",
                                     fontFamily: "Lato",
                                     fontWeight: "semibold",
-                                    fontSize: {
-                                        xs: "0.938rem",
-                                        sm: "0.938rem",
-                                        md: "1.125rem",
-                                    },
-                                    lineHeight: "21.6px",
-                                }}
-                            >
-                                {date.day}
-                            </Typography>
-                            <Typography
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "semibold",
-                                    fontSize: {
-                                        xs: "0.938rem",
-                                        sm: "0.938rem",
-                                        md: "1.125rem",
-                                    },
-                                    lineHeight: "21.6px",
-                                }}
-                            >
-                                {date.date}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Stack>
-                <Stack spacing="20px" sx={{ mt: "16.61px" }}>
-                    <Stack
-                        spacing="20.02px"
-                        direction={{
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        }}
-                    >
-                        <Stack spacing="10.48px">
-                            <InputLabel
-                                sx={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                Start Time
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={
+                                    fontSize: "1rem",
+                                    borderRadius: "5px",
+                                    background:
                                         markAsHoliday ||
-                                        doctor.acceptAppointments === "byToken"
-                                            ? false
-                                            : true
-                                    }
+                                        doctorDetails.acceptAppointments ===
+                                            "byToken"
+                                            ? ""
+                                            : "#D9D9D9",
+                                }}
+                                placeholder="Choose Slot Duration"
+                                value={startTime}
+                                onChange={handleStartTimeChange}
+                            >
+                                <MenuItem
+                                    value={"None"}
                                     sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background:
-                                            markAsHoliday ||
-                                            doctor.acceptAppointments ===
-                                                "byToken"
-                                                ? ""
-                                                : "#D9D9D9",
                                     }}
-                                    placeholder="Choose Slot Duration"
-                                    value={startTime}
-                                    onChange={handleStartTimeChange}
                                 >
-                                    <MenuItem
-                                        value={"None"}
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "semibold",
-                                            fontSize: "1rem",
-                                        }}
-                                    >
-                                        None
-                                    </MenuItem>
-                                    {Array.from(
-                                        { length: 1440 / slotDuration },
-                                        (_, index) => {
-                                            const minutes =
-                                                index * slotDuration;
-                                            const time = new Date(
-                                                0,
-                                                0,
-                                                0,
-                                                0,
-                                                minutes
-                                            );
-                                            return (
-                                                <MenuItem
-                                                    key={time.toTimeString()}
-                                                    value={time.toLocaleTimeString(
-                                                        [],
-                                                        {
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        }
-                                                    )}
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "semibold",
-                                                        fontSize: "1rem",
-                                                    }}
-                                                >
-                                                    {time.toLocaleTimeString(
-                                                        [],
-                                                        {
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        }
-                                                    )}
-                                                </MenuItem>
-                                            );
-                                        }
-                                    )}
-                                    {/* <MenuItem
+                                    None
+                                </MenuItem>
+                                {Array.from(
+                                    { length: 1440 / slotDuration },
+                                    (_, index) => {
+                                        const minutes = index * slotDuration;
+                                        const time = new Date(
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            minutes
+                                        );
+                                        return (
+                                            <MenuItem
+                                                key={time.toTimeString()}
+                                                value={time.toLocaleTimeString(
+                                                    [],
+                                                    {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    }
+                                                )}
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "semibold",
+                                                    fontSize: "1rem",
+                                                }}
+                                            >
+                                                {time.toLocaleTimeString([], {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })}
+                                            </MenuItem>
+                                        );
+                                    }
+                                )}
+                                {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
                                             fontFamily: "Lato",
@@ -484,84 +374,85 @@ const AppointmentByToken = ({
                                     >
                                         Calandar View
                                     </MenuItem> */}
-                                </Select>
-                            </Stack>
+                            </Select>
                         </Stack>
-                        <Stack spacing="10.48px">
-                            <InputLabel
+                    </Stack>
+                    <Stack spacing="10.48px">
+                        <InputLabel
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "0.938rem",
+                                color: "#383838",
+                            }}
+                        >
+                            End Time
+                        </InputLabel>
+                        <Stack
+                            direction="row"
+                            sx={{
+                                alignItems: "center",
+                            }}
+                        >
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                disabled={
+                                    markAsHoliday ||
+                                    doctorDetails.acceptAppointments ===
+                                        "byToken"
+                                        ? false
+                                        : true
+                                }
                                 sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "262.93px",
+                                    },
+                                    height: "40px",
                                     fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                End Time
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={
+                                    fontWeight: "semibold",
+                                    fontSize: "1rem",
+                                    borderRadius: "5px",
+                                    background:
                                         markAsHoliday ||
-                                        doctor.acceptAppointments === "byToken"
-                                            ? false
-                                            : true
-                                    }
+                                        doctorDetails.acceptAppointments ===
+                                            "byToken"
+                                            ? ""
+                                            : "#D9D9D9",
+                                }}
+                                placeholder="Choose Slot Duration"
+                                value={endTime}
+                                onChange={(event) =>
+                                    setEndTime(event.target.value)
+                                }
+                            >
+                                <MenuItem
+                                    value={"None"}
                                     sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background:
-                                            markAsHoliday ||
-                                            doctor.acceptAppointments ===
-                                                "byToken"
-                                                ? ""
-                                                : "#D9D9D9",
                                     }}
-                                    placeholder="Choose Slot Duration"
-                                    value={endTime}
-                                    onChange={(event) =>
-                                        setEndTime(event.target.value)
-                                    }
                                 >
+                                    None
+                                </MenuItem>
+                                {endTimes.map((time) => (
                                     <MenuItem
-                                        value={"None"}
+                                        key={time}
+                                        value={time}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
                                             fontSize: "1rem",
                                         }}
                                     >
-                                        None
+                                        {time}
                                     </MenuItem>
-                                    {endTimes.map((time) => (
-                                        <MenuItem
-                                            key={time}
-                                            value={time}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {time}
-                                        </MenuItem>
-                                    ))}
+                                ))}
 
-                                    {/* <MenuItem
+                                {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
                                             fontFamily: "Lato",
@@ -571,9 +462,9 @@ const AppointmentByToken = ({
                                     >
                                         Calandar View
                                     </MenuItem> */}
-                                </Select>
-                                {/* {numOfStartTimes === 0 && ( */}
-                                {/* <Button
+                            </Select>
+                            {/* {numOfStartTimes === 0 && ( */}
+                            {/* <Button
                                     disabled={markAsHoliday ? true : false}
                                     onClick={() =>
                                         setNumOfStartTimes(
@@ -592,7 +483,7 @@ const AppointmentByToken = ({
                                         }}
                                     />
                                 </Button> */}
-                                {/* <IconButton
+                            {/* <IconButton
                                     disabled={numOfStartTimes === 0 ? true : false}
                                     onClick={() => setNumOfStartTimes(1)}
                                     sx={{
@@ -611,93 +502,92 @@ const AppointmentByToken = ({
 
                                     
                                 </IconButton> */}
-                                {/* )} */}
-                            </Stack>
+                            {/* )} */}
                         </Stack>
                     </Stack>
-                    {/* {numOfStartTimes >= 1 && ( */}
-                    <Stack
-                        spacing="20.02px"
-                        direction={{
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        }}
-                    >
-                        <Stack spacing="10.48px">
-                            <InputLabel
+                </Stack>
+                {/* {numOfStartTimes >= 1 && ( */}
+                <Stack
+                    spacing="20.02px"
+                    direction={{
+                        xs: "column",
+                        sm: "column",
+                        md: "row",
+                    }}
+                >
+                    <Stack spacing="10.48px">
+                        <InputLabel
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "0.938rem",
+                                color: "#383838",
+                            }}
+                        >
+                            Start Time 2
+                        </InputLabel>
+                        <Stack
+                            direction="row"
+                            sx={{
+                                alignItems: "center",
+                            }}
+                        >
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                disabled={
+                                    markAsHoliday ||
+                                    doctorDetails.acceptAppointments ===
+                                        "byToken"
+                                        ? false
+                                        : true
+                                }
                                 sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "262.93px",
+                                    },
+                                    height: "40px",
                                     fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                Start Time 2
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={
+                                    fontWeight: "semibold",
+                                    fontSize: "1rem",
+                                    borderRadius: "5px",
+                                    background:
                                         markAsHoliday ||
-                                        doctor.acceptAppointments === "byToken"
-                                            ? false
-                                            : true
-                                    }
+                                        doctorDetails.acceptAppointments ===
+                                            "byToken"
+                                            ? ""
+                                            : "#D9D9D9",
+                                }}
+                                placeholder="Choose Slot Duration"
+                                value={startTime2}
+                                onChange={(e) => setStartTime2(e.target.value)}
+                            >
+                                <MenuItem
+                                    value={"None"}
                                     sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background:
-                                            markAsHoliday ||
-                                            doctor.acceptAppointments ===
-                                                "byToken"
-                                                ? ""
-                                                : "#D9D9D9",
                                     }}
-                                    placeholder="Choose Slot Duration"
-                                    value={startTime2}
-                                    onChange={(e) =>
-                                        setStartTime2(e.target.value)
-                                    }
                                 >
+                                    None
+                                </MenuItem>
+                                {startTimes2.map((startTime, i) => (
                                     <MenuItem
-                                        value={"None"}
+                                        value={startTime}
+                                        key={i}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
                                             fontSize: "1rem",
                                         }}
                                     >
-                                        None
+                                        {startTime}
                                     </MenuItem>
-                                    {startTimes2.map((startTime, i) => (
-                                        <MenuItem
-                                            value={startTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {startTime}
-                                        </MenuItem>
-                                    ))}
-                                    {/* <MenuItem
+                                ))}
+                                {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
                                             fontFamily: "Lato",
@@ -707,84 +597,83 @@ const AppointmentByToken = ({
                                     >
                                         Calandar View
                                     </MenuItem> */}
-                                </Select>
-                            </Stack>
+                            </Select>
                         </Stack>
-                        <Stack spacing="10.48px">
-                            <InputLabel
+                    </Stack>
+                    <Stack spacing="10.48px">
+                        <InputLabel
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "0.938rem",
+                                color: "#383838",
+                            }}
+                        >
+                            End Time
+                        </InputLabel>
+                        <Stack
+                            direction="row"
+                            sx={{
+                                alignItems: "center",
+                            }}
+                        >
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                disabled={
+                                    markAsHoliday ||
+                                    doctorDetails.acceptAppointments ===
+                                        "byToken"
+                                        ? false
+                                        : true
+                                }
                                 sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "262.93px",
+                                    },
+                                    height: "40px",
                                     fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                End Time
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={
+                                    fontWeight: "semibold",
+                                    fontSize: "1rem",
+                                    borderRadius: "5px",
+                                    background:
                                         markAsHoliday ||
-                                        doctor.acceptAppointments === "byToken"
-                                            ? false
-                                            : true
-                                    }
+                                        doctorDetails.acceptAppointments ===
+                                            "byToken"
+                                            ? ""
+                                            : "#D9D9D9",
+                                }}
+                                placeholder="Choose Slot Duration"
+                                value={endTime2}
+                                onChange={(e) => setEndTime2(e.target.value)}
+                            >
+                                <MenuItem
+                                    value={"None"}
                                     sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background:
-                                            markAsHoliday ||
-                                            doctor.acceptAppointments ===
-                                                "byToken"
-                                                ? ""
-                                                : "#D9D9D9",
                                     }}
-                                    placeholder="Choose Slot Duration"
-                                    value={endTime2}
-                                    onChange={(e) =>
-                                        setEndTime2(e.target.value)
-                                    }
                                 >
+                                    None
+                                </MenuItem>
+                                {endTimes2.map((endTime, i) => (
                                     <MenuItem
-                                        value={"None"}
+                                        value={endTime}
+                                        key={i}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
                                             fontSize: "1rem",
                                         }}
                                     >
-                                        None
+                                        {endTime}
                                     </MenuItem>
-                                    {endTimes2.map((endTime, i) => (
-                                        <MenuItem
-                                            value={endTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {endTime}
-                                        </MenuItem>
-                                    ))}
+                                ))}
 
-                                    {/* <MenuItem
+                                {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
                                             fontFamily: "Lato",
@@ -794,8 +683,8 @@ const AppointmentByToken = ({
                                     >
                                         Calandar View
                                     </MenuItem> */}
-                                </Select>
-                                {/* <Button
+                            </Select>
+                            {/* <Button
                                         sx={{
                                             minWidth: "0px",
                                             height: "29px",
@@ -817,7 +706,7 @@ const AppointmentByToken = ({
                                             }}
                                         />
                                     </Button> */}
-                                {/* <IconButton
+                            {/* <IconButton
                                         onClick={() => setNumOfStartTimes(0)}
                                         sx={{
                                             background: "#B92612",
@@ -839,93 +728,92 @@ const AppointmentByToken = ({
                                         />
                                         
                                     </IconButton> */}
-                            </Stack>
                         </Stack>
                     </Stack>
-                    {/* )} */}
-                    {/* {numOfStartTimes >= 2 && ( */}
-                    <Stack
-                        spacing="20.02px"
-                        direction={{
-                            xs: "column",
-                            sm: "column",
-                            md: "row",
-                        }}
-                    >
-                        <Stack spacing="10.48px">
-                            <InputLabel
+                </Stack>
+                {/* )} */}
+                {/* {numOfStartTimes >= 2 && ( */}
+                <Stack
+                    spacing="20.02px"
+                    direction={{
+                        xs: "column",
+                        sm: "column",
+                        md: "row",
+                    }}
+                >
+                    <Stack spacing="10.48px">
+                        <InputLabel
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "0.938rem",
+                                color: "#383838",
+                            }}
+                        >
+                            Start Time 3
+                        </InputLabel>
+                        <Stack
+                            direction="row"
+                            sx={{
+                                alignItems: "center",
+                            }}
+                        >
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                disabled={
+                                    markAsHoliday ||
+                                    doctorDetails.acceptAppointments ===
+                                        "byToken"
+                                        ? false
+                                        : true
+                                }
                                 sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "262.93px",
+                                    },
+                                    height: "40px",
                                     fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                Start Time 3
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={
+                                    fontWeight: "semibold",
+                                    fontSize: "1rem",
+                                    borderRadius: "5px",
+                                    background:
                                         markAsHoliday ||
-                                        doctor.acceptAppointments === "byToken"
-                                            ? false
-                                            : true
-                                    }
+                                        doctorDetails.acceptAppointments ===
+                                            "byToken"
+                                            ? ""
+                                            : "#D9D9D9",
+                                }}
+                                placeholder="Choose Slot Duration"
+                                value={startTime3}
+                                onChange={(e) => setStartTime3(e.target.value)}
+                            >
+                                <MenuItem
+                                    value={"None"}
                                     sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background:
-                                            markAsHoliday ||
-                                            doctor.acceptAppointments ===
-                                                "byToken"
-                                                ? ""
-                                                : "#D9D9D9",
                                     }}
-                                    placeholder="Choose Slot Duration"
-                                    value={startTime3}
-                                    onChange={(e) =>
-                                        setStartTime3(e.target.value)
-                                    }
                                 >
+                                    None
+                                </MenuItem>
+                                {startTimes3.map((time, i) => (
                                     <MenuItem
-                                        value={"None"}
+                                        value={time}
+                                        key={i}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
                                             fontSize: "1rem",
                                         }}
                                     >
-                                        None
+                                        {time}
                                     </MenuItem>
-                                    {startTimes3.map((time, i) => (
-                                        <MenuItem
-                                            value={time}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {time}
-                                        </MenuItem>
-                                    ))}
-                                    {/* <MenuItem
+                                ))}
+                                {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
                                             fontFamily: "Lato",
@@ -935,84 +823,83 @@ const AppointmentByToken = ({
                                     >
                                         Calandar View
                                     </MenuItem> */}
-                                </Select>
-                            </Stack>
+                            </Select>
                         </Stack>
-                        <Stack spacing="10.48px">
-                            <InputLabel
+                    </Stack>
+                    <Stack spacing="10.48px">
+                        <InputLabel
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "0.938rem",
+                                color: "#383838",
+                            }}
+                        >
+                            End Time 3
+                        </InputLabel>
+                        <Stack
+                            direction="row"
+                            sx={{
+                                alignItems: "center",
+                            }}
+                        >
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                disabled={
+                                    markAsHoliday ||
+                                    doctorDetails.acceptAppointments ===
+                                        "byToken"
+                                        ? false
+                                        : true
+                                }
                                 sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "262.93px",
+                                    },
+                                    height: "40px",
                                     fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "0.938rem",
-                                    color: "#383838",
-                                }}
-                            >
-                                End Time 3
-                            </InputLabel>
-                            <Stack
-                                direction="row"
-                                sx={{
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    disabled={
+                                    fontWeight: "semibold",
+                                    fontSize: "1rem",
+                                    borderRadius: "5px",
+                                    background:
                                         markAsHoliday ||
-                                        doctor.acceptAppointments === "byToken"
-                                            ? false
-                                            : true
-                                    }
+                                        doctorDetails.acceptAppointments ===
+                                            "byToken"
+                                            ? ""
+                                            : "#D9D9D9",
+                                }}
+                                placeholder="Choose Slot Duration"
+                                value={endTime3}
+                                onChange={(e) => setEndTime3(e.target.value)}
+                            >
+                                <MenuItem
+                                    value={"None"}
                                     sx={{
-                                        width: {
-                                            xs: "100%",
-                                            sm: "100%",
-                                            md: "262.93px",
-                                        },
-                                        height: "40px",
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
                                         fontSize: "1rem",
-                                        borderRadius: "5px",
-                                        background:
-                                            markAsHoliday ||
-                                            doctor.acceptAppointments ===
-                                                "byToken"
-                                                ? ""
-                                                : "#D9D9D9",
                                     }}
-                                    placeholder="Choose Slot Duration"
-                                    value={endTime3}
-                                    onChange={(e) =>
-                                        setEndTime3(e.target.value)
-                                    }
                                 >
+                                    None
+                                </MenuItem>
+                                {endTimes3.map((endTime, i) => (
                                     <MenuItem
-                                        value={"None"}
+                                        value={endTime}
+                                        key={i}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
                                             fontSize: "1rem",
                                         }}
                                     >
-                                        None
+                                        {endTime}
                                     </MenuItem>
-                                    {endTimes3.map((endTime, i) => (
-                                        <MenuItem
-                                            value={endTime}
-                                            key={i}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "semibold",
-                                                fontSize: "1rem",
-                                            }}
-                                        >
-                                            {endTime}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                                {/* <Button
+                                ))}
+                            </Select>
+                            {/* <Button
                                         sx={{
                                             minWidth: "0px",
                                             height: "29px",
@@ -1034,12 +921,12 @@ const AppointmentByToken = ({
                                             }}
                                         />
                                     </Button> */}
-                            </Stack>
                         </Stack>
                     </Stack>
-                    {/* )} */}
-                    {/* {numOfStartTimes >= 3 && ( */}
-                    {/* <Stack
+                </Stack>
+                {/* )} */}
+                {/* {numOfStartTimes >= 3 && ( */}
+                {/* <Stack
                         spacing="20.02px"
                         direction={{
                             xs: "column",
@@ -1182,30 +1069,36 @@ const AppointmentByToken = ({
                             </Stack>
                         </Stack>
                     </Stack> */}
-                    {/* )} */}
-                    <Button
-                        variant="contained"
-                        disabled={
-                            doctor.acceptAppointments === "bySlot"
-                                ? true
-                                : false
-                        }
-                        onClick={saveData}
-                        sx={{
-                            boxShadow: "none",
-                            borderRadius: "29px",
-                            textTransform: "none",
-                            fontFamily: "Lato",
-                            fontWeight: "700",
-                            fontSize: "1.063rem",
-                        }}
-                    >
-                        Save
-                    </Button>
-                </Stack>
-            </Card>
+                {/* )} */}
+                <Button
+                    variant="contained"
+                    disabled={
+                        doctorDetails.acceptAppointments === "bySlot"
+                            ? true
+                            : false
+                    }
+                    onClick={saveData}
+                    sx={{
+                        boxShadow: "none",
+                        borderRadius: "29px",
+                        textTransform: "none",
+                        fontFamily: "Lato",
+                        fontWeight: "700",
+                        fontSize: "1.063rem",
+                    }}
+                >
+                    Save
+                </Button>
+            </Stack>
+
+            {/* <EditTokenSettingComponent 
+             markAsHoliday={markAsHoliday}
+             selectedTokenDate={selectedTokenDate}
+             doctorDetails={doctorDetails}
+             getAppointmentByTokenSlotDetailForDoctorForPerticularDate={getAppointmentByTokenSlotDetailForDoctorForPerticularDate}
+            /> */}
         </>
     );
 };
 
-export default AppointmentByToken;
+export default AddTokenComponent;

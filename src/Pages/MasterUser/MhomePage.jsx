@@ -54,12 +54,11 @@ const SearchFeildStyle = styled(TextField)({
 
 const HospitalDetailsStyle = styled(Box)`
     color: #706d6d;
-    
+
     display: flex;
     align-items: center;
     width: 60%;
     margin-top: 5px;
-    
 `;
 
 const DoctorCardStyle = styled(Card)(({ theme }) => ({
@@ -88,15 +87,16 @@ const CarouseBox = styled(Stack)`
 const MhomePage = () => {
     const { hospital_id } = useParams();
     const [inputValue, setInputValue] = useState({
-        nameOfTheDoctor:"",
-        qulification:"",
-        speciality:"",
-        yearOfExprience:"",
-        email:"",
-        phone:"",
-        connsultationFee:"",
-        doctorid:"",
-        imgurl:"",
+        nameOfTheDoctor: "",
+        qulification: "",
+        speciality: "",
+        yearOfExprience: "",
+        email: "",
+        phone: "",
+        connsultationFee: "",
+        doctorid: "",
+        imgurl: "",
+        acceptAppointments: "byToken",
     });
     const [hospitalData, setHospitalData] = useState({});
     const [doctorsData, setDoctorsData] = useState([]);
@@ -184,8 +184,9 @@ const MhomePage = () => {
                             <Box>
                                 <img
                                     src={
-                                        user?.imgurl ? user.imgurl
-                                    : "/default.png"
+                                        user?.imgurl
+                                            ? user.imgurl
+                                            : "/default.png"
                                     }
                                     alt="doctor-img"
                                     style={{
@@ -220,16 +221,16 @@ const MhomePage = () => {
                                             height: "33px",
                                         }}
                                     />
-                                    <Typography sx={{
-                                        fontFamily:"Lato",
-                                        fontWeight: 400,
-                                        fontSize: "0.938rem"
-
-                                    }}>
-                                    {user?.enterFullAddress} &nbsp;
-                                    {user?.location} &nbsp;
-                                    {user?.landmark}
-
+                                    <Typography
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: 400,
+                                            fontSize: "0.938rem",
+                                        }}
+                                    >
+                                        {user?.enterFullAddress} &nbsp;
+                                        {user?.location} &nbsp;
+                                        {user?.landmark}
                                     </Typography>
                                 </HospitalDetailsStyle>
                                 <Rating
@@ -242,7 +243,11 @@ const MhomePage = () => {
                         </Box>
                         <Box>
                             <Button
-                                onClick={()=>navigate(`/master/user/profile/edit/${user?._id}`)}
+                                onClick={() =>
+                                    navigate(
+                                        `/master/user/profile/edit/${user?._id}`
+                                    )
+                                }
                                 variant="contained"
                                 startIcon={<CreateOutlinedIcon />}
                                 sx={{
@@ -253,7 +258,7 @@ const MhomePage = () => {
                                     fontSize: "18px",
                                     fontFamily: "Raleway",
                                     fontWeight: "600",
-                                    boxShadow:'none'
+                                    boxShadow: "none",
                                 }}
                             >
                                 Edit Profile
@@ -311,9 +316,7 @@ const MhomePage = () => {
                             >
                                 <Box>
                                     <DoctorCardStyle
-                                        onClick={() =>
-                                            setDuidDialog(true)
-                                        }
+                                        onClick={() => setDuidDialog(true)}
                                         sx={{ border: "1px solid #8d8989" }}
                                     >
                                         <AddOutlinedIcon
@@ -355,7 +358,7 @@ const MhomePage = () => {
                                                 <DoctorCardStyle>
                                                     <img
                                                         src={
-                                                            doctor.imgurl 
+                                                            doctor.imgurl
                                                                 ? doctor.imgurl
                                                                 : "/default.png"
                                                         }
@@ -453,7 +456,7 @@ const MhomePage = () => {
                                     sm: "0.875rem",
                                     md: "1.375rem",
                                 },
-                                boxShadow:"none",
+                                boxShadow: "none",
                             }}
                         >
                             View All
@@ -611,7 +614,7 @@ const MhomePage = () => {
                                         sm: "0.875rem",
                                         md: "1.375rem",
                                     },
-                                    boxShadow:"none",
+                                    boxShadow: "none",
                                 }}
                             >
                                 View All
@@ -620,15 +623,15 @@ const MhomePage = () => {
                     </Box>
                     {/* Add Doctor Card End Here */}
                     <DuidDialog
-                    duidDialog={duidDialog}
-                    setInputValue={setInputValue}
-                    setDuidDialog={setDuidDialog}
-                    setAddDoctorsDialog={setAddDoctorsDialog}
+                        duidDialog={duidDialog}
+                        setInputValue={setInputValue}
+                        setDuidDialog={setDuidDialog}
+                        setAddDoctorsDialog={setAddDoctorsDialog}
                     />
                     <AddDoctorsDialog
                         getDoctorsData={getDoctorsData}
                         inputValue={inputValue}
-                    setInputValue={setInputValue}
+                        setInputValue={setInputValue}
                         addDoctorsDialog={addDoctorsDialog}
                         setAddDoctorsDialog={setAddDoctorsDialog}
                         hospitalLocation={hospitalData.enterFullAddress}

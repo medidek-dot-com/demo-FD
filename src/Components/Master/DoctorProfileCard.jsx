@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     Avatar,
     Box,
@@ -8,19 +8,18 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-import BookAppointmentDialog from "./BookAppointmentDialog";
-import { axiosClient } from "../../Utils/axiosClient";
+// import { useNavigate, useParams } from "react-router-dom";
+// import BookAppointmentDialog from "./BookAppointmentDialog";
+// import { axiosClient } from "../../Utils/axiosClient";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { baseURL } from "../../Utils/axiosClient";
+// import { baseURL } from "../../Utils/axiosClient";
 
 const DoctorProfileCard = ({
-    getUpcomingAppointmentsData,
     doctorDetails,
     setChooseDateAndTimeDialog,
     setAppointmentSettingDialog,
 }) => {
-    const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
+    // const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     // const [doctorDetails, setDoctorsDetails] = useState({});
 
     // const getDoctorDetails = async () => {
@@ -234,11 +233,13 @@ const DoctorProfileCard = ({
                     Change Settings
                 </Button>
             </Box>
-            <BookAppointmentDialog
+
+            {/* <BookAppointmentDialog
                 bookAppointmentDialog={bookAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
                 getUpcomingAppointmentsData={getUpcomingAppointmentsData}
-            />
+                doctorDetails={doctorDetails}
+            /> */}
         </>
     );
 };

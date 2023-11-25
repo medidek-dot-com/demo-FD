@@ -16,6 +16,7 @@ import {
     Typography,
     FormLabel,
     IconButton,
+    Tooltip,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import styled from "@emotion/styled";
@@ -43,6 +44,8 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { BiSolidBook } from "react-icons/bi";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
+import moment from "moment";
+import { logOutDoctor } from "../../Store/doctorDataSlice";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -90,34 +93,118 @@ const MUDDashboard = () => {
     const [completeAppointmentsData, setCompleteAppointmentsData] = useState(
         []
     );
+    const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
     const [activeTab, setActiveTab] = useState(1);
     const [completedAppointments, setCompletedAppointments] = useState(false);
     const [menu, setMenu] = useState(false);
-
+    const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
     const { user } = useSelector((state) => state.auth);
+    const { doctor } = useSelector((state) => state.doctor);
     const numberOfHospitals = user;
+    const [piChartData, setPiChartData] = useState({});
+    const [selectValue, setSelectValue] = useState(1);
+    const [todaysAppointmentData, setTodaysAppointmentData] = useState({});
+    const [futureAppointmentData, setFutureAppointmentsData] = useState();
+    const [totalPatientData, setTotalPatientData] = useState();
 
-    const getPendingAppointmentsData = async () => {
+    const getPendingAppointmentsDataForPerticularDate = async () => {
         try {
             const response = await axiosClient.get(
-                `/v2/getPendingAppoinmentForDoctor/${doctorid}`
+                `/v2/getPendingAppoinmentForDoctor/${doctorid}/${date}`
             );
             console.log(response);
             return setPendingAppointmentsData(response.result);
         } catch (error) {
+            F;
             console.log(error);
         }
     };
-    const getCompleteAppointmentsData = async () => {
-        const response = await axiosClient.get(
-            `/v2/getCompleteAppointmentsForHospitalAndDoctors/${hospital_id}/${doctor_id}`
-        );
-        setCompleteAppointmentsData(response.result);
+    const getCompleteAppointmentsDataForPerticularDate = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getCompletedAppoinmentForDoctor/${doctorid}/${date}`
+            );
+            setCompleteAppointmentsData(response.result);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getMissedAppointmentsDataForPerticularDate = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getMissedAppoinmentForDoctor/${doctorid}/${date}`
+            );
+            setMissedAppointmentsData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const totalPatient = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/totalPatient/${doctorid}/${date}/totalPatient`
+            );
+            setTotalPatientData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const todaysAppointement = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/todaysAppointement/${doctorid}/${date}/todaysAppointment`
+            );
+            setTodaysAppointmentData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const futureAppointment = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/futureAppointment/${doctorid}/futureAppointment`
+            );
+            if (response.status === "ok") {
+                return setFutureAppointmentsData(response.result);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    // const getCompleteAppointmentsData = async () => {
+    //     const response = await axiosClient.get(
+    //         `/v2/getCompleteAppointmentsForHospitalAndDoctors/${doctorid}/${date}`
+    //     );
+    //     setCompleteAppointmentsData(response.result);
+    // };
+
+    const getPiChartData = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getPiChartData/${doctorid}/${date}/piChart`
+            );
+            console.log(response.result);
+            setPiChartData(response.result);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
-        getPendingAppointmentsData();
-        // getCompleteAppointmentsData();
+        getPendingAppointmentsDataForPerticularDate();
+        getPiChartData();
+        getCompleteAppointmentsDataForPerticularDate();
+        getMissedAppointmentsDataForPerticularDate();
+        todaysAppointement();
+        totalPatient();
+    }, [date]);
+
+    useEffect(() => {
+        futureAppointment();
     }, []);
 
     const handleTabClick = (tabId) => {
@@ -145,7 +232,10 @@ const MUDDashboard = () => {
 
     const [inputImage, setInputImage] = useState("");
     const [preview, setPreview] = useState("");
-    const [disableButton, setDisableButton] = useState(false);
+    const [disableButton, setDisableButton] = useState({
+        loading: false,
+        i: "",
+    });
 
     useEffect(() => {
         if (inputImage) {
@@ -174,8 +264,31 @@ const MUDDashboard = () => {
         await axiosClient.post("/v2/logout");
         removeItem(KEY_ACCESS_TOKEN);
         dispatch(logout());
+        dispatch(logOutDoctor());
         // navigate('/')
         // window.location.href = '/master/signin'
+    };
+
+    const handleStatusChange = async (id, status, remark, i) => {
+        // console.log(updatedStatus, "this is id", id);
+        setDisableButton({ ...disableButton, loading: true, i: i });
+        try {
+            const response = await axiosClient.put(
+                `/v2/updateUserAppointmentStatus/${id}`,
+                { status, remark }
+            );
+            if (response.status === "ok") {
+                todaysAppointement();
+                await getPendingAppointmentsDataForPerticularDate();
+                await getCompleteAppointmentsDataForPerticularDate();
+                setDisableButton({ ...disableButton, loading: false, i: i });
+            }
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+            setDisableButton({ ...disableButton, loading: false, i: i });
+            toast.error("Something went wrong");
+        }
     };
 
     return (
@@ -230,7 +343,7 @@ const MUDDashboard = () => {
                     />
                 </Stack>
                 <Avatar
-                    src={user?.imgurl ? user.imgurl : "/default.png"}
+                    src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
                     sx={{ width: "32px", height: "32px" }}
                 />
             </Stack>
@@ -371,7 +484,9 @@ const MUDDashboard = () => {
                         <Stack alignItems={"center"} mt={4}>
                             <Avatar
                                 src={
-                                    user?.imgurl ? user.imgurl : "/default.png"
+                                    doctor?.imgurl
+                                        ? doctor.imgurl
+                                        : "/default.png"
                                 }
                                 sx={{ width: "71px", height: "71px" }}
                             />
@@ -385,7 +500,7 @@ const MUDDashboard = () => {
                                     fontSize: "22px",
                                 }}
                             >
-                                Dr. {user.nameOfTheDoctor}
+                                Dr. {doctor.nameOfTheDoctor}
                             </Typography>
                             <Typography
                                 variant="h5"
@@ -397,7 +512,7 @@ const MUDDashboard = () => {
                                     fontSize: "15px",
                                 }}
                             >
-                                DUID :- {user.doctorid}
+                                DUID :- {doctor.doctorid}
                             </Typography>
                         </Stack>
                         <Stack
@@ -774,11 +889,11 @@ const MUDDashboard = () => {
                                                     color: "#383838",
                                                 }}
                                             >
-                                                {pendingAppointmentsData.length}
+                                                {totalPatientData}
                                             </Typography>
-                                            <LinearProgress
+                                            {/* <LinearProgress
                                                 variant="determinate"
-                                                value={20}
+                                                value={totalPatientData}
                                                 sx={{
                                                     color: "#1F51C6",
                                                     background: "#ffffff",
@@ -790,7 +905,7 @@ const MUDDashboard = () => {
                                                     height: "10px",
                                                     borderRadius: "10px",
                                                 }}
-                                            />
+                                            /> */}
                                         </Stack>
                                     </Card>
                                     <Card
@@ -890,11 +1005,21 @@ const MUDDashboard = () => {
                                                     color: "#383838",
                                                 }}
                                             >
-                                                {pendingAppointmentsData.length}
+                                                {
+                                                    todaysAppointmentData.completeAppointments
+                                                }
+                                                /
+                                                {
+                                                    todaysAppointmentData.totalAppointments
+                                                }
                                             </Typography>
                                             <LinearProgress
                                                 variant="determinate"
-                                                value={20}
+                                                value={
+                                                    (todaysAppointmentData.completeAppointments *
+                                                        100) /
+                                                    todaysAppointmentData.totalAppointments
+                                                }
                                                 sx={{
                                                     color: "#1F51C6",
                                                     background: "#ffffff",
@@ -975,7 +1100,8 @@ const MUDDashboard = () => {
                                                     color: "#383838",
                                                 }}
                                             >
-                                                Next <br />
+                                                Future
+                                                <br />
                                                 Appointment
                                             </Typography>
                                         </Stack>
@@ -1006,9 +1132,9 @@ const MUDDashboard = () => {
                                                     color: "#383838",
                                                 }}
                                             >
-                                                {pendingAppointmentsData.length}
+                                                {futureAppointmentData}
                                             </Typography>
-                                            <LinearProgress
+                                            {/* <LinearProgress
                                                 variant="determinate"
                                                 value={20}
                                                 sx={{
@@ -1022,7 +1148,7 @@ const MUDDashboard = () => {
                                                     height: "10px",
                                                     borderRadius: "10px",
                                                 }}
-                                            />
+                                            /> */}
                                         </Stack>
                                     </Card>
                                 </Stack>
@@ -1043,7 +1169,92 @@ const MUDDashboard = () => {
                                         // overflow:'auto'
                                     }}
                                 >
-                                    <Typography
+                                    <Stack
+                                        direction={"row"}
+                                        spacing={1}
+                                        sx={{
+                                            display: {
+                                                xs: "none",
+                                                sm: "none",
+                                                md: "flex",
+                                            },
+                                            m: "0 auto 15px auto",
+                                        }}
+                                    >
+                                        <Button
+                                            onClick={() => setSelectValue(1)}
+                                            variant={
+                                                selectValue === 1
+                                                    ? "contained"
+                                                    : "outlined"
+                                            }
+                                            sx={{
+                                                textTransform: "none",
+                                                width: "244px",
+                                                height: "41px",
+                                                fontFamily: "Raleway",
+                                                fontWeight: "600",
+                                                fontSize: "16px",
+                                                borderRadius: "35px",
+                                                color:
+                                                    selectValue === 1
+                                                        ? "#ffffff"
+                                                        : "#383838",
+                                                boxShadow: "none",
+                                            }}
+                                        >
+                                            Upcoming Appointments
+                                        </Button>
+                                        <Button
+                                            onClick={() => setSelectValue(2)}
+                                            variant={
+                                                selectValue === 2
+                                                    ? "contained"
+                                                    : "outlined"
+                                            }
+                                            sx={{
+                                                textTransform: "none",
+                                                width: "244px",
+                                                height: "41px",
+                                                fontFamily: "Raleway",
+                                                fontWeight: "600",
+                                                fontSize: "16px",
+                                                borderRadius: "35px",
+                                                color:
+                                                    selectValue === 2
+                                                        ? "#ffffff"
+                                                        : "#383838",
+                                                boxShadow: "none",
+                                            }}
+                                        >
+                                            Completed Appointments
+                                        </Button>
+                                        <Button
+                                            onClick={() => setSelectValue(3)}
+                                            variant={
+                                                selectValue === 3
+                                                    ? "contained"
+                                                    : "outlined"
+                                            }
+                                            sx={{
+                                                textTransform: "none",
+                                                width: "244px",
+                                                height: "41px",
+                                                fontFamily: "Raleway",
+                                                fontWeight: "600",
+                                                fontSize: "16px",
+                                                borderRadius: "35px",
+                                                color:
+                                                    selectValue === 3
+                                                        ? "#ffffff"
+                                                        : "#383838",
+                                                boxShadow: "none",
+                                            }}
+                                        >
+                                            Missed Appointments
+                                        </Button>
+                                    </Stack>
+                                    {/* <Typography
                                         sx={{
                                             fontFamily: "Raleway",
                                             fontSize: "18px",
@@ -1054,151 +1265,654 @@ const MUDDashboard = () => {
                                         }}
                                     >
                                         Upcoming Appointments
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            overflow: "auto",
-                                            height: "50vh",
-                                        }}
-                                    >
-                                        {pendingAppointmentsData.length > 0 ? (
-                                            pendingAppointmentsData.map(
-                                                (appointment, i) => (
-                                                    <Paper
-                                                        key={i}
-                                                        sx={{
-                                                            p: "5px",
-                                                            mb: "10px",
-                                                            display: "flex",
-                                                            justifyContent:
-                                                                "space-between",
-                                                            alignItems:
-                                                                "center",
-                                                        }}
-                                                    >
-                                                        <Stack
-                                                            direction="row"
-                                                            spacing="10px"
+                                    </Typography> */}
+                                    {selectValue === 1 && (
+                                        <Box
+                                            sx={{
+                                                overflow: "auto",
+                                                height: "50vh",
+                                            }}
+                                        >
+                                            {pendingAppointmentsData.length >
+                                            0 ? (
+                                                pendingAppointmentsData.map(
+                                                    (appointment, i) => (
+                                                        <Paper
+                                                            key={i}
                                                             sx={{
+                                                                p: "5px",
+                                                                mb: "10px",
+                                                                display: "flex",
+                                                                justifyContent:
+                                                                    "space-between",
                                                                 alignItems:
                                                                     "center",
                                                             }}
                                                         >
-                                                            <Fab
+                                                            <Stack
+                                                                direction="row"
+                                                                spacing="10px"
                                                                 sx={{
-                                                                    borderRadius:
-                                                                        "5px",
-                                                                    width: {
-                                                                        xs: "29px",
-                                                                        sm: "29px",
-                                                                        md: "32px",
-                                                                    },
-                                                                    height: {
-                                                                        xs: "29px",
-                                                                        sm: "29px",
-                                                                        md: "29px",
-                                                                    },
-                                                                    fontFamily:
-                                                                        "Raleway",
-                                                                    fontSize: {
-                                                                        xs: "0.813rem",
-                                                                        sm: "0.813rem",
-                                                                        md: "1.125rem",
-                                                                    },
-                                                                    fontWeight:
-                                                                        "600",
-                                                                    background:
-                                                                        "#1F51C6",
-                                                                    color: "#ffffff",
-                                                                    zIndex: 1,
-                                                                    boxShadow:
-                                                                        "none",
+                                                                    alignItems:
+                                                                        "center",
                                                                 }}
                                                             >
-                                                                {i + 1}
-                                                            </Fab>
-                                                            <Typography
-                                                                sx={{
-                                                                    fontFamily:
-                                                                        "Raleway",
-                                                                    fontSize: {
-                                                                        xs: "0.813rem",
-                                                                        sm: "0.813rem",
-                                                                        md: "1.125rem",
-                                                                    },
-                                                                    fontWeight:
-                                                                        "600",
-                                                                    lineHeight:
-                                                                        "21.13px",
-                                                                    color: "#383838",
-                                                                }}
-                                                            >
-                                                                {
-                                                                    appointment.name
-                                                                }
-                                                            </Typography>
-                                                            <Typography
-                                                                sx={{
-                                                                    fontFamily:
-                                                                        "Raleway",
-                                                                    fontSize: {
-                                                                        xs: "0.813rem",
-                                                                        sm: "0.813rem",
-                                                                        md: "1.125rem",
-                                                                    },
-                                                                    fontWeight:
-                                                                        "600",
-                                                                    lineHeight:
-                                                                        "21.13px",
-                                                                    color: "#706D6D",
-                                                                }}
-                                                            >
-                                                                {
-                                                                    appointment.AppointmentTime
-                                                                }
-                                                            </Typography>
-                                                        </Stack>
-                                                        <Stack direction="row">
-                                                            <CancelIcon
-                                                                sx={{
-                                                                    fontSize: {
-                                                                        xs: "20.84px",
-                                                                        sm: "20.84px",
-                                                                        md: "29.15px",
-                                                                    },
-                                                                    color: "#B92612",
-                                                                }}
-                                                            />
-                                                            <CheckCircleIcon
-                                                                sx={{
-                                                                    fontSize: {
-                                                                        xs: "20.84px",
-                                                                        sm: "20.84px",
-                                                                        md: "29.15px",
-                                                                    },
-                                                                    color: "#15B912",
-                                                                }}
-                                                            />
-                                                        </Stack>
-                                                    </Paper>
+                                                                <Fab
+                                                                    sx={{
+                                                                        borderRadius:
+                                                                            "5px",
+                                                                        width: {
+                                                                            xs: "29px",
+                                                                            sm: "29px",
+                                                                            md: "32px",
+                                                                        },
+                                                                        height: {
+                                                                            xs: "29px",
+                                                                            sm: "29px",
+                                                                            md: "29px",
+                                                                        },
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        background:
+                                                                            "#1F51C6",
+                                                                        color: "#ffffff",
+                                                                        zIndex: 1,
+                                                                        boxShadow:
+                                                                            "none",
+                                                                    }}
+                                                                >
+                                                                    {i + 1}
+                                                                </Fab>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        lineHeight:
+                                                                            "21.13px",
+                                                                        color: "#383838",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        appointment.name
+                                                                    }
+                                                                </Typography>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        lineHeight:
+                                                                            "21.13px",
+                                                                        color: "#706D6D",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        appointment.AppointmentTime
+                                                                    }
+                                                                </Typography>
+                                                            </Stack>
+                                                            <Stack direction="row">
+                                                                <Tooltip
+                                                                    title="Cancel"
+                                                                    placement="top"
+                                                                    arrow
+                                                                >
+                                                                    <IconButton
+                                                                        disabled={
+                                                                            disableButton.loading &&
+                                                                            disableButton.i ==
+                                                                                i
+                                                                                ? true
+                                                                                : false
+                                                                        }
+                                                                        onClick={() =>
+                                                                            handleStatusChange(
+                                                                                appointment._id,
+                                                                                "cancelled",
+                                                                                "by doctor",
+                                                                                i
+                                                                            )
+                                                                        }
+                                                                        sx={{
+                                                                            p: 0,
+                                                                        }}
+                                                                    >
+                                                                        <CancelIcon
+                                                                            sx={{
+                                                                                fontSize:
+                                                                                    {
+                                                                                        xs: "20.84px",
+                                                                                        sm: "20.84px",
+                                                                                        md: "29.15px",
+                                                                                    },
+                                                                                color:
+                                                                                    disableButton.loading &&
+                                                                                    disableButton.i ==
+                                                                                        i
+                                                                                        ? "#D9D9D9"
+                                                                                        : "#B92612",
+                                                                            }}
+                                                                        />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                                <Tooltip
+                                                                    title="Complete"
+                                                                    placement="top"
+                                                                    arrow
+                                                                    sx={{
+                                                                        color: "red !important",
+                                                                        backgroundColor:
+                                                                            "red",
+                                                                    }}
+                                                                >
+                                                                    <IconButton
+                                                                        disabled={
+                                                                            disableButton.loading &&
+                                                                            disableButton.i ==
+                                                                                i
+                                                                                ? true
+                                                                                : false
+                                                                        }
+                                                                        onClick={() =>
+                                                                            handleStatusChange(
+                                                                                appointment._id,
+                                                                                "completed",
+                                                                                "by doctor",
+                                                                                i
+                                                                            )
+                                                                        }
+                                                                        sx={{
+                                                                            p: 0,
+                                                                        }}
+                                                                    >
+                                                                        <CheckCircleIcon
+                                                                            sx={{
+                                                                                fontSize:
+                                                                                    {
+                                                                                        xs: "20.84px",
+                                                                                        sm: "20.84px",
+                                                                                        md: "29.15px",
+                                                                                    },
+                                                                                color:
+                                                                                    disableButton.loading &&
+                                                                                    disableButton.i ==
+                                                                                        i
+                                                                                        ? "#D9D9D9"
+                                                                                        : "#15B912",
+                                                                            }}
+                                                                        />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            </Stack>
+                                                        </Paper>
+                                                    )
                                                 )
-                                            )
-                                        ) : (
-                                            <Typography
-                                                variant="h6"
-                                                sx={{
-                                                    fontFamily: "Raleway",
-                                                    fontSize: "18px",
-                                                    fontWeight: "600",
-                                                    lineHeight: "21.13px",
-                                                    color: "#383838",
-                                                    textAlign: "center",
-                                                }}
-                                            >
-                                                No Appointment Yet
-                                            </Typography>
-                                        )}
-                                    </Box>
+                                            ) : (
+                                                <Typography
+                                                    variant="h6"
+                                                    sx={{
+                                                        fontFamily: "Raleway",
+                                                        fontSize: "18px",
+                                                        fontWeight: "600",
+                                                        lineHeight: "21.13px",
+                                                        color: "#383838",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    No Appointment Yet
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    )}
+                                    {selectValue === 2 && (
+                                        <Box
+                                            sx={{
+                                                overflow: "auto",
+                                                height: "50vh",
+                                            }}
+                                        >
+                                            {completeAppointmentsData.length >
+                                            0 ? (
+                                                completeAppointmentsData.map(
+                                                    (appointment, i) => (
+                                                        <Paper
+                                                            key={i}
+                                                            sx={{
+                                                                p: "5px",
+                                                                mb: "10px",
+                                                                display: "flex",
+                                                                justifyContent:
+                                                                    "space-between",
+                                                                alignItems:
+                                                                    "center",
+                                                            }}
+                                                        >
+                                                            <Stack
+                                                                direction="row"
+                                                                spacing="10px"
+                                                                sx={{
+                                                                    alignItems:
+                                                                        "center",
+                                                                }}
+                                                            >
+                                                                <Fab
+                                                                    sx={{
+                                                                        borderRadius:
+                                                                            "5px",
+                                                                        width: {
+                                                                            xs: "29px",
+                                                                            sm: "29px",
+                                                                            md: "32px",
+                                                                        },
+                                                                        height: {
+                                                                            xs: "29px",
+                                                                            sm: "29px",
+                                                                            md: "29px",
+                                                                        },
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        background:
+                                                                            "#1F51C6",
+                                                                        color: "#ffffff",
+                                                                        zIndex: 1,
+                                                                        boxShadow:
+                                                                            "none",
+                                                                    }}
+                                                                >
+                                                                    {i + 1}
+                                                                </Fab>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        lineHeight:
+                                                                            "21.13px",
+                                                                        color: "#383838",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        appointment.name
+                                                                    }
+                                                                </Typography>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        lineHeight:
+                                                                            "21.13px",
+                                                                        color: "#706D6D",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        appointment.AppointmentTime
+                                                                    }
+                                                                </Typography>
+                                                            </Stack>
+                                                            <Stack direction="row">
+                                                                <Tooltip
+                                                                    title="Cancel"
+                                                                    placement="top"
+                                                                    arrow
+                                                                >
+                                                                    <IconButton
+                                                                        disabled={
+                                                                            disableButton.loading &&
+                                                                            disableButton.i ==
+                                                                                i
+                                                                                ? true
+                                                                                : false
+                                                                        }
+                                                                        onClick={() =>
+                                                                            handleStatusChange(
+                                                                                appointment._id,
+                                                                                "cancelled",
+                                                                                "by doctor",
+                                                                                i
+                                                                            )
+                                                                        }
+                                                                        sx={{
+                                                                            p: 0,
+                                                                        }}
+                                                                    >
+                                                                        <CancelIcon
+                                                                            sx={{
+                                                                                fontSize:
+                                                                                    {
+                                                                                        xs: "20.84px",
+                                                                                        sm: "20.84px",
+                                                                                        md: "29.15px",
+                                                                                    },
+                                                                                color:
+                                                                                    disableButton.loading &&
+                                                                                    disableButton.i ==
+                                                                                        i
+                                                                                        ? "#D9D9D9"
+                                                                                        : "#B92612",
+                                                                            }}
+                                                                        />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                                <Tooltip
+                                                                    title="Complete"
+                                                                    placement="top"
+                                                                    arrow
+                                                                    sx={{
+                                                                        color: "red !important",
+                                                                        backgroundColor:
+                                                                            "red",
+                                                                    }}
+                                                                >
+                                                                    <IconButton
+                                                                        disabled={
+                                                                            disableButton.loading &&
+                                                                            disableButton.i ==
+                                                                                i
+                                                                                ? true
+                                                                                : false
+                                                                        }
+                                                                        sx={{
+                                                                            p: 0,
+                                                                        }}
+                                                                    >
+                                                                        <CheckCircleIcon
+                                                                            sx={{
+                                                                                fontSize:
+                                                                                    {
+                                                                                        xs: "20.84px",
+                                                                                        sm: "20.84px",
+                                                                                        md: "29.15px",
+                                                                                    },
+                                                                                color:
+                                                                                    disableButton.loading &&
+                                                                                    disableButton.i ==
+                                                                                        i
+                                                                                        ? "#D9D9D9"
+                                                                                        : "#15B912",
+                                                                            }}
+                                                                        />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            </Stack>
+                                                        </Paper>
+                                                    )
+                                                )
+                                            ) : (
+                                                <Typography
+                                                    variant="h6"
+                                                    sx={{
+                                                        fontFamily: "Raleway",
+                                                        fontSize: "18px",
+                                                        fontWeight: "600",
+                                                        lineHeight: "21.13px",
+                                                        color: "#383838",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    No Appointment Yet
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    )}
+                                    {selectValue === 3 && (
+                                        <Box
+                                            sx={{
+                                                overflow: "auto",
+                                                height: "50vh",
+                                            }}
+                                        >
+                                            {missedAppointmentsData.length >
+                                            0 ? (
+                                                missedAppointmentsData.map(
+                                                    (appointment, i) => (
+                                                        <Paper
+                                                            key={i}
+                                                            sx={{
+                                                                p: "5px",
+                                                                mb: "10px",
+                                                                display: "flex",
+                                                                justifyContent:
+                                                                    "space-between",
+                                                                alignItems:
+                                                                    "center",
+                                                            }}
+                                                        >
+                                                            <Stack
+                                                                direction="row"
+                                                                spacing="10px"
+                                                                sx={{
+                                                                    alignItems:
+                                                                        "center",
+                                                                }}
+                                                            >
+                                                                <Fab
+                                                                    sx={{
+                                                                        borderRadius:
+                                                                            "5px",
+                                                                        width: {
+                                                                            xs: "29px",
+                                                                            sm: "29px",
+                                                                            md: "32px",
+                                                                        },
+                                                                        height: {
+                                                                            xs: "29px",
+                                                                            sm: "29px",
+                                                                            md: "29px",
+                                                                        },
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        background:
+                                                                            "#1F51C6",
+                                                                        color: "#ffffff",
+                                                                        zIndex: 1,
+                                                                        boxShadow:
+                                                                            "none",
+                                                                    }}
+                                                                >
+                                                                    {i + 1}
+                                                                </Fab>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        lineHeight:
+                                                                            "21.13px",
+                                                                        color: "#383838",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        appointment.name
+                                                                    }
+                                                                </Typography>
+                                                                <Typography
+                                                                    sx={{
+                                                                        fontFamily:
+                                                                            "Raleway",
+                                                                        fontSize:
+                                                                            {
+                                                                                xs: "0.813rem",
+                                                                                sm: "0.813rem",
+                                                                                md: "1.125rem",
+                                                                            },
+                                                                        fontWeight:
+                                                                            "600",
+                                                                        lineHeight:
+                                                                            "21.13px",
+                                                                        color: "#706D6D",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        appointment.AppointmentTime
+                                                                    }
+                                                                </Typography>
+                                                            </Stack>
+                                                            <Stack direction="row">
+                                                                <Tooltip
+                                                                    title="Cancel"
+                                                                    placement="top"
+                                                                    arrow
+                                                                >
+                                                                    <IconButton
+                                                                        disabled={
+                                                                            disableButton.loading &&
+                                                                            disableButton.i ==
+                                                                                i
+                                                                                ? true
+                                                                                : false
+                                                                        }
+                                                                        onClick={() =>
+                                                                            handleStatusChange(
+                                                                                appointment._id,
+                                                                                "cancelled",
+                                                                                "by doctor",
+                                                                                i
+                                                                            )
+                                                                        }
+                                                                        sx={{
+                                                                            p: 0,
+                                                                        }}
+                                                                    >
+                                                                        <CancelIcon
+                                                                            sx={{
+                                                                                fontSize:
+                                                                                    {
+                                                                                        xs: "20.84px",
+                                                                                        sm: "20.84px",
+                                                                                        md: "29.15px",
+                                                                                    },
+                                                                                color:
+                                                                                    disableButton.loading &&
+                                                                                    disableButton.i ==
+                                                                                        i
+                                                                                        ? "#D9D9D9"
+                                                                                        : "#B92612",
+                                                                            }}
+                                                                        />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                                <Tooltip
+                                                                    title="Complete"
+                                                                    placement="top"
+                                                                    arrow
+                                                                    sx={{
+                                                                        color: "red !important",
+                                                                        backgroundColor:
+                                                                            "red",
+                                                                    }}
+                                                                >
+                                                                    <IconButton
+                                                                        disabled={
+                                                                            disableButton.loading &&
+                                                                            disableButton.i ==
+                                                                                i
+                                                                                ? true
+                                                                                : false
+                                                                        }
+                                                                        sx={{
+                                                                            p: 0,
+                                                                        }}
+                                                                    >
+                                                                        <CheckCircleIcon
+                                                                            sx={{
+                                                                                fontSize:
+                                                                                    {
+                                                                                        xs: "20.84px",
+                                                                                        sm: "20.84px",
+                                                                                        md: "29.15px",
+                                                                                    },
+                                                                                color:
+                                                                                    disableButton.loading &&
+                                                                                    disableButton.i ==
+                                                                                        i
+                                                                                        ? "#D9D9D9"
+                                                                                        : "#15B912",
+                                                                            }}
+                                                                        />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            </Stack>
+                                                        </Paper>
+                                                    )
+                                                )
+                                            ) : (
+                                                <Typography
+                                                    variant="h6"
+                                                    sx={{
+                                                        fontFamily: "Raleway",
+                                                        fontSize: "18px",
+                                                        fontWeight: "600",
+                                                        lineHeight: "21.13px",
+                                                        color: "#383838",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    No Appointment Yet
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    )}
                                 </Card>
                             </Stack>
                             <Stack
@@ -1215,6 +1929,13 @@ const MUDDashboard = () => {
                                     dateAdapter={AdapterDayjs}
                                 >
                                     <DateCalendar
+                                        onChange={(e) =>
+                                            setDate(
+                                                moment(e.$d).format(
+                                                    "YYYY-MM-DD"
+                                                )
+                                            )
+                                        }
                                         sx={{
                                             background: "#DCE3F6",
                                             borderRadius: "8px",
@@ -1263,19 +1984,19 @@ const MUDDashboard = () => {
                                                 data: [
                                                     {
                                                         id: 0,
-                                                        value: 75,
-                                                        // label: "75% Completed",
+                                                        value: piChartData.completed,
+                                                        label: `${piChartData.completed}% Completed`,
                                                         color: "#1F51C6",
                                                     },
                                                     {
                                                         id: 1,
-                                                        value: 20,
+                                                        value: piChartData.pending,
                                                         // label: "20% Confirmed",
                                                         color: "#A1E18A",
                                                     },
                                                     {
                                                         id: 2,
-                                                        value: 5,
+                                                        value: piChartData.cancelled,
                                                         // label: "5% Cancelled",
                                                         color: "#F45843",
                                                     },

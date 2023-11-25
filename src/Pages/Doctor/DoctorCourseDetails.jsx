@@ -43,6 +43,7 @@ import CourseDetailSkeleton from "../../Components/Doctor/Skeleton/CourseDetailS
 import { BiSolidBook } from "react-icons/bi";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
 import CourseEnrollFormDialog from "../../Components/Doctor/CourseEnrollFormDialog";
+import { logOutDoctor } from "../../Store/doctorDataSlice";
 // import { BsFillCalendarFill } from "react-icons/bs";
 
 // const TextFieldStyle = styled(TextField)({
@@ -110,6 +111,7 @@ const DoctorCourseDetails = () => {
     const { doctorid, course_id } = useParams();
     const [courseEnrollDialog, setCourseEnrollDialog] = useState(false);
     const { user } = useSelector((state) => state.auth);
+    const { doctor } = useSelector((state) => state.doctor);
     const dispatch = useDispatch();
 
     const [activeTab, setActiveTab] = useState(3);
@@ -164,6 +166,7 @@ const DoctorCourseDetails = () => {
     const logOutUser = async () => {
         await axiosClient.post("/v2/logout");
         dispatch(logout());
+        dispatch(logOutDoctor());
         removeItem(KEY_ACCESS_TOKEN);
         // navigate('/')
         // window.location.href = '/master/signin'
@@ -381,8 +384,8 @@ const DoctorCourseDetails = () => {
                             <Stack alignItems={"center"} mt={4}>
                                 <Avatar
                                     src={
-                                        user?.imgurl
-                                            ? user.imgurl
+                                        doctor?.imgurl
+                                            ? doctor.imgurl
                                             : "/default.png"
                                     }
                                     sx={{ width: "71px", height: "71px" }}
@@ -397,7 +400,7 @@ const DoctorCourseDetails = () => {
                                         fontSize: "22px",
                                     }}
                                 >
-                                    Dr. {user.nameOfTheDoctor}
+                                    Dr. {doctor.nameOfTheDoctor}
                                 </Typography>
                             </Stack>
                             <Stack

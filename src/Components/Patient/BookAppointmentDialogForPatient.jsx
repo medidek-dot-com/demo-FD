@@ -62,11 +62,13 @@ const BookAppointmentDialogForPatient = ({
     inputValue,
     setInputValue,
     slotsLoading,
+    selectedTime,
+    setSelectedTime,
+    activeCard,
+    setActiveCard,
 }) => {
-    const [activeCard, setActiveCard] = useState();
     const [dateErr, setDateErr] = useState(false);
     const [dates, setDates] = useState([]);
-    const [selectedTime, setSelectedTime] = useState(null);
     const handleButtonClick = (slot, i) => {
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
