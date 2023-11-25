@@ -88,20 +88,20 @@ import {
 
 // export const baseURL = "https://beyondblack.agency";
 
-export const axiosClient = axios.create({
-    baseURL: "http://localhost:5001",
-    // //     // withCredentials: true,
-});
-
-export const baseURL = "http://localhost:5001";
-// export const baseURL = "http://localhost:5001";
-
 // export const axiosClient = axios.create({
-//     baseURL: "https://medidekdemobackend.onrender.com",
-//     // withCredentials: true
+//     baseURL: "http://localhost:5001",
+//     // //     // withCredentials: true,
 // });
 
-// export const baseURL = "https://medidekdemobackend.onrender.com";
+// export const baseURL = "http://localhost:5001";
+// export const baseURL = "http://localhost:5001";
+
+export const axiosClient = axios.create({
+    baseURL: "https://medidekdemobackend.onrender.com",
+    // withCredentials: true
+});
+
+export const baseURL = "https://medidekdemobackend.onrender.com";
 
 axiosClient.interceptors.request.use((request) => {
     const accessToken = getItem(KEY_ACCESS_TOKEN);
