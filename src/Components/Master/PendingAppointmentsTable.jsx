@@ -53,22 +53,22 @@ const MobileViewCardTypographyStyle = styled(Typography)({
 const statusComplete = { color: "#15B912", fontWeight: 600 };
 const statusPending = { color: "#000000", fontWeight: 600 };
 
-const handleStatusChange = async (id, status) => {
-    console.log(updatedStatus, "this is id", id);
-    try {
-        const response = await axiosClient.put(
-            `/v2/updateUserAppointmentStatus/${id}`,
-            { status }
-        );
-        if (response.status === "ok") {
-            getPendingAppointmentsData();
-        }
-        console.log(response);
-    } catch (error) {
-        console.log(error);
-    }
-    setUpdatedStatus(status);
-};
+// const handleStatusChange = async (id, status) => {
+//     console.log(updatedStatus, "this is id", id);
+//     try {
+//         const response = await axiosClient.put(
+//             `/v2/updateUserAppointmentStatus/${id}`,
+//             { status }
+//         );
+//         if (response.status === "ok") {
+//             getPendingAppointmentsData();
+//         }
+//         console.log(response);
+//     } catch (error) {
+//         console.log(error);
+//     }
+//     setUpdatedStatus(status);
+// };
 
 const PendingAppointmentsTable = ({
     pendingAppointmentsData,
@@ -78,18 +78,15 @@ const PendingAppointmentsTable = ({
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
     const [activeCard, setAciveCard] = useState();
 
-    console.log(pendingAppointmentsData);
     const handleStatusChange = async (id, status) => {
-        console.log(updatedStatus, "this is id", id);
         try {
             const response = await axiosClient.put(
                 `/v2/updateUserAppointmentStatus/${id}`,
                 { status }
             );
             if (response.status === "ok") {
-                getPendingAppointmentsData();
+                await getPendingAppointmentsData();
             }
-            console.log(response);
         } catch (error) {
             console.log(error);
         }
@@ -289,7 +286,7 @@ const PendingAppointmentsTable = ({
                 </Table>
             </Box>
 
-            <Stack
+            {/* <Stack
                 sx={{
                     display: { xs: "block", sm: "block", md: "none" },
                 }}
@@ -433,14 +430,14 @@ const PendingAppointmentsTable = ({
                                                     fontWeight: "600",
                                                     fontSize: "14px",
                                                     textAlign: "center",
-                                                    // p:'5px 10px',
+                                                   
                                                     borderRadius: "21px",
                                                     height: "32px",
                                                     mr: "2px",
                                                 }}
                                                 variant="standard"
                                                 value={appointment.status}
-                                                // onChange={(e) => handleChange(e, i)}
+                                               
                                             >
                                                 <MenuItem
                                                     onClick={() =>
@@ -497,13 +494,7 @@ const PendingAppointmentsTable = ({
                                                     Missed
                                                 </MenuItem>
                                             </Select>
-                                            {/* <span
-                                                        style={{
-                                                            fontWeight: "600",
-                                                        }}
-                                                    >
-                                                        Male
-                                                    </span> */}
+                                            
                                         </Box>
                                     </Stack>
                                 </Card>
@@ -522,7 +513,7 @@ const PendingAppointmentsTable = ({
                         No Appointments For Today
                     </Typography>
                 )}
-            </Stack>
+            </Stack> */}
         </>
     );
 };

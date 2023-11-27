@@ -5,7 +5,6 @@ const HandleNavbarShowing = ({ NavBar }) => {
     const location = useLocation();
     const [showNavbar, setShowNavBar] = useState(false);
     useEffect(() => {
-        console.log(location.pathname);
         if (
             location.pathname === "/sign-up" ||
             location.pathname === "/sign-in" ||
@@ -18,15 +17,9 @@ const HandleNavbarShowing = ({ NavBar }) => {
             console.log("nav bar hide");
         } else {
             setShowNavBar(true);
-            console.log("nav bar show");
-
         }
     }, [location]);
-    return (
-        <>
-        {console.log(NavBar)}
-        </>
-    )
+    return <>{console.log(NavBar)}</>;
 };
 
 export default HandleNavbarShowing;

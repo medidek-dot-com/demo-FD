@@ -44,8 +44,13 @@ const AppointmentConfirmDIalog = ({
     appointmentCofirmedDialog,
     setAppointmentCofirmedDialog,
     bookingAppointmentDetails,
+    setBookingAppointmentDetails,
+    inputValue,
     setInputValue,
     nameOfTheDoctor,
+    setActiveCard,
+    setSelectedTime,
+    setSlotData,
 }) => {
     // const [err, setError] = useState(false);
     return (
@@ -84,13 +89,35 @@ const AppointmentConfirmDIalog = ({
                         onClick={() => {
                             setAppointmentCofirmedDialog(false);
                             setInputValue({
+                                ...inputValue,
                                 name: "",
                                 age: "",
-                                phone: "",
                                 gender: "",
+                                phone: "",
+                                email: "",
+                                AppointmentNotes: "",
                                 appointmentDate: "",
-                                appointmentTime: "",
+                                AppointmentTime: "",
                             });
+                            setActiveCard();
+                            setSelectedTime();
+                            setBookingAppointmentDetails({
+                                ...bookingAppointmentDetails,
+                                nameOfTheDoctor: "",
+                                doctorsId: "",
+                                appointmentDate: "",
+                                consultingTime: "",
+                                hospitalId: "",
+                                doctorid: "",
+                                name: "",
+                                Age: "",
+                                Gender: "",
+                                phone: "",
+                                AppointmentNotes: "",
+                                AppointmentTime: "",
+                                imgurl: "",
+                            });
+                            setSlotData([]);
                         }}
                         sx={{
                             // position: "absolute",
@@ -110,11 +137,12 @@ const AppointmentConfirmDIalog = ({
                     display: "flex",
                     flexWrap: "wrap",
                     justifyContent: "space-between",
+                    gap: { xs: "10px", sm: "10px", md: "200px" },
                     // width: "600px",
                     alignItems: "center",
                 }}
             >
-                <Stack spacing={1}>
+                <Stack gap="15px">
                     <Typography
                         variant="h5"
                         sx={{
@@ -223,6 +251,8 @@ const AppointmentConfirmDIalog = ({
                                 {confirmedAppointmentData?.phone}
                             </Box>
                         </Typography>
+                    </Stack>
+                    <Stack gap="15px">
                         <Typography
                             sx={{
                                 color: "#1F51C6",
@@ -264,6 +294,7 @@ const AppointmentConfirmDIalog = ({
                         </Typography>
                     </Stack>
                 </Stack>
+
                 <CheckCircleIcon
                     sx={{
                         color: "#15B912",

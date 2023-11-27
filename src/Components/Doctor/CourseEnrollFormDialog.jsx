@@ -112,7 +112,6 @@ const CourseEnrollFormDialog = ({
         data.append("email", inputValue.email);
         data.append("phone", inputValue.phone);
 
-        // console.log(data);
         // try {
         //     const response = await axiosClient.post("/v2/addDoctor", data);
         //     console.log(response);

@@ -30,10 +30,9 @@ const AppointmentByTokenEditSettings = ({
         const { date, month, year, day } = userDate;
         // console.log(day, date, month, year);
         const a = year + "-" + month + "-" + date;
-        console.log(a);
 
         var formattedDate = moment(a).format("yyyy-MM-DD");
-        console.log(formattedDate); // Output: "2023-11-13"
+        // Output: "2023-11-13"
         // const formattedDate = moment.format(date)
 
         setTokenSelectedDay({ currentDate: formattedDate, i });

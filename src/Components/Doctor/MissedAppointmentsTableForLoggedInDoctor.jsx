@@ -25,6 +25,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -65,10 +66,10 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                 { status }
             );
             if (response.status === "ok") {
-                getMissedAppointmentsData();
+                return getMissedAppointmentsData();
             }
-            console.log(response);
         } catch (error) {
+            toast.error("something went wrong");
             console.log(error);
         }
         setUpdatedStatus(status);

@@ -33,12 +33,10 @@ const OnlineAppointmentEditSettings = ({
 
     const handleSelectedDate = async (userDate, i) => {
         const { date, month, year, day } = userDate;
-        // console.log(day, date, month, year);
-        const a = year + "-" + month + "-" + date;
-        console.log(a);
 
-        var formattedDate = moment(a, "yyyy-MMM-DD").format("yyyy-MM-DD");
-        console.log(formattedDate); // Output: "2023-11-13"
+        const a = year + "-" + month + "-" + date;
+
+        var formattedDate = moment(a, "yyyy-MMM-DD").format("yyyy-MM-DD"); // Output: "2023-11-13"
         // const formattedDate = moment.format(date)
         await setEditSlottSetting(false);
         setSelectedDay({ currentDate: formattedDate, i });

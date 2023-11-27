@@ -36,6 +36,7 @@ import BookAppointmnetDetailsDialog from "../../Patient/BookAppointmnetDetailsDi
 import BookAppointmentDialogForPatient from "../../Patient/BookAppointmentDialogForPatient";
 import ConfirmAppointmentDialog from "../../Patient/ConfirmAppointmentDialog";
 import AppointmentConfirmDIalog from "../DoctorsList/AppointmentConfirmDIalog";
+import { toast } from "react-toastify";
 
 const CarouselStyle = styled(Carousel)`
     width: 100%;
@@ -139,17 +140,19 @@ const DoctorInfo = () => {
 
     const getAvailableSlots = async () => {
         try {
-            setSlotsLoading(true);
-            const response = await axiosClient.get(
-                `/v2/getAvailbleSlotsForAnUser/${bookingAppointmentDetails.doctorid}/${bookingAppointmentDetails.appointmentDate}`
-            );
-            if (response.status === "ok") {
-                setSlotsLoading(false);
-                return setSlotData(response.result);
+            if (bookingAppointmentDetails.appointmentDate) {
+                setSlotsLoading(true);
+                const response = await axiosClient.get(
+                    `/v2/getAvailbleSlotsForAnUser/${bookingAppointmentDetails.doctorid}/${bookingAppointmentDetails.appointmentDate}`
+                );
+                if (response.status === "ok") {
+                    setSlotsLoading(false);
+                    return setSlotData(response.result);
+                }
             }
         } catch (error) {
             setSlotsLoading(false);
-            console.log(error.message);
+            toast.error("something went wrong");
         }
     };
 
@@ -1274,11 +1277,15 @@ const DoctorInfo = () => {
             <ConfirmAppointmentDialog
                 inputValue={inputValue}
                 setInputValue={setInputValue}
+                setActiveCard={setActiveCard}
+                setSelectedTime={setSelectedTime}
+                setSlotData={setSlotData}
                 confirmBookAppointmentDialog={confirmBookAppointmentDialog}
                 setConfirmBookAppointmentDialog={
                     setConfirmBookAppointmentDialog
                 }
                 bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
                 bookingAppointmentDialog={bookingAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
                 setBookAppointmentDetailsDialog={

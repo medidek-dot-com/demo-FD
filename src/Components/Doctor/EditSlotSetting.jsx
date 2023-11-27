@@ -42,7 +42,6 @@ const EditSlotSetting = ({
     // let [endTime, setEndTime] = useState("");
     // console.log("endtime start", endTime);
 
-    console.log(onlineSlotData);
     let count = 1;
     const [numOfStartTimes, setNumOfStartTimes] = useState(0);
 
@@ -198,7 +197,7 @@ const EditSlotSetting = ({
         // Generate end times based on the selected start time and slot duration
         const genratedStartTimes2 = [];
         let currentTime = new Date(`01/01/2023 ${endTime}`);
-        console.log(currentTime);
+
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
             genratedStartTimes2.push(
@@ -220,7 +219,6 @@ const EditSlotSetting = ({
     };
 
     const saveData = async () => {
-        console.log(markAsHoliday);
         if (markAsHoliday === true) {
             setStartTime("none");
             setStartTime2("none");
@@ -228,7 +226,7 @@ const EditSlotSetting = ({
             setEndTime("none");
             setEndTime2("none");
             setEndTime3("none");
-            console.log("tru haii", markAsHoliday);
+
             try {
                 const response = await axiosClient.post(
                     "/v2/creatSlotForDoctor",
@@ -245,16 +243,15 @@ const EditSlotSetting = ({
                         doctorid: doctorid,
                     }
                 );
-                console.log(false);
+
                 if (response.status === "ok") {
-                    console.log("falssssss");
                     await getOnlineSlotDetailForDoctorForPerticularDate();
                     setEditSlottSetting(false);
                     setMarkAsHoliday(false);
-                    return console.log(response.result);
+                    return;
                 }
             } catch (error) {
-                console.log(error.message);
+                toast.error("something went wrong");
                 console.log(error.message);
             }
         } else {
@@ -276,7 +273,6 @@ const EditSlotSetting = ({
                 );
                 await getOnlineSlotDetailForDoctorForPerticularDate();
                 setEditSlottSetting(false);
-                console.log(response.result);
                 setStartTime("");
                 setStartTime2("");
                 setStartTime3("");
@@ -285,6 +281,7 @@ const EditSlotSetting = ({
                 setEndTime3("");
                 setMarkAsHoliday(false);
             } catch (error) {
+                toast.error("something went wrong");
                 console.log(error.message);
             }
         }

@@ -27,6 +27,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -61,17 +62,17 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
     const [activeCard, setAciveCard] = useState();
 
     const handleStatusChange = async (id, status) => {
-        console.log(updatedStatus, "this is id", id);
         try {
             const response = await axiosClient.put(
                 `/v2/updateUserAppointmentStatus/${id}`,
                 { status }
             );
-            console.log(response);
+
             if (response.status === "ok") {
                 getCompleteAppointmentsData();
             }
         } catch (error) {
+            toast.error("something went wrong");
             console.log(error);
         }
         setUpdatedStatus(status);

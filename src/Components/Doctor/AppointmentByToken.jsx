@@ -47,7 +47,6 @@ const AppointmentByToken = ({
     const { user } = useSelector((state) => state.auth);
     const { doctor } = useSelector((state) => state.doctor);
 
-    console.log(doctor.acceptAppointments);
     // const currentDate = moment().format("yyyy-MM-DD");
 
     const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
@@ -84,12 +83,11 @@ const AppointmentByToken = ({
         setEndTime(
             start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         );
-        console.log(start);
 
         // Generate end times based on the selected start time and slot duration
         const generatedEndTimes = [];
         let currentTime = new Date(`01/01/2023 ${startTime}`);
-        console.log(currentTime);
+
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
             generatedEndTimes.push(
@@ -109,12 +107,11 @@ const AppointmentByToken = ({
         // setEndTime3(
         //     start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         // );
-        console.log(start);
 
         // Generate end times based on the selected start time and slot duration
         const generatedEndTimes3 = [];
         let currentTime = new Date(`01/01/2023 ${startTime3}`);
-        console.log(currentTime);
+
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
             generatedEndTimes3.push(
@@ -134,12 +131,11 @@ const AppointmentByToken = ({
         // setEndTime2(
         //     start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         // );
-        console.log(start);
 
         // Generate end times based on the selected start time and slot duration
         const generatedEndTimes2 = [];
         let currentTime = new Date(`01/01/2023 ${startTime2}`);
-        console.log(currentTime);
+
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
             generatedEndTimes2.push(
@@ -155,17 +151,16 @@ const AppointmentByToken = ({
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
         const start = new Date(`01/01/2023 ${endTime2}`);
-        console.log(start);
+
         start.setMinutes(start.getMinutes() + slotDuration);
         // setStartTime3(
         //     start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         // );
-        console.log(start);
 
         // Generate end times based on the selected start time and slot duration
         const genratedStartTimes3 = [];
         let currentTime = new Date(`01/01/2023 ${endTime2}`);
-        console.log(currentTime);
+
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
             genratedStartTimes3.push(
@@ -214,10 +209,9 @@ const AppointmentByToken = ({
         const { date, month, year, day } = userDate;
         // console.log(day, date, month, year);
         const a = year + "-" + month + "-" + date;
-        console.log(a);
 
         var formattedDate = moment(a).format("YYYY-MM-DD");
-        console.log(formattedDate); // Output: "2023-11-13"
+        // Output: "2023-11-13"
         // const formattedDate = moment.format(date)
 
         setTokenSelectedDay({ currentDate: formattedDate, i });
@@ -230,9 +224,8 @@ const AppointmentByToken = ({
                 `/v2/editAcceptAppointmentByToken/${doctorid}`,
                 { acceptAppointmentByToken: !acceptAppointmentByToken }
             );
-            console.log(response);
+
             if (response.status === "ok") {
-                console.log(e.target.checked);
                 setSwitchLoading(false);
                 return setAcceptAppointmentByToken(
                     response.result.acceptAppointmentByToken
@@ -240,7 +233,6 @@ const AppointmentByToken = ({
             }
         } catch (error) {
             setSwitchLoading(false);
-            console.log(error.message);
             toast.error("Something went wrong");
         }
     };
@@ -257,7 +249,7 @@ const AppointmentByToken = ({
                 date: selectedDay.currentDate,
                 doctorid: user._id,
             });
-            console.log(response.result);
+
             setStartTime("");
             setStartTime2("");
             setStartTime3("");
@@ -265,6 +257,7 @@ const AppointmentByToken = ({
             setEndTime2("");
             setEndTime3("");
         } catch (error) {
+            toast.error("something went wrong");
             console.log(error.message);
         }
     };

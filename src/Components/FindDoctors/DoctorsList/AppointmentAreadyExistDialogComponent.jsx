@@ -56,24 +56,32 @@ const LabelStyle = styled("label")({
 const AppointmentAreadyExistDialogComponent = ({
     appointmentAlreadyExistDialog,
     setAppointmentAlreadyExistDialog,
+    setAppointmentCofirmedDialog,
+    bookingAppointmentDetails,
+    setBookingAppointmentDetails,
+    inputValue,
+    setInputValue,
+    setActiveCard,
+    setSelectedTime,
+    setSlotData,
 }) => {
     // const [err, setError] = useState(false);
 
     return (
         <DialogStyle
             open={appointmentAlreadyExistDialog}
-            onClose={() => {
-                setAppointmentAlreadyExistDialog(false);
-                // setInputValue({
-                //     patientName: "",
-                //     age: "",
-                //     phoneNumber: "",
-                //     gender: "",
-                //     appointmentDate: "",
-                //     appointmentTime: "",
-                // });
-                // setError(false)
-            }}
+            // onClose={() => {
+            //     setAppointmentAlreadyExistDialog(false);
+            //     // setInputValue({
+            //     //     patientName: "",
+            //     //     age: "",
+            //     //     phoneNumber: "",
+            //     //     gender: "",
+            //     //     appointmentDate: "",
+            //     //     appointmentTime: "",
+            //     // });
+            //     // setError(false)
+            // }}
             maxWidth={"sm"}
             sx={{ margin: " 0 auto", borderRadius: "10px" }}
         >
@@ -94,15 +102,37 @@ const AppointmentAreadyExistDialogComponent = ({
                         aria-label="close"
                         onClick={() => {
                             setAppointmentAlreadyExistDialog(false);
+                            setAppointmentCofirmedDialog(false);
                             setInputValue({
+                                ...inputValue,
                                 name: "",
                                 age: "",
-                                phone: "",
                                 gender: "",
+                                phone: "",
+                                email: "",
+                                AppointmentNotes: "",
                                 appointmentDate: "",
-                                appointmentTime: "",
+                                AppointmentTime: "",
                             });
-                            setError(false);
+                            setActiveCard();
+                            setSelectedTime();
+                            setBookingAppointmentDetails({
+                                ...bookingAppointmentDetails,
+                                nameOfTheDoctor: "",
+                                doctorsId: "",
+                                appointmentDate: "",
+                                consultingTime: "",
+                                hospitalId: "",
+                                doctorid: "",
+                                name: "",
+                                Age: "",
+                                Gender: "",
+                                phone: "",
+                                AppointmentNotes: "",
+                                AppointmentTime: "",
+                                imgurl: "",
+                            });
+                            setSlotData([]);
                         }}
                         sx={{
                             // position: "absolute",

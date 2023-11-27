@@ -61,7 +61,6 @@ const ForgotPasswordForm = ({ userData }) => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordNotMatch, setPasswordNotMatch] = useState(false);
 
-    console.log(userData);
     const resetPassword = async () => {
         if (!newPassword || !confirmPassword) {
             return setError(true);
@@ -76,7 +75,6 @@ const ForgotPasswordForm = ({ userData }) => {
                 password: newPassword,
                 role: userData?.role,
             });
-            console.log(response);
 
             if (response.status === "ok") {
                 toast.success("Password updated successfully");

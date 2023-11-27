@@ -67,6 +67,9 @@ import DoctorCourses from "./Pages/Doctor/DoctorCourses";
 import DoctorCourseDetails from "./Pages/Doctor/DoctorCourseDetails";
 import AppointmentSettings from "./Pages/Doctor/AppointmentSettings";
 import ViewPatientCompletedAppointment from "./Pages/Patient/ViewPatientCompletedAppointment";
+import Help from "./Help";
+import MedidekPrivacy from "./MedidekPrivacy";
+import MedidekCancellationPolicy from "./MedidekCancellationPolicy";
 
 const App = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
@@ -128,9 +131,18 @@ const App = () => {
                 {/* Routes For Patient Starts From Here */}
                 {/* <Route path="/nav" element={<NavBarWrapper />} /> */}
                 <Route path="/" element={<Home />} />
+                <Route path="/medidek/help" element={<Help />} />
                 <Route
-                    path="/medidek/terms&PrivacyPolicy"
+                    path="/medidek/Privacy-policy"
+                    element={<MedidekPrivacy />}
+                />
+                <Route
+                    path="/medidek/terms&Privacy-policy"
                     element={<MedidekTerms />}
+                />
+                <Route
+                    path="/medidek/cancellation-policy"
+                    element={<MedidekCancellationPolicy />}
                 />
                 <Route path="/user/signup" element={<SignUp />} />
                 <Route

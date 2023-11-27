@@ -297,13 +297,13 @@ const BookAppointmentDialog = ({
                     </form>
                 </DialogContent>
             </Dialog>
-            <AppointmentConfirmDialog
+            {/* <AppointmentConfirmDialog
                 appointementConfirmDialog={appointementConfirmDialog}
                 setAppointmentConfirmDialog={setAppointmentConfirmDialog}
                 bookingAppoinmtmentData={bookingAppoinmtmentData}
                 setInputValue={setInputValue}
                 setError={setError}
-            />
+            /> */}
         </>
     );
 };

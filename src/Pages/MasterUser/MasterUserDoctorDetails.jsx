@@ -26,6 +26,7 @@ import ChooseDateAndSlotTimeDialog from "../../Components/Master/ChooseDateAndSl
 import AppointmentSettingDialog from "../../Components/Master/AppointmentSettingDialog";
 import BookAppointmnetDetailsDialog from "../../Components/Patient/BookAppointmnetDetailsDialog";
 import ConfirmAppointmentDialog from "../../Components/Patient/ConfirmAppointmentDialog";
+import { toast } from "react-toastify";
 
 const WrapperStyle = styled(Box)(({ theme }) => ({
     width: "calc(100% - 100px)",
@@ -39,7 +40,7 @@ let datedumb;
 const MasterUserDoctorDetails = () => {
     const { user } = useSelector((state) => state.auth);
     const { hospital_id, doctor_id } = useParams();
-    console.log(hospital_id, doctor_id);
+
     const navigate = useNavigate();
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
@@ -53,7 +54,8 @@ const MasterUserDoctorDetails = () => {
     const [slotsLoading, setSlotsLoading] = useState(false);
     const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
         useState(false);
-    // console.log(doctorDetails.acceptAppointments);
+    const [selectedTime, setSelectedTime] = useState(null);
+    const [activeCard, setActiveCard] = useState();
 
     const [appointmentSettingDialog, setAppointmentSettingDialog] =
         useState(false);
@@ -100,7 +102,6 @@ const MasterUserDoctorDetails = () => {
 
     const [slotData, setSlotData] = useState([]);
 
-    console.log(getDateAndTime);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -118,10 +119,10 @@ const MasterUserDoctorDetails = () => {
             const response = await axiosClient.get(
                 `/v2/getPendingAppointmentForDoctor/${doctor_id}`
             );
-            console.log(response.result);
+
             return setAppointments(response.result);
         } catch (error) {
-            console.log(error);
+            toast.error("something went wrong");
         }
     };
 
@@ -132,19 +133,21 @@ const MasterUserDoctorDetails = () => {
 
     const getAvailableSlots = async () => {
         try {
-            setSlotsLoading(true);
             datedumb = false;
-            const response = await axiosClient.get(
-                `/v2/getAvailbleSlotsForAnUser/${bookingAppointmentDetails.doctorid}/${bookingAppointmentDetails.appointmentDate}`
-            );
-            if (response.status === "ok") {
-                setSlotsLoading(false);
-                datedumb = true;
-                return setSlotData(response.result);
+            if (bookingAppointmentDetails.appointmentDate) {
+                setSlotsLoading(true);
+                const response = await axiosClient.get(
+                    `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${bookingAppointmentDetails.appointmentDate}`
+                );
+                if (response.status === "ok") {
+                    setSlotsLoading(false);
+                    datedumb = true;
+                    return setSlotData(response.result);
+                }
             }
         } catch (error) {
+            toast.error("something went wrong");
             setSlotsLoading(false);
-            console.log(error.message);
         }
     };
 
@@ -164,7 +167,7 @@ const MasterUserDoctorDetails = () => {
             }
         } catch (error) {
             setSlotsLoading(false);
-            console.log(error.message);
+            toast.error("something went wrong");
         }
     };
 
@@ -618,6 +621,10 @@ const MasterUserDoctorDetails = () => {
                 setBookAppointmentDetailsDialog={
                     setBookAppointmentDetailsDialog
                 }
+                selectedTime={selectedTime}
+                setSelectedTime={setSelectedTime}
+                activeCard={activeCard}
+                setActiveCard={setActiveCard}
             />
             <BookAppointmnetDetailsDialog
                 inputValue={inputValue}
@@ -649,22 +656,26 @@ const MasterUserDoctorDetails = () => {
                 setChooseDateAndTimeDialog={setChooseDateAndTimeDialog}
                 doctorinfo={doctorDetails}
                 bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
                 bookingAppointmentDialog={bookAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
                 setBookAppointmentDetailsDialog={
                     setBookAppointmentDetailsDialog
                 }
                 setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                setActiveCard={setActiveCard}
+                setSelectedTime={setSelectedTime}
+                setSlotData={setSlotData}
             />
 
-            <BookAppointmentDialog
+            {/* <BookAppointmentDialog
                 bookAppointmentDialog={bookAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
                 getDateAndTime={getDateAndTime}
                 getUpcomingAppointmentsData={
                     getPendingAppointmentsDataForPerticularDate
                 }
-            />
+            /> */}
             <AppointmentSettingDialog
                 appointmentSettingDialog={appointmentSettingDialog}
                 setAppointmentSettingDialog={setAppointmentSettingDialog}

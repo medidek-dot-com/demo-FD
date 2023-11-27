@@ -36,8 +36,9 @@ const ConfirmAppointmentDialog = ({
     confirmBookAppointmentDialog,
     setConfirmBookAppointmentDialog,
     hospitalListDialog,
-    bookingAppointmentDetails,
     bookingAppointmentDialog,
+    bookingAppointmentDetails,
+    setBookingAppointmentDetails,
     setBookAppointmentDialog,
     setHospitalListDialog,
     inputValue,
@@ -46,6 +47,9 @@ const ConfirmAppointmentDialog = ({
     setBookAppointmentDetailsDialog,
     setChooseDateAndTimeDialog,
     getPendingAppointmentsDataForPerticularDate,
+    setActiveCard,
+    setSelectedTime,
+    setSlotData,
 }) => {
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
@@ -56,9 +60,7 @@ const ConfirmAppointmentDialog = ({
 
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
         useState(false);
-    {
-        console.log(inputValue);
-    }
+
     const bookAppointment = async () => {
         setDisableButton(true);
         try {
@@ -66,7 +68,7 @@ const ConfirmAppointmentDialog = ({
                 "/v2/bookAppointment",
                 inputValue
             );
-            console.log(response);
+
             if (response.status === "ok") {
                 setConfirmedAppointmentData(response.result);
                 setAppointmentCofirmedDialog(true);
@@ -86,8 +88,6 @@ const ConfirmAppointmentDialog = ({
                 error.statusCode === 409 &&
                 error.message === "Appointment is already exist"
             ) {
-                console.log("idhr tk");
-
                 setAppointmentAlreadyExistDialog(true);
                 setDisableButton(false);
                 setBookAppointmentDialog(false);
@@ -101,7 +101,6 @@ const ConfirmAppointmentDialog = ({
             }
             setDisableButton(false);
             toast.error("something is wrong");
-            console.log(error);
         }
     };
 
@@ -109,9 +108,9 @@ const ConfirmAppointmentDialog = ({
         <>
             <Dialog
                 sx={{ borderRadius: "14px" }}
+                open={confirmBookAppointmentDialog}
                 onClose={() => setConfirmBookAppointmentDialog(false)}
                 aria-labelledby="customized-dialog-title"
-                open={confirmBookAppointmentDialog}
             >
                 <DialogTitle
                     sx={{
@@ -129,7 +128,7 @@ const ConfirmAppointmentDialog = ({
                     }}
                     id="customized-dialog-title"
                 >
-                    Confirm Appointment With Dr.{" "}
+                    Confirm Appointment With Dr.{"  "}
                     {bookingAppointmentDetails.nameOfTheDoctor}
                 </DialogTitle>
                 {confirmBookAppointmentDialog ? (
@@ -270,13 +269,30 @@ const ConfirmAppointmentDialog = ({
                 setAppointmentAlreadyExistDialog={
                     setAppointmentAlreadyExistDialog
                 }
+                confirmedAppointmentData={confirmedAppointmentData}
+                appointmentCofirmedDialog={appointmentCofirmedDialog}
+                setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                setHospitalListDialog={setHospitalListDialog}
+                setActiveCard={setActiveCard}
+                setSelectedTime={setSelectedTime}
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+                setSlotData={setSlotData}
             />
             <AppointmentConfirmDIalog
                 confirmedAppointmentData={confirmedAppointmentData}
                 appointmentCofirmedDialog={appointmentCofirmedDialog}
                 setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                inputValue={inputValue}
                 setInputValue={setInputValue}
                 setHospitalListDialog={setHospitalListDialog}
+                setActiveCard={setActiveCard}
+                setSelectedTime={setSelectedTime}
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+                setSlotData={setSlotData}
             />
             {/* <AppointmentConfirmDIalog
                 confirmedAppointmentData={confirmedAppointmentData}

@@ -50,15 +50,17 @@ const ChooseDateAndSlotTimeDialog = ({
     inputValue,
     setInputValue,
     datedumb,
+    selectedTime,
+    setSelectedTime,
+    activeCard,
+    setActiveCard,
 }) => {
-    const [activeCard, setActiveCard] = useState();
+    // const [activeCard, setActiveCard] = useState();
     const [dateErr, setDateErr] = useState(false);
     const [dates, setDates] = useState([]);
-    const [selectedTime, setSelectedTime] = useState(null);
-    console.log(slotData);
+    // const [selectedTime, setSelectedTime] = useState(null);
 
     const handleButtonClick = (slot, i) => {
-        console.log(slot);
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
@@ -69,10 +71,6 @@ const ChooseDateAndSlotTimeDialog = ({
             AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
         });
         setSelectedTime(i);
-        console.log({
-            ...bookingAppointmentDetails,
-            AppointmentTime: `${slot.startTime} - ${slot.endTime}`,
-        });
     };
 
     const getWeekDates = () => {
@@ -512,10 +510,9 @@ const ChooseDateAndSlotTimeDialog = ({
                                 !bookingAppointmentDetails.AppointmentTime ||
                                 !datedumb
                             ) {
-                                console.log("date nhi aa rhi");
                                 return setDateErr(true);
                             }
-                            console.log("date aa rhi");
+
                             setBookAppointmentDetailsDialog(true);
                         }}
                     >

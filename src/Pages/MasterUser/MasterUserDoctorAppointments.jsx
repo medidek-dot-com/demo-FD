@@ -138,7 +138,6 @@ const MasterUserDoctorAppointments = () => {
                 `/v2/getMissedAppoinmentForDoctor/${doctor_id}/${date}`
             );
             setMissedAppointmentsData(response.result);
-            console.log(response);
         } catch (error) {
             console.log(error);
         }

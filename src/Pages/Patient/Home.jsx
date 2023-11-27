@@ -8,12 +8,62 @@ import { useEffect } from "react";
 import NavBarWrapper from "../../Components/NavBarWrapper/NavBarWrapper";
 import { Box } from "@mui/material";
 import { tab } from "../../Store/tabSlice";
+import styled from "@emotion/styled";
+
+const useStyles = styled((theme) => ({
+    hidden: {
+        opacity: 0,
+        filter: "blur(5px)",
+        transform: "translateX(-100%)",
+        transition: "all 1s",
+    },
+    show: {
+        opacity: 1,
+        filter: "blur(0)",
+        transform: "translateX(0)",
+    },
+    logos: {
+        display: "flex",
+    },
+    logo: {
+        transitionDelay: "200ms",
+        "&:nth-child(3)": {
+            transitionDelay: "400ms",
+        },
+        "&:nth-child(4)": {
+            transitionDelay: "600ms",
+        },
+    },
+}));
 
 const Home = () => {
+    const classes = useStyles();
+
     const { isLoggedIn, user } = useSelector((state) => state.auth);
     const hospital_id = user?.user?._id;
     const email = user?.user?.enterEmailId;
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                console.log(entry);
+                if (entry.isIntersecting) {
+                    entry.target.classList.add(classes.show);
+                } else {
+                    entry.target.classList.remove(classes.show);
+                }
+            });
+        });
+
+        const hiddenElements = document.querySelectorAll(`.${classes.hidden}`);
+        hiddenElements.forEach((el) => observer.observe(el));
+
+        return () => {
+            // Cleanup observer if needed
+            observer.disconnect();
+        };
+    }, [classes.hidden, classes.show]);
 
     useEffect(() => {
         if (isLoggedIn && user?.role === "MASTER") {
@@ -51,7 +101,7 @@ const Home = () => {
                     p: 1,
                 }}
             >
-                <Banner />
+                <Banner classes={classes} />
                 <Section_I />
                 <Section_II />
             </Box>

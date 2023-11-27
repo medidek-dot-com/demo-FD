@@ -43,10 +43,9 @@ const AppointmentSettingDialog = ({
 }) => {
     const { hospital_id, doctor_id } = useParams();
 
-    console.log(doctorDetails);
     const [appointmentByToken, setAppointmentByToken] = useState(false);
     const [onlineSlotData, setOnlineSlotsData] = useState(null);
-    console.log("online slot data", onlineSlotData);
+
     const [tokenSlotData, setTokenSlotsData] = useState(null);
     // const [dates, setDates] = useState([]);
     const [currentMonth, setCurrentMonth] = useState(moment());
@@ -97,12 +96,9 @@ const AppointmentSettingDialog = ({
         getOnlineSlotDetailForDoctorForPerticularDate();
     }, [selectedSlotDate, doctor_id]);
 
-    console.log("jbj", selectedSlotDate);
-
     useEffect(() => {
         getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
     }, [selectedTokenDate, doctor_id]);
-    console.log("uydgcduichdi", selectedTokenDate);
     // const getWeekDates = () => {
     //     const daysInMonth = currentMonth.daysInMonth();
     //     const monthStart = moment().startOf("day");

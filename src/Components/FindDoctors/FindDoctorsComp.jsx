@@ -16,6 +16,7 @@ import styled from "@emotion/styled";
 import { axiosClient } from "../../Utils/axiosClient";
 import { useNavigate } from "react-router-dom";
 import Footer from "../Footer/Footer";
+import { toast } from "react-toastify";
 
 const TypographyStyling = styled(ListItem)`
     cursor: pointer;
@@ -33,17 +34,17 @@ const FindDoctorsComp = () => {
     const [speciality, setSpeciality] = useState("");
     const [locationData, setLocationData] = useState([]);
     const navigate = useNavigate();
-    console.log(speciality);
+
     const getDoctorsList = async () => {
         try {
             const response = await axiosClient.get(
                 `/v2/getDoctorforSpecialties/abhay?location=${location}&speciality=${speciality}`
             );
-            console.log(response.result.location);
             if (response.status === "ok") {
                 return setLocationData(response.result);
             }
         } catch (error) {
+            toast.error("something went wrong");
             console.log(error.message);
         }
     };
@@ -66,8 +67,6 @@ const FindDoctorsComp = () => {
         setSpeciality(v);
 
         navigate("/doctors", { state: { speciality, location } });
-
-        console.log(v);
     };
 
     return (

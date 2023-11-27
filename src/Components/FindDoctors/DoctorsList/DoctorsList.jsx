@@ -189,8 +189,7 @@ const DoctorsList = () => {
     });
 
     const [selectedTime, setSelectedTime] = useState();
-    console.log(bookingAppointmentDetails);
-    console.log(inputValue);
+
     const [dateErr, setDateErr] = useState(false);
     // const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({})
     const [bookingAppointmentDialog, setBookAppointmentDialog] =
@@ -230,13 +229,15 @@ const DoctorsList = () => {
     };
     const getAvailableSlots = async () => {
         try {
-            setSlotsLoading(true);
-            const response = await axiosClient.get(
-                `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${bookingAppointmentDetails.appointmentDate}`
-            );
-            if (response.status === "ok") {
-                setSlotsLoading(false);
-                return setSlotData(response.result);
+            if (bookingAppointmentDetails.appointmentDate) {
+                setSlotsLoading(true);
+                const response = await axiosClient.get(
+                    `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${bookingAppointmentDetails.appointmentDate}`
+                );
+                if (response.status === "ok") {
+                    setSlotsLoading(false);
+                    return setSlotData(response.result);
+                }
             }
         } catch (error) {
             setSlotsLoading(false);
@@ -279,7 +280,6 @@ const DoctorsList = () => {
         hospitalId,
         duid
     ) => {
-        console.log(doctorId);
         if (!isLoggedIn) {
             navigate("/user/signin", {
                 state: { prevUrl: urlLocation.pathname },
@@ -296,7 +296,7 @@ const DoctorsList = () => {
                 setHospitalListDialog(true);
                 // setBookAppointmentButtonLoading(false);
             }
-            console.log(response);
+
             return;
         } catch (error) {
             // setBookAppointmentButtonLoading(false);
@@ -327,7 +327,7 @@ const DoctorsList = () => {
                 "/v2/createAppoinment",
                 bookingAppointmentDetails
             );
-            console.log(response);
+
             if (response.status === "ok") {
                 setConfirmedAppointmentData(response.result);
                 setAppointmentCofirmedDialog(true);
@@ -748,11 +748,14 @@ const DoctorsList = () => {
                 <ConfirmAppointmentDialog
                     inputValue={inputValue}
                     setInputValue={setInputValue}
+                    setActiveCard={setActiveCard}
+                    setSelectedTime={setSelectedTime}
                     confirmBookAppointmentDialog={confirmBookAppointmentDialog}
                     setConfirmBookAppointmentDialog={
                         setConfirmBookAppointmentDialog
                     }
                     bookingAppointmentDetails={bookingAppointmentDetails}
+                    setBookingAppointmentDetails={setBookingAppointmentDetails}
                     bookingAppointmentDialog={bookingAppointmentDialog}
                     setBookAppointmentDialog={setBookAppointmentDialog}
                     hospitalListDialog={hospitalListDialog}
@@ -763,6 +766,7 @@ const DoctorsList = () => {
                     setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                     confirmedAppointmentData={confirmedAppointmentData}
                     setConfirmedAppointmentData={setConfirmedAppointmentData}
+                    setSlotData={setSlotData}
                 />
 
                 <HospitalListDialog

@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, IconButton, Stack, Typography, styled } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const LinkStyle = styled(Link)`
     text-align: left;
@@ -30,6 +31,9 @@ const LiStyle = styled("li")({
 });
 
 const Footer = () => {
+    const navigate = useNavigate();
+    const { isLoggedIn, user } = useSelector((state) => state.auth);
+
     return (
         <>
             <Box
@@ -77,62 +81,160 @@ const Footer = () => {
                     }}
                 >
                     <UlStyle>
-                        <LiStyle>Home</LiStyle>
-                        <LiStyle>Find Doctors</LiStyle>
-                        <LiStyle>Traking</LiStyle>
-                        <LiStyle>Medical Courses</LiStyle>
-                        <LiStyle>Contact Us</LiStyle>
+                        <LiStyle
+                            onClick={() =>
+                                navigate(
+                                    isLoggedIn && user?.role === "MASTER"
+                                        ? `/master/user/home/${user?._id}`
+                                        : "/"
+                                )
+                            }
+                        >
+                            Home
+                        </LiStyle>
+                        <LiStyle
+                            onClick={() =>
+                                navigate(
+                                    isLoggedIn && user?.role === "MASTER"
+                                        ? `/master/user/management/doctors/${user?._id}`
+                                        : "/doctors"
+                                )
+                            }
+                        >
+                            {isLoggedIn && user?.role === "MASTER"
+                                ? "Management"
+                                : "Find Doctors"}
+                        </LiStyle>
+                        <LiStyle
+                            onClick={() =>
+                                navigate(
+                                    isLoggedIn && user?.role === "MASTER"
+                                        ? `/master/user/doctors/${user?._id}`
+                                        : "/tracking"
+                                )
+                            }
+                        >
+                            {isLoggedIn && user?.role === "MASTER"
+                                ? "Doctors"
+                                : "Traking"}
+                        </LiStyle>
+                        {/* <LiStyle onClick={() => navigate("/medical-courses")}>
+                            Medical Courses
+                        </LiStyle> */}
+                        <LiStyle
+                            onClick={() =>
+                                navigate(
+                                    isLoggedIn && user?.role === "MASTER"
+                                        ? `/master/user/appointments/${user?._id}`
+                                        : "/contact-us"
+                                )
+                            }
+                        >
+                            {isLoggedIn && user?.role === "MASTER"
+                                ? "Appointments"
+                                : "Contact Us"}
+                        </LiStyle>
                     </UlStyle>
                     <UlStyle>
-                        <LiStyle>Help</LiStyle>
-                        <LiStyle>Privacy Policy</LiStyle>Help
-                        <LiStyle>Terms & Condition</LiStyle>
-                        <LiStyle>Cancellation Policy</LiStyle>
+                        <LiStyle onClick={() => navigate("/medidek/help")}>
+                            Help
+                        </LiStyle>
+                        <LiStyle
+                            onClick={() => navigate("/medidek/Privacy-policy")}
+                        >
+                            Privacy Policy
+                        </LiStyle>
+                        <LiStyle
+                            onClick={() =>
+                                navigate("/medidek/terms&Privacy-policy")
+                            }
+                        >
+                            Terms & Condition
+                        </LiStyle>
+                        <LiStyle
+                            onClick={() =>
+                                navigate("/medidek/cancellation-policy")
+                            }
+                        >
+                            Cancellation Policy
+                        </LiStyle>
                     </UlStyle>
                     {/* <Stack spacing={{ xs: "5px", sm: "7px", md: "10px" }}> */}
                     <Stack direction="row" justifyContent="center">
                         <IconButton
+                            sx={{
+                                ":hover": {
+                                    background: "none",
+                                },
+                            }}
                             target="_"
                             href="https://instagram.com/medidekofficial?igshid=MzRlODBiNWFlZA=="
                         >
-                            <img
+                            <Box
+                                component="img"
                                 src="/social-icon1.svg"
                                 alt=""
-                                width="26px"
-                                height="26px"
+                                sx={{
+                                    width: "26px",
+                                    height: "26px",
+                                }}
                             />
                         </IconButton>
                         <IconButton
+                            sx={{
+                                ":hover": {
+                                    background: "none",
+                                },
+                            }}
                             target="_"
                             href="https://www.linkedin.com/company/medidek/"
                         >
-                            <img
+                            <Box
+                                component="img"
                                 src="/social-icon2.svg"
                                 alt=""
-                                width="26px"
-                                height="26px"
+                                sx={{
+                                    width: "26px",
+                                    height: "26px",
+                                }}
                             />
                         </IconButton>
                         <IconButton
+                            sx={{
+                                ":hover": {
+                                    background: "none",
+                                },
+                            }}
                             target="_"
                             href="https://www.facebook.com/profile.php?id=100094316681517&mibextid=ZbWKwL"
                         >
-                            <img
+                            <Box
+                                component="img"
                                 src="/social-icon3.svg"
                                 alt=""
-                                width="26px"
-                                height="26px"
+                                sx={{
+                                    width: "26px",
+                                    height: "26px",
+                                }}
                             />
                         </IconButton>
                         <IconButton
+                            sx={{
+                                ":hover": {
+                                    background: "none",
+                                },
+                            }}
                             target="_"
                             href="https://youtube.com/@MedidekSocial?si=6tXZINUsJUW6HrNF"
                         >
-                            <img
+                            <Box
+                                component="img"
                                 src="/social-icon4.svg"
                                 alt=""
-                                width="33px"
-                                height="26px"
+                                sx={{
+                                    width: "26px",
+                                    height: "26px",
+                                }}
                             />
                         </IconButton>
                     </Stack>

@@ -197,7 +197,6 @@ const OnlineAppointmentsComponent = ({
         // Generate end times based on the selected start time and slot duration
         const genratedStartTimes2 = [];
         let currentTime = new Date(`01/01/2023 ${endTime}`);
-        console.log(currentTime);
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
             genratedStartTimes2.push(
@@ -221,7 +220,6 @@ const OnlineAppointmentsComponent = ({
     //To here
 
     const saveData = async () => {
-        console.log(markAsHoliday);
         if (markAsHoliday === true) {
             setStartTime("");
             setStartTime2("");
@@ -229,7 +227,6 @@ const OnlineAppointmentsComponent = ({
             setEndTime("");
             setEndTime2("");
             setEndTime3("");
-            console.log("tru haii", markAsHoliday);
             try {
                 const response = await axiosClient.post(
                     "/v2/creatSlotForDoctor",
@@ -246,9 +243,9 @@ const OnlineAppointmentsComponent = ({
                         doctorid: doctorid,
                     }
                 );
-                getOnlineSlotDetailForDoctorForPerticularDate();
-                console.log(response.result);
+                await getOnlineSlotDetailForDoctorForPerticularDate();
             } catch (error) {
+                toast.error("something went wrong");
                 console.log(error.message);
             }
         } else {
@@ -269,7 +266,6 @@ const OnlineAppointmentsComponent = ({
                     }
                 );
                 getOnlineSlotDetailForDoctorForPerticularDate();
-                console.log(response.result);
                 setStartTime("");
                 setStartTime2("");
                 setStartTime3("");
@@ -277,6 +273,7 @@ const OnlineAppointmentsComponent = ({
                 setEndTime2("");
                 setEndTime3("");
             } catch (error) {
+                toast.error("something went wrong");
                 console.log(error.message);
             }
         }
@@ -287,7 +284,6 @@ const OnlineAppointmentsComponent = ({
         const a = year + "-" + month + "-" + date;
 
         var formattedDate = moment(a, "yyyy-MMM-DD").format("yyyy-MM-DD");
-        console.log(a);
         await setEditSlottSetting(false);
         setSelectedDay({ currentDate: formattedDate, i });
     };
@@ -1137,7 +1133,6 @@ const OnlineAppointmentsComponent = ({
                                     },
                                 }}
                                 onClick={() => {
-                                    console.log(!markAsHoliday);
                                     setMarkAsHoliday(!markAsHoliday);
                                 }}
                             >

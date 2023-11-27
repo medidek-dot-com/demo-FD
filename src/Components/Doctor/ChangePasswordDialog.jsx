@@ -56,7 +56,6 @@ const ChangePasswordDialog = ({
 
     const changePassword = async (e) => {
         e.preventDefault();
-        console.log(oldPassword, newPassword, confirmPassword);
         if (!oldPassword || !newPassword || !confirmPassword) {
             return setError(true);
         }
@@ -65,11 +64,9 @@ const ChangePasswordDialog = ({
             setError(true);
             return setPasswordNotMatch(true);
         }
-        console.log("hello bccc");
+
         setLoading(true);
         try {
-            console.log("hii bccc");
-
             const response = await axiosClient.put(
                 `/v2/changepassword/${user?._id}`,
                 {

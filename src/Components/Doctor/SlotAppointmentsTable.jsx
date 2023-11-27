@@ -57,18 +57,15 @@ const SlotAppointmentsTable = ({
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
     const [activeCard, setAciveCard] = useState();
 
-    console.log(pendingAppointmentsData);
     const handleStatusChange = async (id, status) => {
-        console.log(updatedStatus, "this is id", id);
         try {
             const response = await axiosClient.put(
                 `/v2/updateUserAppointmentStatus/${id}`,
                 { status }
             );
             if (response.status === "ok") {
-                getPendingAppointmentsData();
+                return await getPendingAppointmentsData();
             }
-            console.log(response);
         } catch (error) {
             console.log(error);
         }
