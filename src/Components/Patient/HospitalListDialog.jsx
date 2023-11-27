@@ -55,6 +55,9 @@ const HospitalListDialog = ({
             nameOfTheDoctor: data.nameOfTheDoctor,
             imgurl: data.imgurl,
             doctorid: data._id,
+            connsultationFee: data.connsultationFee,
+            location: data.location,
+            hospitalName: data.hospitalId.nameOfhospitalOrClinic,
         });
         setInputValue({ ...inputValue, doctorid: data._id });
         setOpenBookingAppointmentDialog(true);
@@ -162,7 +165,7 @@ const HospitalListDialog = ({
                                                   ?.nameOfhospitalOrClinic}
                                     </Typography>
                                     <Stack direction="row">
-                                        <Box
+                                        {/* <Box
                                             component="span"
                                             sx={{
                                                 lineHeight: "19.2px",
@@ -174,7 +177,7 @@ const HospitalListDialog = ({
                                                 ? hospital?.connsultationFee
                                                 : hospital?.hospitalId
                                                       ?.connsultationFee}
-                                        </Box>
+                                        </Box> */}
                                         <Box
                                             component="span"
                                             sx={{

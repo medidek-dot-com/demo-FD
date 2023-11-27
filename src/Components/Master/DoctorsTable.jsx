@@ -35,6 +35,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { HiPencil } from "react-icons/hi";
 import { AiFillDelete } from "react-icons/ai";
+import { useSelector } from "react-redux";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -61,6 +62,8 @@ const MobileViewCardTypographyStyle = styled(Typography)({
 });
 
 const DoctorsTable = ({ search }) => {
+    const { user } = useSelector((state) => state.auth);
+
     const { hospital_id } = useParams();
 
     const [doctorsData, setDoctorsData] = useState([]);
@@ -79,7 +82,7 @@ const DoctorsTable = ({ search }) => {
         phone: "",
         connsultationFee: "",
         consultingTime: "",
-        location: "",
+        location: user?.location,
         imgurl: "",
         acceptAppointments: "bySlot",
         hospitalId: hospital_id,

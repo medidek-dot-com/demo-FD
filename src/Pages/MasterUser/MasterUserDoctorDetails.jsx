@@ -73,8 +73,8 @@ const MasterUserDoctorDetails = () => {
         appointmentDate: "",
         consultingTime: "",
         hospitalId: "",
-        userid: hospital_id,
-        doctorid: doctor_id,
+        userid: user?._id,
+        doctorid: "",
         name: "",
         Age: "",
         Gender: "",
@@ -82,6 +82,9 @@ const MasterUserDoctorDetails = () => {
         AppointmentNotes: "",
         AppointmentTime: "",
         imgurl: "",
+        connsultationFee: "",
+        location: "",
+        hospitalName: "",
     });
 
     const [inputValue, setInputValue] = useState({

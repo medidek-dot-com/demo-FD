@@ -262,10 +262,10 @@ const MUDDashboard = () => {
     };
 
     const logOutUser = async () => {
-        await axiosClient.post("/v2/logout");
-        removeItem(KEY_ACCESS_TOKEN);
         dispatch(logOutDoctor());
         dispatch(logout());
+        await axiosClient.post("/v2/logout");
+        removeItem(KEY_ACCESS_TOKEN);
         // navigate('/')
         // window.location.href = '/master/signin'
     };

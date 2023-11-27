@@ -33,6 +33,9 @@ const TextFeildStyle = styled(TextField)({
     color: "#ffffff",
     borderBottom: "#ffffff",
     marginTop: "10px",
+    [`& input[type = "number"]::-webkit-inner-spin-button`]: {
+        display: "none",
+    },
     [`& input`]: {
         color: "#ffffff",
     },
@@ -137,11 +140,11 @@ const ContactUs = () => {
                             py: { xs: "10px", sm: "35px", md: "52px" },
                             px: { xs: "20px", sm: "30px", md: "68px" },
                             width: { xs: "100%", sm: "100%", md: "586px" },
-                            height: {
-                                xs: "max-content",
-                                sm: "450px",
-                                md: "450px",
-                            },
+                            // height: {
+                            //     xs: "max-content",
+                            //     sm: "450px",
+                            //     md: "450px",
+                            // },
                             background: "#1F51C6",
                         }}
                     >
@@ -168,20 +171,32 @@ const ContactUs = () => {
                         <form onSubmit={handleSubmit}>
                             <Stack>
                                 <TextFeildStyle
-                                    className="input"
+                                    color="secondary"
                                     name="name"
                                     variant="standard"
                                     label="Name"
-                                    InputLabelProps={{
-                                        className: "lableStyle",
-                                    }}
+                                    // InputLabelProps={{
+                                    //     className: "lableStyle",
+                                    // }}
                                     error={
                                         err && !inputValue.name ? true : false
                                     }
                                     helperText={
-                                        err && !inputValue.name
-                                            ? "Please enter your name"
-                                            : ""
+                                        err && !inputValue.name ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                Please enter your name
+                                            </Box>
+                                        ) : (
+                                            ""
+                                        )
                                     }
                                     value={
                                         inputValue.name ? inputValue.name : ""
@@ -189,20 +204,34 @@ const ContactUs = () => {
                                     onChange={handleChange}
                                 />
                                 <TextFeildStyle
-                                    className="input"
+                                    // className="input"
+                                    type="email"
+                                    color="secondary"
                                     name="email"
                                     variant="standard"
                                     label="Email Address"
-                                    InputLabelProps={{
-                                        className: "lableStyle",
-                                    }}
+                                    // InputLabelProps={{
+                                    //     className: "lableStyle",
+                                    // }}
                                     error={
                                         err && !inputValue.email ? true : false
                                     }
                                     helperText={
-                                        err && !inputValue.email
-                                            ? "Please enter your email"
-                                            : ""
+                                        err && !inputValue.email ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                Please enter your email
+                                            </Box>
+                                        ) : (
+                                            ""
+                                        )
                                     }
                                     value={
                                         inputValue.email ? inputValue.email : ""
@@ -210,21 +239,34 @@ const ContactUs = () => {
                                     onChange={handleChange}
                                 />
                                 <TextFeildStyle
-                                    className="textFeild"
+                                    // className="textFeild"
+                                    color="secondary"
                                     name="phone"
                                     variant="standard"
                                     label="Phone Number"
-                                    type="text"
-                                    InputLabelProps={{
-                                        className: "lableStyle",
-                                    }}
+                                    type="number"
+                                    // InputLabelProps={{
+                                    //     className: "lableStyle",
+                                    // }}
                                     error={
                                         err && !inputValue.phone ? true : false
                                     }
                                     helperText={
-                                        err && !inputValue.phone
-                                            ? "Please enter your phone"
-                                            : ""
+                                        err && !inputValue.phone ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                Please enter your phone
+                                            </Box>
+                                        ) : (
+                                            ""
+                                        )
                                     }
                                     value={
                                         inputValue.phone ? inputValue.phone : ""
@@ -233,22 +275,35 @@ const ContactUs = () => {
                                 />
                                 <TextFeildStyle
                                     className="textFeild"
+                                    color="secondary"
                                     name="message"
                                     variant="standard"
                                     label="Your Message"
                                     type="text"
-                                    InputLabelProps={{
-                                        className: "lableStyle",
-                                    }}
+                                    // InputLabelProps={{
+                                    //     className: "lableStyle",
+                                    // }}
                                     error={
                                         err && !inputValue.message
                                             ? true
                                             : false
                                     }
                                     helperText={
-                                        err && !inputValue.phone
-                                            ? "Please enter your message"
-                                            : ""
+                                        err && !inputValue.phone ? (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#FFDF41",
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                Please enter your message
+                                            </Box>
+                                        ) : (
+                                            ""
+                                        )
                                     }
                                     value={
                                         inputValue.message

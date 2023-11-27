@@ -272,9 +272,9 @@ const DoctorAppointments = () => {
     };
 
     const logOutUser = async () => {
-        await axiosClient.post("/v2/logout");
         dispatch(logOutDoctor());
         dispatch(logout());
+        await axiosClient.post("/v2/logout");
         removeItem(KEY_ACCESS_TOKEN);
         // navigate('/')
         // window.location.href = '/master/signin'

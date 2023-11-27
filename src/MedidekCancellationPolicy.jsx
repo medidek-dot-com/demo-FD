@@ -424,7 +424,7 @@ const MedidekCancellationPolicy = () => {
                             contact@medidek.in
                         </ParegrapghTypographyStyle>
                         <ParegrapghTypographyStyle>
-                            Tel.: +91 7721840990
+                            Tel.: +91 8087036733
                         </ParegrapghTypographyStyle>
                     </Box>
                 </Stack>

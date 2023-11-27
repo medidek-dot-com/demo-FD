@@ -86,6 +86,8 @@ const CarouseBox = styled(Stack)`
 
 const MhomePage = () => {
     const { hospital_id } = useParams();
+    const { user } = useSelector((state) => state.auth);
+
     const [inputValue, setInputValue] = useState({
         nameOfTheDoctor: "",
         qulification: "",
@@ -96,6 +98,7 @@ const MhomePage = () => {
         connsultationFee: "",
         doctorid: "",
         imgurl: "",
+        location: user?.location,
         acceptAppointments: "byToken",
     });
     const [hospitalData, setHospitalData] = useState({});
@@ -108,7 +111,6 @@ const MhomePage = () => {
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(tab(0));

@@ -164,6 +164,7 @@ const EditDoctorDialog = ({
         data.append("doctorid", inputValue.doctorid);
         data.append("description", inputValue.description);
         data.append("acceptAppointments", inputValue.acceptAppointments);
+        data.append("location", inputValue.location);
         data.append("image", inputImage || inputValue?.imgurl);
 
         // console.log(data);

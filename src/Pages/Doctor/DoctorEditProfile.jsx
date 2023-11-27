@@ -109,7 +109,7 @@ const LabelStyle = styled("label")({
     fontSize: "15px",
     color: "#383838",
 });
-
+var isSelfDoctorId;
 const DoctorEditProfile = () => {
     const { doctorid } = useParams();
     const dispatch = useDispatch();
@@ -126,10 +126,15 @@ const DoctorEditProfile = () => {
     const { user } = useSelector((state) => state.auth);
     const { doctor } = useSelector((state) => state.doctor);
     console.log(doctor);
-    const isSelfDoctorId = doctor.hospitalId === null ? true : false;
     console.log(doctor.hospitalId);
     console.log(isSelfDoctorId);
 
+    if (
+        doctor.hospitalId === "6531c8f389aee1b3fbd0a2d7" ||
+        doctor.hospitalId === null
+    ) {
+        isSelfDoctorId = true;
+    }
     const numberOfHospitals = user;
 
     const getPendingAppointmentsData = async () => {
@@ -167,6 +172,7 @@ const DoctorEditProfile = () => {
         acceptAppointments: doctor?.acceptAppointments
             ? doctor?.acceptAppointments
             : "byToken",
+        location: doctor?.location,
     });
 
     const [inputImage, setInputImage] = useState("");
@@ -200,7 +206,8 @@ const DoctorEditProfile = () => {
             !inputValue.email ||
             !inputValue.phone ||
             !inputValue.connsultationFee ||
-            !inputValue.description
+            !inputValue.description ||
+            !inputValue.location
         ) {
             setError(true);
             return false;
@@ -216,6 +223,7 @@ const DoctorEditProfile = () => {
         data.append("connsultationFee", inputValue.connsultationFee);
         data.append("description", inputValue.description);
         data.append("acceptAppointments", inputValue.acceptAppointments);
+        data.append("location", inputValue.location);
         data.append("image", inputImage || user?.imgurl);
 
         // console.log(data);
@@ -239,9 +247,9 @@ const DoctorEditProfile = () => {
     };
 
     const logOutUser = async () => {
-        await axiosClient.post("/v2/logout");
         dispatch(logOutDoctor());
         dispatch(logout());
+        await axiosClient.post("/v2/logout");
         removeItem(KEY_ACCESS_TOKEN);
         window.location.replace("/");
     };
@@ -1312,6 +1320,36 @@ const DoctorEditProfile = () => {
                                                     "Please enter description"
                                                 }
                                                 value={inputValue.description}
+                                                onChange={(e) =>
+                                                    handleChange(e)
+                                                }
+                                            />
+                                        </StackStyle>
+                                        <StackStyle>
+                                            <LabelStyle htmlFor="location">
+                                                Enter Location
+                                            </LabelStyle>
+                                            <TextFieldStyle
+                                                id="location"
+                                                name="location"
+                                                fullWidth
+                                                placeholder="Enter Doctor’s location"
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
+                                                error={
+                                                    err &&
+                                                    !inputValue.location &&
+                                                    true
+                                                }
+                                                helperText={
+                                                    err &&
+                                                    !inputValue.location &&
+                                                    "Please enter location"
+                                                }
+                                                value={inputValue.location}
                                                 onChange={(e) =>
                                                     handleChange(e)
                                                 }

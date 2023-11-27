@@ -152,6 +152,7 @@ const AddDoctorsDialog = ({
         data.append("connsultationFee", inputValue.connsultationFee);
         data.append("doctorid", inputValue.doctorid);
         data.append("description", inputValue.description);
+        data.append("location", inputValue.location);
         data.append("acceptAppointments", inputValue.acceptAppointments);
         data.append("image", inputImage || inputValue?.imgurl);
 

@@ -68,6 +68,7 @@ const responsive = {
         items: 5,
     },
 };
+let datedumb;
 
 const DoctorInfo = () => {
     const { doctorsId } = useParams();
@@ -99,6 +100,9 @@ const DoctorInfo = () => {
         AppointmentNotes: "",
         AppointmentTime: "",
         imgurl: "",
+        connsultationFee: "",
+        location: "",
+        hospitalName: "",
     });
 
     const [inputValue, setInputValue] = useState({
@@ -133,6 +137,9 @@ const DoctorInfo = () => {
             nameOfTheDoctor: data.nameOfTheDoctor,
             imgurl: data.imgurl,
             doctorid: data._id,
+            connsultationFee: data.connsultationFee,
+            location: data.location,
+            hospitalName: data?.hospitalId?.nameOfhospitalOrClinic || null,
         });
         setInputValue({ ...inputValue, doctorid: data._id });
         setBookAppointmentDialog(true);
@@ -140,12 +147,14 @@ const DoctorInfo = () => {
 
     const getAvailableSlots = async () => {
         try {
+            datedumb = false;
             if (bookingAppointmentDetails.appointmentDate) {
                 setSlotsLoading(true);
                 const response = await axiosClient.get(
                     `/v2/getAvailbleSlotsForAnUser/${bookingAppointmentDetails.doctorid}/${bookingAppointmentDetails.appointmentDate}`
                 );
                 if (response.status === "ok") {
+                    datedumb = true;
                     setSlotsLoading(false);
                     return setSlotData(response.result);
                 }
@@ -1264,6 +1273,7 @@ const DoctorInfo = () => {
                 setBookAppointmentDetailsDialog={
                     setBookAppointmentDetailsDialog
                 }
+                datedumb={datedumb}
                 inputValue={inputValue}
                 setInputValue={setInputValue}
                 slotData={slotData}

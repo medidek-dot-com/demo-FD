@@ -16,6 +16,8 @@ import {
     Typography,
     Select,
     MenuItem,
+    FormControlLabel,
+    Switch,
 } from "@mui/material";
 import dayjs from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
@@ -61,6 +63,9 @@ const MenuItemStyle = styled(MenuItem)({
 
 const TextFieldStyle = styled(TextField)({
     // marginBottom: "20px",
+    [`& input[type = "number"]::-webkit-inner-spin-button`]: {
+        display: "none",
+    },
     ["& input:disabled"]: {
         color: "#706D6D",
         backgroundColor: "#D9D9D9",
@@ -114,6 +119,8 @@ const BookAppointmnetDetailsDialog = ({
     setInputValue,
     setConfirmBookAppointmentDialog,
 }) => {
+    console.log(bookingAppointmentDetails);
+    console.log(doctorinfo);
     const [err, setError] = useState(false);
     const { user } = useSelector((state) => state.auth);
 
@@ -247,6 +254,7 @@ const BookAppointmnetDetailsDialog = ({
                                 <TextFieldStyle
                                     id="age"
                                     name="age"
+                                    type="number"
                                     fullWidth
                                     sx={{
                                         ":disabled": {
@@ -320,6 +328,7 @@ const BookAppointmnetDetailsDialog = ({
                                 <TextFieldStyle
                                     id="phone"
                                     name="phone"
+                                    type="number"
                                     fullWidth
                                     sx={{
                                         ":disabled": {
@@ -415,13 +424,13 @@ const BookAppointmnetDetailsDialog = ({
                                 >
                                     <Stack
                                         direction="row"
-                                        spacing="10px"
                                         sx={{
                                             justifyContent: {
                                                 xs: "space-between",
                                                 sm: "space-between",
                                                 md: "start",
                                             },
+                                            gap: "10px",
                                         }}
                                     >
                                         <Avatar
@@ -438,6 +447,9 @@ const BookAppointmnetDetailsDialog = ({
                                         <Box
                                             sx={{
                                                 order: { xs: 1, sm: 1, md: 2 },
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                gap: "5px",
                                             }}
                                         >
                                             <Typography
@@ -464,11 +476,57 @@ const BookAppointmnetDetailsDialog = ({
                                                     color: "#706D6D",
                                                 }}
                                             >
-                                                Medidek Hospital
+                                                {
+                                                    bookingAppointmentDetails.hospitalName
+                                                }
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    color: "#706D6D",
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "500",
+                                                    fontSize: "0.938rem",
+                                                    lineHeight: "18px",
+                                                    color: "#706D6D",
+                                                }}
+                                            >
+                                                {doctorinfo?.location ||
+                                                    bookingAppointmentDetails?.location}
+                                            </Typography>
+                                            <Typography
+                                                sx={{
+                                                    color: "#706D6D",
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "semibold",
+                                                    fontSize: {
+                                                        xs: "0.813rem",
+                                                        sm: "0.813rem",
+                                                        md: "0.938rem",
+                                                    },
+                                                    lineHeight: "18px",
+                                                    ml: {
+                                                        xs: "5px",
+                                                        sm: "5px",
+                                                        md: "0",
+                                                    },
+                                                    color: "#15B912",
+                                                }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        // fontWeight: "bold",
+                                                        fontSize: "1rem",
+                                                    }}
+                                                >
+                                                    {" "}
+                                                    Rs.
+                                                </span>
+                                                {doctorinfo?.connsultationFee ||
+                                                    bookingAppointmentDetails.connsultationFee}
                                             </Typography>
                                         </Box>
                                     </Stack>
-                                    <Button
+                                    {/* <Button
                                         variant="text"
                                         sx={{
                                             textTransform: "none",
@@ -485,7 +543,7 @@ const BookAppointmnetDetailsDialog = ({
                                         }}
                                     >
                                         View Profile
-                                    </Button>
+                                    </Button> */}
                                 </Stack>
                                 <Divider
                                     sx={{
@@ -497,6 +555,58 @@ const BookAppointmnetDetailsDialog = ({
                                         },
                                     }}
                                 />
+                                {/* <Stack
+                                    direction="row"
+                                    sx={{
+                                        justifyContent: {
+                                            xs: "start",
+                                            sm: "start",
+                                            md: "space-between",
+                                        },
+                                        mt: { xs: "0", sm: "0", md: "25px" },
+                                    }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            color: "#383838",
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: {
+                                                xs: "0.813rem",
+                                                sm: "0.813rem",
+                                                md: "0.938rem",
+                                            },
+                                            lineHeight: "18px",
+                                            color: "#383838",
+                                        }}
+                                    >
+                                        Consultation Fee:
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: "#706D6D",
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: {
+                                                xs: "0.813rem",
+                                                sm: "0.813rem",
+                                                md: "0.938rem",
+                                            },
+                                            lineHeight: "18px",
+                                            ml: {
+                                                xs: "5px",
+                                                sm: "5px",
+                                                md: "0",
+                                            },
+                                            color: "#706D6D",
+                                        }}
+                                    >
+                                        ₹
+                                        {
+                                            bookingAppointmentDetails.connsultationFee
+                                        }
+                                    </Typography>
+                                </Stack> */}
                                 <Stack
                                     direction="row"
                                     sx={{

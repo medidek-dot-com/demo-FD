@@ -134,6 +134,8 @@ const AutocompleteStyle = styled(Autocomplete)({
     },
 });
 
+let datedumb;
+
 const DoctorsList = () => {
     const navigate = useNavigate();
     const { isLoggedIn, user } = useSelector((state) => state.auth);
@@ -171,6 +173,9 @@ const DoctorsList = () => {
         AppointmentNotes: "",
         AppointmentTime: "",
         imgurl: "",
+        connsultationFee: "",
+        location: "",
+        hospitalName: "",
     });
     const [doctor_id, setDoctor_id] = useState("");
 
@@ -229,6 +234,8 @@ const DoctorsList = () => {
     };
     const getAvailableSlots = async () => {
         try {
+            datedumb = false;
+
             if (bookingAppointmentDetails.appointmentDate) {
                 setSlotsLoading(true);
                 const response = await axiosClient.get(
@@ -236,6 +243,7 @@ const DoctorsList = () => {
                 );
                 if (response.status === "ok") {
                     setSlotsLoading(false);
+                    datedumb = true;
                     return setSlotData(response.result);
                 }
             }
@@ -726,6 +734,7 @@ const DoctorsList = () => {
                 <BookAppointmentDialogForPatient
                     bookingAppointmentDetails={bookingAppointmentDetails}
                     bookingAppointmentDialog={bookingAppointmentDialog}
+                    datedumb={datedumb}
                     setBookAppointmentDialog={setBookAppointmentDialog}
                     setBookingAppointmentDetails={setBookingAppointmentDetails}
                     confirmBookAppointmentDialog={confirmBookAppointmentDialog}

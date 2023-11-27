@@ -270,7 +270,7 @@ const ViewPetiantAppointment = () => {
                                     {appointmentDetails?._id}
                                 </span>
                             </Box>
-                            <Box
+                            {/* <Box
                                 component="span"
                                 sx={{
                                     fontFamily: "Lato",
@@ -292,7 +292,7 @@ const ViewPetiantAppointment = () => {
                                 >
                                     {appointmentDetails?._id}
                                 </span>
-                            </Box>
+                            </Box> */}
                         </Stack>
 
                         {/* <Stack alignItems='center' justifyContent='center'>
@@ -333,7 +333,7 @@ const ViewPetiantAppointment = () => {
                                             fontSize: "1rem",
                                         }}
                                     >
-                                        Appoitment Confirm with dr{" "}
+                                        Appoitment Confirm with Dr.{" "}
                                         {
                                             appointmentDetails?.doctorid
                                                 ?.nameOfTheDoctor
@@ -386,7 +386,7 @@ const ViewPetiantAppointment = () => {
                                         }{" "}
                                         will start appointments
                                     </Box>
-                                    <Box
+                                    {/* <Box
                                         component="p"
                                         sx={{
                                             fontFamily: "Lato",
@@ -396,7 +396,7 @@ const ViewPetiantAppointment = () => {
                                         }}
                                     >
                                         @12:00 PM, Sept 5, 2021
-                                    </Box>
+                                    </Box> */}
                                 </Stack>
                             </Stack>
                             <Stack direction="row" sx={{ gap: "5px" }}>

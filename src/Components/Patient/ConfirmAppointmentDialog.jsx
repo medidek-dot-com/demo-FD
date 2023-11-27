@@ -156,44 +156,76 @@ const ConfirmAppointmentDialog = ({
                             lineHeight: "21.6px",
                         }}
                     >
-                        Are you sure you want to book appointment with Dr
+                        Are you sure you want to book appointment with Dr.{" "}
                         {bookingAppointmentDetails?.nameOfTheDoctor ||
                             doctorinfo?.nameOfTheDoctor}
                         &nbsp; ?
                     </Typography>
-                    <Box
+                    <Stack
+                        direction={{ xs: "column", sm: "column", md: "row" }}
                         sx={{
                             fontSize: "18px",
                             my: "10px",
+                            gap: "10px",
                         }}
                     >
-                        <Box
-                            component="span"
-                            sx={{
-                                color: "#383838",
-                                fontFamily: "Lato",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                            }}
-                        >
-                            Time:{" "}
-                        </Box>{" "}
-                        <Box
-                            component="span"
-                            sx={{
-                                color: "#ffffff",
-                                background: "#1F51C6",
-                                p: "8px",
-                                borderRadius: "4px",
-                                fontFamily: "Lato",
-                                fontWeight: "semibold",
-                                fontSize: "0.813rem",
-                            }}
-                        >
-                            {bookingAppointmentDetails.appointmentDate},{" "}
-                            {bookingAppointmentDetails.AppointmentTime}{" "}
+                        <Box>
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#383838",
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "1.125rem",
+                                }}
+                            >
+                                Date:{" "}
+                            </Box>{" "}
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#1F51C6",
+                                    // background: "#1F51C6",
+                                    p: "8px",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                }}
+                            >
+                                {moment(
+                                    bookingAppointmentDetails.appointmentDate,
+                                    "YYYY-MM-DD"
+                                ).format("DD-MM-YYYY")}{" "}
+                            </Box>
                         </Box>
-                    </Box>
+                        <Box>
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#383838",
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                }}
+                            >
+                                Time:{" "}
+                            </Box>{" "}
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#1F51C6",
+                                    // background: "#1F51C6",
+                                    p: "8px",
+                                    borderRadius: "4px",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                }}
+                            >
+                                {bookingAppointmentDetails.AppointmentTime}{" "}
+                            </Box>
+                        </Box>
+                    </Stack>
                     <Stack direction="row" spacing="15px">
                         <Button
                             onClick={() =>

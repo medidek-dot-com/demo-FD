@@ -66,6 +66,7 @@ const BookAppointmentDialogForPatient = ({
     setSelectedTime,
     activeCard,
     setActiveCard,
+    datedumb,
 }) => {
     const [dateErr, setDateErr] = useState(false);
     const [dates, setDates] = useState([]);
@@ -304,7 +305,7 @@ const BookAppointmentDialogForPatient = ({
                                 textAlign: "center",
                             }}
                         >
-                            Please choose date!
+                            Please choose Date And Time!
                         </Box>
                     )}
 
@@ -463,11 +464,13 @@ const BookAppointmentDialogForPatient = ({
                             height: "40px",
                         }}
                         onClick={() => {
-                            if (!bookingAppointmentDetails.appointmentDate) {
-                                console.log("date nhi aa rhi");
+                            if (
+                                !bookingAppointmentDetails.appointmentDate ||
+                                !bookingAppointmentDetails.AppointmentTime ||
+                                !datedumb
+                            ) {
                                 return setDateErr(true);
                             }
-                            console.log("date aa rhi");
                             setBookAppointmentDetailsDialog(true);
                         }}
                     >

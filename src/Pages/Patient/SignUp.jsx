@@ -223,7 +223,7 @@ const SignUp = () => {
                     console.log(response.result.phone);
                     setDisableButton(false);
                     setError(true);
-                    setAsUser(response.result.role)
+                    setAsUser(response.result.role);
                     return setPhoneExists(true);
                 } else if (response.result.email == email) {
                     console.log(response.result.phone);
@@ -301,7 +301,7 @@ const SignUp = () => {
             });
 
             if (response.status === "ok") {
-                navigate('/');
+                navigate("/");
                 setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
                 dispatch(login(response.result.user));
             }
@@ -525,7 +525,8 @@ const SignUp = () => {
                                                             fontSize: "15px",
                                                         }}
                                                     />
-                                                    &nbsp; Email already exists as a {asUser}
+                                                    &nbsp; Email already exists
+                                                    as a {asUser}
                                                 </Box>
                                             ) : "" || (err && invalidEmail) ? (
                                                 <Box
@@ -701,7 +702,7 @@ const SignUp = () => {
                                             color: "#ffffff",
                                         }}
                                     >
-                                        Don't have an account?
+                                        Already have an account?
                                     </Typography>
                                     <Link
                                         to="/user/signin"
