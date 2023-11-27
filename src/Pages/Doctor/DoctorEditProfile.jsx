@@ -236,7 +236,7 @@ const DoctorEditProfile = () => {
             if (response.status === "ok") {
                 // navigate(`/master/user/home/${uuid.id}`);
                 dispatch(updateDoctorsData(response.result));
-                navigate(`/doctor/courses/${user?._id}`);
+                navigate(`/doctor/appointments/${doctor?._id}`);
                 toast.success("Doctor added successfully");
 
                 return;
@@ -355,7 +355,7 @@ const DoctorEditProfile = () => {
                     >
                         Appointments
                     </Button>
-                    <Button
+                    {/* <Button
                         onClick={() =>
                             navigate(`/doctor/courses/${user._id}`) &
                             setMenu(false)
@@ -369,7 +369,7 @@ const DoctorEditProfile = () => {
                         }}
                     >
                         Medical Courses
-                    </Button>
+                    </Button> */}
                     <Button
                         onClick={() =>
                             navigate(`/doctor/edit-profile/${user._id}`) &
@@ -551,7 +551,7 @@ const DoctorEditProfile = () => {
                                     &nbsp; Appointments
                                 </Button>
                             </Box>
-                            <Box
+                            {/* <Box
                                 sx={{
                                     width: "100%",
                                 }}
@@ -580,7 +580,7 @@ const DoctorEditProfile = () => {
                                     />
                                     Medical Courses
                                 </Button>
-                            </Box>
+                            </Box> */}
                             <Box
                                 sx={{
                                     width: "100%",

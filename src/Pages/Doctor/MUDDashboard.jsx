@@ -396,7 +396,7 @@ const MUDDashboard = () => {
                     >
                         Appointments
                     </Button>
-                    <Button
+                    {/* <Button
                         onClick={() =>
                             navigate(`/doctor/courses/${user._id}`) &
                             setMenu(false)
@@ -410,7 +410,7 @@ const MUDDashboard = () => {
                         }}
                     >
                         Medical Courses
-                    </Button>
+                    </Button> */}
                     <Button
                         onClick={() =>
                             navigate(`/doctor/edit-profile/${user._id}`) &
@@ -589,7 +589,7 @@ const MUDDashboard = () => {
                                     &nbsp; Appointments
                                 </Button>
                             </Box>
-                            <Box
+                            {/* <Box
                                 sx={{
                                     width: "100%",
                                 }}
@@ -618,7 +618,7 @@ const MUDDashboard = () => {
                                     />
                                     Medical Courses
                                 </Button>
-                            </Box>
+                            </Box> */}
                             <Box
                                 sx={{
                                     width: "100%",

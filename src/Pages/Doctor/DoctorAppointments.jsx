@@ -385,7 +385,7 @@ const DoctorAppointments = () => {
                     >
                         Appointments
                     </Button>
-                    <Button
+                    {/* <Button
                         onClick={() =>
                             navigate(`/doctor/courses/${user._id}`) &
                             setMenu(false)
@@ -399,7 +399,7 @@ const DoctorAppointments = () => {
                         }}
                     >
                         Medical Courses
-                    </Button>
+                    </Button> */}
                     <Button
                         onClick={() =>
                             navigate(`/doctor/edit-profile/${user._id}`) &
@@ -578,7 +578,7 @@ const DoctorAppointments = () => {
                                     &nbsp; Appointments
                                 </Button>
                             </Box>
-                            <Box
+                            {/* <Box
                                 sx={{
                                     width: "100%",
                                 }}
@@ -607,7 +607,7 @@ const DoctorAppointments = () => {
                                     />
                                     Medical Courses
                                 </Button>
-                            </Box>
+                            </Box> */}
                             <Box
                                 sx={{
                                     width: "100%",
