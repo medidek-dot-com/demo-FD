@@ -126,12 +126,12 @@ const DoctorEditProfile = () => {
     const { user } = useSelector((state) => state.auth);
     const { doctor } = useSelector((state) => state.doctor);
     console.log(doctor);
-    console.log(doctor.hospitalId);
+    // console.log(doctor.hospitalId);
     console.log(isSelfDoctorId);
 
     if (
-        doctor.hospitalId === "6531c8f389aee1b3fbd0a2d7" ||
-        doctor.hospitalId === null
+        doctor?.hospitalId === "6531c8f389aee1b3fbd0a2d7" ||
+        doctor?.hospitalId === null
     ) {
         isSelfDoctorId = true;
     }
