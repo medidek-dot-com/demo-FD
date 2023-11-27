@@ -1,0 +1,7 @@
+.drawer {
+    transition: left 5s cubic-bezier !important;
+    background: red !important;
+    /* left: "-240px" !important; */
+}
+/* transform: translateX(-50%) skewX(325deg);
+    transition: 0.5s; */

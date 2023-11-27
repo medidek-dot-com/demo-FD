@@ -302,7 +302,7 @@ const DoctorAppointments = () => {
                     alignItems: "center",
                     position: "sticky",
                     top: "0",
-                    background: "#ffffff",
+                    // background: "#ffffff",
                     zIndex: 2,
                 }}
             >
@@ -321,264 +321,409 @@ const DoctorAppointments = () => {
                                 style={{
                                     width: "32px",
                                     height: "19px",
-                                    color: "#1F51C6",
+                                    color: "#ffffff",
                                 }}
                             />
                         )}
                     </IconButton>
-                    <img
-                        src="/m-logonew.png"
-                        alt="logo"
-                        style={{ width: "121px", height: "28px" }}
-                    />
+                    {/* {!menu && (
+                        <img
+                            src="/m-logonew.png"
+                            alt="logo"
+                            style={{ width: "121px", height: "28px" }}
+                        />
+                    )} */}
                 </Stack>
-                <Avatar
-                    src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
-                    sx={{ width: "32px", height: "32px" }}
-                />
+                {!menu && (
+                    <Avatar
+                        src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
+                        sx={{ width: "32px", height: "32px" }}
+                    />
+                )}
             </Stack>
 
-            {menu && (
+            {/* {menu && ( */}
+            <Box
+                sx={{
+                    // position: "absolute",
+                    // top: "-10px",
+                    transform: !menu
+                        ? "translateX(-250px)"
+                        : "translateX(-10px)",
+                    transition: "transform 0.3s ease-in",
+                    zIndex: 1,
+                    position: {
+                        xs: "fixed",
+                        sm: "fixed",
+                        md: "sticky",
+                    },
+                    top: "0px",
+                }}
+                // sx={{
+
+                // }}
+            >
                 <Box
                     sx={{
-                        width: "100%",
-                        height: "100vh",
-                        display: "flex",
+                        width: "240px",
+                        background: "#1F51C6",
+                        display: { xs: "flex", sm: "flex", md: "none" },
                         flexDirection: "column",
-                        gap: "30px",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#1F51C6",
-                        borderRadius: "6px",
+                        // alignItems: "center",
+                        height: "100vh",
+                        // position: {
+                        //     xs: "fixed",
+                        //     sm: "static",
+                        //     md: "sticky",
+                        // },
+                        // top: "0px",
+                        // left: "0px",
+                        zIndex: 1,
+                        // bottom: "-100px",
                     }}
                 >
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/dashboard/${doctorid}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
+                    <Stack alignItems={"center"} mt={4}>
+                        <Avatar
+                            src={
+                                doctor?.imgurl ? doctor.imgurl : "/default.png"
+                            }
+                            sx={{ width: "71px", height: "71px" }}
+                        />
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                m: 1,
+                                color: "#ffffff",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "22px",
+                            }}
+                        >
+                            Dr. {doctor.nameOfTheDoctor}
+                        </Typography>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                mx: 1,
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "15px",
+                            }}
+                        >
+                            DUID :- {doctor.doctorid}
+                        </Typography>
+                    </Stack>
+                    <Stack
+                        alignItems={"start"}
+                        spacing={2}
+                        mt={4}
+                        flex={1}
+                        width={"100%"}
                     >
-                        Dashboard
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/appointments/${doctorid}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            background: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                            ":hover": {
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    color: "#ffffff",
+                                }}
+                            >
+                                <MdDashboard
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                &nbsp;Dashboard
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
                                 background: "#ffffff",
-                            },
-                        }}
-                    >
-                        Appointments
-                    </Button>
-                    {/* <Button
-                        onClick={() =>
-                            navigate(`/doctor/courses/${user._id}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Medical Courses
-                    </Button> */}
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/edit-profile/${user._id}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Edit Profile
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            navigate(
-                                `/doctor/appointment-settings/${user._id}`
-                            ) & setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Appointment Settings
-                    </Button>
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/appointments/${doctorid}`)
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                }}
+                            >
+                                <BsFillCalendarFill
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                &nbsp; Appointments
+                            </Button>
+                        </Box>
+                        {/* <Box
+                       sx={{
+                           width: "100%",
+                       }}
+                   >
+                       <Button
+                           onClick={() =>
+                               navigate(`/doctor/courses/${user?._id}`)
+                           }
+                           variant="text"
+                           sx={{
+                               ml: "30px",
+                               color: "#ffffff",
+                               borderRadius: "0",
+                               textTransform: "none",
+                               fontFamily: "Raleway",
+                               fontWeight: "600",
+                               fontSize: "18px",
+                           }}
+                       >
+                           <BiSolidBook
+                               style={{
+                                   width: "25px",
+                                   height: "25px",
+                                   marginRight: "10px",
+                               }}
+                           />
+                           Medical Courses
+                       </Button>
+                   </Box> */}
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/edit-profile/${user._id}`)
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                }}
+                            >
+                                <ImPencil
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Edit Profile
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(
+                                        `/doctor/appointment-settings/${doctorid}`
+                                    )
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    lineHeight: "21.13px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    textAlign: "start",
+                                }}
+                            >
+                                <BsFillCalendarPlusFill
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Appointment Settings
+                            </Button>
+                        </Box>
+                    </Stack>
                     <Button
                         onClick={logOutUser}
                         sx={{
                             color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
+                            width: "100%",
+                            my: 1,
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "18px",
                             textTransform: "none",
-                            lineHeight: "28.8px",
                         }}
                     >
+                        <MdLogout style={{ width: "25px", height: "25px" }} />
                         Log Out
                     </Button>
                 </Box>
-            )}
+            </Box>
+            {/* )} */}
 
-            {!menu && (
+            {/* {!menu && ( */}
+            <Box
+                sx={{
+                    // width: "calc(100% - 100px)",
+                    mr: { xs: 0, sm: 0, md: "-55px" },
+                    ml: { xs: 0, sm: 0, md: "-60px" },
+                    display: "flex",
+                    justifyContent: "center",
+                    mt: -1,
+                    // position: "fixed"
+                }}
+            >
                 <Box
                     sx={{
-                        // width: "calc(100% - 100px)",
-                        mr: { xs: 0, sm: 0, md: "-55px" },
-                        ml: { xs: 0, sm: 0, md: "-60px" },
-                        display: "flex",
-                        justifyContent: "center",
-                        mt: -1,
-                        // position: "fixed"
+                        width: "240px",
+                        background: "#1F51C6",
+                        display: { xs: "none", sm: "none", md: "flex" },
+                        flexDirection: "column",
+                        // alignItems: "center",
+                        height: "100vh",
+                        position: "sticky",
+                        top: "0px",
+                        bottom: "-100px",
                     }}
                 >
-                    <Box
-                        sx={{
-                            width: "240px",
-                            background: "#1F51C6",
-                            display: { xs: "none", sm: "none", md: "flex" },
-                            flexDirection: "column",
-                            // alignItems: "center",
-                            height: "100vh",
-                            position: "sticky",
-                            top: "0px",
-                            bottom: "-100px",
-                        }}
+                    <Stack alignItems={"center"} mt={4}>
+                        <Avatar
+                            src={
+                                doctor?.imgurl ? doctor.imgurl : "/default.png"
+                            }
+                            sx={{ width: "71px", height: "71px" }}
+                        />
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                m: 1,
+                                color: "#ffffff",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "22px",
+                            }}
+                        >
+                            Dr. {doctor.nameOfTheDoctor}
+                        </Typography>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                mx: 1,
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "15px",
+                            }}
+                        >
+                            DUID :- {doctor.doctorid}
+                        </Typography>
+                    </Stack>
+                    <Stack
+                        alignItems={"start"}
+                        spacing={2}
+                        mt={4}
+                        flex={1}
+                        width={"100%"}
                     >
-                        <Stack alignItems={"center"} mt={4}>
-                            <Avatar
-                                src={
-                                    doctor?.imgurl
-                                        ? doctor.imgurl
-                                        : "/default.png"
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/dashboard/${doctorid}`)
                                 }
-                                sx={{ width: "71px", height: "71px" }}
-                            />
-                            <Typography
-                                variant="h5"
+                                variant="text"
                                 sx={{
-                                    m: 1,
-                                    color: "#ffffff",
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    borderRadius: "0",
+                                    textTransform: "none",
                                     fontFamily: "Raleway",
                                     fontWeight: "600",
-                                    fontSize: "22px",
-                                }}
-                            >
-                                Dr. {doctor.nameOfTheDoctor}
-                            </Typography>
-                            <Typography
-                                variant="h5"
-                                sx={{
-                                    mx: 1,
+                                    fontSize: "18px",
                                     color: "#ffffff",
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "15px",
                                 }}
                             >
-                                DUID :- {doctor.doctorid}
-                            </Typography>
-                        </Stack>
-                        <Stack
-                            alignItems={"start"}
-                            spacing={2}
-                            mt={4}
-                            flex={1}
-                            width={"100%"}
+                                <MdDashboard
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                &nbsp;Dashboard
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                background: "#ffffff",
+                            }}
                         >
-                            <Box
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/appointments/${doctorid}`)
+                                }
+                                variant="text"
                                 sx={{
-                                    width: "100%",
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
                                 }}
                             >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/dashboard/${doctorid}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#1F51C6",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                        color: "#ffffff",
+                                <BsFillCalendarFill
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
                                     }}
-                                >
-                                    <MdDashboard
-                                        style={{
-                                            width: "25px",
-                                            height: "25px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    &nbsp;Dashboard
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                    background: "#ffffff",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/appointments/${doctorid}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#1F51C6",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                    }}
-                                >
-                                    <BsFillCalendarFill
-                                        style={{
-                                            width: "20px",
-                                            height: "20px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    &nbsp; Appointments
-                                </Button>
-                            </Box>
-                            {/* <Box
+                                />
+                                &nbsp; Appointments
+                            </Button>
+                        </Box>
+                        {/* <Box
                                 sx={{
                                     width: "100%",
                                 }}
@@ -608,109 +753,114 @@ const DoctorAppointments = () => {
                                     Medical Courses
                                 </Button>
                             </Box> */}
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/edit-profile/${user._id}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                    }}
-                                >
-                                    <ImPencil
-                                        style={{
-                                            width: "20px",
-                                            height: "20px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    Edit Profile
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/appointment-settings/${doctorid}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        lineHeight: "21.13px",
-                                        color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                        textAlign: "start",
-                                    }}
-                                >
-                                    <BsFillCalendarPlusFill
-                                        style={{
-                                            width: "25px",
-                                            height: "25px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    Appointment Settings
-                                </Button>
-                            </Box>
-                        </Stack>
-                        <Button
-                            onClick={logOutUser}
+                        <Box
                             sx={{
-                                color: "#ffffff",
                                 width: "100%",
-                                my: 1,
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                                textTransform: "none",
                             }}
                         >
-                            <MdLogout
-                                style={{ width: "25px", height: "25px" }}
-                            />
-                            Log Out
-                        </Button>
-                    </Box>
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/edit-profile/${user._id}`)
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                }}
+                            >
+                                <ImPencil
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Edit Profile
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(
+                                        `/doctor/appointment-settings/${doctorid}`
+                                    )
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    lineHeight: "21.13px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    textAlign: "start",
+                                }}
+                            >
+                                <BsFillCalendarPlusFill
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Appointment Settings
+                            </Button>
+                        </Box>
+                    </Stack>
+                    <Button
+                        onClick={logOutUser}
+                        sx={{
+                            color: "#ffffff",
+                            width: "100%",
+                            my: 1,
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "18px",
+                            textTransform: "none",
+                        }}
+                    >
+                        <MdLogout style={{ width: "25px", height: "25px" }} />
+                        Log Out
+                    </Button>
+                </Box>
+                <Box
+                    sx={{
+                        flex: 4,
+                        // display: "flex",
+                        // justifyContent: "space-between",
+                        // alignItems: "center",
+                        width: "100%",
+                        mx: { xs: "1px", sm: "1px", md: "100px" },
+                        mt: { xs: "0px", sm: "0px", md: "32px" },
+                        // height: "90vh",
+                    }}
+                >
                     <Box
                         sx={{
-                            flex: 4,
-                            // display: "flex",
-                            // justifyContent: "space-between",
-                            // alignItems: "center",
                             width: "100%",
-                            mx: { xs: "1px", sm: "1px", md: "100px" },
-                            mt: { xs: "0px", sm: "0px", md: "32px" },
-                            // height: "90vh",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            mb: "41px",
+                            display: {
+                                xs: "none",
+                                sm: "none",
+                                md: "flex",
+                            },
                         }}
                     >
                         <Box
                             sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                mb: "41px",
                                 display: {
                                     xs: "none",
                                     sm: "none",
@@ -718,7 +868,54 @@ const DoctorAppointments = () => {
                                 },
                             }}
                         >
-                            <Box
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    fontFamily: "Raleway",
+                                    fontWeight: "700",
+                                    fontSize: {
+                                        xs: "1.125rem",
+                                        sm: "1.14rem",
+                                        md: "2.188rem",
+                                    },
+                                    color: "#383838",
+                                }}
+                            >
+                                Appointment
+                            </Typography>
+                        </Box>
+                        {activeTab === 3 ? null : (
+                            <TextFieldStyle
+                                placeholder="Search here"
+                                sx={{
+                                    width: "377px",
+                                    display: {
+                                        xs: "none",
+                                        sm: "none",
+                                        md: "flex",
+                                    },
+                                }}
+                                InputLabelProps={{ color: "red" }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <img src="/search.svg" alt="img" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        )}
+                    </Box>
+                    <Box sx={{ width: "100%" }}>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Stack
+                                direction={"row"}
+                                spacing={1}
                                 sx={{
                                     display: {
                                         xs: "none",
@@ -727,298 +924,206 @@ const DoctorAppointments = () => {
                                     },
                                 }}
                             >
-                                <Typography
-                                    variant="h5"
+                                <Select
                                     sx={{
-                                        fontFamily: "Raleway",
-                                        fontWeight: "700",
-                                        fontSize: {
-                                            xs: "1.125rem",
-                                            sm: "1.14rem",
-                                            md: "2.188rem",
-                                        },
                                         color: "#383838",
+                                        fontFamily: "Lato",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        textAlign: "center",
+                                        background: "#1F51C6",
+                                        // p:'5px 10px',
+                                        borderRadius: "21px",
+                                        height: "41px",
+                                        color: "#FFFFFF",
+                                    }}
+                                    variant="outlined"
+                                    value={slotAppointment}
+                                    onChange={(e) =>
+                                        setSlotAppointment(e.target.value)
+                                    }
+                                >
+                                    <MenuItem
+                                        onClick={() => setSelectValue(1)}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "16px",
+                                            textAlign: "center",
+                                            color: "#383838",
+                                        }}
+                                        value="tokenAppointments"
+                                    >
+                                        Token Appointments
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => setSelectValue(2)}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "16px",
+                                            textAlign: "center",
+                                            color: "#383838",
+                                        }}
+                                        value="slotAppointments"
+                                    >
+                                        Slot Appointments
+                                    </MenuItem>
+                                </Select>
+                                <hr />
+                                <Button
+                                    onClick={() => setSelectValue(1)}
+                                    variant={
+                                        selectValue === 1
+                                            ? "contained"
+                                            : "outlined"
+                                    }
+                                    sx={{
+                                        textTransform: "none",
+                                        width: "119px",
+                                        height: "41px",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        borderRadius: "35px",
+                                        color:
+                                            selectValue === 1
+                                                ? "#ffffff"
+                                                : "#383838",
+                                        boxShadow: "none",
                                     }}
                                 >
-                                    Appointment
-                                </Typography>
-                            </Box>
-                            {activeTab === 3 ? null : (
-                                <TextFieldStyle
-                                    placeholder="Search here"
+                                    Upcoming
+                                </Button>
+                                <Button
+                                    onClick={() => setSelectValue(2)}
+                                    variant={
+                                        selectValue === 2
+                                            ? "contained"
+                                            : "outlined"
+                                    }
                                     sx={{
-                                        width: "377px",
-                                        display: {
-                                            xs: "none",
-                                            sm: "none",
-                                            md: "flex",
-                                        },
+                                        textTransform: "none",
+                                        width: "119px",
+                                        height: "41px",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        borderRadius: "35px",
+                                        color:
+                                            selectValue === 2
+                                                ? "#ffffff"
+                                                : "#383838",
+                                        boxShadow: "none",
                                     }}
-                                    InputLabelProps={{ color: "red" }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <img
-                                                    src="/search.svg"
-                                                    alt="img"
-                                                />
-                                            </InputAdornment>
-                                        ),
+                                >
+                                    Completed
+                                </Button>
+                                <Button
+                                    onClick={() => setSelectValue(3)}
+                                    variant={
+                                        selectValue === 3
+                                            ? "contained"
+                                            : "outlined"
+                                    }
+                                    sx={{
+                                        textTransform: "none",
+                                        width: "119px",
+                                        height: "41px",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        borderRadius: "35px",
+                                        color:
+                                            selectValue === 3
+                                                ? "#ffffff"
+                                                : "#383838",
+                                        boxShadow: "none",
                                     }}
-                                />
-                            )}
-                        </Box>
-                        <Box sx={{ width: "100%" }}>
+                                >
+                                    Missed
+                                </Button>
+                            </Stack>
                             <Box
                                 sx={{
-                                    display: "flex",
+                                    width: "100%",
+                                    display: {
+                                        xs: "flex",
+                                        sm: "flex",
+                                        md: "none",
+                                    },
                                     justifyContent: "space-between",
+                                    alignItems: "center",
+                                    mb: "16px",
+                                    mt: "16px",
                                 }}
                             >
-                                <Stack
-                                    direction={"row"}
-                                    spacing={1}
+                                <Select
                                     sx={{
-                                        display: {
-                                            xs: "none",
-                                            sm: "none",
-                                            md: "flex",
-                                        },
+                                        color: "#383838",
+                                        fontFamily: "Lato",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        textAlign: "center",
+                                        background: "#1F51C6",
+                                        // p:'5px 10px',
+                                        borderRadius: "21px",
+                                        height: "32px",
+                                        color: "#FFFFFF",
                                     }}
+                                    variant="outlined"
+                                    value={
+                                        (selectValue === 1 && "pending") ||
+                                        (selectValue === 2 && "completed") ||
+                                        (selectValue === 3 && "missed")
+                                    }
+                                    // onChange={(e) => handleChange(e, i)}
                                 >
-                                    <Select
-                                        sx={{
-                                            color: "#383838",
-                                            fontFamily: "Lato",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            textAlign: "center",
-                                            background: "#1F51C6",
-                                            // p:'5px 10px',
-                                            borderRadius: "21px",
-                                            height: "41px",
-                                            color: "#FFFFFF",
-                                        }}
-                                        variant="outlined"
-                                        value={slotAppointment}
-                                        onChange={(e) =>
-                                            setSlotAppointment(e.target.value)
-                                        }
-                                    >
-                                        <MenuItem
-                                            onClick={() => setSelectValue(1)}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "600",
-                                                fontSize: "16px",
-                                                textAlign: "center",
-                                                color: "#383838",
-                                            }}
-                                            value="tokenAppointments"
-                                        >
-                                            Token Appointments
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => setSelectValue(2)}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "600",
-                                                fontSize: "16px",
-                                                textAlign: "center",
-                                                color: "#383838",
-                                            }}
-                                            value="slotAppointments"
-                                        >
-                                            Slot Appointments
-                                        </MenuItem>
-                                    </Select>
-                                    <hr />
-                                    <Button
+                                    <MenuItem
                                         onClick={() => setSelectValue(1)}
-                                        variant={
-                                            selectValue === 1
-                                                ? "contained"
-                                                : "outlined"
-                                        }
                                         sx={{
-                                            textTransform: "none",
-                                            width: "119px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            borderRadius: "35px",
-                                            color:
-                                                selectValue === 1
-                                                    ? "#ffffff"
-                                                    : "#383838",
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        Upcoming
-                                    </Button>
-                                    <Button
-                                        onClick={() => setSelectValue(2)}
-                                        variant={
-                                            selectValue === 2
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            textTransform: "none",
-                                            width: "119px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            borderRadius: "35px",
-                                            color:
-                                                selectValue === 2
-                                                    ? "#ffffff"
-                                                    : "#383838",
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        Completed
-                                    </Button>
-                                    <Button
-                                        onClick={() => setSelectValue(3)}
-                                        variant={
-                                            selectValue === 3
-                                                ? "contained"
-                                                : "outlined"
-                                        }
-                                        sx={{
-                                            textTransform: "none",
-                                            width: "119px",
-                                            height: "41px",
-                                            fontFamily: "Raleway",
-                                            fontWeight: "600",
-                                            fontSize: "16px",
-                                            borderRadius: "35px",
-                                            color:
-                                                selectValue === 3
-                                                    ? "#ffffff"
-                                                    : "#383838",
-                                            boxShadow: "none",
-                                        }}
-                                    >
-                                        Missed
-                                    </Button>
-                                </Stack>
-                                <Box
-                                    sx={{
-                                        width: "100%",
-                                        display: {
-                                            xs: "flex",
-                                            sm: "flex",
-                                            md: "none",
-                                        },
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        mb: "16px",
-                                        mt: "16px",
-                                    }}
-                                >
-                                    <Select
-                                        sx={{
-                                            color: "#383838",
                                             fontFamily: "Lato",
                                             fontWeight: "600",
                                             fontSize: "16px",
                                             textAlign: "center",
-                                            background: "#1F51C6",
-                                            // p:'5px 10px',
-                                            borderRadius: "21px",
-                                            height: "32px",
-                                            color: "#FFFFFF",
+                                            color: "#383838",
                                         }}
-                                        variant="outlined"
-                                        value={
-                                            (selectValue === 1 && "pending") ||
-                                            (selectValue === 2 &&
-                                                "completed") ||
-                                            (selectValue === 3 && "missed")
-                                        }
-                                        // onChange={(e) => handleChange(e, i)}
+                                        value={"pending"}
                                     >
-                                        <MenuItem
-                                            onClick={() => setSelectValue(1)}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "600",
-                                                fontSize: "16px",
-                                                textAlign: "center",
-                                                color: "#383838",
-                                            }}
-                                            value={"pending"}
-                                        >
-                                            Pending Appointments
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => setSelectValue(2)}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "600",
-                                                fontSize: "16px",
-                                                textAlign: "center",
-                                                color: "#15B912",
-                                            }}
-                                            value={"completed"}
-                                        >
-                                            Completed Appointments
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => setSelectValue(3)}
-                                            sx={{
-                                                fontFamily: "Lato",
-                                                fontWeight: "600",
-                                                fontSize: "16px",
-                                                textAlign: "center",
-                                                color: "#B92612",
-                                            }}
-                                            value={"missed"}
-                                        >
-                                            Missed Appointments
-                                        </MenuItem>
-                                    </Select>
-                                    <Box>
-                                        <LocalizationProvider
-                                            dateAdapter={AdapterDayjs}
-                                        >
-                                            <DatePickerStyleForMobile
-                                                format="DD-MM-YYYY"
-                                                onChange={(e) =>
-                                                    setDate(
-                                                        moment(e.$d).format(
-                                                            "YYYY-MM-DD"
-                                                        )
-                                                    )
-                                                }
-                                                sx={{
-                                                    width: "120px",
-                                                    backgroundColor: "#1F51C6",
-                                                    color: "#ffffff",
-                                                    borderRadius: "50px",
-                                                }}
-                                                defaultValue={dayjs()}
-                                            />
-                                        </LocalizationProvider>
-                                    </Box>
-                                </Box>
-                                <Box
-                                    sx={{
-                                        display: {
-                                            xs: "none",
-                                            sm: "none",
-                                            md: "block",
-                                        },
-                                    }}
-                                >
+                                        Pending Appointments
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => setSelectValue(2)}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "16px",
+                                            textAlign: "center",
+                                            color: "#15B912",
+                                        }}
+                                        value={"completed"}
+                                    >
+                                        Completed Appointments
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => setSelectValue(3)}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            fontSize: "16px",
+                                            textAlign: "center",
+                                            color: "#B92612",
+                                        }}
+                                        value={"missed"}
+                                    >
+                                        Missed Appointments
+                                    </MenuItem>
+                                </Select>
+                                <Box>
                                     <LocalizationProvider
                                         dateAdapter={AdapterDayjs}
                                     >
-                                        <DatePickerStyle
+                                        <DatePickerStyleForMobile
                                             format="DD-MM-YYYY"
                                             onChange={(e) =>
                                                 setDate(
@@ -1027,56 +1132,88 @@ const DoctorAppointments = () => {
                                                     )
                                                 )
                                             }
-                                            sx={
-                                                {
-                                                    // width: "120px",
-                                                    // // height: "41px",
-                                                    // backgroundColor: "#1F51C6",
-                                                    // color: "#ffffff",
-                                                    // borderRadius: "50px",
-                                                }
-                                            }
+                                            sx={{
+                                                width: "120px",
+                                                backgroundColor: "#1F51C6",
+                                                color: "#ffffff",
+                                                borderRadius: "50px",
+                                            }}
                                             defaultValue={dayjs()}
                                         />
                                     </LocalizationProvider>
                                 </Box>
                             </Box>
-                            {(selectValue === 1 && (
-                                <PendingAppointmentsTableForLoggedInDoctor
-                                    pendingAppointmentsData={
-                                        pendingAppointmentsData
+                            <Box
+                                sx={{
+                                    display: {
+                                        xs: "none",
+                                        sm: "none",
+                                        md: "block",
+                                    },
+                                }}
+                            >
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                >
+                                    <DatePickerStyle
+                                        format="DD-MM-YYYY"
+                                        onChange={(e) =>
+                                            setDate(
+                                                moment(e.$d).format(
+                                                    "YYYY-MM-DD"
+                                                )
+                                            )
+                                        }
+                                        sx={
+                                            {
+                                                // width: "120px",
+                                                // // height: "41px",
+                                                // backgroundColor: "#1F51C6",
+                                                // color: "#ffffff",
+                                                // borderRadius: "50px",
+                                            }
+                                        }
+                                        defaultValue={dayjs()}
+                                    />
+                                </LocalizationProvider>
+                            </Box>
+                        </Box>
+                        {(selectValue === 1 && (
+                            <PendingAppointmentsTableForLoggedInDoctor
+                                pendingAppointmentsData={
+                                    pendingAppointmentsData
+                                }
+                                getPendingAppointmentsData={
+                                    getPendingAppointmentsData
+                                }
+                                slotAppointment={slotAppointment}
+                                setSlotAppointment={setSlotAppointment}
+                            />
+                        )) ||
+                            (selectValue === 2 && (
+                                <CompletedAppointmentsTableForLoggedInDoctor
+                                    completeAppointmentsData={
+                                        completeAppointmentsData
                                     }
-                                    getPendingAppointmentsData={
-                                        getPendingAppointmentsData
+                                    getCompleteAppointmentsData={
+                                        getCompleteAppointmentsData
                                     }
-                                    slotAppointment={slotAppointment}
-                                    setSlotAppointment={setSlotAppointment}
                                 />
                             )) ||
-                                (selectValue === 2 && (
-                                    <CompletedAppointmentsTableForLoggedInDoctor
-                                        completeAppointmentsData={
-                                            completeAppointmentsData
-                                        }
-                                        getCompleteAppointmentsData={
-                                            getCompleteAppointmentsData
-                                        }
-                                    />
-                                )) ||
-                                (selectValue === 3 && (
-                                    <MissedAppointmentsTableForLoggedInDoctor
-                                        missedAppointmentsData={
-                                            missedAppointmentsData
-                                        }
-                                        getMissedAppointmentsData={
-                                            getMissedAppointmentsData
-                                        }
-                                    />
-                                ))}
-                        </Box>
+                            (selectValue === 3 && (
+                                <MissedAppointmentsTableForLoggedInDoctor
+                                    missedAppointmentsData={
+                                        missedAppointmentsData
+                                    }
+                                    getMissedAppointmentsData={
+                                        getMissedAppointmentsData
+                                    }
+                                />
+                            ))}
                     </Box>
                 </Box>
-            )}
+            </Box>
+            {/* )} */}
         </Box>
     );
 };

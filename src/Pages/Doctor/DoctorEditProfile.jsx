@@ -275,7 +275,7 @@ const DoctorEditProfile = () => {
                     alignItems: "center",
                     position: "sticky",
                     top: "0",
-                    background: "#ffffff",
+                    // background: "#ffffff",
                     zIndex: 2,
                 }}
             >
@@ -294,16 +294,16 @@ const DoctorEditProfile = () => {
                                 style={{
                                     width: "32px",
                                     height: "19px",
-                                    color: "#1F51C6",
+                                    color: "#ffffff",
                                 }}
                             />
                         )}
                     </IconButton>
-                    <img
+                    {/* <img
                         src="/m-logonew.png"
                         alt="logo"
                         style={{ width: "121px", height: "28px" }}
-                    />
+                    /> */}
                 </Stack>
                 <Avatar
                     src={doctor?.imgurl ? doctor.imgurl : "/default.png"}
@@ -311,247 +311,383 @@ const DoctorEditProfile = () => {
                 />
             </Stack>
 
-            {menu && (
+            {/* {menu && ( */}
+            <Box
+                sx={{
+                    // position: "absolute",
+                    // top: "-10px",
+                    transform: !menu
+                        ? "translateX(-250px)"
+                        : "translateX(-10px)",
+                    transition: "transform 0.3s ease-in",
+                    zIndex: 1,
+                    position: {
+                        xs: "fixed",
+                        sm: "fixed",
+                        md: "sticky",
+                    },
+                    top: "0px",
+                }}
+                // sx={{
+
+                // }}
+            >
                 <Box
                     sx={{
-                        width: "100%",
-                        height: "100vh",
-                        display: "flex",
+                        width: "240px",
+                        background: "#1F51C6",
+                        display: { xs: "flex", sm: "flex", md: "none" },
                         flexDirection: "column",
-                        gap: "30px",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#1F51C6",
-                        borderRadius: "6px",
+                        height: "100vh",
+                        zIndex: 1,
+                        // alignItems: "center",
+                        //  position: "sticky",
+                        //  top: "0px",
+                        //  bottom: "-100px",
                     }}
                 >
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/dashboard/${doctorid}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
+                    <Stack alignItems={"center"} mt={4}>
+                        <Avatar
+                            src={
+                                doctor?.imgurl ? doctor.imgurl : "/default.png"
+                            }
+                            sx={{ width: "71px", height: "71px" }}
+                        />
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                m: 1,
+                                color: "#ffffff",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "22px",
+                            }}
+                        >
+                            Dr. {doctor?.nameOfTheDoctor}
+                        </Typography>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                mx: 1,
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "15px",
+                            }}
+                        >
+                            DUID :- {doctor.doctorid}
+                        </Typography>
+                    </Stack>
+                    <Stack
+                        alignItems={"start"}
+                        spacing={2}
+                        mt={4}
+                        flex={1}
+                        width={"100%"}
                     >
-                        Dashboard
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/appointments/${doctorid}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Appointments
-                    </Button>
-                    {/* <Button
-                        onClick={() =>
-                            navigate(`/doctor/courses/${user._id}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Medical Courses
-                    </Button> */}
-                    <Button
-                        onClick={() =>
-                            navigate(`/doctor/edit-profile/${user._id}`) &
-                            setMenu(false)
-                        }
-                        sx={{
-                            background: "#ffffff",
-                            color: "#1F51C6",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                            ":hover": {
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    color: "#ffffff",
+                                }}
+                            >
+                                <MdDashboard
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                &nbsp;Dashboard
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/appointments/${doctorid}`)
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                }}
+                            >
+                                <BsFillCalendarFill
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                &nbsp; Appointments
+                            </Button>
+                        </Box>
+                        {/* <Box
+                         sx={{
+                             width: "100%",
+                         }}
+                     >
+                         <Button
+                             onClick={() =>
+                                 navigate(`/doctor/courses/${user?._id}`)
+                             }
+                             variant="text"
+                             sx={{
+                                 ml: "30px",
+                                 color: "#ffffff",
+                                 borderRadius: "0",
+                                 textTransform: "none",
+                                 fontFamily: "Raleway",
+                                 fontWeight: "600",
+                                 fontSize: "18px",
+                             }}
+                         >
+                             <BiSolidBook
+                                 style={{
+                                     width: "25px",
+                                     height: "25px",
+                                     marginRight: "10px",
+                                 }}
+                             />
+                             Medical Courses
+                         </Button>
+                     </Box> */}
+                        <Box
+                            sx={{
+                                width: "100%",
                                 background: "#ffffff",
-                            },
-                        }}
-                    >
-                        Edit Profile
-                    </Button>
-                    <Button
-                        onClick={() =>
-                            navigate(
-                                `/doctor/appointment-settings/${doctorid}`
-                            ) & setMenu(false)
-                        }
-                        sx={{
-                            color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
-                            textTransform: "none",
-                            lineHeight: "28.8px",
-                        }}
-                    >
-                        Appointment Settings
-                    </Button>
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/edit-profile/${user._id}`)
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    background: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                }}
+                            >
+                                <ImPencil
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Edit Profile
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(
+                                        `/doctor/appointment-settings/${doctorid}`
+                                    )
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    lineHeight: "21.13px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    textAlign: "start",
+                                }}
+                            >
+                                <BsFillCalendarPlusFill
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Appointment Settings
+                            </Button>
+                        </Box>
+                    </Stack>
                     <Button
                         onClick={logOutUser}
                         sx={{
                             color: "#ffffff",
-                            fontFamily: "Lato",
-                            fontSize: "1.5rem",
+                            width: "100%",
+                            my: 1,
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "18px",
                             textTransform: "none",
-                            lineHeight: "28.8px",
                         }}
                     >
+                        <MdLogout style={{ width: "25px", height: "25px" }} />
                         Log Out
                     </Button>
                 </Box>
-            )}
+            </Box>
+            {/* )} */}
 
-            {!menu && (
+            {/* {!menu && ( */}
+            <Box
+                sx={{
+                    // width: "calc(100% - 100px)",
+                    mr: { xs: 0, sm: 0, md: "-55px" },
+                    ml: { xs: 0, sm: 0, md: "-60px" },
+                    display: "flex",
+                    justifyContent: "center",
+                    mt: -1,
+                    // position: "fixed"
+                }}
+            >
                 <Box
                     sx={{
-                        // width: "calc(100% - 100px)",
-                        mr: { xs: 0, sm: 0, md: "-55px" },
-                        ml: { xs: 0, sm: 0, md: "-60px" },
-                        display: "flex",
-                        justifyContent: "center",
-                        mt: -1,
-                        // position: "fixed"
+                        width: "240px",
+                        background: "#1F51C6",
+                        display: { xs: "none", sm: "none", md: "flex" },
+                        flexDirection: "column",
+                        // alignItems: "center",
+                        height: "100vh",
+                        position: "sticky",
+                        top: "0px",
+                        bottom: "-100px",
                     }}
                 >
-                    <Box
-                        sx={{
-                            width: "240px",
-                            background: "#1F51C6",
-                            display: { xs: "none", sm: "none", md: "flex" },
-                            flexDirection: "column",
-                            // alignItems: "center",
-                            height: "100vh",
-                            position: "sticky",
-                            top: "0px",
-                            bottom: "-100px",
-                        }}
+                    <Stack alignItems={"center"} mt={4}>
+                        <Avatar
+                            src={
+                                doctor?.imgurl ? doctor.imgurl : "/default.png"
+                            }
+                            sx={{ width: "71px", height: "71px" }}
+                        />
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                m: 1,
+                                color: "#ffffff",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "22px",
+                            }}
+                        >
+                            Dr. {doctor?.nameOfTheDoctor}
+                        </Typography>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                mx: 1,
+                                color: "#ffffff",
+                                fontFamily: "Lato",
+                                fontWeight: "500",
+                                fontSize: "15px",
+                            }}
+                        >
+                            DUID :- {doctor.doctorid}
+                        </Typography>
+                    </Stack>
+                    <Stack
+                        alignItems={"start"}
+                        spacing={2}
+                        mt={4}
+                        flex={1}
+                        width={"100%"}
                     >
-                        <Stack alignItems={"center"} mt={4}>
-                            <Avatar
-                                src={
-                                    doctor?.imgurl
-                                        ? doctor.imgurl
-                                        : "/default.png"
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/dashboard/${doctorid}`)
                                 }
-                                sx={{ width: "71px", height: "71px" }}
-                            />
-                            <Typography
-                                variant="h5"
+                                variant="text"
                                 sx={{
-                                    m: 1,
-                                    color: "#ffffff",
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    borderRadius: "0",
+                                    textTransform: "none",
                                     fontFamily: "Raleway",
                                     fontWeight: "600",
-                                    fontSize: "22px",
-                                }}
-                            >
-                                Dr. {doctor?.nameOfTheDoctor}
-                            </Typography>
-                            <Typography
-                                variant="h5"
-                                sx={{
-                                    mx: 1,
+                                    fontSize: "18px",
                                     color: "#ffffff",
-                                    fontFamily: "Lato",
-                                    fontWeight: "500",
-                                    fontSize: "15px",
                                 }}
                             >
-                                DUID :- {doctor.doctorid}
-                            </Typography>
-                        </Stack>
-                        <Stack
-                            alignItems={"start"}
-                            spacing={2}
-                            mt={4}
-                            flex={1}
-                            width={"100%"}
+                                <MdDashboard
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                &nbsp;Dashboard
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
                         >
-                            <Box
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/appointments/${doctorid}`)
+                                }
+                                variant="text"
                                 sx={{
-                                    width: "100%",
+                                    ml: "30px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
                                 }}
                             >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/dashboard/${doctorid}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#1F51C6",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                        color: "#ffffff",
+                                <BsFillCalendarFill
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
                                     }}
-                                >
-                                    <MdDashboard
-                                        style={{
-                                            width: "25px",
-                                            height: "25px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    &nbsp;Dashboard
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/appointments/${doctorid}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                    }}
-                                >
-                                    <BsFillCalendarFill
-                                        style={{
-                                            width: "20px",
-                                            height: "20px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    &nbsp; Appointments
-                                </Button>
-                            </Box>
-                            {/* <Box
+                                />
+                                &nbsp; Appointments
+                            </Button>
+                        </Box>
+                        {/* <Box
                                 sx={{
                                     width: "100%",
                                 }}
@@ -581,533 +717,486 @@ const DoctorEditProfile = () => {
                                     Medical Courses
                                 </Button>
                             </Box> */}
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                    background: "#ffffff",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/edit-profile/${user._id}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        color: "#1F51C6",
-                                        background: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                    }}
-                                >
-                                    <ImPencil
-                                        style={{
-                                            width: "20px",
-                                            height: "20px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    Edit Profile
-                                </Button>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        navigate(
-                                            `/doctor/appointment-settings/${doctorid}`
-                                        )
-                                    }
-                                    variant="text"
-                                    sx={{
-                                        ml: "30px",
-                                        lineHeight: "21.13px",
-                                        color: "#ffffff",
-                                        borderRadius: "0",
-                                        textTransform: "none",
-                                        fontFamily: "Raleway",
-                                        fontWeight: "600",
-                                        fontSize: "18px",
-                                        textAlign: "start",
-                                    }}
-                                >
-                                    <BsFillCalendarPlusFill
-                                        style={{
-                                            width: "25px",
-                                            height: "25px",
-                                            marginRight: "6px",
-                                        }}
-                                    />
-                                    Appointment Settings
-                                </Button>
-                            </Box>
-                        </Stack>
-                        <Button
-                            onClick={logOutUser}
-                            sx={{
-                                color: "#ffffff",
-                                width: "100%",
-                                my: 1,
-                                fontFamily: "Raleway",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                                textTransform: "none",
-                            }}
-                        >
-                            <MdLogout
-                                style={{ width: "25px", height: "25px" }}
-                            />
-                            Log Out
-                        </Button>
-                    </Box>
-                    <Box
-                        sx={{
-                            flex: 4,
-                            // display: "flex",
-                            // justifyContent: "space-between",
-                            // alignItems: "center",
-                            width: "100%",
-                            mx: "100px",
-                            mt: "32px",
-                            // height: "90vh",
-                        }}
-                    >
                         <Box
                             sx={{
                                 width: "100%",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                mb: { xs: "0", sm: "0", md: "41px" },
+                                background: "#ffffff",
                             }}
                         >
-                            <Box>
-                                <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontFamily: "Raleway",
-                                        fontWeight: "700",
-                                        fontSize: {
-                                            xs: "1.125rem",
-                                            sm: "1.14rem",
-                                            md: "2.188rem",
-                                        },
-                                        color: "#383838",
-                                    }}
-                                >
-                                    {(activeTab === 1 && "Dashboard") ||
-                                        (activeTab === 2 && "Appointment") ||
-                                        (activeTab === 3 && "Edit Profile")}
-                                </Typography>
-                            </Box>
-                            {activeTab === 4 ? null : (
-                                <TextFieldStyle
-                                    placeholder="Search here"
-                                    sx={{
-                                        width: "377px",
-                                        display: {
-                                            xs: "none",
-                                            sm: "none",
-                                            md: "flex",
-                                        },
-                                    }}
-                                    InputLabelProps={{ color: "red" }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <img
-                                                    src="/search.svg"
-                                                    alt="img"
-                                                />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                            )}
-                        </Box>
-
-                        {activeTab === 4 && (
-                            <Card
+                            <Button
+                                onClick={() =>
+                                    navigate(`/doctor/edit-profile/${user._id}`)
+                                }
+                                variant="text"
                                 sx={{
-                                    py: { xs: "20px", sm: "20px", md: "25px" },
-                                    px: { xs: "16px", sm: "16px", md: "25px" },
-                                    boxShadow: "none",
-                                    border: "1px solid #D9D9D9",
+                                    ml: "30px",
+                                    color: "#1F51C6",
+                                    background: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
                                 }}
                             >
-                                <form onSubmit={handleSubmit}>
-                                    <Stack
-                                        direction="row"
-                                        sx={{ justifyContent: "space-between" }}
-                                    >
-                                        <Stack
-                                            direction={"row"}
-                                            spacing={{ xs: 0.8, sm: 1, md: 3 }}
-                                            sx={{}}
-                                        >
-                                            <img
-                                                src={
-                                                    preview
-                                                        ? preview
-                                                        : doctor?.imgurl
-                                                        ? doctor.imgurl
-                                                        : "/default.png"
-                                                }
-                                                alt="user"
-                                                width="60"
-                                                height="60"
-                                                style={{ borderRadius: "50%" }}
-                                            />
+                                <ImPencil
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Edit Profile
+                            </Button>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                            }}
+                        >
+                            <Button
+                                onClick={() =>
+                                    navigate(
+                                        `/doctor/appointment-settings/${doctorid}`
+                                    )
+                                }
+                                variant="text"
+                                sx={{
+                                    ml: "30px",
+                                    lineHeight: "21.13px",
+                                    color: "#ffffff",
+                                    borderRadius: "0",
+                                    textTransform: "none",
+                                    fontFamily: "Raleway",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                    textAlign: "start",
+                                }}
+                            >
+                                <BsFillCalendarPlusFill
+                                    style={{
+                                        width: "25px",
+                                        height: "25px",
+                                        marginRight: "6px",
+                                    }}
+                                />
+                                Appointment Settings
+                            </Button>
+                        </Box>
+                    </Stack>
+                    <Button
+                        onClick={logOutUser}
+                        sx={{
+                            color: "#ffffff",
+                            width: "100%",
+                            my: 1,
+                            fontFamily: "Raleway",
+                            fontWeight: "600",
+                            fontSize: "18px",
+                            textTransform: "none",
+                        }}
+                    >
+                        <MdLogout style={{ width: "25px", height: "25px" }} />
+                        Log Out
+                    </Button>
+                </Box>
+                <Box
+                    sx={{
+                        flex: 4,
+                        // display: "flex",
+                        // justifyContent: "space-between",
+                        // alignItems: "center",
+                        width: "100%",
+                        mx: "100px",
+                        mt: "32px",
+                        // height: "90vh",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            mb: { xs: "0", sm: "0", md: "41px" },
+                        }}
+                    >
+                        <Box>
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    fontFamily: "Raleway",
+                                    fontWeight: "700",
+                                    fontSize: {
+                                        xs: "1.125rem",
+                                        sm: "1.14rem",
+                                        md: "2.188rem",
+                                    },
+                                    color: "#383838",
+                                }}
+                            >
+                                {(activeTab === 1 && "Dashboard") ||
+                                    (activeTab === 2 && "Appointment") ||
+                                    (activeTab === 3 && "Edit Profile")}
+                            </Typography>
+                        </Box>
+                        {activeTab === 4 ? null : (
+                            <TextFieldStyle
+                                placeholder="Search here"
+                                sx={{
+                                    width: "377px",
+                                    display: {
+                                        xs: "none",
+                                        sm: "none",
+                                        md: "flex",
+                                    },
+                                }}
+                                InputLabelProps={{ color: "red" }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <img src="/search.svg" alt="img" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        )}
+                    </Box>
 
-                                            <Box
+                    {activeTab === 4 && (
+                        <Card
+                            sx={{
+                                py: { xs: "20px", sm: "20px", md: "25px" },
+                                px: { xs: "16px", sm: "16px", md: "25px" },
+                                boxShadow: "none",
+                                border: "1px solid #D9D9D9",
+                            }}
+                        >
+                            <form onSubmit={handleSubmit}>
+                                <Stack
+                                    direction="row"
+                                    sx={{ justifyContent: "space-between" }}
+                                >
+                                    <Stack
+                                        direction={"row"}
+                                        spacing={{ xs: 0.8, sm: 1, md: 3 }}
+                                        sx={{}}
+                                    >
+                                        <img
+                                            src={
+                                                preview
+                                                    ? preview
+                                                    : doctor?.imgurl
+                                                    ? doctor.imgurl
+                                                    : "/default.png"
+                                            }
+                                            alt="user"
+                                            width="60"
+                                            height="60"
+                                            style={{ borderRadius: "50%" }}
+                                        />
+
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <Typography
+                                                my={1}
+                                                color="#706D6D"
+                                                lineHeight="20px"
                                                 sx={{
-                                                    display: "flex",
-                                                    flexDirection: "column",
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "15px",
+                                                    width: "120.73px",
                                                 }}
                                             >
-                                                <Typography
-                                                    my={1}
-                                                    color="#706D6D"
-                                                    lineHeight="20px"
-                                                    sx={{
-                                                        fontFamily: "Lato",
-                                                        fontWeight: "600",
-                                                        fontSize: "15px",
-                                                        width: "120.73px",
-                                                    }}
-                                                >
-                                                    Pick a photo from your
-                                                    computer
-                                                </Typography>
+                                                Pick a photo from your computer
+                                            </Typography>
 
-                                                <FormLabel
-                                                    htmlFor="hospitalImg"
-                                                    sx={{
-                                                        fontWeight: "600",
-                                                        color: "#1F51C6",
-                                                        lineHeight: "14.4px",
-                                                        fontSize: {
-                                                            xs: "0.75rem",
-                                                            sm: "0.75rem",
-                                                            md: "0.875rem",
-                                                        },
-                                                    }}
-                                                >
-                                                    Change Profile photo
-                                                </FormLabel>
-                                                <input
-                                                    type="file"
-                                                    id="hospitalImg"
-                                                    name="photo"
-                                                    disabled={
-                                                        isSelfDoctorId
-                                                            ? false
-                                                            : true
-                                                    }
-                                                    style={{ display: "none" }}
-                                                    onChange={(e) =>
-                                                        getUserImage(e)
-                                                    }
-                                                />
-                                            </Box>
-                                        </Stack>
-                                        <Stack justifyContent="center" sx={{}}>
-                                            <Button
-                                                onClick={(e) =>
-                                                    navigate(
-                                                        `/doctor/appointment-settings/${doctorid}`
-                                                    )
-                                                }
+                                            <FormLabel
+                                                htmlFor="hospitalImg"
                                                 sx={{
+                                                    fontWeight: "600",
+                                                    color: "#1F51C6",
+                                                    lineHeight: "14.4px",
                                                     fontSize: {
                                                         xs: "0.75rem",
                                                         sm: "0.75rem",
                                                         md: "0.875rem",
                                                     },
-                                                    fontFamily: "Lato",
-                                                    fontWeight: "600",
-                                                    color: "#1F51C6",
-                                                    cursor: "pointer",
-                                                    textTransform: "none",
-                                                    lineHeight: "14.4px",
-                                                    width: {
-                                                        xs: "114px",
-                                                        sm: "114px",
-                                                        md: "250px",
-                                                    },
-                                                    // backgroundColor:'blue',
-                                                    p: 0,
-                                                    ":hover": {
-                                                        background: "none",
-                                                    },
                                                 }}
                                             >
-                                                Change Appointment settings
-                                            </Button>
-                                        </Stack>
+                                                Change Profile photo
+                                            </FormLabel>
+                                            <input
+                                                type="file"
+                                                id="hospitalImg"
+                                                name="photo"
+                                                disabled={
+                                                    isSelfDoctorId
+                                                        ? false
+                                                        : true
+                                                }
+                                                style={{ display: "none" }}
+                                                onChange={(e) =>
+                                                    getUserImage(e)
+                                                }
+                                            />
+                                        </Box>
                                     </Stack>
+                                    <Stack justifyContent="center" sx={{}}>
+                                        <Button
+                                            onClick={(e) =>
+                                                navigate(
+                                                    `/doctor/appointment-settings/${doctorid}`
+                                                )
+                                            }
+                                            sx={{
+                                                fontSize: {
+                                                    xs: "0.75rem",
+                                                    sm: "0.75rem",
+                                                    md: "0.875rem",
+                                                },
+                                                fontFamily: "Lato",
+                                                fontWeight: "600",
+                                                color: "#1F51C6",
+                                                cursor: "pointer",
+                                                textTransform: "none",
+                                                lineHeight: "14.4px",
+                                                width: {
+                                                    xs: "114px",
+                                                    sm: "114px",
+                                                    md: "250px",
+                                                },
+                                                // backgroundColor:'blue',
+                                                p: 0,
+                                                ":hover": {
+                                                    background: "none",
+                                                },
+                                            }}
+                                        >
+                                            Change Appointment settings
+                                        </Button>
+                                    </Stack>
+                                </Stack>
 
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexWrap: "wrap",
-                                            justifyContent: "space-between",
-                                            gap: "17px",
-                                            mt: 2,
-                                        }}
-                                    >
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="DoctorName">
-                                                Name of the Doctor
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="DoctorName"
-                                                name="nameOfTheDoctor"
-                                                fullWidth
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                placeholder="Ex. Dr. John Doe"
-                                                error={
-                                                    err &&
-                                                    !inputValue.nameOfTheDoctor &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.nameOfTheDoctor &&
-                                                    "Please enter Doctor's name"
-                                                }
-                                                value={
-                                                    inputValue.nameOfTheDoctor
-                                                }
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
-                                            />
-                                        </StackStyle>
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="qualification">
-                                                Qualification
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="qualification"
-                                                name="qulification"
-                                                fullWidth
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                placeholder="Ex. MBBS. MD"
-                                                error={
-                                                    err &&
-                                                    !inputValue.qulification &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.qulification &&
-                                                    "Please enter your qualification"
-                                                }
-                                                value={inputValue.qulification}
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
-                                            />
-                                        </StackStyle>
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="speciality">
-                                                Speciality
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="speciality"
-                                                name="speciality"
-                                                fullWidth
-                                                placeholder="Ex. ENT"
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                error={
-                                                    err &&
-                                                    !inputValue.speciality &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.speciality &&
-                                                    "Please enter specialty"
-                                                }
-                                                value={inputValue.speciality}
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
-                                            />
-                                        </StackStyle>
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="experience">
-                                                Years Of Experience
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="experience"
-                                                name="yearOfExprience"
-                                                fullWidth
-                                                placeholder="Ex. 5 Years"
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                error={
-                                                    err &&
-                                                    !inputValue.yearOfExprience &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.yearOfExprience &&
-                                                    "Please enter your experience"
-                                                }
-                                                value={
-                                                    inputValue.yearOfExprience
-                                                }
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
-                                            />
-                                        </StackStyle>
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="mailId">
-                                                Enter Email Id
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="mailId"
-                                                name="email"
-                                                fullWidth
-                                                placeholder="doctor@gmail.com"
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                error={
-                                                    err &&
-                                                    !inputValue.email &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.email &&
-                                                    "Please enter your email"
-                                                }
-                                                value={inputValue.email}
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
-                                            />
-                                        </StackStyle>
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="phoneNo">
-                                                Enter Phone No
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="phoneNo"
-                                                name="phone"
-                                                fullWidth
-                                                placeholder="Ex 99112240477"
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                error={
-                                                    err &&
-                                                    !inputValue.phone &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.phone &&
-                                                    "Please enter your phone number"
-                                                }
-                                                value={inputValue.phone}
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
-                                            />
-                                        </StackStyle>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        justifyContent: "space-between",
+                                        gap: "17px",
+                                        mt: 2,
+                                    }}
+                                >
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="DoctorName">
+                                            Name of the Doctor
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="DoctorName"
+                                            name="nameOfTheDoctor"
+                                            fullWidth
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            placeholder="Ex. Dr. John Doe"
+                                            error={
+                                                err &&
+                                                !inputValue.nameOfTheDoctor &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.nameOfTheDoctor &&
+                                                "Please enter Doctor's name"
+                                            }
+                                            value={inputValue.nameOfTheDoctor}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="qualification">
+                                            Qualification
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="qualification"
+                                            name="qulification"
+                                            fullWidth
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            placeholder="Ex. MBBS. MD"
+                                            error={
+                                                err &&
+                                                !inputValue.qulification &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.qulification &&
+                                                "Please enter your qualification"
+                                            }
+                                            value={inputValue.qulification}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="speciality">
+                                            Speciality
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="speciality"
+                                            name="speciality"
+                                            fullWidth
+                                            placeholder="Ex. ENT"
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            error={
+                                                err &&
+                                                !inputValue.speciality &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.speciality &&
+                                                "Please enter specialty"
+                                            }
+                                            value={inputValue.speciality}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="experience">
+                                            Years Of Experience
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="experience"
+                                            name="yearOfExprience"
+                                            fullWidth
+                                            placeholder="Ex. 5 Years"
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            error={
+                                                err &&
+                                                !inputValue.yearOfExprience &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.yearOfExprience &&
+                                                "Please enter your experience"
+                                            }
+                                            value={inputValue.yearOfExprience}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="mailId">
+                                            Enter Email Id
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="mailId"
+                                            name="email"
+                                            fullWidth
+                                            placeholder="doctor@gmail.com"
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            error={
+                                                err && !inputValue.email && true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.email &&
+                                                "Please enter your email"
+                                            }
+                                            value={inputValue.email}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="phoneNo">
+                                            Enter Phone No
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="phoneNo"
+                                            name="phone"
+                                            fullWidth
+                                            placeholder="Ex 99112240477"
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            error={
+                                                err && !inputValue.phone && true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.phone &&
+                                                "Please enter your phone number"
+                                            }
+                                            value={inputValue.phone}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
 
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="connsultationFee">
-                                                Connsultation Fee
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                type="number"
-                                                id="connsultationFee"
-                                                name="connsultationFee"
-                                                fullWidth
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                placeholder="Ex ₹500"
-                                                error={
-                                                    err &&
-                                                    !inputValue.connsultationFee &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.connsultationFee &&
-                                                    "Please enter your fees"
-                                                }
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment
-                                                            position="start"
-                                                            sx={{
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="connsultationFee">
+                                            Connsultation Fee
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            type="number"
+                                            id="connsultationFee"
+                                            name="connsultationFee"
+                                            fullWidth
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            placeholder="Ex ₹500"
+                                            error={
+                                                err &&
+                                                !inputValue.connsultationFee &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.connsultationFee &&
+                                                "Please enter your fees"
+                                            }
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment
+                                                        position="start"
+                                                        sx={{
+                                                            fontSize: "1rem",
+                                                        }}
+                                                    >
+                                                        <span
+                                                            style={{
+                                                                fontFamily:
+                                                                    "Lato",
+                                                                fontWeight:
+                                                                    "500",
                                                                 fontSize:
-                                                                    "1rem",
+                                                                    "1.2rem",
+                                                                color: "#000000",
                                                             }}
                                                         >
-                                                            <span
-                                                                style={{
-                                                                    fontFamily:
-                                                                        "Lato",
-                                                                    fontWeight:
-                                                                        "500",
-                                                                    fontSize:
-                                                                        "1.2rem",
-                                                                    color: "#000000",
-                                                                }}
-                                                            >
-                                                                ₹
-                                                            </span>
-                                                        </InputAdornment>
-                                                    ),
-                                                }}
-                                                value={
-                                                    inputValue.connsultationFee
-                                                }
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
-                                            />
-                                        </StackStyle>
+                                                            ₹
+                                                        </span>
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            value={inputValue.connsultationFee}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
 
-                                        {/* <StackStyle>
+                                    {/* <StackStyle>
                                             <LabelStyle htmlFor="category1">
                                                 Category 1
                                             </LabelStyle>
@@ -1295,93 +1384,85 @@ const DoctorEditProfile = () => {
                                                 </MenuItem>
                                             </Select>
                                         </StackStyle> */}
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="description">
-                                                Enter Description
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="description"
-                                                name="description"
-                                                fullWidth
-                                                placeholder="Enter Doctor’s Description"
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                error={
-                                                    err &&
-                                                    !inputValue.description &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.description &&
-                                                    "Please enter description"
-                                                }
-                                                value={inputValue.description}
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="description">
+                                            Enter Description
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="description"
+                                            name="description"
+                                            fullWidth
+                                            placeholder="Enter Doctor’s Description"
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            error={
+                                                err &&
+                                                !inputValue.description &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.description &&
+                                                "Please enter description"
+                                            }
+                                            value={inputValue.description}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="location">
+                                            Enter Location
+                                        </LabelStyle>
+                                        <TextFieldStyle
+                                            id="location"
+                                            name="location"
+                                            fullWidth
+                                            placeholder="Enter Doctor’s location"
+                                            disabled={
+                                                isSelfDoctorId ? false : true
+                                            }
+                                            error={
+                                                err &&
+                                                !inputValue.location &&
+                                                true
+                                            }
+                                            helperText={
+                                                err &&
+                                                !inputValue.location &&
+                                                "Please enter location"
+                                            }
+                                            value={inputValue.location}
+                                            onChange={(e) => handleChange(e)}
+                                        />
+                                    </StackStyle>
+                                    <StackStyle>
+                                        <LabelStyle htmlFor="acceptAppointments">
+                                            How would you like to accept
+                                            appointments ?
+                                        </LabelStyle>
+                                        <RadioGroup
+                                            row
+                                            aria-labelledby="demo-controlled-radio-buttons-group"
+                                            name="acceptAppointments"
+                                            value={
+                                                inputValue.acceptAppointments
+                                            }
+                                            onChange={handleChange}
+                                        >
+                                            <FormControlLabel
+                                                value="byToken"
+                                                control={<Radio />}
+                                                label="By Token"
+                                                sx={{ fontFamily: "Lato" }}
                                             />
-                                        </StackStyle>
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="location">
-                                                Enter Location
-                                            </LabelStyle>
-                                            <TextFieldStyle
-                                                id="location"
-                                                name="location"
-                                                fullWidth
-                                                placeholder="Enter Doctor’s location"
-                                                disabled={
-                                                    isSelfDoctorId
-                                                        ? false
-                                                        : true
-                                                }
-                                                error={
-                                                    err &&
-                                                    !inputValue.location &&
-                                                    true
-                                                }
-                                                helperText={
-                                                    err &&
-                                                    !inputValue.location &&
-                                                    "Please enter location"
-                                                }
-                                                value={inputValue.location}
-                                                onChange={(e) =>
-                                                    handleChange(e)
-                                                }
+                                            <FormControlLabel
+                                                value="bySlot"
+                                                control={<Radio />}
+                                                label="By Slot"
                                             />
-                                        </StackStyle>
-                                        <StackStyle>
-                                            <LabelStyle htmlFor="acceptAppointments">
-                                                How would you like to accept
-                                                appointments ?
-                                            </LabelStyle>
-                                            <RadioGroup
-                                                row
-                                                aria-labelledby="demo-controlled-radio-buttons-group"
-                                                name="acceptAppointments"
-                                                value={
-                                                    inputValue.acceptAppointments
-                                                }
-                                                onChange={handleChange}
-                                            >
-                                                <FormControlLabel
-                                                    value="byToken"
-                                                    control={<Radio />}
-                                                    label="By Token"
-                                                    sx={{ fontFamily: "Lato" }}
-                                                />
-                                                <FormControlLabel
-                                                    value="bySlot"
-                                                    control={<Radio />}
-                                                    label="By Slot"
-                                                />
-                                            </RadioGroup>
-                                            {/* <TextFieldStyle
+                                        </RadioGroup>
+                                        {/* <TextFieldStyle
                                                 id="acceptAppointments"
                                                 name="acceptAppointments"
                                                 fullWidth
@@ -1401,8 +1482,8 @@ const DoctorEditProfile = () => {
                                                     handleChange(e)
                                                 }
                                             /> */}
-                                        </StackStyle>
-                                        {/* <StackStyle>
+                                    </StackStyle>
+                                    {/* <StackStyle>
                                             <LabelStyle htmlFor="location">
                                                 Full Address
                                             </LabelStyle>
@@ -1425,77 +1506,77 @@ const DoctorEditProfile = () => {
                                                 onChange={handleChange}
                                             />
                                         </StackStyle> */}
-                                    </Box>
-                                    <Stack
-                                        spacing={{
-                                            xs: "8px",
-                                            sm: "8px",
-                                            md: "10px",
+                                </Box>
+                                <Stack
+                                    spacing={{
+                                        xs: "8px",
+                                        sm: "8px",
+                                        md: "10px",
+                                    }}
+                                    sx={{ mt: 2 }}
+                                >
+                                    <LoadingButton
+                                        size="small"
+                                        fullWidth
+                                        type="submit"
+                                        loading={disableButton}
+                                        // loadingPosition="end"
+                                        variant="contained"
+                                        sx={{
+                                            marginY: "10px",
+                                            textTransform: "none",
+                                            display: "block",
+                                            width: "100%",
+                                            boxShadow: "none",
+                                            borderRadius: "53px",
+                                            ":hover": {
+                                                boxShadow: "none",
+                                            },
                                         }}
-                                        sx={{ mt: 2 }}
                                     >
-                                        <LoadingButton
-                                            size="small"
-                                            fullWidth
-                                            type="submit"
-                                            loading={disableButton}
-                                            // loadingPosition="end"
-                                            variant="contained"
-                                            sx={{
-                                                marginY: "10px",
-                                                textTransform: "none",
-                                                display: "block",
-                                                width: "100%",
-                                                boxShadow: "none",
-                                                borderRadius: "53px",
-                                                ":hover": {
-                                                    boxShadow: "none",
-                                                },
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    fontFamily: "Lato",
-                                                    fontWeight: "700",
-                                                    fontSize: "1.125rem",
-                                                }}
-                                            >
-                                                Save Changes
-                                            </span>
-                                        </LoadingButton>
-                                        <Button
-                                            onClick={() =>
-                                                setChangePasswordDialog(true)
-                                            }
-                                            variant="outlined"
-                                            sx={{
-                                                backgroundColor: "#ffffff",
-                                                borderColor: "#D9D9D9",
-                                                color: "#383838",
-                                                marginY: "10px",
-                                                textTransform: "none",
-                                                display: "block",
-                                                width: "100%",
-                                                boxShadow: "none",
+                                        <span
+                                            style={{
                                                 fontFamily: "Lato",
                                                 fontWeight: "700",
                                                 fontSize: "1.125rem",
-                                                borderRadius: "53px",
-                                                ":hover": {
-                                                    boxShadow: "none",
-                                                    borderColor: "#D9D9D8",
-                                                },
                                             }}
                                         >
-                                            Change Password
-                                        </Button>
-                                    </Stack>
-                                </form>
-                            </Card>
-                        )}
-                    </Box>
+                                            Save Changes
+                                        </span>
+                                    </LoadingButton>
+                                    <Button
+                                        onClick={() =>
+                                            setChangePasswordDialog(true)
+                                        }
+                                        variant="outlined"
+                                        sx={{
+                                            backgroundColor: "#ffffff",
+                                            borderColor: "#D9D9D9",
+                                            color: "#383838",
+                                            marginY: "10px",
+                                            textTransform: "none",
+                                            display: "block",
+                                            width: "100%",
+                                            boxShadow: "none",
+                                            fontFamily: "Lato",
+                                            fontWeight: "700",
+                                            fontSize: "1.125rem",
+                                            borderRadius: "53px",
+                                            ":hover": {
+                                                boxShadow: "none",
+                                                borderColor: "#D9D9D8",
+                                            },
+                                        }}
+                                    >
+                                        Change Password
+                                    </Button>
+                                </Stack>
+                            </form>
+                        </Card>
+                    )}
                 </Box>
-            )}
+            </Box>
+            {/* )} */}
             <ChangePasswordDialog
                 changePasswordDialog={changePasswordDialog}
                 setChangePasswordDialog={setChangePasswordDialog}
