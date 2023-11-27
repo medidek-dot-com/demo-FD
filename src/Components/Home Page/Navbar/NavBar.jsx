@@ -225,7 +225,7 @@ const NavBar = () => {
                         >
                             Tracking
                         </Button>
-                        {!isLoggedIn && (
+                        {/* {!isLoggedIn && (
                             <Button
                                 variant={tabValue === 3 ? "contained" : "text"}
                                 onClick={() => {
@@ -249,7 +249,7 @@ const NavBar = () => {
                             >
                                 Medical Courses
                             </Button>
-                        )}
+                        )} */}
                         <Button
                             variant={tabValue === 4 ? "contained" : "text"}
                             onClick={() => {
@@ -330,14 +330,14 @@ const NavBar = () => {
                             to="/tracking"
                             tabIndex={2}
                         />
-                        {!isLoggedIn && (
+                        {/* {!isLoggedIn && (
                             <TabStyle
                                 component={Link}
                                 label="Medical Courses"
                                 to="/medical-courses"
                                 tabIndex={3}
                             />
-                        )}
+                        )} */}
                         <TabStyle
                             component={Link}
                             label="Contact Us"
@@ -367,7 +367,7 @@ const NavBar = () => {
                                 fontSize: "16px",
                                 width: { xs: "80px", sm: "90px", md: "121px" },
                                 height: { xs: "25px", sm: "32px", md: "35px" },
-                                boxShadow:'none'
+                                boxShadow: "none",
                             }}
                         >
                             Sign In
