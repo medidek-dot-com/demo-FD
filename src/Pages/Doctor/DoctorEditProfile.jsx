@@ -548,7 +548,7 @@ const DoctorEditProfile = () => {
                         sx={{
                             color: "#ffffff",
                             width: "100%",
-                            my: 1,
+                            mb: "20px",
                             fontFamily: "Raleway",
                             fontWeight: "600",
                             fontSize: "18px",

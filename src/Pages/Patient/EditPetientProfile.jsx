@@ -30,6 +30,7 @@ import DatePicker from "react-date-picker";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { LoadingButton } from "@mui/lab";
 
 const StackStyle = styled(Stack)(({ theme }) => ({
     width: "48%",
@@ -172,7 +173,7 @@ const EditPetientProfile = () => {
             setError(true);
             return false;
         }
-
+        setDisableButton(true);
         let formData = new FormData();
         formData.append("name", inputValue.name);
         formData.append("email", inputValue.email);
@@ -188,12 +189,14 @@ const EditPetientProfile = () => {
             );
             console.log(response.result);
             if (response.status === "ok") {
+                setDisableButton(false);
                 dispatch(updateUserData(response.result));
 
                 toast.success("Profile updated successfully");
                 navigate("/");
             }
         } catch (error) {
+            setDisableButton(false);
             toast.error(error.message);
             console.log(error);
         }
@@ -453,29 +456,36 @@ const EditPetientProfile = () => {
                                     /> */}
                                 </StackStyle>
                             </Box>
-                            <Button
+
+                            <LoadingButton
                                 type="submit"
                                 variant="contained"
+                                loading={disableButton}
                                 sx={{
-                                    flex: 0.3,
+                                    // flex: 0.3,
                                     width: {
                                         xs: "100%",
                                         sm: "100%",
                                         md: "100%",
                                     },
-                                    my: 2,
-                                    mx: "auto",
+                                    mt: 2,
+                                    // mx: "auto",
                                     display: "block",
                                     textTransform: "none",
                                     borderRadius: "63px",
-                                    fontFamily: "Lato",
-                                    fontWeight: "700",
-                                    fontSize: "17px",
                                     boxShadow: "none",
                                 }}
                             >
-                                Save Details
-                            </Button>
+                                <span
+                                    style={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "700",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    Save Details
+                                </span>
+                            </LoadingButton>
                             <Button
                                 variant="contained"
                                 onClick={() => setChangePasswordDialog(true)}
@@ -486,7 +496,7 @@ const EditPetientProfile = () => {
                                         sm: "100%",
                                         md: "100%",
                                     },
-                                    my: 2,
+                                    mt: 2,
                                     mx: "auto",
                                     display: "block",
                                     textTransform: "none",

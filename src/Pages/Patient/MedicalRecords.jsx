@@ -69,8 +69,16 @@ const MedicalRecords = () => {
                             component="button"
                             onClick={() => setUploadPrescriptionDialog(true)}
                             sx={{
-                                width: "219px",
-                                height: "219px",
+                                width: {
+                                    xs: "100px",
+                                    sm: "100px",
+                                    md: "219px",
+                                },
+                                height: {
+                                    xs: "100px",
+                                    sm: "100px",
+                                    md: "219px",
+                                },
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
@@ -93,8 +101,16 @@ const MedicalRecords = () => {
                                 <Card
                                     key={i}
                                     sx={{
-                                        width: "219px",
-                                        height: "219px",
+                                        width: {
+                                            xs: "100px",
+                                            sm: "100px",
+                                            md: "219px",
+                                        },
+                                        height: {
+                                            xs: "100px",
+                                            sm: "100px",
+                                            md: "219px",
+                                        },
                                         // display: "flex",
                                         // justifyContent: "center",
                                         // alignItems: "center",
@@ -109,7 +125,15 @@ const MedicalRecords = () => {
                                         image={recipt.imgurl}
                                         title="green iguana"
                                     /> */}
-                                    <img src={recipt.imgurl} alt="" />
+                                    <Box
+                                        component="img"
+                                        src={recipt.imgurl}
+                                        alt=""
+                                        style={{
+                                            width: "100%",
+                                            height: "160px",
+                                        }}
+                                    />
                                 </Card>
                             ))
                         ) : (
