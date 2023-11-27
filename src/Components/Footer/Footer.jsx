@@ -167,7 +167,7 @@ const Footer = () => {
                                     background: "none",
                                 },
                             }}
-                            target="_"
+                            target="_blank"
                             href="https://instagram.com/medidekofficial?igshid=MzRlODBiNWFlZA=="
                         >
                             <Box
@@ -186,7 +186,7 @@ const Footer = () => {
                                     background: "none",
                                 },
                             }}
-                            target="_"
+                            target="_blank"
                             href="https://www.linkedin.com/company/medidek/"
                         >
                             <Box
@@ -205,7 +205,7 @@ const Footer = () => {
                                     background: "none",
                                 },
                             }}
-                            target="_"
+                            target="_blank"
                             href="https://www.facebook.com/profile.php?id=100094316681517&mibextid=ZbWKwL"
                         >
                             <Box
@@ -224,7 +224,7 @@ const Footer = () => {
                                     background: "none",
                                 },
                             }}
-                            target="_"
+                            target="_blank"
                             href="https://youtube.com/@MedidekSocial?si=6tXZINUsJUW6HrNF"
                         >
                             <Box
