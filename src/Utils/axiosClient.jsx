@@ -97,11 +97,11 @@ import {
 // export const baseURL = "http://localhost:5001";
 
 export const axiosClient = axios.create({
-    baseURL: "http://54.160.228.153:5001/",
+    baseURL: "https://mehrhospitality.com/",
     // withCredentials: true
 });
 
-export const baseURL = "http://54.160.228.153:5001/";
+export const baseURL = "https://mehrhospitality.com/";
 
 axiosClient.interceptors.request.use((request) => {
     const accessToken = getItem(KEY_ACCESS_TOKEN);
