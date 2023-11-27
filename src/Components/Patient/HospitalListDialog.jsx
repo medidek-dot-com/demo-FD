@@ -57,7 +57,7 @@ const HospitalListDialog = ({
             doctorid: data._id,
             connsultationFee: data.connsultationFee,
             location: data.location,
-            hospitalName: data.hospitalId.nameOfhospitalOrClinic,
+            hospitalName: data?.hospitalId?.nameOfhospitalOrClinic,
         });
         setInputValue({ ...inputValue, doctorid: data._id });
         setOpenBookingAppointmentDialog(true);
