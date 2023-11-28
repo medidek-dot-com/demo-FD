@@ -375,7 +375,7 @@ const DoctorEditProfile = () => {
                                 fontSize: "15px",
                             }}
                         >
-                            DUID :- {doctor.doctorid}
+                            DUID :- {doctor?.doctorid}
                         </Typography>
                     </Stack>
                     <Stack
@@ -616,7 +616,7 @@ const DoctorEditProfile = () => {
                                 fontSize: "15px",
                             }}
                         >
-                            DUID :- {doctor.doctorid}
+                            DUID :- {doctor?.doctorid}
                         </Typography>
                     </Stack>
                     <Stack

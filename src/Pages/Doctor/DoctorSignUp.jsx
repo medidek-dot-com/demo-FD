@@ -29,7 +29,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../Store/authSlice";
 import { KEY_ACCESS_TOKEN, setItem } from "../../Utils/localStorageManager";
 import validator from "validator";
-
+import { selectedDoctorsData } from "../../Store/doctorDataSlice";
 
 const LadyImgStyle = styled("img")({
     width: "230px",
@@ -84,16 +84,16 @@ const TextFiledStyle = styled(TextField)({
 });
 
 const TabsOnImgStyle = styled(Typography)`
-margin: 15px;
-z-index: 1;
-border-radius: 30px;
-padding: 2px 13px;
-background: #1f51c6;
-width: max-content;
-color: #ffffff;
-font-family: Raleway;
-font-weight: 600;
-font-size: 1rem;
+    margin: 15px;
+    z-index: 1;
+    border-radius: 30px;
+    padding: 2px 13px;
+    background: #1f51c6;
+    width: max-content;
+    color: #ffffff;
+    font-family: Raleway;
+    font-weight: 600;
+    font-size: 1rem;
 `;
 
 const DoctorSignUp = () => {
@@ -123,7 +123,6 @@ const DoctorSignUp = () => {
     const [err, setError] = useState(false);
     const [catchError, setCatchError] = useState(null);
     const dispatch = useDispatch();
-
 
     const togglePassword = () => {
         setEye(!eye);
@@ -203,7 +202,6 @@ const DoctorSignUp = () => {
 
         phone = phone.trim();
 
-
         try {
             const response = await axiosClient.post("/v2/isUserExist", {
                 phone,
@@ -253,22 +251,22 @@ const DoctorSignUp = () => {
             })
             .catch((error) => {
                 console.log(error);
-                if(error == "reCAPTCHA client element has been removed"){
+                if (error == "reCAPTCHA client element has been removed") {
                     console.log("too many attemps");
                 }
                 if (error?.code === "auth/captcha-check-failed") {
                     return;
                 } else {
                     setCatchError("Something went wrong");
-                  return  setDisableButton(false);
+                    return setDisableButton(false);
                 }
             });
     }
 
     function onOTPVerify() {
         setDisableButton(true);
-        if(!OTP){
-        setDisableButton(false);
+        if (!OTP) {
+            setDisableButton(false);
             return setNotOtp(true);
         }
         window.confirmationResult
@@ -296,12 +294,13 @@ const DoctorSignUp = () => {
                 phone,
                 email,
                 password,
-                rol
+                rol,
             });
 
             if (response.status === "ok") {
                 console.log(response);
                 dispatch(login(response.result.user));
+                dispatch(selectedDoctorsData(response.result.user));
                 setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
                 navigate(`/doctor/edit-profile/${response.result.user._id}`);
             }
@@ -578,8 +577,10 @@ const DoctorSignUp = () => {
                                         ? "Password is required"
                                         : ""
                                 }
-                                onChange={(e) => setPassword(e.target.value) &
-                                    setError(false)}
+                                onChange={(e) =>
+                                    setPassword(e.target.value) &
+                                    setError(false)
+                                }
                             />
 
                             <LoadingButton
@@ -600,22 +601,31 @@ const DoctorSignUp = () => {
                                 }}
                             >
                                 <span
-                                style={{
-                                    fontFamily: "Lato",
-                                    fontWeight: "700",
-                                    fontSize: "1rem",
-                                }}
-                                >Signup</span>
+                                    style={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "700",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    Signup
+                                </span>
                             </LoadingButton>
-                            
-                                 {/* <Snackbar open={catchError} autoHideDuration={6000} onClose={()=>setCatchError(false)}>
+
+                            {/* <Snackbar open={catchError} autoHideDuration={6000} onClose={()=>setCatchError(false)}>
                                 <Alert  onClose={()=>setCatchError(false)} severity="error" sx={{ width: '100%' }}>
                                 {catchError} jjnknjk
                                 </Alert>
                               </Snackbar> */}
 
-                            
-                {catchError &&<Alert onClose={()=>setCatchError(false)} sx={{mt:'10px'}} severity="error">{catchError}</Alert>}
+                            {catchError && (
+                                <Alert
+                                    onClose={() => setCatchError(false)}
+                                    sx={{ mt: "10px" }}
+                                    severity="error"
+                                >
+                                    {catchError}
+                                </Alert>
+                            )}
                             {/* <Button
                             type="submit"
                             fullWidth
@@ -719,13 +729,12 @@ const DoctorSignUp = () => {
                                     OTPLength={6}
                                     otpType="number"
                                     disabled={false}
-                                    
                                 />
                                 <Typography
                                     sx={{
                                         mt: 2,
                                         color: invalidOtp ? "red" : "#1F51C6",
-                                        textAlign:"center",
+                                        textAlign: "center",
                                     }}
                                 >
                                     {(couter === 0 && (
@@ -739,7 +748,6 @@ const DoctorSignUp = () => {
                                         `Resend OTP in ${couter} seconds`}
                                 </Typography>
                             </Box>
-                            
                         </Box>
                         <Box
                             component="span"
@@ -749,7 +757,8 @@ const DoctorSignUp = () => {
                                 display: "block",
                             }}
                         >
-                            {invalidOtp && "Invalid OTP" || notOtp && OTP && "Please enter otp"}
+                            {(invalidOtp && "Invalid OTP") ||
+                                (notOtp && OTP && "Please enter otp")}
                         </Box>
                         <LoadingButton
                             onClick={onOTPVerify}

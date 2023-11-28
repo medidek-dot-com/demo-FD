@@ -19,6 +19,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { LoadingButton } from "@mui/lab";
 import { login } from "../../Store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { selectedDoctorsData } from "../../Store/doctorDataSlice";
 
 const LadyImgStyle = styled("img")({
     width: "230px",
@@ -104,6 +105,7 @@ const DoctorSignIn = () => {
             if (response.status === "ok") {
                 setDisableButton(false);
                 console.log(response.result);
+                dispatch(selectedDoctorsData(response.result.isdoctor));
                 dispatch(login(response.result.isdoctor));
                 navigate("/doctor/select-hospital");
 
