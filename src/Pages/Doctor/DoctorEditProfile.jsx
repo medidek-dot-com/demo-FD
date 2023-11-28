@@ -236,7 +236,7 @@ const DoctorEditProfile = () => {
             if (response.status === "ok") {
                 // navigate(`/master/user/home/${uuid.id}`);
                 dispatch(updateDoctorsData(response.result));
-                navigate(`/doctor/appointments/${doctor?._id}`);
+                navigate(`/doctor/appointment-settings/${doctor?._id}`);
                 toast.success("Doctor added successfully");
 
                 return;
