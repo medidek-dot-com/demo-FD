@@ -11,6 +11,7 @@ import {
     Typography,
 } from "@mui/material";
 import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
+import { useSelector } from "react-redux";
 
 const AppointmentByTokenEditSettings = ({
     dates,
@@ -23,6 +24,8 @@ const AppointmentByTokenEditSettings = ({
 }) => {
     const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
         useState(false);
+    const { doctor } = useSelector((state) => state.doctor);
+
     // const [selectedDay, setSelectedDay] = useState(0);
     // const currentDate = moment().format("ddd");
 
@@ -69,6 +72,11 @@ const AppointmentByTokenEditSettings = ({
                         <Box
                             key={i + 1}
                             component="button"
+                            disabled={
+                                doctor?.acceptAppointments === "bySlot"
+                                    ? true
+                                    : false
+                            }
                             onClick={() => handleSelectedDate(date, i)}
                             sx={{
                                 width: {
@@ -82,9 +90,13 @@ const AppointmentByTokenEditSettings = ({
                                     md: "57.39px",
                                 },
                                 background:
-                                    tokenSelectedDay.i === i
+                                    tokenSelectedDay.i === i &&
+                                    doctor?.acceptAppointments === "byToken"
                                         ? "#1F51C6"
-                                        : "#FFFFFF",
+                                        : doctor?.acceptAppointments ===
+                                          "byToken"
+                                        ? "#FFFFFF"
+                                        : "#D9D9D9",
                                 border:
                                     currentDate === date.day
                                         ? "2px solid #1F51C6"
@@ -93,7 +105,10 @@ const AppointmentByTokenEditSettings = ({
                                 color:
                                     tokenSelectedDay.i === i
                                         ? "#FFFFFF"
-                                        : "#706D6D",
+                                        : doctor?.acceptAppointments ===
+                                          "byToken"
+                                        ? "#706D6D"
+                                        : "#ffffff",
                                 userSelect: "none",
                             }}
                         >
@@ -148,6 +163,10 @@ const AppointmentByTokenEditSettings = ({
                                 border: "1px solid #D9D9D9",
                                 borderRadius: "6px",
                                 p: "16px",
+                                background:
+                                    doctor?.acceptAppointments === "bySlot"
+                                        ? "#D9D9D9"
+                                        : "#ffffff",
                             }}
                         >
                             <Box
@@ -239,6 +258,10 @@ const AppointmentByTokenEditSettings = ({
                                     border: "1px solid #D9D9D9",
                                     borderRadius: "6px",
                                     p: "16px",
+                                    background:
+                                        doctor?.acceptAppointments === "bySlot"
+                                            ? "#D9D9D9"
+                                            : "#ffffff",
                                 }}
                             >
                                 <Box
@@ -331,6 +354,10 @@ const AppointmentByTokenEditSettings = ({
                                     border: "1px solid #D9D9D9",
                                     borderRadius: "6px",
                                     p: "16px",
+                                    background:
+                                        doctor?.acceptAppointments === "bySlot"
+                                            ? "#D9D9D9"
+                                            : "#ffffff",
                                 }}
                             >
                                 <Box
@@ -419,6 +446,11 @@ const AppointmentByTokenEditSettings = ({
                     </Stack>
                     <Button
                         variant="contained"
+                        disabled={
+                            doctor?.acceptAppointments === "bySlot"
+                                ? true
+                                : false
+                        }
                         // onClick={saveData}
                         sx={{
                             width: "100%",

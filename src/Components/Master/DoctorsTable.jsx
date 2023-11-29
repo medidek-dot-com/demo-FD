@@ -456,7 +456,7 @@ const DoctorsTable = ({ search }) => {
                                                     fontWeight: "600",
                                                 }}
                                             >
-                                                {doctor.enterPhoneNo}
+                                                {doctor.phone}
                                             </span>
                                         </MobileViewCardTypographyStyle>
                                         <MobileViewCardTypographyStyle>

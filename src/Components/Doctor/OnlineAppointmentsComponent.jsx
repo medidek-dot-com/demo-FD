@@ -28,6 +28,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "ldrs/dotPulse";
+import { LoadingButton } from "@mui/lab";
 
 // Default values shown
 
@@ -58,6 +59,7 @@ const OnlineAppointmentsComponent = ({
     const { user } = useSelector((state) => state.auth);
     const { doctor } = useSelector((state) => state.doctor);
     const [slotDurationTime, setSlotDurationTime] = useState("15 min");
+    const [disableButton, setDisableButton] = useState(false);
 
     let count = 1;
     const [numOfStartTimes, setNumOfStartTimes] = useState(0);
@@ -220,6 +222,7 @@ const OnlineAppointmentsComponent = ({
     //To here
 
     const saveData = async () => {
+        setDisableButton(true);
         if (markAsHoliday === true) {
             setStartTime("");
             setStartTime2("");
@@ -243,7 +246,10 @@ const OnlineAppointmentsComponent = ({
                         doctorid: doctorid,
                     }
                 );
-                await getOnlineSlotDetailForDoctorForPerticularDate();
+                if (response.status === "ok") {
+                    await getOnlineSlotDetailForDoctorForPerticularDate();
+                    setDisableButton(false);
+                }
             } catch (error) {
                 toast.error("something went wrong");
                 console.log(error.message);
@@ -359,6 +365,11 @@ const OnlineAppointmentsComponent = ({
                             key={i + 1}
                             component="button"
                             onClick={() => handleSelectedDate(date, i)}
+                            disabled={
+                                doctor.acceptAppointments !== "bySlot"
+                                    ? true
+                                    : false
+                            }
                             sx={{
                                 width: {
                                     xs: "43.18px",
@@ -1186,7 +1197,41 @@ const OnlineAppointmentsComponent = ({
                             View Holiday List
                         </Button>
                     </Stack>
-                    <Button
+                    <LoadingButton
+                        // size="small"
+                        fullWidth
+                        onClick={saveData}
+                        loading={disableButton}
+                        // loadingPosition="end"
+                        variant="contained"
+                        disabled={
+                            doctor.acceptAppointments === "byToken"
+                                ? true
+                                : false
+                        }
+                        sx={{
+                            boxShadow: "none",
+                            borderRadius: "29px",
+                            textTransform: "none",
+                            fontFamily: "Lato",
+                            fontWeight: "700",
+                            fontSize: "1.063rem",
+                            ":hover": {
+                                boxShadow: "none",
+                            },
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                fontSize: "1.063rem",
+                            }}
+                        >
+                            Save
+                        </span>
+                    </LoadingButton>
+                    {/* <Button
                         variant="contained"
                         disabled={
                             doctor.acceptAppointments === "byToken"
@@ -1204,7 +1249,7 @@ const OnlineAppointmentsComponent = ({
                         }}
                     >
                         Save
-                    </Button>
+                    </Button> */}
                 </Stack>
             </Card>
         </>

@@ -124,6 +124,8 @@ const BookAppointmnetDetailsDialog = ({
     const [err, setError] = useState(false);
     const { user } = useSelector((state) => state.auth);
 
+    const currentDate = moment().format("DD-MM-YYYY");
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInputValue({ ...inputValue, [name]: value });
@@ -151,12 +153,8 @@ const BookAppointmnetDetailsDialog = ({
             <DialogStyle
                 className="abhay"
                 open={bookingAppointmentDetailsDialog}
-                onClose={() => {
-                    return (
-                        setBookAppointmentDetailsDialog(false) &
-                        setDateErr(false)
-                    );
-                }}
+                onClose={() => setBookAppointmentDetailsDialog(false)}
+                // setDateErr(false)
                 maxWidth={"lg"}
                 sx={{ margin: "0 auto" }}
             >
@@ -657,9 +655,12 @@ const BookAppointmnetDetailsDialog = ({
                                             color: "#706D6D",
                                         }}
                                     >
-                                        {moment(
-                                            bookingAppointmentDetails.appointmentDate
-                                        ).format("DD-MM-YYYY")}
+                                        {doctorinfo?.acceptAppointments !==
+                                        "byToken"
+                                            ? moment(
+                                                  bookingAppointmentDetails.appointmentDate
+                                              ).format("DD-MM-YYYY")
+                                            : currentDate}
                                     </Typography>
                                 </Stack>
                                 <Stack

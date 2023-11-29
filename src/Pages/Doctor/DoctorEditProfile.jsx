@@ -213,6 +213,8 @@ const DoctorEditProfile = () => {
             return false;
         }
 
+        setDisableButton(true);
+
         const data = new FormData();
         data.append("nameOfTheDoctor", inputValue.nameOfTheDoctor);
         data.append("qulification", inputValue.qulification);
@@ -238,10 +240,12 @@ const DoctorEditProfile = () => {
                 dispatch(updateDoctorsData(response.result));
                 navigate(`/doctor/appointment-settings/${doctor?._id}`);
                 toast.success("Doctor added successfully");
+                setDisableButton(false);
 
                 return;
             }
         } catch (e) {
+            setDisableButton(false);
             toast.error(e.message);
         }
     };
@@ -1516,7 +1520,7 @@ const DoctorEditProfile = () => {
                                     sx={{ mt: 2 }}
                                 >
                                     <LoadingButton
-                                        size="small"
+                                        // size="small"
                                         fullWidth
                                         type="submit"
                                         loading={disableButton}
@@ -1525,7 +1529,8 @@ const DoctorEditProfile = () => {
                                         sx={{
                                             marginY: "10px",
                                             textTransform: "none",
-                                            display: "block",
+                                            display: "flex",
+                                            alignItems: "center",
                                             width: "100%",
                                             boxShadow: "none",
                                             borderRadius: "53px",

@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
 import EditSlotSetting from "./Doctor/EditSlotSetting";
+import { useSelector } from "react-redux";
 
 const OnlineAppointmentEditSettings = ({
     dates,
@@ -24,6 +25,8 @@ const OnlineAppointmentEditSettings = ({
     getOnlineSlotDetailForDoctorForPerticularDate,
     setHolidayDialog,
 }) => {
+    const { doctor } = useSelector((state) => state.doctor);
+
     const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
         useState(true);
     const [markAsHoliday, setMarkAsHoliday] = useState(false);
@@ -94,6 +97,11 @@ const OnlineAppointmentEditSettings = ({
                         <Box
                             key={i + 1}
                             component="button"
+                            disabled={
+                                doctor.acceptAppointments !== "bySlot"
+                                    ? true
+                                    : false
+                            }
                             onClick={() => handleSelectedDate(date, i)}
                             sx={{
                                 width: {
@@ -107,14 +115,27 @@ const OnlineAppointmentEditSettings = ({
                                     md: "57.39px",
                                 },
                                 background:
-                                    selectedDay.i === i ? "#1F51C6" : "#FFFFFF",
+                                    selectedDay.i === i &&
+                                    doctor.acceptAppointments === "bySlot"
+                                        ? "#1F51C6"
+                                        : doctor.acceptAppointments === "bySlot"
+                                        ? "#FFFFFF"
+                                        : "#D9D9D9",
                                 border:
                                     currentDate === date.day
                                         ? "2px solid #1F51C6"
                                         : "1px solid #706D6D8F",
                                 borderRadius: "3px",
                                 color:
-                                    selectedDay.i === i ? "#FFFFFF" : "#706D6D",
+                                    selectedDay.i === i
+                                        ? "#FFFFFF"
+                                        : doctor.acceptAppointments === "bySlot"
+                                        ? "#706D6D"
+                                        : "#ffffff",
+                                cursor:
+                                    doctor.acceptAppointments === "bySlot"
+                                        ? "pointer"
+                                        : "no-drop",
                                 userSelect: "none",
                             }}
                         >
@@ -183,6 +204,11 @@ const OnlineAppointmentEditSettings = ({
                                                 border: "1px solid #D9D9D9",
                                                 borderRadius: "5px",
                                                 lineHeight: "18px",
+                                                background:
+                                                    doctor?.acceptAppointments ===
+                                                    "byToken"
+                                                        ? "#D9D9D9"
+                                                        : "#ffffff",
                                             }}
                                         >
                                             {onlineSlotData?.slotduration} Mins
@@ -203,6 +229,11 @@ const OnlineAppointmentEditSettings = ({
                                             border: "1px solid #D9D9D9",
                                             borderRadius: "6px",
                                             p: "16px",
+                                            background:
+                                                doctor?.acceptAppointments ===
+                                                "byToken"
+                                                    ? "#D9D9D9"
+                                                    : "#ffffff",
                                         }}
                                     >
                                         <Box
@@ -294,6 +325,11 @@ const OnlineAppointmentEditSettings = ({
                                                 border: "1px solid #D9D9D9",
                                                 borderRadius: "6px",
                                                 p: "16px",
+                                                background:
+                                                    doctor?.acceptAppointments ===
+                                                    "byToken"
+                                                        ? "#D9D9D9"
+                                                        : "#ffffff",
                                             }}
                                         >
                                             <Box
@@ -395,6 +431,11 @@ const OnlineAppointmentEditSettings = ({
                                                 border: "1px solid #D9D9D9",
                                                 borderRadius: "6px",
                                                 p: "16px",
+                                                background:
+                                                    doctor?.acceptAppointments ===
+                                                    "byToken"
+                                                        ? "#D9D9D9"
+                                                        : "#ffffff",
                                             }}
                                         >
                                             <Box
@@ -510,6 +551,11 @@ const OnlineAppointmentEditSettings = ({
                         <Button
                             variant="contained"
                             onClick={() => setEditSlottSetting(true)}
+                            disabled={
+                                doctor?.acceptAppointments === "byToken"
+                                    ? true
+                                    : false
+                            }
                             sx={{
                                 width: "100%",
                                 boxShadow: "none",

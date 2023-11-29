@@ -54,11 +54,14 @@ const ChooseDateAndSlotTimeDialog = ({
     setSelectedTime,
     activeCard,
     setActiveCard,
+    tokenData,
 }) => {
     // const [activeCard, setActiveCard] = useState();
     const [dateErr, setDateErr] = useState(false);
     const [dates, setDates] = useState([]);
     // const [selectedTime, setSelectedTime] = useState(null);
+    const currontDate = moment().format("YYYY-MM-DD");
+    console.log(currontDate);
 
     const handleButtonClick = (slot, i) => {
         setBookingAppointmentDetails({
@@ -446,7 +449,30 @@ const ChooseDateAndSlotTimeDialog = ({
                                     color: "#1F51C6",
                                 }}
                             >
-                                9:00AM- 4:00PM
+                                {tokenData ? (
+                                    <Stack gap="10px">
+                                        <Box component="span">
+                                            {tokenData?.Starttime1} to{" "}
+                                            {tokenData?.Endtime1}
+                                        </Box>
+                                        {tokenData?.Starttime2 && (
+                                            <Box component="span">
+                                                {" "}
+                                                {tokenData?.Starttime2} to{" "}
+                                                {tokenData?.Endtime2}
+                                            </Box>
+                                        )}
+                                        {tokenData?.Starttime3 && (
+                                            <Box component="span">
+                                                {" "}
+                                                {tokenData?.Starttime3} to{" "}
+                                                {tokenData?.Endtime3}
+                                            </Box>
+                                        )}
+                                    </Stack>
+                                ) : (
+                                    "Doctor Not Available For Today"
+                                )}
                             </Typography>
                         </Stack>
                     )}
@@ -490,34 +516,58 @@ const ChooseDateAndSlotTimeDialog = ({
                             Booked
                         </Box>
                     </ListBoxStyle> */}
-                    <Button
-                        variant="contained"
-                        sx={{
-                            background: "#1F51C6",
-                            marginBottom: "10px",
-                            // width: "100%",
-                            borderRadius: "40px",
-                            boxShadow: "none",
-                            fontFamily: "Lato",
-                            fontWeight: "700",
-                            fontSize: "1.063rem",
-                            textTransform: "none",
-                            height: "40px",
-                        }}
-                        onClick={() => {
-                            if (
-                                !bookingAppointmentDetails.appointmentDate ||
-                                !bookingAppointmentDetails.AppointmentTime ||
-                                !datedumb
-                            ) {
-                                return setDateErr(true);
-                            }
+                    {acceptAppointments === "byToken" ? (
+                        <Button
+                            variant="contained"
+                            disabled={!tokenData?.Starttime1 ? true : false}
+                            sx={{
+                                background: "#1F51C6",
+                                marginBottom: "10px",
+                                // width: "100%",
+                                borderRadius: "40px",
+                                boxShadow: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                fontSize: "1.063rem",
+                                textTransform: "none",
+                                height: "40px",
+                            }}
+                            onClick={() => {
+                                setBookAppointmentDetailsDialog(true);
+                            }}
+                        >
+                            Next
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            sx={{
+                                background: "#1F51C6",
+                                marginBottom: "10px",
+                                // width: "100%",
+                                borderRadius: "40px",
+                                boxShadow: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                fontSize: "1.063rem",
+                                textTransform: "none",
+                                height: "40px",
+                            }}
+                            onClick={() => {
+                                if (
+                                    !bookingAppointmentDetails.appointmentDate ||
+                                    !bookingAppointmentDetails.AppointmentTime ||
+                                    !datedumb
+                                ) {
+                                    return setDateErr(true);
+                                }
 
-                            setBookAppointmentDetailsDialog(true);
-                        }}
-                    >
-                        Next
-                    </Button>
+                                setBookAppointmentDetailsDialog(true);
+                            }}
+                        >
+                            Next
+                        </Button>
+                    )}
                 </DialogContent>
             </Dialog>
         </>

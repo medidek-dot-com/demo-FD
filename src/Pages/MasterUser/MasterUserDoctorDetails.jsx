@@ -100,10 +100,13 @@ const MasterUserDoctorDetails = () => {
         role: user?.role,
     });
 
+    const currentDate = moment().format("YYYY-MM-DD");
+
     const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
         useState(false);
 
     const [slotData, setSlotData] = useState([]);
+    const [tokenData, setTokensData] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -162,17 +165,22 @@ const MasterUserDoctorDetails = () => {
         try {
             setSlotsLoading(true);
             const response = await axiosClient.get(
-                `/v2/getAvailbleSlotsForAnUser/${doctor_id}/${getDateAndTime.appointmentDate}`
+                `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctor_id}/${currentDate}`
             );
+            console.log(response);
             if (response.status === "ok") {
                 setSlotsLoading(false);
-                return setSlotData(response.result);
+                return setTokensData(response.result);
             }
         } catch (error) {
             setSlotsLoading(false);
             toast.error("something went wrong");
         }
     };
+
+    useEffect(() => {
+        getAvailableTokenTime();
+    }, [doctorDetails?.acceptAppointments === "byToken"]);
 
     return (
         <>
@@ -610,6 +618,7 @@ const MasterUserDoctorDetails = () => {
                 getDateAndTime={getDateAndTime}
                 setGetDateAndTime={setGetDateAndTime}
                 slotData={slotData}
+                tokenData={tokenData}
                 setSlotData={setSlotData}
                 slotsLoading={slotsLoading}
                 acceptAppointments={doctorDetails.acceptAppointments}

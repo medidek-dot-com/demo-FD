@@ -609,7 +609,8 @@ const EditDoctorDialog = ({
                             sx={{
                                 // marginTop: "25px",
                                 textTransform: "none",
-                                display: "block",
+                                display: "flex",
+                                alignItems: "center",
                                 width: "100%",
                                 borderRadius: "63px",
                                 // height: "40px",

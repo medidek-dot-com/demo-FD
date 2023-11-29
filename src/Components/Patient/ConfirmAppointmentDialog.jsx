@@ -58,6 +58,8 @@ const ConfirmAppointmentDialog = ({
         {}
     );
 
+    const currentDate = moment().format("DD-MM-YYYY");
+
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
         useState(false);
 
@@ -192,10 +194,18 @@ const ConfirmAppointmentDialog = ({
                                     fontSize: "1rem",
                                 }}
                             >
-                                {moment(
-                                    bookingAppointmentDetails.appointmentDate,
-                                    "YYYY-MM-DD"
-                                ).format("DD-MM-YYYY")}{" "}
+                                {/* {doctorinfo?.acceptAppointments !==
+                                        "byToken"
+                                            ? moment(
+                                                  bookingAppointmentDetails.appointmentDate
+                                              ).format("DD-MM-YYYY")
+                                            : currentDate} */}
+                                {doctorinfo?.acceptAppointments !== "byToken"
+                                    ? moment(
+                                          bookingAppointmentDetails.appointmentDate,
+                                          "YYYY-MM-DD"
+                                      ).format("DD-MM-YYYY")
+                                    : currentDate}{" "}
                             </Box>
                         </Box>
                         <Box>

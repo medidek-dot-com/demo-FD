@@ -101,6 +101,8 @@ const Home = () => {
                     p: 1,
                 }}
             >
+                {/* <img src="/loading2.gif" alt="loading" /> */}
+                {/* <iframe src="https://lottie.host/embed/a16e4038-29fe-4526-8bb9-e39b10c3ea6b/XvUF37riV5.json"></iframe> */}
                 <Banner classes={classes} />
                 <Section_I />
                 <Section_II />

@@ -143,7 +143,9 @@ const AppointmentSettings = () => {
     const [view, setView] = useState("Weekly view");
     const [holidayDialog, setHolidayDialog] = useState(false);
     const [markAsHoliday, setMarkAsHoliday] = useState(false);
-    const [appointmentByToken, setAppointmentByToken] = useState(false);
+    const [appointmentByToken, setAppointmentByToken] = useState(
+        doctor?.acceptAppointments === "byToken" ? true : false
+    );
     const [activeCard, setActiveCard] = useState();
     const [currentMonth, setCurrentMonth] = useState(moment());
     const [onlineSlotData, setOnlineSlotsData] = useState({});

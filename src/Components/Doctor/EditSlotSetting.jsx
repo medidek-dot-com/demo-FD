@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { BiSolidPlusSquare } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
+import { LoadingButton } from "@mui/lab";
 
 const EditSlotSetting = ({
     dates,
@@ -34,9 +35,11 @@ const EditSlotSetting = ({
     let c;
     let d;
     const { doctorid } = useParams();
+    const { doctor } = useSelector((state) => state.doctor);
     const { user } = useSelector((state) => state.auth);
     const [slotDurationTime, setSlotDurationTime] = useState("15 min");
     const [markAsHoliday, setMarkAsHoliday] = useState(false);
+    const [disableButton, setDisableButton] = useState(false);
 
     // const [startTime, setStartTime] = useState("10:00 AM");
     // let [endTime, setEndTime] = useState("");
@@ -219,6 +222,7 @@ const EditSlotSetting = ({
     };
 
     const saveData = async () => {
+        setDisableButton(true);
         if (markAsHoliday === true) {
             setStartTime("none");
             setStartTime2("none");
@@ -248,10 +252,12 @@ const EditSlotSetting = ({
                     await getOnlineSlotDetailForDoctorForPerticularDate();
                     setEditSlottSetting(false);
                     setMarkAsHoliday(false);
+                    setDisableButton(false);
                     return;
                 }
             } catch (error) {
                 toast.error("something went wrong");
+                setDisableButton(false);
                 console.log(error.message);
             }
         } else {
@@ -280,8 +286,10 @@ const EditSlotSetting = ({
                 setEndTime2("");
                 setEndTime3("");
                 setMarkAsHoliday(false);
+                setDisableButton(false);
             } catch (error) {
                 toast.error("something went wrong");
+                setDisableButton(false);
                 console.log(error.message);
             }
         }
@@ -1257,7 +1265,39 @@ const EditSlotSetting = ({
                         View Holiday List
                     </Button>
                 </Stack>
-                <Button
+                <LoadingButton
+                    // size="small"
+                    fullWidth
+                    onClick={saveData}
+                    loading={disableButton}
+                    // loadingPosition="end"
+                    variant="contained"
+                    disabled={
+                        doctor.acceptAppointments === "byToken" ? true : false
+                    }
+                    sx={{
+                        boxShadow: "none",
+                        borderRadius: "29px",
+                        textTransform: "none",
+                        fontFamily: "Lato",
+                        fontWeight: "700",
+                        fontSize: "1.063rem",
+                        ":hover": {
+                            boxShadow: "none",
+                        },
+                    }}
+                >
+                    <span
+                        style={{
+                            fontFamily: "Lato",
+                            fontWeight: "700",
+                            fontSize: "1.063rem",
+                        }}
+                    >
+                        Save
+                    </span>
+                </LoadingButton>
+                {/* <Button
                     variant="contained"
                     onClick={saveData}
                     disabled={acceptAppointmentBySlot === false ? true : false}
@@ -1271,7 +1311,7 @@ const EditSlotSetting = ({
                     }}
                 >
                     Save Changes
-                </Button>
+                </Button> */}
             </Stack>
         </>
     );
