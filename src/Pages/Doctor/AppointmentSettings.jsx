@@ -951,6 +951,9 @@ const AppointmentSettings = () => {
                                             }
                                             currentDate={currentDate}
                                             tokenSlotData={tokenSlotData}
+                                            getAppointmentByTokenSlotDetailForDoctorForPerticularDate={
+                                                getAppointmentByTokenSlotDetailForDoctorForPerticularDate
+                                            }
                                         />
                                     ) : (
                                         <AppointmentByToken
@@ -964,6 +967,9 @@ const AppointmentSettings = () => {
                                                 setTokenSelectedDay
                                             }
                                             currentDate={currentDate}
+                                            getAppointmentByTokenSlotDetailForDoctorForPerticularDate={
+                                                getAppointmentByTokenSlotDetailForDoctorForPerticularDate
+                                            }
                                         />
                                     )}
                                 </>

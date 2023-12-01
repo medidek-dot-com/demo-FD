@@ -22,6 +22,7 @@ import "ldrs/dotPulse";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "@emotion/styled";
+import { LoadingButton } from "@mui/lab";
 
 const SelectStyle = styled(Select)({
     ["& input:disabled"]: {
@@ -34,7 +35,7 @@ const SelectStyle = styled(Select)({
 });
 
 const AppointmentByToken = ({
-    dates,
+    // dates,
     setHolidayDialog,
     view,
     markAsHoliday,
@@ -42,10 +43,12 @@ const AppointmentByToken = ({
     currentDate,
     tokenSelectedDay,
     setTokenSelectedDay,
+    getAppointmentByTokenSlotDetailForDoctorForPerticularDate,
 }) => {
     const { doctorid } = useParams();
     const { user } = useSelector((state) => state.auth);
     const { doctor } = useSelector((state) => state.doctor);
+    const [dates, setDates] = useState([]);
 
     // const currentDate = moment().format("yyyy-MM-DD");
 
@@ -63,11 +66,14 @@ const AppointmentByToken = ({
     const [startTimes3, setStartTimes3] = useState([]);
     const [endTime3, setEndTime3] = useState("");
     const [endTimes3, setEndTimes3] = useState([]);
+    const [currentMonth, setCurrentMonth] = useState(moment());
 
     //From here
-    const [slotDuration, setSlotDuration] = useState(60);
+    const [slotDuration, setSlotDuration] = useState(15);
     const [endTime, setEndTime] = useState("");
     const [endTimes, setEndTimes] = useState([]);
+    const [disableButton, setDisableButton] = useState(false);
+
     let count = 1;
     const [numOfStartTimes, setNumOfStartTimes] = useState(0);
 
@@ -75,6 +81,29 @@ const AppointmentByToken = ({
         useState(false);
     const [switchLoading, setSwitchLoading] = useState(false);
     const slotDurations = [15, 30, 45, 60];
+
+    const generateStartTimes = () => {
+        const timestamps = [];
+        const totalMinutesInDay = 24 * 60;
+
+        for (
+            let minute = 0;
+            minute < totalMinutesInDay;
+            minute += slotDuration
+        ) {
+            const hour = Math.floor(minute / 60);
+            const minutePart = minute % 60;
+
+            const formattedHour = hour.toString().padStart(2, "0");
+            const formattedMinute = minutePart.toString().padStart(2, "0");
+
+            const timestamp = `${formattedHour}:${formattedMinute}`;
+            timestamps.push(timestamp);
+        }
+
+        return timestamps;
+    };
+    const startTimes = generateStartTimes();
 
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
@@ -94,6 +123,7 @@ const AppointmentByToken = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -118,6 +148,7 @@ const AppointmentByToken = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -142,6 +173,7 @@ const AppointmentByToken = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -167,6 +199,7 @@ const AppointmentByToken = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -190,11 +223,35 @@ const AppointmentByToken = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
         setStartTimes2(genratedStartTimes2);
     }, [endTime]);
+
+    const currentDay = moment().format("ddd");
+
+    const getWeekDates = () => {
+        const daysInMonth = currentMonth.daysInMonth();
+        const monthStart = moment().startOf("day");
+        const monthsDates = [];
+
+        for (let i = 0; i < 7; i++) {
+            const date = monthStart.clone().add(i, "days");
+            monthsDates.push({
+                day: date.format("ddd"),
+                date: date.format("DD"),
+                month: date.format("MMM"),
+                year: date.format("YYYY"),
+            });
+        }
+        setDates(monthsDates, currentDay);
+    };
+
+    useEffect(() => {
+        getWeekDates();
+    }, []);
 
     const handleSlotDurationChange = (event) => {
         setSlotDuration(event.target.value);
@@ -238,6 +295,7 @@ const AppointmentByToken = ({
     };
 
     const saveData = async () => {
+        setDisableButton(true);
         try {
             const response = await axiosClient.post("/v2/creatTokenForDoctor", {
                 Starttime1: startTime,
@@ -246,16 +304,20 @@ const AppointmentByToken = ({
                 Endtime2: endTime2,
                 Starttime3: startTime3,
                 Endtime3: endTime3,
-                date: selectedDay.currentDate,
+                date: tokenSelectedDay.currentDate,
                 doctorid: user._id,
             });
 
-            setStartTime("");
-            setStartTime2("");
-            setStartTime3("");
-            setEndTime("");
-            setEndTime2("");
-            setEndTime3("");
+            if (response.status === "ok") {
+                await getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
+                setStartTime("");
+                setStartTime2("");
+                setStartTime3("");
+                setEndTime("");
+                setEndTime2("");
+                setEndTime3("");
+                setDisableButton(false);
+            }
         } catch (error) {
             toast.error("something went wrong");
             console.log(error.message);
@@ -428,7 +490,20 @@ const AppointmentByToken = ({
                                     >
                                         None
                                     </MenuItem>
-                                    {Array.from(
+                                    {startTimes.map((time, i) => (
+                                        <MenuItem
+                                            key={i}
+                                            value={time}
+                                            sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "semibold",
+                                                fontSize: "1rem",
+                                            }}
+                                        >
+                                            {time}
+                                        </MenuItem>
+                                    ))}
+                                    {/* {Array.from(
                                         { length: 1440 / slotDuration },
                                         (_, index) => {
                                             const minutes =
@@ -466,7 +541,7 @@ const AppointmentByToken = ({
                                                 </MenuItem>
                                             );
                                         }
-                                    )}
+                                    )} */}
                                     {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
@@ -1176,7 +1251,41 @@ const AppointmentByToken = ({
                         </Stack>
                     </Stack> */}
                     {/* )} */}
-                    <Button
+                    <LoadingButton
+                        // size="small"
+                        fullWidth
+                        onClick={saveData}
+                        loading={disableButton}
+                        // loadingPosition="end"
+                        variant="contained"
+                        disabled={
+                            doctor.acceptAppointments === "bySlot"
+                                ? true
+                                : false
+                        }
+                        sx={{
+                            boxShadow: "none",
+                            borderRadius: "29px",
+                            textTransform: "none",
+                            fontFamily: "Lato",
+                            fontWeight: "700",
+                            fontSize: "1.063rem",
+                            ":hover": {
+                                boxShadow: "none",
+                            },
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                fontSize: "1.063rem",
+                            }}
+                        >
+                            Save
+                        </span>
+                    </LoadingButton>
+                    {/* <Button
                         variant="contained"
                         disabled={
                             doctor.acceptAppointments === "bySlot"
@@ -1194,7 +1303,7 @@ const AppointmentByToken = ({
                         }}
                     >
                         Save
-                    </Button>
+                    </Button> */}
                 </Stack>
             </Card>
         </>
