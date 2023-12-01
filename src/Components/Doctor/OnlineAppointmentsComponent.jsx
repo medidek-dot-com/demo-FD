@@ -93,16 +93,20 @@ const OnlineAppointmentsComponent = ({
         // Generate end times based on the selected start time and slot duration
         const generatedEndTimes = [];
         let currentTime = new Date(`01/01/2023 ${startTime}`);
+        console.log(currentTime);
         while (currentTime < new Date(`01/01/2023 11:59 PM`)) {
             currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
+            console.log(currentTime);
             generatedEndTimes.push(
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    formatMatcher: "basic",
                 })
             );
         }
         setEndTimes(generatedEndTimes);
+        console.log(generatedEndTimes);
     }, [slotDuration, startTime]);
 
     useEffect(() => {

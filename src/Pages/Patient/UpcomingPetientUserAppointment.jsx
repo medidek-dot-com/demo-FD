@@ -133,7 +133,7 @@ const UpcomingPetientUserAppointment = ({
                         textAlign: "center",
                     }}
                 >
-                    Loading...
+                    Nothing to show
                 </Typography>
             )}
 

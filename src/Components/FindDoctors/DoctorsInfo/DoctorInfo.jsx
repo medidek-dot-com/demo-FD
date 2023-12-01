@@ -311,8 +311,8 @@ const DoctorInfo = () => {
                             <Box>
                                 <img
                                     src={
-                                        doctorsData.imgurl
-                                            ? doctorsData.imgurl
+                                        doctorsData?.imgurl
+                                            ? doctorsData?.imgurl
                                             : "/default.png"
                                     }
                                     width={"118px"}
@@ -339,7 +339,7 @@ const DoctorInfo = () => {
                                             lineHeight: "25.83px",
                                         }}
                                     >
-                                        Dr {doctorsData.nameOfTheDoctor}
+                                        Dr {doctorsData?.nameOfTheDoctor}
                                     </Typography>
                                     <CheckCircleIcon
                                         color="success"
@@ -356,7 +356,7 @@ const DoctorInfo = () => {
                                         color: "#706D6D",
                                     }}
                                 >
-                                    {doctorsData.speciality}
+                                    {doctorsData?.speciality}
                                 </Typography>
                                 <Typography
                                     component={"span"}
@@ -367,7 +367,7 @@ const DoctorInfo = () => {
                                         color: "#706D6D",
                                     }}
                                 >
-                                    {doctorsData.yearOfExprience} Years
+                                    {doctorsData?.yearOfExprience} Years
                                     Experience
                                 </Typography>
                                 <Typography
@@ -382,7 +382,7 @@ const DoctorInfo = () => {
                                         color: "#000000BD",
                                     }}
                                 >
-                                    {doctorsData.description}
+                                    {doctorsData?.description}
                                 </Typography>
                             </Box>
                         </Card>
@@ -402,7 +402,7 @@ const DoctorInfo = () => {
                         {/* This is Web view */}
                         <Stack spacing={2}>
                             {doctorsData &&
-                                doctorsData.reviews?.map((review, i) => {
+                                doctorsData?.reviews?.map((review, i) => {
                                     return (
                                         <Card
                                             key={i}
@@ -429,7 +429,8 @@ const DoctorInfo = () => {
                                                 >
                                                     <Avatar
                                                         src={
-                                                            review.userid.imgurl
+                                                            review?.userid
+                                                                ?.imgurl
                                                         }
                                                         sx={{
                                                             width: "69.88px",
@@ -457,7 +458,10 @@ const DoctorInfo = () => {
                                                                     "22.38px",
                                                             }}
                                                         >
-                                                            {review.userid.name}
+                                                            {
+                                                                review?.userid
+                                                                    ?.name
+                                                            }
                                                         </Typography>
                                                         <Typography
                                                             variant="caption"
@@ -527,7 +531,7 @@ const DoctorInfo = () => {
                                     mx: "-25px",
                                 }}
                             />
-                            {hospitalList.map((hospital, i) => (
+                            {hospitalList?.map((hospital, i) => (
                                 <Stack
                                     key={i}
                                     direction="row"
@@ -574,7 +578,7 @@ const DoctorInfo = () => {
                                                           ?.nameOfhospitalOrClinic}
                                             </Typography>
                                             <Stack direction="row">
-                                                <Box
+                                                {/* <Box
                                                     component="span"
                                                     sx={{
                                                         lineHeight: "19.2px",
@@ -587,7 +591,7 @@ const DoctorInfo = () => {
                                                         ? hospital?.connsultationFee
                                                         : hospital?.hospitalId
                                                               ?.connsultationFee}
-                                                </Box>
+                                                </Box> */}
                                                 <Box
                                                     component="span"
                                                     sx={{

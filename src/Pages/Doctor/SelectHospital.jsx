@@ -13,7 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { axiosClient, baseURL } from "../../Utils/axiosClient";
 import styled from "@emotion/styled";
-import { selectedDoctorsData } from "../../Store/doctorDataSlice";
+import { logOutDoctor, selectedDoctorsData } from "../../Store/doctorDataSlice";
+import { logout } from "../../Store/authSlice";
 
 const ImageStyle = styled("img")(({ theme }) => ({
     width: "136.66px",
@@ -57,6 +58,15 @@ const SelectHospital = () => {
     useEffect(() => {
         multipleloginprofile();
     }, []);
+
+    const logOutUser = async () => {
+        dispatch(logOutDoctor());
+        dispatch(logout());
+        await axiosClient.post("/v2/logout");
+        removeItem(KEY_ACCESS_TOKEN);
+        // navigate('/')
+        // window.location.href = '/master/signin'
+    };
 
     // const doctorName = [...new Set(numberOfHospitals)];
 
@@ -192,6 +202,25 @@ const SelectHospital = () => {
                             </Stack>
                         ))}
                     </Card>
+                    <Button
+                        variant="contained"
+                        onClick={logOutUser}
+                        sx={{
+                            marginY: "10px",
+                            textTransform: "none",
+                            fontFamily: "Lato",
+                            fontWeight: "700",
+                            fontSize: "1.125rem",
+                            width: "100%",
+                            boxShadow: "none",
+                            borderRadius: "53px",
+                            ":hover": {
+                                boxShadow: "none",
+                            },
+                        }}
+                    >
+                        Logout
+                    </Button>
                 </Stack>
             </Box>
         </>

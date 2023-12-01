@@ -17,6 +17,8 @@ import {
     FormLabel,
     IconButton,
     Tooltip,
+    Select,
+    MenuItem,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import styled from "@emotion/styled";
@@ -46,8 +48,11 @@ import { BiSolidBook } from "react-icons/bi";
 import { BsFillCalendarPlusFill } from "react-icons/bs";
 import moment from "moment";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
-import { logOutDoctor } from "../../Store/doctorDataSlice";
+import { logOutDoctor, selectedDoctorsData } from "../../Store/doctorDataSlice";
 import "../../Styles/drawerAnimation.css";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import EastIcon from "@mui/icons-material/East";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 // const TextFieldStyle = styled(TextField)({
 //     // marginBottom: "20px",
@@ -108,6 +113,7 @@ const MUDDashboard = () => {
     const [todaysAppointmentData, setTodaysAppointmentData] = useState({});
     const [futureAppointmentData, setFutureAppointmentsData] = useState();
     const [totalPatientData, setTotalPatientData] = useState();
+    const [hospitalList, setHospitalList] = useState([]);
 
     const getPendingAppointmentsDataForPerticularDate = async () => {
         try {
@@ -239,6 +245,8 @@ const MUDDashboard = () => {
         i: "",
     });
 
+    const [expandedMore, setExpandedMore] = useState(false);
+
     useEffect(() => {
         if (inputImage) {
             setPreview(URL.createObjectURL(inputImage));
@@ -292,6 +300,27 @@ const MUDDashboard = () => {
             toast.error("Something went wrong");
         }
     };
+
+    //Handle Switch account functionality here
+
+    const multipleloginprofile = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/multipleloginprofile/${user?.doctorid}`
+            );
+            setHospitalList(response.result);
+            console.log(response);
+            return;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    console.log(hospitalList);
+
+    useEffect(() => {
+        multipleloginprofile();
+    }, []);
 
     return (
         <Box
@@ -670,6 +699,156 @@ const MUDDashboard = () => {
                         >
                             DUID :- {doctor.doctorid}
                         </Typography>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                width: "100%",
+                                position: "relative",
+                            }}
+                        >
+                            <Box
+                                component="button"
+                                onClick={() => setExpandedMore(!expandedMore)}
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    background: "none",
+                                    color: "#ffffff",
+                                    border: "none",
+                                    lineHeight: "18px",
+                                    fontFamily: "Lato",
+                                    fontSize: "15px",
+                                    fontWeight: "700",
+                                }}
+                            >
+                                {doctor?.hospitalId?.nameOfhospitalOrClinic
+                                    ? doctor.hospitalId.nameOfhospitalOrClinic
+                                    : doctor?.nameOfTheDoctor}
+                                {expandedMore ? (
+                                    <ExpandLessIcon />
+                                ) : (
+                                    <ExpandMoreIcon />
+                                )}
+                            </Box>
+                            {expandedMore && (
+                                <Card
+                                    sx={{
+                                        p: "5px",
+                                        width: "90%",
+                                        boxShadow: "none",
+                                        border: "1px solid #D9D9D9",
+                                        position: "absolute",
+                                        top: "30px",
+                                        zIndex: "2",
+                                    }}
+                                >
+                                    {hospitalList.map((hospital, i) => (
+                                        <Stack
+                                            key={i}
+                                            direction="row"
+                                            sx={{
+                                                justifyContent: "space-between",
+                                                borderBottom:
+                                                    "1px solid #D9D9D9",
+                                            }}
+                                        >
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                spacing="10px"
+                                            >
+                                                {/* <Badge badgeContent={4} color="primary"> */}
+                                                <Avatar
+                                                    src={
+                                                        hospital?.hospitalId ===
+                                                        null
+                                                            ? hospital?.imgurl
+                                                            : hospital
+                                                                  ?.hospitalId
+                                                                  ?.imgurl ||
+                                                              "/default.png"
+                                                    }
+                                                    sx={{
+                                                        width: "20px",
+                                                        height: "20px",
+                                                    }}
+                                                />
+                                                {/* </Badge> */}
+                                                <Stack>
+                                                    <Typography
+                                                        sx={{
+                                                            lineHeight:
+                                                                "14.6px",
+                                                            fontFamily:
+                                                                "Raleway",
+                                                            fontSize: "13px",
+                                                            fontWeight: "500",
+                                                        }}
+                                                    >
+                                                        {hospital?.hospitalId ===
+                                                        null
+                                                            ? hospital?.nameOfTheDoctor
+                                                            : hospital
+                                                                  ?.hospitalId
+                                                                  ?.nameOfhospitalOrClinic}
+                                                    </Typography>
+                                                    {/* <Typography
+                                                    sx={{
+                                                        lineHeight: "19.2px",
+                                                        fontFamily: "Lato",
+                                                        color: "#706D6D",
+                                                    }}
+                                                >
+                                                    {hospital?.hospitalId?.location}
+                                                </Typography> */}
+                                                </Stack>
+                                            </Stack>
+                                            <Button
+                                                onClick={() => {
+                                                    dispatch(
+                                                        selectedDoctorsData(
+                                                            hospital
+                                                        )
+                                                    );
+                                                    navigate(
+                                                        `/doctor/dashboard/${hospital._id}`
+                                                    );
+                                                    setExpandedMore(false);
+                                                }}
+                                                variant="text"
+                                                sx={{
+                                                    fontSize: "16px",
+                                                }}
+                                            >
+                                                <EastIcon fontSize="16px" />
+                                            </Button>
+                                        </Stack>
+                                    ))}
+                                </Card>
+                            )}
+                            {/* <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    background: "#ffffff",
+                                    width: "75%",
+                                    borderRadius: "5px",
+                                    p: "5px",
+                                }}
+                            >
+                                <Box component="span">
+                                    djkfvvikfhv kjbkuhkhk
+                                </Box>
+                                <hr color="red" />
+                                <Box component="span">
+                                    dkjfjbdk dfhvijhvedfv oohrfoerijv e
+                                </Box>
+                                <Box component="span">kdhfvkdhvk</Box>
+                            </Box> */}
+                        </Box>
                     </Stack>
                     <Stack
                         alignItems={"start"}

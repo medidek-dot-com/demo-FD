@@ -109,8 +109,8 @@ const LabelStyle = styled("label")({
     fontSize: "15px",
     color: "#383838",
 });
-var isSelfDoctorId;
 const DoctorEditProfile = () => {
+    var isSelfDoctorId = false;
     const { doctorid } = useParams();
     const dispatch = useDispatch();
     const [pendingAppointmentsData, setPendingAppointmentsData] = useState([]);
