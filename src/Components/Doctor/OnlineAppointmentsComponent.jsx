@@ -82,6 +82,29 @@ const OnlineAppointmentsComponent = ({
 
     const slotDurations = [15, 30, 45, 60];
 
+    const generateStartTimes = () => {
+        const timestamps = [];
+        const totalMinutesInDay = 24 * 60;
+
+        for (
+            let minute = 0;
+            minute < totalMinutesInDay;
+            minute += slotDuration
+        ) {
+            const hour = Math.floor(minute / 60);
+            const minutePart = minute % 60;
+
+            const formattedHour = hour.toString().padStart(2, "0");
+            const formattedMinute = minutePart.toString().padStart(2, "0");
+
+            const timestamp = `${formattedHour}:${formattedMinute}`;
+            timestamps.push(timestamp);
+        }
+
+        return timestamps;
+    };
+    const startTimes = generateStartTimes();
+
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
         const start = new Date(`01/01/2023 ${startTime}`);
@@ -101,6 +124,7 @@ const OnlineAppointmentsComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                     formatMatcher: "basic",
                 })
             );
@@ -126,6 +150,7 @@ const OnlineAppointmentsComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -149,6 +174,7 @@ const OnlineAppointmentsComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -185,6 +211,7 @@ const OnlineAppointmentsComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -209,6 +236,7 @@ const OnlineAppointmentsComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -602,7 +630,20 @@ const OnlineAppointmentsComponent = ({
                                     value={startTime}
                                     onChange={handleStartTimeChange}
                                 >
-                                    {Array.from(
+                                    {startTimes.map((time, i) => (
+                                        <MenuItem
+                                            key={i}
+                                            value={time}
+                                            sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "semibold",
+                                                fontSize: "1rem",
+                                            }}
+                                        >
+                                            {time}
+                                        </MenuItem>
+                                    ))}
+                                    {/* {Array.from(
                                         { length: 1440 / slotDuration },
                                         (_, index) => {
                                             const minutes =
@@ -640,7 +681,7 @@ const OnlineAppointmentsComponent = ({
                                                 </MenuItem>
                                             );
                                         }
-                                    )}
+                                    )}  */}
                                     {/* <MenuItem
                                         value="Calandar View"
                                         sx={{

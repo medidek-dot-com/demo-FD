@@ -347,7 +347,7 @@ const DoctorsList = () => {
 
     const [hospitalList, setHospitalList] = useState([]);
 
-    const multipleloginprofile = async () => {};
+    // const multipleloginprofile = async () => {};
 
     return (
         <>

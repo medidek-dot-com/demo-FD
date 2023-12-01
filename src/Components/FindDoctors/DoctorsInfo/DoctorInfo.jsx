@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./DoctorsInfoStyle/doctorsInfoStyle.css";
 import {
     Box,
@@ -72,7 +72,8 @@ let datedumb;
 
 const DoctorInfo = () => {
     const { doctorsId } = useParams();
-    const { user } = useSelector((state) => state.auth);
+    const { isLoggedIn, user } = useSelector((state) => state.auth);
+    const urlLocation = useLocation();
     const [dates, setDates] = useState([]);
     const [activeDate, setActiveDate] = useState(false);
     const [slotTime, setSlotTime] = useState(false);
@@ -200,6 +201,12 @@ const DoctorInfo = () => {
     }, []);
 
     const getSingleDoctorDetails = async () => {
+        if (!isLoggedIn) {
+            navigate("/user/signin", {
+                state: { prevUrl: urlLocation.pathname },
+            });
+            return false;
+        }
         try {
             const response = await axiosClient.get(
                 `/v2/singledoctor/${doctorsId}`
