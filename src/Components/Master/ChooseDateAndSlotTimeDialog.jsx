@@ -60,8 +60,8 @@ const ChooseDateAndSlotTimeDialog = ({
     const [dateErr, setDateErr] = useState(false);
     const [dates, setDates] = useState([]);
     // const [selectedTime, setSelectedTime] = useState(null);
-    const currontDate = moment().format("YYYY-MM-DD");
-    console.log(currontDate);
+    const currentDate = moment().format("YYYY-MM-DD");
+    console.log(currentDate);
 
     const handleButtonClick = (slot, i) => {
         setBookingAppointmentDetails({
@@ -387,7 +387,7 @@ const ChooseDateAndSlotTimeDialog = ({
                         <Stack spacing="20px">
                             <Card
                                 onClick={(e) => {
-                                    setActiveCard(i);
+                                    // setActiveCard(i);
                                     setDateErr(false);
                                     const dateString = e.target.innerText;
                                     const dateObject = dayjs(

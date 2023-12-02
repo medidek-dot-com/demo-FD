@@ -481,7 +481,7 @@ const AppointmentByToken = ({
                                     onChange={handleStartTimeChange}
                                 >
                                     <MenuItem
-                                        value={"None"}
+                                        value={""}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
@@ -606,7 +606,7 @@ const AppointmentByToken = ({
                                     }
                                 >
                                     <MenuItem
-                                        value={"None"}
+                                        value={""}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
@@ -743,7 +743,7 @@ const AppointmentByToken = ({
                                     }
                                 >
                                     <MenuItem
-                                        value={"None"}
+                                        value={""}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
@@ -829,7 +829,7 @@ const AppointmentByToken = ({
                                     }
                                 >
                                     <MenuItem
-                                        value={"None"}
+                                        value={""}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
@@ -971,7 +971,7 @@ const AppointmentByToken = ({
                                     }
                                 >
                                     <MenuItem
-                                        value={"None"}
+                                        value={""}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",
@@ -1057,7 +1057,7 @@ const AppointmentByToken = ({
                                     }
                                 >
                                     <MenuItem
-                                        value={"None"}
+                                        value={""}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "semibold",

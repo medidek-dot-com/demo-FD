@@ -180,7 +180,7 @@ const EditPetientProfile = () => {
         formData.append("dateOfBirth", inputValue.dateOfBirth);
         formData.append("phone", inputValue.phone);
         formData.append("gender", inputValue.gender);
-        formData.append("image", inputImage || imageValues);
+        formData.append("image", inputImage || user?.imgurl);
 
         try {
             const response = await axiosClient.put(

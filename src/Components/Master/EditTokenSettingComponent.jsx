@@ -22,6 +22,7 @@ import "ldrs/dotPulse";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "@emotion/styled";
+import { LoadingButton } from "@mui/lab";
 
 const EditTokenSettingComponent = ({
     setSelecteTokendDate,
@@ -55,23 +56,47 @@ const EditTokenSettingComponent = ({
 
     //From here
     const [slotDuration, setSlotDuration] = useState(60);
-    const [endTime, setEndTime] = useState("");
+    const [endTime, setEndTime] = useState(tokenSlotData.Endtime1);
     const [endTimes, setEndTimes] = useState([]);
     let count = 1;
     const [numOfStartTimes, setNumOfStartTimes] = useState(0);
+    const [disableButton, setDisableButton] = useState(false);
 
     const [acceptAppointmentByToken, setAcceptAppointmentByToken] =
         useState(false);
     const [switchLoading, setSwitchLoading] = useState(false);
     const slotDurations = [15, 30, 45, 60];
 
+    const generateStartTimes = () => {
+        const timestamps = [];
+        const totalMinutesInDay = 24 * 60;
+
+        for (
+            let minute = 0;
+            minute < totalMinutesInDay;
+            minute += slotDuration
+        ) {
+            const hour = Math.floor(minute / 60);
+            const minutePart = minute % 60;
+
+            const formattedHour = hour.toString().padStart(2, "0");
+            const formattedMinute = minutePart.toString().padStart(2, "0");
+
+            const timestamp = `${formattedHour}:${formattedMinute}`;
+            timestamps.push(timestamp);
+        }
+
+        return timestamps;
+    };
+    const startTimes = generateStartTimes();
+
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
         const start = new Date(`01/01/2023 ${startTime}`);
         start.setMinutes(start.getMinutes() + slotDuration);
-        setEndTime(
-            start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        );
+        // setEndTime(
+        //     start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        // );
         console.log(start);
 
         // Generate end times based on the selected start time and slot duration
@@ -84,6 +109,7 @@ const EditTokenSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -109,6 +135,7 @@ const EditTokenSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -134,6 +161,7 @@ const EditTokenSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -160,6 +188,7 @@ const EditTokenSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -183,6 +212,7 @@ const EditTokenSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -234,6 +264,7 @@ const EditTokenSettingComponent = ({
     };
 
     const saveData = async () => {
+        setDisableButton(true);
         try {
             const response = await axiosClient.post("/v2/creatTokenForDoctor", {
                 Starttime1: startTime,
@@ -253,10 +284,13 @@ const EditTokenSettingComponent = ({
                 setEndTime("");
                 setEndTime2("");
                 setEndTime3("");
-                setEditTokenSetting(false);
                 await getAppointmentByTokenSlotDetailForDoctorForPerticularDate();
+                setEditTokenSetting(false);
+                setDisableButton(false);
             }
         } catch (error) {
+            toast.error("Something went wrong");
+            setDisableButton(false);
             console.log(error.message);
         }
     };
@@ -322,7 +356,7 @@ const EditTokenSettingComponent = ({
                                 onChange={handleStartTimeChange}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -331,7 +365,20 @@ const EditTokenSettingComponent = ({
                                 >
                                     None
                                 </MenuItem>
-                                {Array.from(
+                                {startTimes.map((time, i) => (
+                                    <MenuItem
+                                        key={i}
+                                        value={time}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        {time}
+                                    </MenuItem>
+                                ))}
+                                {/* {Array.from(
                                     { length: 1440 / slotDuration },
                                     (_, index) => {
                                         const minutes = index * slotDuration;
@@ -365,7 +412,7 @@ const EditTokenSettingComponent = ({
                                             </MenuItem>
                                         );
                                     }
-                                )}
+                                )} */}
                                 {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
@@ -431,7 +478,7 @@ const EditTokenSettingComponent = ({
                                 }
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -567,7 +614,7 @@ const EditTokenSettingComponent = ({
                                 onChange={(e) => setStartTime2(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -652,7 +699,7 @@ const EditTokenSettingComponent = ({
                                 onChange={(e) => setEndTime2(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -793,7 +840,7 @@ const EditTokenSettingComponent = ({
                                 onChange={(e) => setStartTime3(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -878,7 +925,7 @@ const EditTokenSettingComponent = ({
                                 onChange={(e) => setEndTime3(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -1072,7 +1119,41 @@ const EditTokenSettingComponent = ({
                         </Stack>
                     </Stack> */}
                 {/* )} */}
-                <Button
+                <LoadingButton
+                    // size="small"
+                    fullWidth
+                    onClick={saveData}
+                    loading={disableButton}
+                    // loadingPosition="end"
+                    variant="contained"
+                    disabled={
+                        doctorDetails.acceptAppointments === "bySlot"
+                            ? true
+                            : false
+                    }
+                    sx={{
+                        boxShadow: "none",
+                        borderRadius: "29px",
+                        textTransform: "none",
+                        fontFamily: "Lato",
+                        fontWeight: "700",
+                        fontSize: "1.063rem",
+                        ":hover": {
+                            boxShadow: "none",
+                        },
+                    }}
+                >
+                    <span
+                        style={{
+                            fontFamily: "Lato",
+                            fontWeight: "700",
+                            fontSize: "1.063rem",
+                        }}
+                    >
+                        Save Changes
+                    </span>
+                </LoadingButton>
+                {/* <Button
                     variant="contained"
                     disabled={
                         doctorDetails.acceptAppointments === "bySlot"
@@ -1090,7 +1171,7 @@ const EditTokenSettingComponent = ({
                     }}
                 >
                     Save Changes
-                </Button>
+                </Button> */}
             </Stack>
 
             {/* <EditTokenSettingComponent 

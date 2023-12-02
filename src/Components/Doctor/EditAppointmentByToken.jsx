@@ -305,7 +305,7 @@ const EditAppointmentByToken = ({
                                 onChange={handleStartTimeChange}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -428,7 +428,7 @@ const EditAppointmentByToken = ({
                                 }
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -509,7 +509,7 @@ const EditAppointmentByToken = ({
                                 onChange={(e) => setStartTime2(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value=""
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -580,7 +580,7 @@ const EditAppointmentByToken = ({
                                 onChange={(e) => setEndTime2(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -661,7 +661,7 @@ const EditAppointmentByToken = ({
                                 onChange={(e) => setStartTime3(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -732,7 +732,7 @@ const EditAppointmentByToken = ({
                                 onChange={(e) => setEndTime3(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"None"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",

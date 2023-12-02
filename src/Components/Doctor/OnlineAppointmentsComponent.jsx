@@ -630,6 +630,16 @@ const OnlineAppointmentsComponent = ({
                                     value={startTime}
                                     onChange={handleStartTimeChange}
                                 >
+                                    <MenuItem
+                                        value={""}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        None
+                                    </MenuItem>
                                     {startTimes.map((time, i) => (
                                         <MenuItem
                                             key={i}
@@ -745,6 +755,16 @@ const OnlineAppointmentsComponent = ({
                                         setEndTime(event.target.value)
                                     }
                                 >
+                                    <MenuItem
+                                        value={""}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        None
+                                    </MenuItem>
                                     {endTimes.map((time) => (
                                         <MenuItem
                                             key={time}
@@ -861,6 +881,16 @@ const OnlineAppointmentsComponent = ({
                                         setStartTime2(e.target.value)
                                     }
                                 >
+                                    <MenuItem
+                                        value={""}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        None
+                                    </MenuItem>
                                     {startTimes2.map((startTime, i) => (
                                         <MenuItem
                                             value={startTime}
@@ -937,6 +967,16 @@ const OnlineAppointmentsComponent = ({
                                         setEndTime2(e.target.value)
                                     }
                                 >
+                                    <MenuItem
+                                        value={""}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        None
+                                    </MenuItem>
                                     {endTimes2.map((endTime, i) => (
                                         <MenuItem
                                             value={endTime}
@@ -1045,6 +1085,16 @@ const OnlineAppointmentsComponent = ({
                                         setStartTime3(e.target.value)
                                     }
                                 >
+                                    <MenuItem
+                                        value={""}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        None
+                                    </MenuItem>
                                     {startTimes3.map((time, i) => (
                                         <MenuItem
                                             value={time}
@@ -1121,6 +1171,16 @@ const OnlineAppointmentsComponent = ({
                                         setEndTime3(e.target.value)
                                     }
                                 >
+                                    <MenuItem
+                                        value={""}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        None
+                                    </MenuItem>
                                     {endTimes3.map((endTime, i) => (
                                         <MenuItem
                                             value={endTime}

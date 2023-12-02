@@ -16,6 +16,8 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
 import { axiosClient } from "../../Utils/axiosClient";
+import { LoadingButton } from "@mui/lab";
+import { toast } from "react-toastify";
 
 const AddSlotComponent = ({
     doctorDetails,
@@ -49,8 +51,32 @@ const AddSlotComponent = ({
     const [startTimes3, setStartTimes3] = useState([]);
     const [endTime3, setEndTime3] = useState("");
     const [endTimes3, setEndTimes3] = useState([]);
+    const [disableButton, setDisableButton] = useState(false);
 
     const slotDurations = [15, 30, 45, 60];
+
+    const generateStartTimes = () => {
+        const timestamps = [];
+        const totalMinutesInDay = 24 * 60;
+
+        for (
+            let minute = 0;
+            minute < totalMinutesInDay;
+            minute += slotDuration
+        ) {
+            const hour = Math.floor(minute / 60);
+            const minutePart = minute % 60;
+
+            const formattedHour = hour.toString().padStart(2, "0");
+            const formattedMinute = minutePart.toString().padStart(2, "0");
+
+            const timestamp = `${formattedHour}:${formattedMinute}`;
+            timestamps.push(timestamp);
+        }
+
+        return timestamps;
+    };
+    const startTimes = generateStartTimes();
 
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
@@ -69,6 +95,7 @@ const AddSlotComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -92,6 +119,7 @@ const AddSlotComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -115,6 +143,7 @@ const AddSlotComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -151,6 +180,7 @@ const AddSlotComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -176,6 +206,7 @@ const AddSlotComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -194,6 +225,7 @@ const AddSlotComponent = ({
 
     const saveData = async () => {
         console.log(markAsHoliday);
+        setDisableButton(true);
         if (markAsHoliday === true) {
             setStartTime("");
             setStartTime2("");
@@ -219,8 +251,11 @@ const AddSlotComponent = ({
                     }
                 );
                 await getOnlineSlotDetailForDoctorForPerticularDate();
+                setDisableButton(false);
                 console.log(response.result);
             } catch (error) {
+                toast.error("Something went wrong");
+                setDisableButton(false);
                 console.log(error.message);
             }
         } else {
@@ -429,7 +464,30 @@ const AddSlotComponent = ({
                                 value={startTime}
                                 onChange={handleStartTimeChange}
                             >
-                                {Array.from(
+                                <MenuItem
+                                    value={""}
+                                    sx={{
+                                        fontFamily: "Lato",
+                                        fontWeight: "semibold",
+                                        fontSize: "1rem",
+                                    }}
+                                >
+                                    None
+                                </MenuItem>
+                                {startTimes.map((time, i) => (
+                                    <MenuItem
+                                        key={i}
+                                        value={time}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        {time}
+                                    </MenuItem>
+                                ))}
+                                {/* {Array.from(
                                     { length: 1440 / slotDuration },
                                     (_, index) => {
                                         const minutes = index * slotDuration;
@@ -463,7 +521,7 @@ const AddSlotComponent = ({
                                             </MenuItem>
                                         );
                                     }
-                                )}
+                                )} */}
                                 {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
@@ -678,7 +736,7 @@ const AddSlotComponent = ({
                                 color: "#383838",
                             }}
                         >
-                            End Time
+                            End Time 2
                         </InputLabel>
                         <Stack
                             direction="row"
@@ -1022,7 +1080,41 @@ const AddSlotComponent = ({
                         View Holiday List
                     </Button>
                 </Stack>
-                <Button
+                <LoadingButton
+                    // size="small"
+                    fullWidth
+                    onClick={saveData}
+                    loading={disableButton}
+                    // loadingPosition="end"
+                    variant="contained"
+                    disabled={
+                        doctorDetails.acceptAppointments === "byToken"
+                            ? true
+                            : false
+                    }
+                    sx={{
+                        boxShadow: "none",
+                        borderRadius: "29px",
+                        textTransform: "none",
+                        fontFamily: "Lato",
+                        fontWeight: "700",
+                        fontSize: "1.063rem",
+                        ":hover": {
+                            boxShadow: "none",
+                        },
+                    }}
+                >
+                    <span
+                        style={{
+                            fontFamily: "Lato",
+                            fontWeight: "700",
+                            fontSize: "1.063rem",
+                        }}
+                    >
+                        Save
+                    </span>
+                </LoadingButton>
+                {/* <Button
                     variant="contained"
                     disabled={
                         doctorDetails?.acceptAppointments === "byToken"
@@ -1040,7 +1132,7 @@ const AddSlotComponent = ({
                     }}
                 >
                     Save
-                </Button>
+                </Button> */}
             </Stack>
         </>
     );

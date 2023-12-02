@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { BiSolidPlusSquare } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { BiRadioCircle, BiRadioCircleMarked } from "react-icons/bi";
+import { LoadingButton } from "@mui/lab";
 
 const EditSlotSettingComponent = ({
     dates,
@@ -35,6 +36,7 @@ const EditSlotSettingComponent = ({
     let c;
     let d;
     const { doctor_id } = useParams();
+    console.log(onlineSlotData);
     const { user } = useSelector((state) => state.auth);
     const [slotDurationTime, setSlotDurationTime] = useState("15 min");
     const [markAsHoliday, setMarkAsHoliday] = useState(false);
@@ -61,8 +63,32 @@ const EditSlotSettingComponent = ({
     const [acceptAppointmentBySlot, setAcceptAppointmentBySlot] = useState(
         onlineSlotData ? true : false
     );
+    const [disableButton, setDisableButton] = useState(false);
     const [switchLoading, setSwitchLoading] = useState(false);
     const slotDurations = [15, 30, 45, 60];
+
+    const generateStartTimes = () => {
+        const timestamps = [];
+        const totalMinutesInDay = 24 * 60;
+
+        for (
+            let minute = 0;
+            minute < totalMinutesInDay;
+            minute += slotDuration
+        ) {
+            const hour = Math.floor(minute / 60);
+            const minutePart = minute % 60;
+
+            const formattedHour = hour.toString().padStart(2, "0");
+            const formattedMinute = minutePart.toString().padStart(2, "0");
+
+            const timestamp = `${formattedHour}:${formattedMinute}`;
+            timestamps.push(timestamp);
+        }
+
+        return timestamps;
+    };
+    const startTimes = generateStartTimes();
 
     useEffect(() => {
         // Calculate the initial end time based on slot duration and start time
@@ -81,6 +107,7 @@ const EditSlotSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -117,6 +144,7 @@ const EditSlotSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -140,6 +168,7 @@ const EditSlotSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -176,6 +205,7 @@ const EditSlotSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -201,6 +231,7 @@ const EditSlotSettingComponent = ({
                 currentTime.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
+                    hour12: false,
                 })
             );
         }
@@ -217,6 +248,7 @@ const EditSlotSettingComponent = ({
 
     const saveData = async () => {
         console.log(markAsHoliday);
+        setDisableButton(true);
         if (markAsHoliday === true) {
             setStartTime("none");
             setStartTime2("none");
@@ -246,12 +278,14 @@ const EditSlotSettingComponent = ({
                     console.log("falssssss");
                     await getOnlineSlotDetailForDoctorForPerticularDate();
                     setEditSlotSetting(false);
+                    setDisableButton(false);
                     setMarkAsHoliday(false);
                     return console.log(response.result);
                 }
             } catch (error) {
                 console.log(error.message);
-                console.log(error.message);
+                setDisableButton(false);
+                toast.error("Something went wrong");
             }
         } else {
             try {
@@ -448,7 +482,7 @@ const EditSlotSettingComponent = ({
                                 onChange={handleStartTimeChange}
                             >
                                 <MenuItem
-                                    value={"none"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -457,7 +491,20 @@ const EditSlotSettingComponent = ({
                                 >
                                     None
                                 </MenuItem>
-                                {Array.from(
+                                {startTimes.map((time, i) => (
+                                    <MenuItem
+                                        key={i}
+                                        value={time}
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        {time}
+                                    </MenuItem>
+                                ))}
+                                {/* {Array.from(
                                     { length: 1440 / slotDuration },
                                     (_, index) => {
                                         const minutes = index * slotDuration;
@@ -491,7 +538,7 @@ const EditSlotSettingComponent = ({
                                             </MenuItem>
                                         );
                                     }
-                                )}
+                                )} */}
                                 {/* <MenuItem
                                         value="Calandar View"
                                         sx={{
@@ -555,7 +602,7 @@ const EditSlotSettingComponent = ({
                                 }
                             >
                                 <MenuItem
-                                    value={"none"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -690,7 +737,7 @@ const EditSlotSettingComponent = ({
                                 onChange={(e) => setStartTime2(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"none"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -764,7 +811,7 @@ const EditSlotSettingComponent = ({
                                 onChange={(e) => setEndTime2(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"none"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -894,7 +941,7 @@ const EditSlotSettingComponent = ({
                                 onChange={(e) => setStartTime3(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"none"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -968,7 +1015,7 @@ const EditSlotSettingComponent = ({
                                 onChange={(e) => setEndTime3(e.target.value)}
                             >
                                 <MenuItem
-                                    value={"none"}
+                                    value={""}
                                     sx={{
                                         fontFamily: "Lato",
                                         fontWeight: "semibold",
@@ -1256,7 +1303,37 @@ const EditSlotSettingComponent = ({
                         View Holiday List
                     </Button>
                 </Stack>
-                <Button
+                <LoadingButton
+                    // size="small"
+                    fullWidth
+                    onClick={saveData}
+                    loading={disableButton}
+                    // loadingPosition="end"
+                    variant="contained"
+                    disabled={acceptAppointmentBySlot ? false : true}
+                    sx={{
+                        boxShadow: "none",
+                        borderRadius: "29px",
+                        textTransform: "none",
+                        fontFamily: "Lato",
+                        fontWeight: "700",
+                        fontSize: "1.063rem",
+                        ":hover": {
+                            boxShadow: "none",
+                        },
+                    }}
+                >
+                    <span
+                        style={{
+                            fontFamily: "Lato",
+                            fontWeight: "700",
+                            fontSize: "1.063rem",
+                        }}
+                    >
+                        Save Changes
+                    </span>
+                </LoadingButton>
+                {/* <Button
                     variant="contained"
                     onClick={saveData}
                     disabled={acceptAppointmentBySlot === false ? true : false}
@@ -1270,7 +1347,7 @@ const EditSlotSettingComponent = ({
                     }}
                 >
                     Save Changes
-                </Button>
+                </Button> */}
             </Stack>
         </>
     );

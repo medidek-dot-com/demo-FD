@@ -23,10 +23,11 @@ const AddedTokenComponent = ({
     getAppointmentByTokenSlotDetailForDoctorForPerticularDate,
     doctorDetails,
     selectedTokenDate,
+    editTokenSetting,
+    setEditTokenSetting,
 }) => {
     const [onlineAppointmentEnabled, setOnlineAppointmentEnabled] =
         useState(false);
-    const [editTokenSetting, setEditTokenSetting] = useState(false);
     // const [selectedDay, setSelectedDay] = useState(0);
     // const currentDate = moment().format("ddd");
 

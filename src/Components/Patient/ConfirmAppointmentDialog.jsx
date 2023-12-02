@@ -25,6 +25,7 @@ import { LoadingButton } from "@mui/lab";
 // import AppointmentConfirmDialog from "../Master/AppointmentConfirmDialog";
 import { toast } from "react-toastify";
 import AppointmentConfirmDIalog from "../FindDoctors/DoctorsList/AppointmentConfirmDIalog";
+import AppointmentConfirmByTokenDialog from "../FindDoctors/DoctorsList/AppointmentConfirmByTokenDialog";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -58,53 +59,109 @@ const ConfirmAppointmentDialog = ({
         {}
     );
 
-    const currentDate = moment().format("DD-MM-YYYY");
+    console.log(doctorinfo);
+
+    const currentDate = moment().format("YYYY-MM-DD");
 
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
         useState(false);
+    const [
+        appointmentCofirmedByTokenDialog,
+        setAppointmentCofirmedByTokenDialog,
+    ] = useState(false);
 
     const bookAppointment = async () => {
         setDisableButton(true);
-        try {
-            const response = await axiosClient.post(
-                "/v2/bookAppointment",
-                inputValue
-            );
+        // try {
+        if (doctorinfo?.acceptAppointments === "byToken") {
+            try {
+                const response = await axiosClient.post(
+                    "/v2/bookappointmentbytoken",
+                    { ...inputValue, appointmentDate: currentDate }
+                );
 
-            if (response.status === "ok") {
-                setConfirmedAppointmentData(response.result);
-                setAppointmentCofirmedDialog(true);
-                setDisableButton(false);
-                setBookAppointmentDialog(false);
-                setConfirmBookAppointmentDialog(false);
-                setBookAppointmentDialog(false);
-                setBookAppointmentDetailsDialog(false);
-                setHospitalListDialog && setHospitalListDialog(false);
-                setChooseDateAndTimeDialog && setChooseDateAndTimeDialog(false);
-                // window.location.reload();
-                (await getPendingAppointmentsDataForPerticularDate) &&
-                    getPendingAppointmentsDataForPerticularDate();
-            }
-        } catch (error) {
-            if (
-                error.statusCode === 409 &&
-                error.message === "Appointment is already exist"
-            ) {
-                setAppointmentAlreadyExistDialog(true);
-                setDisableButton(false);
-                setBookAppointmentDialog(false);
-                setConfirmBookAppointmentDialog(false);
-                setBookAppointmentDialog(false);
-                setBookAppointmentDetailsDialog(false);
+                if (response.status === "ok") {
+                    setConfirmedAppointmentData(response.result);
+                    setAppointmentCofirmedByTokenDialog(true);
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setBookAppointmentDetailsDialog(false);
+                    setHospitalListDialog && setHospitalListDialog(false);
+                    setChooseDateAndTimeDialog &&
+                        setChooseDateAndTimeDialog(false);
+                    // window.location.reload();
+                    (await getPendingAppointmentsDataForPerticularDate) &&
+                        getPendingAppointmentsDataForPerticularDate();
+                }
+            } catch (error) {
+                if (
+                    error.statusCode === 409 &&
+                    error.message ===
+                        "token already exist for this user and doctor for today"
+                ) {
+                    setAppointmentAlreadyExistDialog(true);
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setBookAppointmentDetailsDialog(false);
 
-                setChooseDateAndTimeDialog && setChooseDateAndTimeDialog(false);
-                setHospitalListDialog && setHospitalListDialog(false);
-                return;
+                    setChooseDateAndTimeDialog &&
+                        setChooseDateAndTimeDialog(false);
+                    setHospitalListDialog && setHospitalListDialog(false);
+                    return;
+                }
+                setDisableButton(false);
+                toast.error(error.message);
             }
-            setDisableButton(false);
-            toast.error("something is wrong");
+        } else {
+            try {
+                const response = await axiosClient.post(
+                    "/v2/bookAppointment",
+                    inputValue
+                );
+
+                if (response.status === "ok") {
+                    setConfirmedAppointmentData(response.result);
+                    setAppointmentCofirmedDialog(true);
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setBookAppointmentDetailsDialog(false);
+                    setHospitalListDialog && setHospitalListDialog(false);
+                    setChooseDateAndTimeDialog &&
+                        setChooseDateAndTimeDialog(false);
+                    // window.location.reload();
+                    (await getPendingAppointmentsDataForPerticularDate) &&
+                        getPendingAppointmentsDataForPerticularDate();
+                }
+            } catch (error) {
+                if (
+                    error.statusCode === 409 &&
+                    error.message === "Appointment is already exist"
+                ) {
+                    setAppointmentAlreadyExistDialog(true);
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setBookAppointmentDetailsDialog(false);
+
+                    setChooseDateAndTimeDialog &&
+                        setChooseDateAndTimeDialog(false);
+                    setHospitalListDialog && setHospitalListDialog(false);
+                    return;
+                }
+                setDisableButton(false);
+                toast.error(error.message);
+            }
         }
     };
+
+    // };
 
     return (
         <>
@@ -327,6 +384,23 @@ const ConfirmAppointmentDialog = ({
                 confirmedAppointmentData={confirmedAppointmentData}
                 appointmentCofirmedDialog={appointmentCofirmedDialog}
                 setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                setHospitalListDialog={setHospitalListDialog}
+                setActiveCard={setActiveCard}
+                setSelectedTime={setSelectedTime}
+                bookingAppointmentDetails={bookingAppointmentDetails}
+                setBookingAppointmentDetails={setBookingAppointmentDetails}
+                setSlotData={setSlotData}
+            />
+            <AppointmentConfirmByTokenDialog
+                confirmedAppointmentData={confirmedAppointmentData}
+                appointmentCofirmedByTokenDialog={
+                    appointmentCofirmedByTokenDialog
+                }
+                setAppointmentCofirmedByTokenDialog={
+                    setAppointmentCofirmedByTokenDialog
+                }
                 inputValue={inputValue}
                 setInputValue={setInputValue}
                 setHospitalListDialog={setHospitalListDialog}

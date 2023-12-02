@@ -40,7 +40,7 @@ let datedumb;
 const MasterUserDoctorDetails = () => {
     const { user } = useSelector((state) => state.auth);
     const { hospital_id, doctor_id } = useParams();
-
+    const currentDate = moment().format("YYYY-MM-DD");
     const navigate = useNavigate();
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
@@ -100,7 +100,7 @@ const MasterUserDoctorDetails = () => {
         role: user?.role,
     });
 
-    const currentDate = moment().format("YYYY-MM-DD");
+    // const currentDate = moment().format("YYYY-MM-DD");
 
     const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
         useState(false);
