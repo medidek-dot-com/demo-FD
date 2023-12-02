@@ -886,6 +886,7 @@ const DoctorEditProfile = () => {
                                         sx={{}}
                                     >
                                         <img
+                                            htmlFor="hospitalImg"
                                             src={
                                                 preview
                                                     ? preview
@@ -1079,6 +1080,7 @@ const DoctorEditProfile = () => {
                                         </LabelStyle>
                                         <TextFieldStyle
                                             id="experience"
+                                            type="number"
                                             name="yearOfExprience"
                                             fullWidth
                                             placeholder="Ex. 5 Years"

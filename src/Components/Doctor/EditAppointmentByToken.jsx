@@ -543,7 +543,7 @@ const EditAppointmentByToken = ({
                                 color: "#383838",
                             }}
                         >
-                            End Time
+                            End Time 2
                         </InputLabel>
                         <Stack
                             direction="row"
