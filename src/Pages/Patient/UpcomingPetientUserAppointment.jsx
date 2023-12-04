@@ -13,8 +13,8 @@ const UpcomingPetientUserAppointment = ({
     return (
         <Stack spacing="15px">
             {isLoading && <TrackingSkeleton />}
-            {pendingAppointmentsData.length > 0 ? (
-                pendingAppointmentsData.map((appointment, i) => {
+            {pendingAppointmentsData?.length > 0 ? (
+                pendingAppointmentsData?.map((appointment, i) => {
                     return (
                         <Card
                             key={i}

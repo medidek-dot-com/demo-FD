@@ -116,42 +116,75 @@ const MUDDashboard = () => {
     const [hospitalList, setHospitalList] = useState([]);
 
     const getPendingAppointmentsDataForPerticularDate = async () => {
-        try {
-            const response = await axiosClient.get(
-                `/v2/getPendingAppoinmentForDoctor/${doctorid}/${date}`
-            );
-            console.log(response);
-            return setPendingAppointmentsData(response.result);
-        } catch (error) {
-            F;
-            console.log(error);
+        if (doctor?.acceptAppointments === "bySlot") {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getPendingAppoinmentForDoctor/${doctor?._id}/${date}`
+                );
+                console.log(response);
+                return setPendingAppointmentsData(response.result);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getPendingAppoinmentByTokenForDoctor/${doctor?._id}/${date}`
+                );
+                return setPendingAppointmentsData(response.result);
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
     const getCompleteAppointmentsDataForPerticularDate = async () => {
-        try {
-            const response = await axiosClient.get(
-                `/v2/getCompletedAppoinmentForDoctor/${doctorid}/${date}`
-            );
-            setCompleteAppointmentsData(response.result);
-        } catch (error) {
-            console.log(error);
+        if (doctor?.acceptAppointments === "bySlot") {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getCompletedAppoinmentForDoctor/${doctor?._id}/${date}`
+                );
+                setCompleteAppointmentsData(response.result);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getCompletedAppoinmentByTokenForDoctor/${doctor?._id}/${date}`
+                );
+                setCompleteAppointmentsData(response.result);
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
     const getMissedAppointmentsDataForPerticularDate = async () => {
-        try {
-            const response = await axiosClient.get(
-                `/v2/getMissedAppoinmentForDoctor/${doctorid}/${date}`
-            );
-            setMissedAppointmentsData(response.result);
-            console.log(response);
-        } catch (error) {
-            console.log(error);
+        if (doctor?.acceptAppointments === "bySlot") {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getMissedAppoinmentForDoctor/${doctor?._id}/${date}`
+                );
+                setMissedAppointmentsData(response.result);
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getMissedAppoinmentByTokenForDoctor/${doctor?._id}/${date}`
+                );
+                setMissedAppointmentsData(response.result);
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
     const totalPatient = async () => {
         try {
             const response = await axiosClient.get(
-                `/v2/totalPatient/${doctorid}/${date}/totalPatient`
+                `/v2/totalPatient/${doctor?._id}/${date}/totalPatient`
             );
             setTotalPatientData(response.result);
             console.log(response);
@@ -160,45 +193,75 @@ const MUDDashboard = () => {
         }
     };
     const todaysAppointement = async () => {
-        try {
-            const response = await axiosClient.get(
-                `/v2/todaysAppointement/${doctorid}/${date}/todaysAppointment`
-            );
-            setTodaysAppointmentData(response.result);
-            console.log(response);
-        } catch (error) {
-            console.log(error);
+        if (doctor?.acceptAppointments === "bySlot") {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/todaysAppointement/${doctor?._id}/${date}/todaysAppointment`
+                );
+                setTodaysAppointmentData(response.result);
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/todaysAppointementByToken/${doctor?._id}/${date}/todaysAppointment`
+                );
+                setTodaysAppointmentData(response.result);
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
     const futureAppointment = async () => {
-        try {
-            const response = await axiosClient.get(
-                `/v2/futureAppointment/${doctorid}/futureAppointment`
-            );
-            if (response.status === "ok") {
-                return setFutureAppointmentsData(response.result);
+        if (doctor?.acceptAppointments === "bySlot") {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/futureAppointment/${doctor?._id}/futureAppointment`
+                );
+                if (response.status === "ok") {
+                    return setFutureAppointmentsData(response.result);
+                }
+            } catch (error) {
+                console.log(error);
             }
-        } catch (error) {
-            console.log(error);
+        } else {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/futureAppointmentForAppointmentByToken/${doctor?._id}/futureAppointment`
+                );
+                if (response.status === "ok") {
+                    return setFutureAppointmentsData(response.result);
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
-    // const getCompleteAppointmentsData = async () => {
-    //     const response = await axiosClient.get(
-    //         `/v2/getCompleteAppointmentsForHospitalAndDoctors/${doctorid}/${date}`
-    //     );
-    //     setCompleteAppointmentsData(response.result);
-    // };
-
     const getPiChartData = async () => {
-        try {
-            const response = await axiosClient.get(
-                `/v2/getPiChartData/${doctorid}/${date}/piChart`
-            );
-            console.log(response.result);
-            setPiChartData(response.result);
-        } catch (error) {
-            console.log(error);
+        if (doctor?.acceptAppointments === "bySlot") {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getPiChartData/${doctor?._id}/${date}/piChart`
+                );
+                console.log(response.result);
+                setPiChartData(response.result);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            try {
+                const response = await axiosClient.get(
+                    `/v2/getPiChartDataForAppointmentByToken/${doctor?._id}/${date}/piChart`
+                );
+                console.log(response.result);
+                setPiChartData(response.result);
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
@@ -209,11 +272,11 @@ const MUDDashboard = () => {
         getMissedAppointmentsDataForPerticularDate();
         todaysAppointement();
         totalPatient();
-    }, [date]);
+    }, [date, doctor?._id]);
 
     useEffect(() => {
         futureAppointment();
-    }, []);
+    }, [doctor?._id]);
 
     const handleTabClick = (tabId) => {
         // Set the active button when it's clicked
@@ -282,22 +345,50 @@ const MUDDashboard = () => {
     const handleStatusChange = async (id, status, remark, i) => {
         // console.log(updatedStatus, "this is id", id);
         setDisableButton({ ...disableButton, loading: true, i: i });
-        try {
-            const response = await axiosClient.put(
-                `/v2/updateUserAppointmentStatus/${id}`,
-                { status, remark }
-            );
-            if (response.status === "ok") {
-                todaysAppointement();
-                await getPendingAppointmentsDataForPerticularDate();
-                await getCompleteAppointmentsDataForPerticularDate();
+        if (doctor?.acceptAppointments === "bySlot") {
+            try {
+                const response = await axiosClient.put(
+                    `/v2/updateUserAppointmentStatus/${id}`,
+                    { status, remark }
+                );
+                if (response.status === "ok") {
+                    await todaysAppointement();
+                    await getPiChartData();
+                    await getPendingAppointmentsDataForPerticularDate();
+                    await getCompleteAppointmentsDataForPerticularDate();
+                    await getMissedAppointmentsDataForPerticularDate();
+                    setDisableButton({
+                        ...disableButton,
+                        loading: false,
+                        i: i,
+                    });
+                }
+            } catch (error) {
                 setDisableButton({ ...disableButton, loading: false, i: i });
+                toast.error("Something went wrong");
             }
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-            setDisableButton({ ...disableButton, loading: false, i: i });
-            toast.error("Something went wrong");
+        } else {
+            try {
+                const response = await axiosClient.put(
+                    `/v2/updateAppointmentByTokenUserAppointmentStatus/${id}`,
+                    { status, remark }
+                );
+                if (response.status === "ok") {
+                    await todaysAppointement();
+                    await getPiChartData();
+                    await getPendingAppointmentsDataForPerticularDate();
+                    await getCompleteAppointmentsDataForPerticularDate();
+                    await getMissedAppointmentsDataForPerticularDate();
+                    setDisableButton({
+                        ...disableButton,
+                        loading: false,
+                        i: i,
+                    });
+                }
+            } catch (error) {
+                setDisableButton({ ...disableButton, loading: false, i: i });
+                toast.error("Something went wrong");
+            }
         }
     };
 
@@ -309,18 +400,15 @@ const MUDDashboard = () => {
                 `/v2/multipleloginprofile/${user?.doctorid}`
             );
             setHospitalList(response.result);
-            console.log(response);
             return;
         } catch (error) {
             console.log(error);
         }
     };
 
-    console.log(hospitalList);
-
     useEffect(() => {
         multipleloginprofile();
-    }, []);
+    }, [doctor?._id]);
 
     return (
         <Box
@@ -473,7 +561,7 @@ const MUDDashboard = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                    navigate(`/doctor/dashboard/${doctor?._id}`)
                                 }
                                 variant="text"
                                 sx={{
@@ -504,7 +592,9 @@ const MUDDashboard = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/appointments/${doctorid}`)
+                                    navigate(
+                                        `/doctor/appointments/${doctor?._id}`
+                                    )
                                 }
                                 variant="text"
                                 sx={{
@@ -595,7 +685,7 @@ const MUDDashboard = () => {
                             <Button
                                 onClick={() =>
                                     navigate(
-                                        `/doctor/appointment-settings/${doctorid}`
+                                        `/doctor/appointment-settings/${doctor?._id}`
                                     )
                                 }
                                 variant="text"
@@ -865,7 +955,7 @@ const MUDDashboard = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                    navigate(`/doctor/dashboard/${doctor?._id}`)
                                 }
                                 variant="text"
                                 sx={{
@@ -896,7 +986,9 @@ const MUDDashboard = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/appointments/${doctorid}`)
+                                    navigate(
+                                        `/doctor/appointments/${doctor?._id}`
+                                    )
                                 }
                                 variant="text"
                                 sx={{
@@ -987,7 +1079,7 @@ const MUDDashboard = () => {
                             <Button
                                 onClick={() =>
                                     navigate(
-                                        `/doctor/appointment-settings/${doctorid}`
+                                        `/doctor/appointment-settings/${doctor?._id}`
                                     )
                                 }
                                 variant="text"
@@ -1514,7 +1606,7 @@ const MUDDashboard = () => {
                                         }
                                         sx={{
                                             textTransform: "none",
-                                            width: "244px",
+                                            // width: "244px",
                                             height: "41px",
                                             fontFamily: "Raleway",
                                             fontWeight: "600",
@@ -1527,7 +1619,7 @@ const MUDDashboard = () => {
                                             boxShadow: "none",
                                         }}
                                     >
-                                        Upcoming Appointments
+                                        Upcoming
                                     </Button>
                                     <Button
                                         onClick={() => setSelectValue(2)}
@@ -1538,7 +1630,7 @@ const MUDDashboard = () => {
                                         }
                                         sx={{
                                             textTransform: "none",
-                                            width: "244px",
+                                            // width: "244px",
                                             height: "41px",
                                             fontFamily: "Raleway",
                                             fontWeight: "600",
@@ -1551,7 +1643,7 @@ const MUDDashboard = () => {
                                             boxShadow: "none",
                                         }}
                                     >
-                                        Completed Appointments
+                                        Completed
                                     </Button>
                                     <Button
                                         onClick={() => setSelectValue(3)}
@@ -1562,7 +1654,7 @@ const MUDDashboard = () => {
                                         }
                                         sx={{
                                             textTransform: "none",
-                                            width: "244px",
+                                            // width: "244px",
                                             height: "41px",
                                             fontFamily: "Raleway",
                                             fontWeight: "600",
@@ -1575,7 +1667,7 @@ const MUDDashboard = () => {
                                             boxShadow: "none",
                                         }}
                                     >
-                                        Missed Appointments
+                                        Missed
                                     </Button>
                                 </Stack>
                                 {/* <Typography
@@ -2085,7 +2177,7 @@ const MUDDashboard = () => {
                                                                     onClick={() =>
                                                                         handleStatusChange(
                                                                             appointment._id,
-                                                                            "cancelled",
+                                                                            "pending",
                                                                             "by doctor",
                                                                             i
                                                                         )
@@ -2123,6 +2215,14 @@ const MUDDashboard = () => {
                                                                 }}
                                                             >
                                                                 <IconButton
+                                                                    onClick={() =>
+                                                                        handleStatusChange(
+                                                                            appointment._id,
+                                                                            "completed",
+                                                                            "by doctor",
+                                                                            i
+                                                                        )
+                                                                    }
                                                                     disabled={
                                                                         disableButton.loading &&
                                                                         disableButton.i ==
@@ -2247,12 +2347,14 @@ const MUDDashboard = () => {
                                                 {
                                                     id: 1,
                                                     value: piChartData.pending,
+                                                    label: `${piChartData.pending}% Pending`,
                                                     // label: "20% Confirmed",
                                                     color: "#A1E18A",
                                                 },
                                                 {
                                                     id: 2,
                                                     value: piChartData.cancelled,
+                                                    label: `${piChartData.cancelled}% Cancelled/Missed`,
                                                     // label: "5% Cancelled",
                                                     color: "#F45843",
                                                 },

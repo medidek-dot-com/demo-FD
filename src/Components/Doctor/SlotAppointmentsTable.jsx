@@ -56,7 +56,6 @@ const SlotAppointmentsTable = ({
     const [updatedStatus, setUpdatedStatus] = useState("pending");
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
     const [activeCard, setAciveCard] = useState();
-
     const handleStatusChange = async (id, status) => {
         try {
             const response = await axiosClient.put(
@@ -112,9 +111,9 @@ const SlotAppointmentsTable = ({
                             <StyledTableCell>Status</StyledTableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {pendingAppointmentsData ? (
-                            pendingAppointmentsData.map((appointment, i) => (
+                    {pendingAppointmentsData.length > 0 ? (
+                        <TableBody>
+                            {pendingAppointmentsData.map((appointment, i) => (
                                 <TableRow
                                     key={appointment._id}
                                     sx={{
@@ -155,8 +154,8 @@ const SlotAppointmentsTable = ({
                                         View
                                     </StyledTableCell>
                                     {/* <StyledTableCell sx={{ color: "#B92612" }}>
-                                        Cancel
-                                    </StyledTableCell> */}
+                                            Cancel
+                                        </StyledTableCell> */}
                                     <StyledTableCell>
                                         <Select
                                             sx={{
@@ -245,50 +244,24 @@ const SlotAppointmentsTable = ({
                                         </Select>
                                     </StyledTableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <Typography>No Data</Typography>
-                        )}
-                        {/* <TableRow
-                                sx={{
-                                    boxShadow:
-                                        "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
-                                }}
-                            >
-                                <StyledTableCell>1</StyledTableCell>
-                                <StyledTableCell>Johnny Doe</StyledTableCell>
-                                <StyledTableCell>54</StyledTableCell>
-                                <StyledTableCell>Male</StyledTableCell>
-                                <StyledTableCell>9911223344</StyledTableCell>
-                                <StyledTableCell>12:00 PM</StyledTableCell>
-                                <StyledTableCell>15/07/23</StyledTableCell>
-                                <StyledTableCell sx={{ color: "#1F51C6" }}>
-                                    Edit
-                                </StyledTableCell>
-                                <StyledTableCell sx={{ color: "#B92612" }}>
-                                    Cancel
-                                </StyledTableCell>
-                                <StyledTableCell>
-                                    <Select
-                                        sx={
-                                            status == "Complete"
-                                                ? statusComplete
-                                                : statusPending
-                                        }
-                                        variant="standard"
-                                        value={status}
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value={"Pending"}>
-                                            Pending
-                                        </MenuItem>
-                                        <MenuItem value={"Complete"}>
-                                            Complete
-                                        </MenuItem>
-                                    </Select>
-                                </StyledTableCell>
-                            </TableRow> */}
-                    </TableBody>
+                            ))}
+                        </TableBody>
+                    ) : (
+                        <Typography
+                            sx={{
+                                width: "100%",
+                                fontFamily: "Raleway",
+                                fontWeight: "600",
+                                fontSize: "18px",
+                                color: "#383838",
+                                textAlign: "center",
+                                display: "block",
+                                marginInline: "auto",
+                            }}
+                        >
+                            Nothing to show
+                        </Typography>
+                    )}
                 </Table>
             </Box>
 

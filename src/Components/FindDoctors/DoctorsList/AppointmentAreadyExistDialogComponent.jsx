@@ -169,7 +169,7 @@ const AppointmentAreadyExistDialogComponent = ({
                             },
                         }}
                     >
-                        Appointment Is Already Exist
+                        Appointment Already Exists
                     </Typography>
                     <CancelIcon
                         sx={{

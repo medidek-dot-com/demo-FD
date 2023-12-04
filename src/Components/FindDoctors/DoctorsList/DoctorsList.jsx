@@ -49,6 +49,7 @@ import ConfirmAppointmentDialog from "../../Patient/ConfirmAppointmentDialog";
 import BookAppointmnetDetailsDialog from "../../Patient/BookAppointmnetDetailsDialog";
 import FindDoctorsSkeleton from "../../Skeleton/FindDoctorsSkeleton";
 import "ldrs/dotPulse";
+import { toast } from "react-toastify";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -141,6 +142,7 @@ const DoctorsList = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
     const urlLocation = useLocation();
     const [dates, setDates] = useState([]);
+    const currentDate = moment().format("YYYY-MM-DD");
     const [doctorsData, setDoctorsData] = useState([]);
     const [speciality, setSpeciality] = useState("");
     const [location, setLocation] = useState("");
@@ -158,6 +160,9 @@ const DoctorsList = () => {
     );
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
         useState(false);
+
+    const [acceptAppointments, setAcceptAppointments] = useState("");
+
     const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
         nameOfTheDoctor: "",
         doctorsId: "",
@@ -205,7 +210,10 @@ const DoctorsList = () => {
     const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
         useState(false);
     const [open, setOpen] = useState(false);
+
     const [slotData, setSlotData] = useState([]);
+    const [tokenData, setTokensData] = useState([]);
+
     const [slotsLoading, setSlotsLoading] = useState(false);
     const [isloading, setIsLoading] = useState(false);
     // const [bookAppointmentButtonLoading, setBookAppointmentButtonLoading] =
@@ -256,6 +264,30 @@ const DoctorsList = () => {
     useEffect(() => {
         getAvailableSlots();
     }, [bookingAppointmentDetails.appointmentDate]);
+
+    const getAvailableTokenTime = async () => {
+        if (doctor_id) {
+            try {
+                setSlotsLoading(true);
+                const response = await axiosClient.get(
+                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctor_id}/${currentDate}`
+                );
+                console.log(response);
+                if (response.status === "ok") {
+                    setSlotsLoading(false);
+                    return setTokensData(response.result);
+                }
+            } catch (error) {
+                setSlotsLoading(false);
+                toast.error("something went wrong");
+            }
+        }
+        return false;
+    };
+
+    useEffect(() => {
+        getAvailableTokenTime();
+    }, [acceptAppointments === "byToken"]);
 
     const getWeekDates = () => {
         const monthStart = moment().startOf("day");
@@ -730,6 +762,8 @@ const DoctorsList = () => {
                     }
                     bookingAppointmentDetails={bookingAppointmentDetails}
                     setBookingAppointmentDetails={setBookingAppointmentDetails}
+                    acceptAppointments={acceptAppointments}
+                    setAcceptAppointments={setAcceptAppointments}
                 />
                 <BookAppointmentDialogForPatient
                     bookingAppointmentDetails={bookingAppointmentDetails}
@@ -753,6 +787,9 @@ const DoctorsList = () => {
                     setActiveCard={setActiveCard}
                     selectedTime={selectedTime}
                     setSelectedTime={setSelectedTime}
+                    acceptAppointments={acceptAppointments}
+                    setAcceptAppointments={setAcceptAppointments}
+                    tokenData={tokenData}
                 />
                 <ConfirmAppointmentDialog
                     inputValue={inputValue}
@@ -775,6 +812,8 @@ const DoctorsList = () => {
                     setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                     confirmedAppointmentData={confirmedAppointmentData}
                     setConfirmedAppointmentData={setConfirmedAppointmentData}
+                    acceptAppointments={acceptAppointments}
+                    setAcceptAppointments={setAcceptAppointments}
                     setSlotData={setSlotData}
                 />
 
@@ -789,6 +828,8 @@ const DoctorsList = () => {
                     setBookingAppointmentDetails={setBookingAppointmentDetails}
                     bookingAppointmentDetails={bookingAppointmentDetails}
                     setDoctor_id={setDoctor_id}
+                    acceptAppointments={acceptAppointments}
+                    setAcceptAppointments={setAcceptAppointments}
                 />
                 {/* <AppointmentConfirmDIalog
                     confirmedAppointmentData={confirmedAppointmentData}

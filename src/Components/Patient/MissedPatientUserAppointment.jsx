@@ -76,7 +76,6 @@ const MissedPatientUserAppointment = ({
         useState(false);
 
     const handleReschedule = (appointment) => {
-        console.log(appointment);
         setAppointmentDetails(appointment);
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
@@ -166,6 +165,19 @@ const MissedPatientUserAppointment = ({
                                     }}
                                 />
                                 <Stack>
+                                    <Box
+                                        component="span"
+                                        sx={{
+                                            fontFamily: "Lato",
+                                            fontWeight: "700",
+                                            fontSize: "13px",
+                                            color: "#B92612",
+                                            textTransform: "uppercase",
+                                        }}
+                                    >
+                                        {appointment?.status}{" "}
+                                        {appointment?.remark}
+                                    </Box>
                                     <Typography
                                         sx={{
                                             fontFamily: "Raleway",

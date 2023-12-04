@@ -115,6 +115,18 @@ const CompletedPatientUserAppointment = ({
                                         }}
                                     />
                                     <Stack>
+                                        <Box
+                                            component="span"
+                                            sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "700",
+                                                fontSize: "13px",
+                                                color: "#15B912",
+                                                textTransform: "uppercase",
+                                            }}
+                                        >
+                                            {appointment?.status}{" "}
+                                        </Box>
                                         <Typography
                                             sx={{
                                                 fontFamily: "Raleway",

@@ -5,6 +5,7 @@ import {
     Card,
     Divider,
     InputAdornment,
+    InputLabel,
     MenuItem,
     Pagination,
     Paper,
@@ -21,13 +22,12 @@ import {
     styled,
     tableCellClasses,
 } from "@mui/material";
+import { FiUpload } from "react-icons/fi";
 import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import moment from "moment";
 import { toast } from "react-toastify";
-import MissedAppointmentTableForSlot from "./MissedAppointmentTableForSlot";
-import MissedAppointmentTableForToken from "./MissedAppointmentTableForToken";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -41,7 +41,7 @@ const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.body}`]: {
         fontFamily: "Lato",
         fontWeight: "600",
-        fontSize: "16px",
+        fontSize: "15px",
         textAlign: "center",
         color: "#383838",
     },
@@ -53,14 +53,13 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     color: "#383838",
 });
 
-const MissedAppointmentsTableForLoggedInDoctor = ({
-    missedAppointmentsData,
-    getMissedAppointmentsData,
-    slotAppointment,
-    missedAppointmentsByTokenData,
-    getMissedAppointmentsByTokenData,
+const CompleteAppointmentTableForToken = ({
+    completeAppointmentsData,
+    completeAppointmentsByTokenData,
+    setCompleteAppointmentsByTokenData,
+    getCompleteAppointmentsByTokenData,
 }) => {
-    const [updatedStatus, setUpdatedStatus] = useState("pending");
+    const [updatedStatus, setUpdatedStatus] = useState("completed");
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
     const [activeCard, setAciveCard] = useState();
 
@@ -70,8 +69,9 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                 `/v2/updateUserAppointmentStatus/${id}`,
                 { status }
             );
+
             if (response.status === "ok") {
-                return getMissedAppointmentsData();
+                getCompleteAppointmentsByTokenData();
             }
         } catch (error) {
             toast.error("something went wrong");
@@ -81,27 +81,12 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
     };
 
     useEffect(() => {
-        getMissedAppointmentsData();
+        getCompleteAppointmentsByTokenData();
     }, [updatedStatus]);
+
     return (
         <>
-            {slotAppointment === "slotAppointments" ? (
-                <MissedAppointmentTableForSlot
-                    missedAppointmentsData={missedAppointmentsData}
-                    getMissedAppointmentsData={getMissedAppointmentsData}
-                />
-            ) : (
-                <MissedAppointmentTableForToken
-                    missedAppointmentsByTokenData={
-                        missedAppointmentsByTokenData
-                    }
-                    getMissedAppointmentsByTokenData={
-                        getMissedAppointmentsByTokenData
-                    }
-                />
-            )}
-
-            {/* <Box
+            <Box
                 sx={{
                     overflow: "auto",
                     display: { xs: "none", sm: "none", md: "block" },
@@ -115,67 +100,72 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                         background: "#ffffff",
                         textAlign: "center",
                         mt: 2,
-                        overflow: "scroll",
                     }}
                     aria-label="customized table"
                 >
-                    <TableHead sx={{ position: "relative" }}>
-                        <TableRow
-                            sx={{ position: "sticky", top: "10px", zIndex: 1 }}
-                        >
-                            <StyledTableCell>Sr. No.</StyledTableCell>
+                    <TableHead
+                        sx={{ position: "sticky", top: "10px", zIndex: 1 }}
+                    >
+                        <TableRow>
+                            <StyledTableCell>Token No.</StyledTableCell>
                             <StyledTableCell>Patient's Name</StyledTableCell>
                             <StyledTableCell>Age</StyledTableCell>
                             <StyledTableCell>Gender</StyledTableCell>
                             <StyledTableCell>Contact No.</StyledTableCell>
-                            <StyledTableCell>Timing</StyledTableCell>
+                            {/* <StyledTableCell>Timing</StyledTableCell> */}
                             <StyledTableCell>Date</StyledTableCell>
-                            <StyledTableCell>Edit</StyledTableCell>
-                            <StyledTableCell>Remove</StyledTableCell>
+                            {/* <StyledTableCell>Remove</StyledTableCell> */}
                             <StyledTableCell>Status</StyledTableCell>
+                            <StyledTableCell>Prescription</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {missedAppointmentsData ? (
-                            missedAppointmentsData.map((appointment, i) => (
-                                <TableRow
-                                    key={appointment._id}
-                                    sx={{
-                                        boxShadow:
-                                            "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
-                                    }}
-                                >
-                                    <StyledTableCell>{i + 1}</StyledTableCell>
-                                    <StyledTableCell>
-                                        {appointment.name}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {appointment.age}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {appointment.gender}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {appointment.phone}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {appointment.AppointmentTime}
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        {moment(
-                                            appointment.appointmentDate
-                                        ).format("DD-MM-YYYY")}
-                                    </StyledTableCell>
-                                    <StyledTableCell sx={{ color: "#1F51C6" }}>
+                        {completeAppointmentsByTokenData ? (
+                            completeAppointmentsByTokenData.map(
+                                (appointment, i) => (
+                                    <TableRow
+                                        key={appointment._id}
+                                        sx={{
+                                            boxShadow:
+                                                "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+                                        }}
+                                    >
+                                        <StyledTableCell>
+                                            {i + 1}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {appointment.name}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {appointment.age}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {appointment.gender}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {appointment.phone}
+                                        </StyledTableCell>
+                                        {/* <StyledTableCell>
+                                            {appointment.AppointmentTime}
+                                        </StyledTableCell> */}
+                                        <StyledTableCell>
+                                            {moment(
+                                                appointment.appointmentDate
+                                            ).format("DD-MM-YYYY")}
+                                        </StyledTableCell>
+                                        {/* <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         Edit
-                                    </StyledTableCell>
-                                    <StyledTableCell sx={{ color: "#B92612" }}>
-                                        Cancel
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Select
+                                    </StyledTableCell> */}
+                                        <StyledTableCell>
+                                            <Box
+                                                component="span"
+                                                sx={{ color: "#15B912" }}
+                                            >
+                                                Completed
+                                            </Box>
+                                            {/* <Select
                                             sx={{
-                                                color: "#EA4335",
+                                                color: "#15B912",
                                                 fontFamily: "Lato",
                                                 fontWeight: "600",
                                                 fontSize: "16px",
@@ -183,6 +173,7 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                                             }}
                                             variant="standard"
                                             value={appointment.status}
+                                            // onChange={handleChange}
                                         >
                                             <MenuItem
                                                 onClick={() =>
@@ -238,10 +229,51 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                                             >
                                                 Missed
                                             </MenuItem>
-                                        </Select>
-                                    </StyledTableCell>
-                                </TableRow>
-                            ))
+                                            <MenuItem
+                                                onClick={() =>
+                                                    handleStatusChange(
+                                                        appointment._id,
+                                                        "missed"
+                                                    )
+                                                }
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "16px",
+                                                    textAlign: "center",
+                                                    color: "#EA4335",
+                                                }}
+                                                value={"cancelled"}
+                                            >
+                                                Cancelled
+                                            </MenuItem>
+                                        </Select> */}
+                                        </StyledTableCell>
+                                        <StyledTableCell
+                                            sx={{ color: "#1F51C6" }}
+                                        >
+                                            <label
+                                                htmlFor="file"
+                                                style={{
+                                                    fontSize: "1rem",
+                                                    fontWeight: "bold",
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    color: "#1F51C6",
+                                                }}
+                                            >
+                                                <FiUpload size={20} />
+                                                &nbsp;Upload prescription
+                                            </label>
+                                            <TextField
+                                                id="file"
+                                                type="file"
+                                                sx={{ display: "none" }}
+                                            />
+                                        </StyledTableCell>
+                                    </TableRow>
+                                )
+                            )
                         ) : (
                             <Typography>No Data</Typography>
                         )}
@@ -253,8 +285,8 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                     display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
-                {missedAppointmentsData?.length > 0 ? (
-                    missedAppointmentsData.map((appointment, i) => {
+                {completeAppointmentsByTokenData?.length > 0 ? (
+                    completeAppointmentsByTokenData.map((appointment, i) => {
                         return (
                             <Box
                                 key={i}
@@ -387,19 +419,27 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                                             }}
                                         >
                                             Status:{" "}
-                                            <Select
+                                            <Box
+                                                component="span"
+                                                sx={{ color: "#15B912" }}
+                                            >
+                                                Completed
+                                            </Box>
+                                            {/* <Select
                                                 sx={{
                                                     color: "#383838",
                                                     fontFamily: "Lato",
                                                     fontWeight: "600",
                                                     fontSize: "14px",
                                                     textAlign: "center",
+                                                    // p:'5px 10px',
                                                     borderRadius: "21px",
                                                     height: "32px",
                                                     mr: "2px",
                                                 }}
                                                 variant="standard"
                                                 value={appointment.status}
+                                                // onChange={(e) => handleChange(e, i)}
                                             >
                                                 <MenuItem
                                                     onClick={() =>
@@ -455,9 +495,32 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                                                 >
                                                     Missed
                                                 </MenuItem>
-                                            </Select>
+                                            </Select> */}
+                                            {/* <span
+                                                        style={{
+                                                            fontWeight: "600",
+                                                        }}
+                                                    >
+                                                        Male
+                                                    </span> */}
                                         </Box>
                                     </Stack>
+
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            width: "100%",
+                                            borderRadius: "35px",
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            textTransform: "none",
+                                            boxShadow: "none",
+                                            mt: "24px",
+                                        }}
+                                    >
+                                        <FiUpload size={20} />
+                                        Upload Prescription
+                                    </Button>
                                 </Card>
                             </Box>
                         );
@@ -474,9 +537,9 @@ const MissedAppointmentsTableForLoggedInDoctor = ({
                         No Appointments For Today
                     </Typography>
                 )}
-            </Stack> */}
+            </Stack>
         </>
     );
 };
 
-export default MissedAppointmentsTableForLoggedInDoctor;
+export default CompleteAppointmentTableForToken;

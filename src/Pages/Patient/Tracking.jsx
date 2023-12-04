@@ -83,7 +83,7 @@ const Tracking = () => {
     const getCompleteAppointmentsData = async () => {
         setIsLoading(true);
         const response = await axiosClient.get(
-            `/v2/getCompletedAppointment/${user._id}`
+            `/v2/getCompletedAppointment/${user?._id}`
         );
         setIsLoading(false);
         setCompleteAppointmentsData(response.result);
@@ -93,7 +93,7 @@ const Tracking = () => {
         setIsLoading(true);
         try {
             const response = await axiosClient.get(
-                `/v2/getMissedAppointment/${user._id}`
+                `/v2/getMissedAppointment/${user?._id}`
             );
             setIsLoading(false);
             setMissedAppointmentsData(response.result);

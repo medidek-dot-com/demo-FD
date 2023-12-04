@@ -231,7 +231,7 @@ const DoctorEditProfile = () => {
         // console.log(data);
         try {
             const response = await axiosClient.put(
-                `/v2/editDoctorfile/${user?._id}`,
+                `/v2/editDoctorfile/${doctor?._id}`,
                 data
             );
             console.log(response.result);
@@ -239,7 +239,7 @@ const DoctorEditProfile = () => {
                 // navigate(`/master/user/home/${uuid.id}`);
                 dispatch(updateDoctorsData(response.result));
                 navigate(`/doctor/appointment-settings/${doctor?._id}`);
-                toast.success("Doctor added successfully");
+                toast.success("Profile Updated successfully");
                 setDisableButton(false);
 
                 return;
@@ -396,7 +396,7 @@ const DoctorEditProfile = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                    navigate(`/doctor/dashboard/${doctor?._id}`)
                                 }
                                 variant="text"
                                 sx={{
@@ -427,7 +427,9 @@ const DoctorEditProfile = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/appointments/${doctorid}`)
+                                    navigate(
+                                        `/doctor/appointments/${doctor?._id}`
+                                    )
                                 }
                                 variant="text"
                                 sx={{
@@ -520,7 +522,7 @@ const DoctorEditProfile = () => {
                             <Button
                                 onClick={() =>
                                     navigate(
-                                        `/doctor/appointment-settings/${doctorid}`
+                                        `/doctor/appointment-settings/${doctor?._id}`
                                     )
                                 }
                                 variant="text"
@@ -637,7 +639,7 @@ const DoctorEditProfile = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                    navigate(`/doctor/dashboard/${doctor?._id}`)
                                 }
                                 variant="text"
                                 sx={{
@@ -668,7 +670,9 @@ const DoctorEditProfile = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/appointments/${doctorid}`)
+                                    navigate(
+                                        `/doctor/appointments/${doctor?._id}`
+                                    )
                                 }
                                 variant="text"
                                 sx={{
@@ -761,7 +765,7 @@ const DoctorEditProfile = () => {
                             <Button
                                 onClick={() =>
                                     navigate(
-                                        `/doctor/appointment-settings/${doctorid}`
+                                        `/doctor/appointment-settings/${doctor?._id}`
                                     )
                                 }
                                 variant="text"
@@ -955,7 +959,7 @@ const DoctorEditProfile = () => {
                                         <Button
                                             onClick={(e) =>
                                                 navigate(
-                                                    `/doctor/appointment-settings/${doctorid}`
+                                                    `/doctor/appointment-settings/${doctor?._id}`
                                                 )
                                             }
                                             sx={{

@@ -253,7 +253,7 @@ const DoctorCourses = () => {
                 >
                     <Button
                         onClick={() =>
-                            navigate(`/doctor/dashboard/${doctorid}`) &
+                            navigate(`/doctor/dashboard/${doctor?._id}`) &
                             setMenu(false)
                         }
                         sx={{
@@ -268,7 +268,7 @@ const DoctorCourses = () => {
                     </Button>
                     <Button
                         onClick={() =>
-                            navigate(`/doctor/appointments/${doctorid}`) &
+                            navigate(`/doctor/appointments/${doctor?._id}`) &
                             setMenu(false)
                         }
                         sx={{
@@ -317,7 +317,7 @@ const DoctorCourses = () => {
                     <Button
                         onClick={() =>
                             navigate(
-                                `/doctor/appointment-settings/${doctorid}`
+                                `/doctor/appointment-settings/${doctor?._id}`
                             ) & setMenu(false)
                         }
                         sx={{
@@ -419,7 +419,7 @@ const DoctorCourses = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/dashboard/${doctorid}`
+                                            `/doctor/dashboard/${doctor?._id}`
                                         )
                                     }
                                     variant="text"
@@ -452,7 +452,7 @@ const DoctorCourses = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointments/${doctorid}`
+                                            `/doctor/appointments/${doctor?._id}`
                                         )
                                     }
                                     variant="text"
@@ -547,7 +547,7 @@ const DoctorCourses = () => {
                                 <Button
                                     onClick={() =>
                                         navigate(
-                                            `/doctor/appointment-settings/${doctorid}`
+                                            `/doctor/appointment-settings/${doctor?._id}`
                                         )
                                     }
                                     variant="text"

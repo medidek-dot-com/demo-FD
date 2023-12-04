@@ -655,8 +655,9 @@ const BookAppointmnetDetailsDialog = ({
                                             color: "#706D6D",
                                         }}
                                     >
-                                        {doctorinfo?.acceptAppointments !==
-                                        "byToken"
+                                        {doctorinfo?.acceptAppointments &&
+                                        doctorinfo?.acceptAppointments !==
+                                            "byToken"
                                             ? moment(
                                                   bookingAppointmentDetails.appointmentDate
                                               ).format("DD-MM-YYYY")

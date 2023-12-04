@@ -264,7 +264,7 @@ const DoctorCourseDetails = () => {
                     >
                         <Button
                             onClick={() =>
-                                navigate(`/doctor/dashboard/${doctorid}`) &
+                                navigate(`/doctor/dashboard/${doctor?._id}`) &
                                 setMenu(false)
                             }
                             sx={{
@@ -279,8 +279,9 @@ const DoctorCourseDetails = () => {
                         </Button>
                         <Button
                             onClick={() =>
-                                navigate(`/doctor/appointments/${doctorid}`) &
-                                setMenu(false)
+                                navigate(
+                                    `/doctor/appointments/${doctor?._id}`
+                                ) & setMenu(false)
                             }
                             sx={{
                                 color: "#ffffff",
@@ -328,7 +329,7 @@ const DoctorCourseDetails = () => {
                         <Button
                             onClick={() =>
                                 navigate(
-                                    `/doctor/appointment-settings/${doctorid}`
+                                    `/doctor/appointment-settings/${doctor?._id}`
                                 ) & setMenu(false)
                             }
                             sx={{
@@ -418,7 +419,7 @@ const DoctorCourseDetails = () => {
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/dashboard/${doctorid}`
+                                                `/doctor/dashboard/${doctor?._id}`
                                             )
                                         }
                                         variant="text"
@@ -451,7 +452,7 @@ const DoctorCourseDetails = () => {
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/appointments/${doctorid}`
+                                                `/doctor/appointments/${doctor?._id}`
                                             )
                                         }
                                         variant="text"
@@ -548,7 +549,7 @@ const DoctorCourseDetails = () => {
                                     <Button
                                         onClick={() =>
                                             navigate(
-                                                `/doctor/appointment-settings/${doctorid}`
+                                                `/doctor/appointment-settings/${doctor?._id}`
                                             )
                                         }
                                         variant="text"

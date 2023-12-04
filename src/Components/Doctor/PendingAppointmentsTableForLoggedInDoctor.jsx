@@ -55,6 +55,9 @@ const MobileViewCardTypographyStyle = styled(Typography)({
 const PendingAppointmentsTableForLoggedInDoctor = ({
     pendingAppointmentsData,
     getPendingAppointmentsData,
+    pendingAppointmentsByTokenData,
+    setPendingAppointmentsByTokenData,
+    getPendingAppointmentsByTokenData,
     slotAppointment,
     setSlotAppointment,
 }) => {
@@ -91,7 +94,17 @@ const PendingAppointmentsTableForLoggedInDoctor = ({
                     getPendingAppointmentsData={getPendingAppointmentsData}
                 />
             ) : (
-                <TokenAppointmentsTable />
+                <TokenAppointmentsTable
+                    pendingAppointmentsByTokenData={
+                        pendingAppointmentsByTokenData
+                    }
+                    setPendingAppointmentsByTokenData={
+                        setPendingAppointmentsByTokenData
+                    }
+                    getPendingAppointmentsByTokenData={
+                        getPendingAppointmentsByTokenData
+                    }
+                />
             )}
             {/* <Box
                 sx={{

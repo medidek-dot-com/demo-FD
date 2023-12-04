@@ -51,6 +51,8 @@ const ConfirmAppointmentDialog = ({
     setActiveCard,
     setSelectedTime,
     setSlotData,
+    acceptAppointments,
+    setAcceptAppointments,
 }) => {
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
@@ -59,7 +61,7 @@ const ConfirmAppointmentDialog = ({
         {}
     );
 
-    console.log(doctorinfo);
+    // console.log(doctorinfo);
 
     const currentDate = moment().format("YYYY-MM-DD");
 
@@ -73,7 +75,10 @@ const ConfirmAppointmentDialog = ({
     const bookAppointment = async () => {
         setDisableButton(true);
         // try {
-        if (doctorinfo?.acceptAppointments === "byToken") {
+        if (
+            acceptAppointments === "byToken" ||
+            doctorinfo?.acceptAppointments === "byToken"
+        ) {
             try {
                 const response = await axiosClient.post(
                     "/v2/bookappointmentbytoken",
@@ -92,7 +97,10 @@ const ConfirmAppointmentDialog = ({
                     setChooseDateAndTimeDialog &&
                         setChooseDateAndTimeDialog(false);
                     // window.location.reload();
-                    (await getPendingAppointmentsDataForPerticularDate) &&
+                    setAcceptAppointments &&
+                        setAcceptAppointments("")(
+                            await getPendingAppointmentsDataForPerticularDate
+                        ) &&
                         getPendingAppointmentsDataForPerticularDate();
                 }
             } catch (error) {
@@ -111,6 +119,7 @@ const ConfirmAppointmentDialog = ({
                     setChooseDateAndTimeDialog &&
                         setChooseDateAndTimeDialog(false);
                     setHospitalListDialog && setHospitalListDialog(false);
+                    setAcceptAppointments && setAcceptAppointments("");
                     return;
                 }
                 setDisableButton(false);
@@ -257,12 +266,15 @@ const ConfirmAppointmentDialog = ({
                                                   bookingAppointmentDetails.appointmentDate
                                               ).format("DD-MM-YYYY")
                                             : currentDate} */}
-                                {doctorinfo?.acceptAppointments !== "byToken"
+                                {doctorinfo?.acceptAppointments &&
+                                doctorinfo?.acceptAppointments !== "byToken"
                                     ? moment(
                                           bookingAppointmentDetails.appointmentDate,
                                           "YYYY-MM-DD"
                                       ).format("DD-MM-YYYY")
-                                    : currentDate}{" "}
+                                    : moment(currentDate, "YYYY-MM-DD").format(
+                                          "DD-MM-YYYY"
+                                      )}{" "}
                             </Box>
                         </Box>
                         <Box>

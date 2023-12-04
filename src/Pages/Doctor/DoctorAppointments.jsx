@@ -134,6 +134,16 @@ const DoctorAppointments = () => {
         []
     );
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
+
+    const [pendingAppointmentsByTokenData, setPendingAppointmentsByTokenData] =
+        useState([]);
+    const [
+        completeAppointmentsByTokenData,
+        setCompleteAppointmentsByTokenData,
+    ] = useState([]);
+    const [missedAppointmentsByTokenData, setMissedAppointmentsByTokenData] =
+        useState([]);
+
     const [activeTab, setActiveTab] = useState(2);
     const [selectValue, setSelectValue] = useState(1);
     const [completedAppointments, setCompletedAppointments] = useState(false);
@@ -149,21 +159,42 @@ const DoctorAppointments = () => {
 
     const getPendingAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getPendingAppoinmentForDoctor/${doctorid}/${date}`
+            `/v2/getPendingAppoinmentForDoctor/${doctor?._id}/${date}`
         );
         setPendingAppointmentsData(response.result);
     };
     const getCompleteAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getCompletedAppoinmentForDoctor/${doctorid}/${date}`
+            `/v2/getCompletedAppoinmentForDoctor/${doctor?._id}/${date}`
         );
         setCompleteAppointmentsData(response.result);
     };
     const getMissedAppointmentsData = async () => {
         const response = await axiosClient.get(
-            `/v2/getMissedAppoinmentForDoctor/${doctorid}/${date}`
+            `/v2/getMissedAppoinmentForDoctor/${doctor?._id}/${date}`
         );
         setMissedAppointmentsData(response.result);
+        console.log(response);
+    };
+
+    const getPendingAppointmentsByTokenData = async () => {
+        const response = await axiosClient.get(
+            `/v2/getPendingAppoinmentByTokenForDoctor/${doctor?._id}/${date}`
+        );
+        console.log(response);
+        setPendingAppointmentsByTokenData(response.result);
+    };
+    const getCompleteAppointmentsByTokenData = async () => {
+        const response = await axiosClient.get(
+            `/v2/getCompletedAppoinmentByTokenForDoctor/${doctor?._id}/${date}`
+        );
+        setCompleteAppointmentsByTokenData(response.result);
+    };
+    const getMissedAppointmentsByTokenData = async () => {
+        const response = await axiosClient.get(
+            `/v2/getMissedAppoinmentByTokenForDoctor/${doctor?._id}/${date}`
+        );
+        setMissedAppointmentsByTokenData(response.result);
         console.log(response);
     };
 
@@ -171,7 +202,10 @@ const DoctorAppointments = () => {
         getPendingAppointmentsData();
         getCompleteAppointmentsData();
         getMissedAppointmentsData();
-    }, [date]);
+        getPendingAppointmentsByTokenData();
+        getCompleteAppointmentsByTokenData();
+        getMissedAppointmentsByTokenData();
+    }, [date, doctor?._id]);
 
     const handleTabClick = (tabId) => {
         // Set the active button when it's clicked
@@ -428,7 +462,7 @@ const DoctorAppointments = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                    navigate(`/doctor/dashboard/${doctor?._id}`)
                                 }
                                 variant="text"
                                 sx={{
@@ -460,7 +494,9 @@ const DoctorAppointments = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/appointments/${doctorid}`)
+                                    navigate(
+                                        `/doctor/appointments/${doctor?._id}`
+                                    )
                                 }
                                 variant="text"
                                 sx={{
@@ -551,7 +587,7 @@ const DoctorAppointments = () => {
                             <Button
                                 onClick={() =>
                                     navigate(
-                                        `/doctor/appointment-settings/${doctorid}`
+                                        `/doctor/appointment-settings/${doctor?._id}`
                                     )
                                 }
                                 variant="text"
@@ -668,7 +704,7 @@ const DoctorAppointments = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/dashboard/${doctorid}`)
+                                    navigate(`/doctor/dashboard/${doctor?._id}`)
                                 }
                                 variant="text"
                                 sx={{
@@ -700,7 +736,9 @@ const DoctorAppointments = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/appointments/${doctorid}`)
+                                    navigate(
+                                        `/doctor/appointments/${doctor?._id}`
+                                    )
                                 }
                                 variant="text"
                                 sx={{
@@ -791,7 +829,7 @@ const DoctorAppointments = () => {
                             <Button
                                 onClick={() =>
                                     navigate(
-                                        `/doctor/appointment-settings/${doctorid}`
+                                        `/doctor/appointment-settings/${doctor?._id}`
                                     )
                                 }
                                 variant="text"
@@ -1186,8 +1224,17 @@ const DoctorAppointments = () => {
                                 getPendingAppointmentsData={
                                     getPendingAppointmentsData
                                 }
+                                pendingAppointmentsByTokenData={
+                                    pendingAppointmentsByTokenData
+                                }
+                                setPendingAppointmentsByTokenData={
+                                    setPendingAppointmentsByTokenData
+                                }
                                 slotAppointment={slotAppointment}
                                 setSlotAppointment={setSlotAppointment}
+                                getPendingAppointmentsByTokenData={
+                                    getPendingAppointmentsByTokenData
+                                }
                             />
                         )) ||
                             (selectValue === 2 && (
@@ -1198,6 +1245,17 @@ const DoctorAppointments = () => {
                                     getCompleteAppointmentsData={
                                         getCompleteAppointmentsData
                                     }
+                                    slotAppointment={slotAppointment}
+                                    setSlotAppointment={setSlotAppointment}
+                                    completeAppointmentsByTokenData={
+                                        completeAppointmentsByTokenData
+                                    }
+                                    setCompleteAppointmentsByTokenData={
+                                        setCompleteAppointmentsByTokenData
+                                    }
+                                    getCompleteAppointmentsByTokenData={
+                                        getCompleteAppointmentsByTokenData
+                                    }
                                 />
                             )) ||
                             (selectValue === 3 && (
@@ -1207,6 +1265,16 @@ const DoctorAppointments = () => {
                                     }
                                     getMissedAppointmentsData={
                                         getMissedAppointmentsData
+                                    }
+                                    slotAppointment={slotAppointment}
+                                    missedAppointmentsByTokenData={
+                                        missedAppointmentsByTokenData
+                                    }
+                                    setMissedAppointmentsByTokenData={
+                                        setMissedAppointmentsByTokenData
+                                    }
+                                    getMissedAppointmentsByTokenData={
+                                        getMissedAppointmentsByTokenData
                                     }
                                 />
                             ))}

@@ -42,6 +42,8 @@ const HospitalListDialog = ({
     setOpen,
     bookingAppointmentDetails,
     setBookingAppointmentDetails,
+    acceptAppointments,
+    setAcceptAppointments,
 }) => {
     console.log(hospitalList);
     console.log(bookingAppointmentDetails);
@@ -49,7 +51,7 @@ const HospitalListDialog = ({
     const { user } = useSelector((state) => state.auth);
 
     const selectDoctor = (data) => {
-        console.log(data);
+        console.log(data.acceptAppointments);
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
             nameOfTheDoctor: data.nameOfTheDoctor,
@@ -60,6 +62,7 @@ const HospitalListDialog = ({
             hospitalName: data?.hospitalId?.nameOfhospitalOrClinic,
         });
         setInputValue({ ...inputValue, doctorid: data._id });
+        setAcceptAppointments(data.acceptAppointments);
         setOpenBookingAppointmentDialog(true);
         setDoctor_id(data._id);
     };

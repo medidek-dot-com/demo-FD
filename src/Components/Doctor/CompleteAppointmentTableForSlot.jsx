@@ -28,8 +28,6 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import moment from "moment";
 import { toast } from "react-toastify";
-import CompleteAppointmentTableForSlot from "./CompleteAppointmentTableForSlot";
-import CompleteAppointmentTableForToken from "./CompleteAppointmentTableForToken";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -55,14 +53,9 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     color: "#383838",
 });
 
-const CompletedAppointmentsTableForLoggedInDoctor = ({
+const CompleteAppointmentTableForSlot = ({
     completeAppointmentsData,
     getCompleteAppointmentsData,
-    completeAppointmentsByTokenData,
-    setCompleteAppointmentsByTokenData,
-    getCompleteAppointmentsByTokenData,
-
-    slotAppointment,
 }) => {
     const [updatedStatus, setUpdatedStatus] = useState("completed");
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
@@ -91,25 +84,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
 
     return (
         <>
-            {slotAppointment === "slotAppointments" ? (
-                <CompleteAppointmentTableForSlot
-                    completeAppointmentsData={completeAppointmentsData}
-                    getCompleteAppointmentsData={getCompleteAppointmentsData}
-                />
-            ) : (
-                <CompleteAppointmentTableForToken
-                    completeAppointmentsByTokenData={
-                        completeAppointmentsByTokenData
-                    }
-                    setCompleteAppointmentsByTokenData={
-                        setCompleteAppointmentsByTokenData
-                    }
-                    getCompleteAppointmentsByTokenData={
-                        getCompleteAppointmentsByTokenData
-                    }
-                />
-            )}
-            {/* <Box
+            <Box
                 sx={{
                     overflow: "auto",
                     display: { xs: "none", sm: "none", md: "block" },
@@ -137,6 +112,7 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                             <StyledTableCell>Contact No.</StyledTableCell>
                             <StyledTableCell>Timing</StyledTableCell>
                             <StyledTableCell>Date</StyledTableCell>
+                            {/* <StyledTableCell>Remove</StyledTableCell> */}
                             <StyledTableCell>Status</StyledTableCell>
                             <StyledTableCell>Prescription</StyledTableCell>
                         </TableRow>
@@ -172,6 +148,9 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                             appointment.appointmentDate
                                         ).format("DD-MM-YYYY")}
                                     </StyledTableCell>
+                                    {/* <StyledTableCell sx={{ color: "#1F51C6" }}>
+                                        Edit
+                                    </StyledTableCell> */}
                                     <StyledTableCell>
                                         <Box
                                             component="span"
@@ -179,6 +158,91 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                         >
                                             Completed
                                         </Box>
+                                        {/* <Select
+                                            sx={{
+                                                color: "#15B912",
+                                                fontFamily: "Lato",
+                                                fontWeight: "600",
+                                                fontSize: "16px",
+                                                textAlign: "center",
+                                            }}
+                                            variant="standard"
+                                            value={appointment.status}
+                                            // onChange={handleChange}
+                                        >
+                                            <MenuItem
+                                                onClick={() =>
+                                                    handleStatusChange(
+                                                        appointment._id,
+                                                        "pending"
+                                                    )
+                                                }
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "16px",
+                                                    textAlign: "center",
+                                                    color: "#383838",
+                                                }}
+                                                value={"pending"}
+                                            >
+                                                Pending
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={() =>
+                                                    handleStatusChange(
+                                                        appointment._id,
+                                                        "completed"
+                                                    )
+                                                }
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "16px",
+                                                    textAlign: "center",
+                                                    color: "#15B912",
+                                                }}
+                                                value={"completed"}
+                                            >
+                                                Completed
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={() =>
+                                                    handleStatusChange(
+                                                        appointment._id,
+                                                        "missed"
+                                                    )
+                                                }
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "16px",
+                                                    textAlign: "center",
+                                                    color: "#EA4335",
+                                                }}
+                                                value={"missed"}
+                                            >
+                                                Missed
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={() =>
+                                                    handleStatusChange(
+                                                        appointment._id,
+                                                        "missed"
+                                                    )
+                                                }
+                                                sx={{
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "16px",
+                                                    textAlign: "center",
+                                                    color: "#EA4335",
+                                                }}
+                                                value={"cancelled"}
+                                            >
+                                                Cancelled
+                                            </MenuItem>
+                                        </Select> */}
                                     </StyledTableCell>
                                     <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         <label
@@ -353,6 +417,84 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                                             >
                                                 Completed
                                             </Box>
+                                            {/* <Select
+                                                sx={{
+                                                    color: "#383838",
+                                                    fontFamily: "Lato",
+                                                    fontWeight: "600",
+                                                    fontSize: "14px",
+                                                    textAlign: "center",
+                                                    // p:'5px 10px',
+                                                    borderRadius: "21px",
+                                                    height: "32px",
+                                                    mr: "2px",
+                                                }}
+                                                variant="standard"
+                                                value={appointment.status}
+                                                // onChange={(e) => handleChange(e, i)}
+                                            >
+                                                <MenuItem
+                                                    onClick={() =>
+                                                        handleStatusChange(
+                                                            appointment._id,
+                                                            "pending"
+                                                        )
+                                                    }
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "600",
+                                                        fontSize: "16px",
+                                                        textAlign: "center",
+                                                        color: "#383838",
+                                                    }}
+                                                    value={"pending"}
+                                                >
+                                                    Pending
+                                                </MenuItem>
+                                                <MenuItem
+                                                    onClick={() =>
+                                                        handleStatusChange(
+                                                            appointment._id,
+                                                            "completed"
+                                                        )
+                                                    }
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "600",
+                                                        fontSize: "16px",
+                                                        textAlign: "center",
+                                                        color: "#15B912",
+                                                    }}
+                                                    value={"completed"}
+                                                >
+                                                    Completed
+                                                </MenuItem>
+                                                <MenuItem
+                                                    onClick={() =>
+                                                        handleStatusChange(
+                                                            appointment._id,
+                                                            "missed"
+                                                        )
+                                                    }
+                                                    sx={{
+                                                        fontFamily: "Lato",
+                                                        fontWeight: "600",
+                                                        fontSize: "16px",
+                                                        textAlign: "center",
+                                                        color: "#B92612",
+                                                    }}
+                                                    value={"missed"}
+                                                >
+                                                    Missed
+                                                </MenuItem>
+                                            </Select> */}
+                                            {/* <span
+                                                        style={{
+                                                            fontWeight: "600",
+                                                        }}
+                                                    >
+                                                        Male
+                                                    </span> */}
                                         </Box>
                                     </Stack>
 
@@ -387,9 +529,9 @@ const CompletedAppointmentsTableForLoggedInDoctor = ({
                         No Appointments For Today
                     </Typography>
                 )}
-            </Stack> */}
+            </Stack>
         </>
     );
 };
 
-export default CompletedAppointmentsTableForLoggedInDoctor;
+export default CompleteAppointmentTableForSlot;
