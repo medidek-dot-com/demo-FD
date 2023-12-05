@@ -237,6 +237,7 @@ const DoctorInfo = () => {
             });
             return false;
         }
+        console.log("hello hiiiiii");
         try {
             const response = await axiosClient.get(
                 `/v2/singledoctor/${doctorsId}`

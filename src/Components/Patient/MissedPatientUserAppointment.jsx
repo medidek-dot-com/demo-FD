@@ -23,6 +23,8 @@ import { axiosClient } from "../../Utils/axiosClient";
 import BookAppointmnetDetailsDialog from "./BookAppointmnetDetailsDialog";
 import ConfirmRescheduleDialog from "./ConfirmRescheduleDialog";
 
+let datedumb;
+
 const MissedPatientUserAppointment = ({
     missedAppointmentsData,
     getPendingAppointmentsData,
@@ -36,7 +38,7 @@ const MissedPatientUserAppointment = ({
     const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
         nameOfTheDoctor: "",
         doctorsId: "",
-        appointmentDate: currentDate,
+        appointmentDate: moment(currentDate, "YYYY-MM-DD").format("DD-MM-YYYY"),
         consultingTime: "",
         hospitalId: "",
         userid: user?._id,
@@ -48,7 +50,9 @@ const MissedPatientUserAppointment = ({
         AppointmentNotes: "",
         AppointmentTime: "",
         imgurl: "",
-        appointmentId: "",
+        connsultationFee: "",
+        location: "",
+        hospitalName: "",
     });
 
     const [appointmentDetails, setAppointmentDetails] = useState({});
@@ -70,12 +74,19 @@ const MissedPatientUserAppointment = ({
         useState(false);
     const [slotData, setSlotData] = useState([]);
     const [activeCard, setActiveCard] = useState();
+    const [slotsLoading, setSlotsLoading] = useState(false);
+    const [acceptAppointments, setAcceptAppointments] = useState("");
     const [confirmBookAppointmentDialog, setConfirmBookAppointmentDialog] =
         useState(false);
     const [bookingAppointmentDetailsDialog, setBookAppointmentDetailsDialog] =
         useState(false);
+    const [doctorsId, setDoctorId] = useState("");
+    const [tokenData, setTokensData] = useState([]);
 
     const handleReschedule = (appointment) => {
+        console.log(appointment);
+        setAcceptAppointments(appointment?.doctorid?.acceptAppointments);
+        setAcceptAppointments(appointment?.doctorid?.acceptAppointments);
         setAppointmentDetails(appointment);
         setBookingAppointmentDetails({
             ...bookingAppointmentDetails,
@@ -83,6 +94,11 @@ const MissedPatientUserAppointment = ({
             imgurl: appointment.doctorid.imgurl,
             doctorid: appointment.doctorid._id,
             appointmentId: appointment._id,
+            connsultationFee: appointment?.doctorid?.connsultationFee,
+            location: appointment?.doctorid?.location,
+            hospitalName:
+                appointment?.doctorid?.hospitalId?.nameOfhospitalOrClinic ||
+                null,
         });
         setInputValue({
             ...inputValue,
@@ -93,10 +109,13 @@ const MissedPatientUserAppointment = ({
             AppointmentNotes: appointment.AppointmentNotes,
             doctorid: appointment.doctorid._id,
         });
+        setDoctorId(appointment.doctorid._id);
+        // setAcceptAppointments("");
         setBookAppointmentDialog(true);
     };
 
     const getAvailableSlots = async () => {
+        datedumb = false;
         try {
             // setSlotsLoading(true);
             if (!appointmentDetails?.doctorid?._id) {
@@ -110,6 +129,7 @@ const MissedPatientUserAppointment = ({
             );
             if (response.status === "ok") {
                 // setSlotsLoading(false);
+                datedumb = true;
                 return setSlotData(response.result);
             }
         } catch (error) {
@@ -121,6 +141,30 @@ const MissedPatientUserAppointment = ({
     useEffect(() => {
         getAvailableSlots();
     }, [bookingAppointmentDetails.appointmentDate]);
+
+    const getAvailableTokenTime = async () => {
+        if (doctorsId) {
+            try {
+                setSlotsLoading(true);
+                const response = await axiosClient.get(
+                    `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctorsId}/${currentDate}`
+                );
+                console.log(response);
+                if (response.status === "ok") {
+                    setSlotsLoading(false);
+                    return setTokensData(response.result);
+                }
+            } catch (error) {
+                setSlotsLoading(false);
+                toast.error("something went wrong");
+            }
+        }
+        return false;
+    };
+
+    useEffect(() => {
+        getAvailableTokenTime();
+    }, [acceptAppointments === "byToken"]);
 
     return (
         <>
@@ -260,6 +304,7 @@ const MissedPatientUserAppointment = ({
             )}
             <BookAppointmentDialogForPatient
                 missedAppointmentsData={missedAppointmentsData}
+                datedumb={datedumb}
                 bookingAppointmentDetails={bookingAppointmentDetails}
                 bookingAppointmentDialog={bookingAppointmentDialog}
                 setBookAppointmentDialog={setBookAppointmentDialog}
@@ -279,6 +324,10 @@ const MissedPatientUserAppointment = ({
                 setSelectedTime={setSelectedTime}
                 activeCard={activeCard}
                 setActiveCard={setActiveCard}
+                acceptAppointments={acceptAppointments}
+                setAcceptAppointments={setAcceptAppointments}
+                tokenData={tokenData}
+                setTokensData={setTokensData}
                 // slotsLoading={slotsLoading}
             />
 
@@ -296,6 +345,8 @@ const MissedPatientUserAppointment = ({
                 }
                 bookingAppointmentDetails={bookingAppointmentDetails}
                 setBookingAppointmentDetails={setBookingAppointmentDetails}
+                acceptAppointments={acceptAppointments}
+                setAcceptAppointments={setAcceptAppointments}
             />
             <ConfirmRescheduleDialog
                 inputValue={inputValue}
@@ -319,6 +370,9 @@ const MissedPatientUserAppointment = ({
                 setSelectedTime={setSelectedTime}
                 setSlotData={setSlotData}
                 setActiveCard={setActiveCard}
+                acceptAppointments={acceptAppointments}
+                setAcceptAppointments={setAcceptAppointments}
+
                 // setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
             />
         </>

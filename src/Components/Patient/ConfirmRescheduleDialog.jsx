@@ -48,6 +48,7 @@ const ConfirmRescheduleDialog = ({
     setSelectedTime,
     setSlotData,
     setActiveCard,
+    acceptAppointments,
 }) => {
     const [appointmentAlreadyExistDialog, setAppointmentAlreadyExistDialog] =
         useState(false);
@@ -56,78 +57,151 @@ const ConfirmRescheduleDialog = ({
         {}
     );
 
+    const currentDate = moment().format("YYYY-MM-DD");
+
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
         useState(false);
 
     const bookAppointment = async () => {
         setDisableButton(true);
-        try {
-            const response = await axiosClient.put(
-                `/v2/editAppointment/${bookingAppointmentDetails.appointmentId}`,
-                inputValue
-            );
-            console.log(response);
-            if (response.status === "ok") {
-                console.log("yaaha tk");
-                setSelectedTime(null);
-                getPendingAppointmentsData();
-                getMissedAppointmentsData();
-                setConfirmedAppointmentData(response.result);
-                setAppointmentCofirmedDialog(true);
-                setActiveCard();
-                setInputValue({
-                    ...inputValue,
-                    name: "",
-                    age: "",
-                    gender: "",
-                    phone: "",
-                    AppointmentNotes: "",
-                    appointmentDate: "",
-                    AppointmentTime: "",
-                    doctorid: "",
-                });
-                setBookingAppointmentDetails({
-                    ...bookingAppointmentDetails,
-                    nameOfTheDoctor: "",
-                    doctorsId: "",
-                    appointmentDate: "",
-                    consultingTime: "",
-                    hospitalId: "",
-                    userid: "",
-                    doctorid: "",
-                    name: "",
-                    Age: "",
-                    Gender: "",
-                    phone: "",
-                    AppointmentNotes: "",
-                    AppointmentTime: "",
-                    imgurl: "",
-                    appointmentId: "",
-                });
+        if (acceptAppointments === "byToken") {
+            try {
+                const response = await axiosClient.put(
+                    `/v2/editAppointmentForAppointmentByToken/${bookingAppointmentDetails.appointmentId}`,
+                    { ...inputValue, appointmentDate: currentDate }
+                );
+                console.log(response);
+                if (response.status === "ok") {
+                    console.log("yaaha tk");
+                    setSelectedTime(null);
+                    getPendingAppointmentsData();
+                    getMissedAppointmentsData();
+                    setConfirmedAppointmentData(response.result);
+                    setAppointmentCofirmedDialog(true);
+                    setActiveCard();
+                    setInputValue({
+                        ...inputValue,
+                        name: "",
+                        age: "",
+                        gender: "",
+                        phone: "",
+                        AppointmentNotes: "",
+                        appointmentDate: "",
+                        AppointmentTime: "",
+                        doctorid: "",
+                    });
+                    setBookingAppointmentDetails({
+                        ...bookingAppointmentDetails,
+                        nameOfTheDoctor: "",
+                        doctorsId: "",
+                        appointmentDate: "",
+                        consultingTime: "",
+                        hospitalId: "",
+                        userid: "",
+                        doctorid: "",
+                        name: "",
+                        Age: "",
+                        Gender: "",
+                        phone: "",
+                        AppointmentNotes: "",
+                        AppointmentTime: "",
+                        imgurl: "",
+                        appointmentId: "",
+                    });
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setBookAppointmentDetailsDialog(false);
+                    setSlotData([]);
+                }
+            } catch (error) {
+                if (
+                    error.statusCode === 409 &&
+                    error.message === "Appointment is already exist"
+                ) {
+                    console.log("idhr tk");
+                    setSelectedTime(null);
+                    setAppointmentAlreadyExistDialog(true);
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setHospitalListDialog(false);
+                    return setBookAppointmentDetailsDialog(false);
+                }
                 setDisableButton(false);
-                setBookAppointmentDialog(false);
-                setConfirmBookAppointmentDialog(false);
-                setBookAppointmentDialog(false);
-                setBookAppointmentDetailsDialog(false);
-                setSlotData([]);
+                console.log(error);
             }
-        } catch (error) {
-            if (
-                error.statusCode === 409 &&
-                error.message === "Appointment is already exist"
-            ) {
-                console.log("idhr tk");
-                setSelectedTime(null);
-                setAppointmentAlreadyExistDialog(true);
+        } else {
+            try {
+                const response = await axiosClient.put(
+                    `/v2/editAppointment/${bookingAppointmentDetails.appointmentId}`,
+                    inputValue
+                );
+                console.log(response);
+                if (response.status === "ok") {
+                    console.log("yaaha tk");
+                    setSelectedTime(null);
+                    getPendingAppointmentsData();
+                    getMissedAppointmentsData();
+                    setConfirmedAppointmentData(response.result);
+                    setAppointmentCofirmedDialog(true);
+                    setActiveCard();
+                    setInputValue({
+                        ...inputValue,
+                        name: "",
+                        age: "",
+                        gender: "",
+                        phone: "",
+                        AppointmentNotes: "",
+                        appointmentDate: "",
+                        AppointmentTime: "",
+                        doctorid: "",
+                    });
+                    setBookingAppointmentDetails({
+                        ...bookingAppointmentDetails,
+                        nameOfTheDoctor: "",
+                        doctorsId: "",
+                        appointmentDate: "",
+                        consultingTime: "",
+                        hospitalId: "",
+                        userid: "",
+                        doctorid: "",
+                        name: "",
+                        Age: "",
+                        Gender: "",
+                        phone: "",
+                        AppointmentNotes: "",
+                        AppointmentTime: "",
+                        imgurl: "",
+                        appointmentId: "",
+                    });
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setBookAppointmentDetailsDialog(false);
+                    setSlotData([]);
+                }
+            } catch (error) {
+                if (
+                    error.statusCode === 409 &&
+                    error.message === "Appointment is already exist"
+                ) {
+                    console.log("idhr tk");
+                    setSelectedTime(null);
+                    setAppointmentAlreadyExistDialog(true);
+                    setDisableButton(false);
+                    setBookAppointmentDialog(false);
+                    setConfirmBookAppointmentDialog(false);
+                    setBookAppointmentDialog(false);
+                    setHospitalListDialog(false);
+                    return setBookAppointmentDetailsDialog(false);
+                }
                 setDisableButton(false);
-                setBookAppointmentDialog(false);
-                setConfirmBookAppointmentDialog(false);
-                setBookAppointmentDialog(false);
-                setHospitalListDialog(false);
-                return setBookAppointmentDetailsDialog(false);
+                console.log(error);
             }
-            setDisableButton(false);
-            console.log(error);
         }
     };
 
@@ -186,39 +260,79 @@ const ConfirmRescheduleDialog = ({
                         Are you sure you want to book appointment with Dr.{" "}
                         {bookingAppointmentDetails.nameOfTheDoctor}?
                     </Typography>
-                    <Box
+                    <Stack
+                        direction={{ xs: "column", sm: "column", md: "row" }}
                         sx={{
                             fontSize: "18px",
                             my: "10px",
+                            gap: "10px",
                         }}
                     >
-                        <Box
-                            component="span"
-                            sx={{
-                                color: "#383838",
-                                fontFamily: "Lato",
-                                fontWeight: "600",
-                                fontSize: "18px",
-                            }}
-                        >
-                            Time:{" "}
-                        </Box>{" "}
-                        <Box
-                            component="span"
-                            sx={{
-                                color: "#ffffff",
-                                background: "#1F51C6",
-                                p: "8px",
-                                borderRadius: "4px",
-                                fontFamily: "Lato",
-                                fontWeight: "semibold",
-                                fontSize: "0.813rem",
-                            }}
-                        >
-                            {bookingAppointmentDetails.appointmentDate},{" "}
-                            {bookingAppointmentDetails.AppointmentTime}{" "}
+                        <Box>
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#383838",
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "1.125rem",
+                                }}
+                            >
+                                Date:{" "}
+                            </Box>{" "}
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#1F51C6",
+                                    // background: "#1F51C6",
+                                    p: "8px",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                }}
+                            >
+                                {/* {doctorinfo?.acceptAppointments !==
+                                        "byToken"
+                                            ? moment(
+                                                  bookingAppointmentDetails.appointmentDate
+                                              ).format("DD-MM-YYYY")
+                                            : currentDate} */}
+                                {acceptAppointments !== "byToken"
+                                    ? moment(
+                                          bookingAppointmentDetails.appointmentDate,
+                                          "YYYY-MM-DD"
+                                      ).format("DD-MM-YYYY")
+                                    : bookingAppointmentDetails?.appointmentDate}{" "}
+                            </Box>
                         </Box>
-                    </Box>
+                        <Box>
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#383838",
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "18px",
+                                }}
+                            >
+                                Time:{" "}
+                            </Box>{" "}
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: "#1F51C6",
+                                    // background: "#1F51C6",
+                                    p: "8px",
+                                    borderRadius: "4px",
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                }}
+                            >
+                                {bookingAppointmentDetails.AppointmentTime}{" "}
+                            </Box>
+                        </Box>
+                    </Stack>
                     <Stack direction="row" spacing="15px">
                         <Button
                             onClick={() =>

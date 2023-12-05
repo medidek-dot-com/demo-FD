@@ -23,6 +23,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
+import Footer from "../../Components/Footer/Footer";
 import {
     KEY_ACCESS_TOKEN,
     PATIENT_USER,
@@ -31,8 +32,8 @@ import {
 import { login } from "../../Store/authSlice";
 
 const MobileImageStyle = styled("img")({
-    position: "fixed",
-    bottom: 0,
+    position: "absolute",
+    bottom: -20,
 });
 
 const TextFeildStyle = styled(TextField)({
@@ -50,10 +51,10 @@ const TextFeildStyle = styled(TextField)({
         fontFamily: "Lato",
         fontWeight: "500",
         fontSize: "1rem",
-        color:"yellow"
+        color: "yellow",
     },
-    '& .MuiFormLabel-root-MuiInputLabel-root.Mui-error':{
-        color:"yellow",
+    "& .MuiFormLabel-root-MuiInputLabel-root.Mui-error": {
+        color: "yellow",
     },
     "& div:before:hover": {
         borderBottom: "1px solid #ffffff",
@@ -139,7 +140,7 @@ const SignIn = () => {
                 {
                     email,
                     password,
-                    role:"PATIENT"
+                    role: "PATIENT",
                 }
             );
             console.log(response);
@@ -193,7 +194,7 @@ const SignIn = () => {
                         sm: "100%",
                         md: "calc(100% - 30px)",
                     },
-                    position: "fixed",
+                    // position: "fixed",
                     // top:0,
                     m: "0px auto",
                     p: 1,
@@ -205,6 +206,11 @@ const SignIn = () => {
                         justifyContent: "space-between",
                         alignItems: "center",
                         minHeight: "100vh",
+                        background: {
+                            xs: "url('/backgroundForMobileView.jpeg')",
+                            sm: "",
+                            md: "none",
+                        },
                     }}
                 >
                     <Box
@@ -580,6 +586,7 @@ const SignIn = () => {
                     {/* </Box> */}
                 </Box>
             </Box>
+            <Footer />
         </>
     );
 };

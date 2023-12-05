@@ -114,7 +114,7 @@ const CompleteAppointmentTableForSlot = ({
                             <StyledTableCell>Date</StyledTableCell>
                             {/* <StyledTableCell>Remove</StyledTableCell> */}
                             <StyledTableCell>Status</StyledTableCell>
-                            <StyledTableCell>Prescription</StyledTableCell>
+                            {/* <StyledTableCell>Prescription</StyledTableCell> */}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -244,7 +244,7 @@ const CompleteAppointmentTableForSlot = ({
                                             </MenuItem>
                                         </Select> */}
                                     </StyledTableCell>
-                                    <StyledTableCell sx={{ color: "#1F51C6" }}>
+                                    {/* <StyledTableCell sx={{ color: "#1F51C6" }}>
                                         <label
                                             htmlFor="file"
                                             style={{
@@ -263,7 +263,7 @@ const CompleteAppointmentTableForSlot = ({
                                             type="file"
                                             sx={{ display: "none" }}
                                         />
-                                    </StyledTableCell>
+                                    </StyledTableCell> */}
                                 </TableRow>
                             ))
                         ) : (
@@ -498,7 +498,7 @@ const CompleteAppointmentTableForSlot = ({
                                         </Box>
                                     </Stack>
 
-                                    <Button
+                                    {/* <Button
                                         variant="contained"
                                         sx={{
                                             width: "100%",
@@ -512,7 +512,7 @@ const CompleteAppointmentTableForSlot = ({
                                     >
                                         <FiUpload size={20} />
                                         Upload Prescription
-                                    </Button>
+                                    </Button> */}
                                 </Card>
                             </Box>
                         );
