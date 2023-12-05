@@ -34,7 +34,6 @@ const SelectHospital = () => {
     const { user } = useSelector((state) => state.auth);
     // const {doctor} = useSelector((state) => state.doctor)
     const { doctor } = useSelector((state) => state.doctor);
-    console.log(doctor);
     const [hospitalList, setHospitalList] = useState([]);
     const numberOfHospitals = user;
     // const doctordAndHospitalDetails = numberOfHospitals.map(hospital => hospital)
@@ -46,14 +45,11 @@ const SelectHospital = () => {
                 `/v2/multipleloginprofile/${user?.doctorid}`
             );
             setHospitalList(response.result);
-            console.log(response);
             return;
         } catch (error) {
             console.log(error);
         }
     };
-
-    console.log(hospitalList);
 
     useEffect(() => {
         multipleloginprofile();
