@@ -188,7 +188,7 @@ const DoctorsTable = ({ search }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {doctorsData ? (
+                        {doctorsData.length > 0 ? (
                             doctorsData.map((doctor, i) => (
                                 <TableRow
                                     key={doctor._id}
@@ -263,7 +263,16 @@ const DoctorsTable = ({ search }) => {
                                 </TableRow>
                             ))
                         ) : (
-                            <Typography>No Data</Typography>
+                            <Typography
+                                sx={{
+                                    textAlign: "center",
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    mt: "10px",
+                                }}
+                            >
+                                No Doctors Found
+                            </Typography>
                         )}
                     </TableBody>
                 </Table>

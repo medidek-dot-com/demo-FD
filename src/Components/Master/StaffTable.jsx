@@ -159,7 +159,7 @@ const StaffTable = ({ search }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {staffData ? (
+                        {staffData.length > 0 ? (
                             staffData.map((staff, i) => (
                                 <TableRow
                                     key={staff._id}
@@ -172,7 +172,8 @@ const StaffTable = ({ search }) => {
                                     <StyledTableCell>
                                         <Avatar
                                             src={
-                                                staff?.imgurl ? staff.imgurl
+                                                staff?.imgurl
+                                                    ? staff.imgurl
                                                     : "/default.png"
                                             }
                                             sx={{
@@ -233,7 +234,16 @@ const StaffTable = ({ search }) => {
                                 </TableRow>
                             ))
                         ) : (
-                            <Typography>No Data</Typography>
+                            <Typography
+                                sx={{
+                                    textAlign: "center",
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    mt: "10px",
+                                }}
+                            >
+                                No Staff Found
+                            </Typography>
                         )}
                     </TableBody>
                 </Table>

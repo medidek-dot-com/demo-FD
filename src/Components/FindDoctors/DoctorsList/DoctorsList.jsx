@@ -630,7 +630,7 @@ const DoctorsList = () => {
                                             value={5}
                                             readOnly
                                         />
-                                        &nbsp;
+                                        {/* &nbsp;
                                         <Box
                                             component={"span"}
                                             sx={{
@@ -640,7 +640,7 @@ const DoctorsList = () => {
                                             }}
                                         >
                                             114 Rating
-                                        </Box>
+                                        </Box> */}
                                     </Box>
                                     <Box
                                         sx={{
