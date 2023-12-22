@@ -448,7 +448,7 @@ const BookAppointmentDialogForPatient = ({
                             >
                                 Availability:
                             </Typography>
-                            <Typography
+                            <Box
                                 sx={{
                                     fontFamily: "Lato",
                                     fontWeight: "600",
@@ -481,7 +481,7 @@ const BookAppointmentDialogForPatient = ({
                                 ) : (
                                     "Doctor Not Available For Today"
                                 )}
-                            </Typography>
+                            </Box>
                         </Stack>
                     )}
 

@@ -531,7 +531,7 @@ const MUDDashboard = () => {
                                 fontSize: "22px",
                             }}
                         >
-                            Dr. {doctor.nameOfTheDoctor}
+                            Dr. {doctor?.nameOfTheDoctor}
                         </Typography>
                         <Typography
                             variant="h5"
@@ -543,7 +543,7 @@ const MUDDashboard = () => {
                                 fontSize: "15px",
                             }}
                         >
-                            DUID :- {doctor.doctorid}
+                            DUID :- {doctor?.doctorid}
                         </Typography>
                     </Stack>
                     <Stack
@@ -775,7 +775,7 @@ const MUDDashboard = () => {
                                 fontSize: "22px",
                             }}
                         >
-                            Dr. {doctor.nameOfTheDoctor}
+                            Dr. {doctor?.nameOfTheDoctor}
                         </Typography>
                         <Typography
                             variant="h5"
@@ -787,7 +787,7 @@ const MUDDashboard = () => {
                                 fontSize: "15px",
                             }}
                         >
-                            DUID :- {doctor.doctorid}
+                            DUID :- {doctor?.doctorid}
                         </Typography>
                         <Box
                             sx={{
@@ -903,7 +903,7 @@ const MUDDashboard = () => {
                                                         )
                                                     );
                                                     navigate(
-                                                        `/doctor/dashboard/${hospital._id}`
+                                                        `/doctor/dashboard/${hospital?._id}`
                                                     );
                                                     setExpandedMore(false);
                                                 }}
@@ -1048,7 +1048,9 @@ const MUDDashboard = () => {
                         >
                             <Button
                                 onClick={() =>
-                                    navigate(`/doctor/edit-profile/${user._id}`)
+                                    navigate(
+                                        `/doctor/edit-profile/${user?._id}`
+                                    )
                                 }
                                 variant="text"
                                 sx={{

@@ -70,6 +70,7 @@ import ViewPatientCompletedAppointment from "./Pages/Patient/ViewPatientComplete
 import Help from "./Help";
 import MedidekPrivacy from "./MedidekPrivacy";
 import MedidekCancellationPolicy from "./MedidekCancellationPolicy";
+import Map from "./Components/Map";
 
 const App = () => {
     const { isLoggedIn, user } = useSelector((state) => state.auth);
@@ -106,7 +107,7 @@ const App = () => {
         } else {
             setShowNavBar(true);
         }
-    }, [location]);
+    }, [location.pathname]);
     return (
         <>
             {/* <ComingSoon/> */}
@@ -209,6 +210,7 @@ const App = () => {
                         path="/master/user/management/staff/:hospital_id"
                         element={<ManageStaff />}
                     />
+
                     <Route
                         path="/master/user/doctors/:hospital_id"
                         element={<MasterDoctors />}
@@ -272,7 +274,9 @@ const App = () => {
                     element={<OtpScreen />}
                 />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/map" element={<Map />} />
             </Routes>
+
             {/* </Box> */}
 
             {/* {showNavbar && <Footer />} */}

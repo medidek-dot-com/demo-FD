@@ -14,7 +14,11 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import moment from "moment";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
-const ViewSlotAppointment = ({ appointmentDetails }) => {
+const ViewSlotAppointment = ({
+    appointmentDetails,
+    setAreYouSureDialog,
+    setEditAppointmentDialog,
+}) => {
     return (
         <>
             <Box
@@ -41,7 +45,6 @@ const ViewSlotAppointment = ({ appointmentDetails }) => {
                         px: { xs: "24px", sm: "24px", md: "26px" },
                     }}
                 >
-                    SLottttttttttttttttttttttttt
                     <Stack
                         alignItems={{
                             xs: "space-between",

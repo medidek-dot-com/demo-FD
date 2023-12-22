@@ -982,7 +982,7 @@ const DoctorAppointments = () => {
                                     }
                                 >
                                     <MenuItem
-                                        onClick={() => setSelectValue(1)}
+                                        // onClick={() => setSelectValue(1)}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "600",
@@ -995,7 +995,7 @@ const DoctorAppointments = () => {
                                         Token Appointments
                                     </MenuItem>
                                     <MenuItem
-                                        onClick={() => setSelectValue(2)}
+                                        // onClick={() => setSelectValue(2)}
                                         sx={{
                                             fontFamily: "Lato",
                                             fontWeight: "600",

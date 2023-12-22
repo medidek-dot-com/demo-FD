@@ -25,8 +25,6 @@ import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import moment from "moment";
-import MissedAppointmentBySlotTable from "./MissedAppointmentBySlotTable";
-import MissedAppointmentByTokenTable from "./MissedAppointmentByTokenTable";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -52,12 +50,9 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     color: "#383838",
 });
 
-const AllMissedAppintmentsForAnHospital = ({
+const MissedAppointmentBySlotTable = ({
     missedAppointmentsData,
     getMissedAppointmentsData,
-    slotAppointment,
-    missedAppointmentsByTokenData,
-    getMissedAppointmentsByTokenData,
 }) => {
     const [updatedStatus, setUpdatedStatus] = useState("pending");
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
@@ -85,22 +80,7 @@ const AllMissedAppintmentsForAnHospital = ({
     }, [updatedStatus]);
     return (
         <>
-            {slotAppointment === "slotAppointments" ? (
-                <MissedAppointmentBySlotTable
-                    missedAppointmentsData={missedAppointmentsData}
-                    getMissedAppointmentsData={getMissedAppointmentsData}
-                />
-            ) : (
-                <MissedAppointmentByTokenTable
-                    missedAppointmentsByTokenData={
-                        missedAppointmentsByTokenData
-                    }
-                    getMissedAppointmentsByTokenData={
-                        getMissedAppointmentsByTokenData
-                    }
-                />
-            )}
-            {/* <Box
+            <Box
                 sx={{
                     display: { xs: "none", sm: "none", md: "block" },
                 }}
@@ -248,7 +228,45 @@ const AllMissedAppintmentsForAnHospital = ({
                         ) : (
                             <Typography>No Data</Typography>
                         )}
-                       
+                        {/* <TableRow
+                                sx={{
+                                    boxShadow:
+                                        "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+                                }}
+                            >
+                                <StyledTableCell>1</StyledTableCell>
+                                <StyledTableCell>Johnny Doe</StyledTableCell>
+                                <StyledTableCell>54</StyledTableCell>
+                                <StyledTableCell>Male</StyledTableCell>
+                                <StyledTableCell>9911223344</StyledTableCell>
+                                <StyledTableCell>12:00 PM</StyledTableCell>
+                                <StyledTableCell>15/07/23</StyledTableCell>
+                                <StyledTableCell sx={{ color: "#1F51C6" }}>
+                                    Edit
+                                </StyledTableCell>
+                                <StyledTableCell sx={{ color: "#B92612" }}>
+                                    Cancel
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                    <Select
+                                        sx={
+                                            status == "Complete"
+                                                ? statusComplete
+                                                : statusPending
+                                        }
+                                        variant="standard"
+                                        value={status}
+                                        onChange={handleChange}
+                                    >
+                                        <MenuItem value={"Pending"}>
+                                            Pending
+                                        </MenuItem>
+                                        <MenuItem value={"Complete"}>
+                                            Complete
+                                        </MenuItem>
+                                    </Select>
+                                </StyledTableCell>
+                            </TableRow> */}
                     </TableBody>
                 </Table>
             </Box>
@@ -405,6 +423,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                                 }}
                                                 variant="standard"
                                                 value={appointment.status}
+                                                // onChange={(e) => handleChange(e, i)}
                                             >
                                                 <MenuItem
                                                     onClick={() =>
@@ -479,9 +498,9 @@ const AllMissedAppintmentsForAnHospital = ({
                         No Appointments For Today
                     </Typography>
                 )}
-            </Stack> */}
+            </Stack>
         </>
     );
 };
 
-export default AllMissedAppintmentsForAnHospital;
+export default MissedAppointmentBySlotTable;

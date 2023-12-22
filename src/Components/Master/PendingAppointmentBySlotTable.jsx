@@ -24,9 +24,8 @@ import {
 import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { FiUpload } from "react-icons/fi";
 import moment from "moment";
-import MissedAppointmentBySlotTable from "./MissedAppointmentBySlotTable";
-import MissedAppointmentByTokenTable from "./MissedAppointmentByTokenTable";
 
 const StyledTableCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -52,12 +51,9 @@ const MobileViewCardTypographyStyle = styled(Typography)({
     color: "#383838",
 });
 
-const AllMissedAppintmentsForAnHospital = ({
-    missedAppointmentsData,
-    getMissedAppointmentsData,
-    slotAppointment,
-    missedAppointmentsByTokenData,
-    getMissedAppointmentsByTokenData,
+const PendingAppointmentBySlotTable = ({
+    pendingAppointmentsData,
+    getPendingAppointmentsData,
 }) => {
     const [updatedStatus, setUpdatedStatus] = useState("pending");
     const [appointmentDropDown, setAppointmentDropDown] = useState(false);
@@ -72,7 +68,7 @@ const AllMissedAppintmentsForAnHospital = ({
             );
             if (response.status === "ok") {
                 setAciveCard(false);
-                getMissedAppointmentsData();
+                getPendingAppointmentsData();
             }
             console.log(response);
         } catch (error) {
@@ -81,26 +77,12 @@ const AllMissedAppintmentsForAnHospital = ({
         setUpdatedStatus(status);
     };
     useEffect(() => {
-        getMissedAppointmentsData();
+        getPendingAppointmentsData();
     }, [updatedStatus]);
+
     return (
         <>
-            {slotAppointment === "slotAppointments" ? (
-                <MissedAppointmentBySlotTable
-                    missedAppointmentsData={missedAppointmentsData}
-                    getMissedAppointmentsData={getMissedAppointmentsData}
-                />
-            ) : (
-                <MissedAppointmentByTokenTable
-                    missedAppointmentsByTokenData={
-                        missedAppointmentsByTokenData
-                    }
-                    getMissedAppointmentsByTokenData={
-                        getMissedAppointmentsByTokenData
-                    }
-                />
-            )}
-            {/* <Box
+            <Box
                 sx={{
                     display: { xs: "none", sm: "none", md: "block" },
                 }}
@@ -121,7 +103,7 @@ const AllMissedAppintmentsForAnHospital = ({
                         <TableRow
                             sx={{ position: "sticky", top: "10px", zIndex: 1 }}
                         >
-                            <StyledTableCell>Token No.</StyledTableCell>
+                            <StyledTableCell>Sr. No.</StyledTableCell>
                             <StyledTableCell>Patient's Name</StyledTableCell>
                             <StyledTableCell>Age</StyledTableCell>
                             <StyledTableCell>Gender</StyledTableCell>
@@ -135,8 +117,8 @@ const AllMissedAppintmentsForAnHospital = ({
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {missedAppointmentsData ? (
-                            missedAppointmentsData.map((appointment, i) => (
+                        {pendingAppointmentsData ? (
+                            pendingAppointmentsData.map((appointment, i) => (
                                 <TableRow
                                     key={appointment._id}
                                     sx={{
@@ -177,7 +159,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                     <StyledTableCell>
                                         <Select
                                             sx={{
-                                                color: "#EA4335",
+                                                color: "#383838",
                                                 fontFamily: "Lato",
                                                 fontWeight: "600",
                                                 fontSize: "16px",
@@ -235,7 +217,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                                     fontWeight: "600",
                                                     fontSize: "16px",
                                                     textAlign: "center",
-                                                    color: "#EA4335",
+                                                    color: "red",
                                                 }}
                                                 value={"missed"}
                                             >
@@ -248,7 +230,45 @@ const AllMissedAppintmentsForAnHospital = ({
                         ) : (
                             <Typography>No Data</Typography>
                         )}
-                       
+                        {/* <TableRow
+                                sx={{
+                                    boxShadow:
+                                        "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+                                }}
+                            >
+                                <StyledTableCell>1</StyledTableCell>
+                                <StyledTableCell>Johnny Doe</StyledTableCell>
+                                <StyledTableCell>54</StyledTableCell>
+                                <StyledTableCell>Male</StyledTableCell>
+                                <StyledTableCell>9911223344</StyledTableCell>
+                                <StyledTableCell>12:00 PM</StyledTableCell>
+                                <StyledTableCell>15/07/23</StyledTableCell>
+                                <StyledTableCell sx={{ color: "#1F51C6" }}>
+                                    Edit
+                                </StyledTableCell>
+                                <StyledTableCell sx={{ color: "#B92612" }}>
+                                    Cancel
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                    <Select
+                                        sx={
+                                            status == "Complete"
+                                                ? statusComplete
+                                                : statusPending
+                                        }
+                                        variant="standard"
+                                        value={status}
+                                        onChange={handleChange}
+                                    >
+                                        <MenuItem value={"Pending"}>
+                                            Pending
+                                        </MenuItem>
+                                        <MenuItem value={"Complete"}>
+                                            Complete
+                                        </MenuItem>
+                                    </Select>
+                                </StyledTableCell>
+                            </TableRow> */}
                     </TableBody>
                 </Table>
             </Box>
@@ -257,8 +277,8 @@ const AllMissedAppintmentsForAnHospital = ({
                     display: { xs: "block", sm: "block", md: "none" },
                 }}
             >
-                {missedAppointmentsData?.length > 0 ? (
-                    missedAppointmentsData.map((appointment, i) => {
+                {pendingAppointmentsData?.length > 0 ? (
+                    pendingAppointmentsData.map((appointment, i) => {
                         return (
                             <Box
                                 key={i}
@@ -405,6 +425,7 @@ const AllMissedAppintmentsForAnHospital = ({
                                                 }}
                                                 variant="standard"
                                                 value={appointment.status}
+                                                // onChange={(e) => handleChange(e, i)}
                                             >
                                                 <MenuItem
                                                     onClick={() =>
@@ -461,6 +482,13 @@ const AllMissedAppintmentsForAnHospital = ({
                                                     Missed
                                                 </MenuItem>
                                             </Select>
+                                            {/* <span
+                                                        style={{
+                                                            fontWeight: "600",
+                                                        }}
+                                                    >
+                                                        Male
+                                                    </span> */}
                                         </Box>
                                     </Stack>
                                 </Card>
@@ -479,9 +507,9 @@ const AllMissedAppintmentsForAnHospital = ({
                         No Appointments For Today
                     </Typography>
                 )}
-            </Stack> */}
+            </Stack>
         </>
     );
 };
 
-export default AllMissedAppintmentsForAnHospital;
+export default PendingAppointmentBySlotTable;

@@ -105,11 +105,24 @@ const Appoinments = () => {
     const [doctorData, setDoctorData] = useState({});
     const [showDoctorCard, setShowDoctorCard] = useState(false);
     const [search, setSearch] = useState("");
+    const [slotAppointment, setSlotAppointment] = useState("slotAppointments");
     const [pendingAppointmentsData, setPendingAppointmentsData] = useState([]);
     const [completeAppointmentsData, setCompleteAppointmentsData] = useState(
         []
     );
     const [missedAppointmentsData, setMissedAppointmentsData] = useState([]);
+
+    const [pendingAppointmentsByTokenData, setPendingAppointmentsByTokenData] =
+        useState([]);
+
+    const [
+        completeAppointmentsByTokenData,
+        setCompleteAppointmentsByTokenData,
+    ] = useState([]);
+
+    const [missedAppointmentsByTokenData, setMissedAppointmentsByTokenData] =
+        useState([]);
+
     const [bookAppointmentDialog, setBookAppointmentDialog] = useState(false);
     const [mobileActiveTab, setMobileActiveTab] = useState(1);
     const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
@@ -172,6 +185,7 @@ const Appoinments = () => {
         setPendingAppointmentsData(response.result);
         console.log(response.result);
     };
+
     const getCompleteAppointmentsData = async () => {
         const response = await axiosClient.get(
             `/v2/getCompleteAppointmentsForHospital/${hospital_id}/${date}`
@@ -179,6 +193,7 @@ const Appoinments = () => {
         setCompleteAppointmentsData(response.result);
         console.log(response);
     };
+
     const getMissedAppointmentsData = async () => {
         try {
             const response = await axiosClient.get(
@@ -192,11 +207,54 @@ const Appoinments = () => {
         }
     };
 
+    const getPendingAppointmentsByTokenData = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getAllAppointmentsForPerticularHospitalByToken/${hospital_id}/${date}/pendingByToken`
+            );
+            setPendingAppointmentsByTokenData(response.result);
+            console.log(response.result);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getCompleteAppointmentsByTokenData = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getCompleteAppointmentsForHospitalByToken/${hospital_id}/${date}/completedByToken`
+            );
+            setCompleteAppointmentsByTokenData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
+
+    const getMissedAppointmentsByTokenData = async () => {
+        try {
+            const response = await axiosClient.get(
+                `/v2/getMissedAppointmentsByTokenForHospital/${hospital_id}/${date}/missedByToken`
+            );
+            setMissedAppointmentsByTokenData(response.result);
+            console.log(response);
+        } catch (error) {
+            console.log(error.message);
+            toast.error("something went wrong");
+        }
+    };
+
     useEffect(() => {
         getPendingAppointmentsData();
         getCompleteAppointmentsData();
         getMissedAppointmentsData();
-    }, [date]);
+    }, [date, slotAppointment === "slotAppointments"]);
+
+    useEffect(() => {
+        getPendingAppointmentsByTokenData();
+        getCompleteAppointmentsByTokenData();
+        getMissedAppointmentsByTokenData();
+    }, [date, slotAppointment === "tokenAppointments"]);
 
     return (
         <>
@@ -350,6 +408,135 @@ const Appoinments = () => {
                         justifyContent: "space-between",
                     }}
                 >
+                    <Stack
+                        direction={"row"}
+                        spacing={1}
+                        sx={{
+                            display: {
+                                xs: "none",
+                                sm: "none",
+                                md: "flex",
+                            },
+                        }}
+                    >
+                        <Select
+                            sx={{
+                                color: "#383838",
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "16px",
+                                textAlign: "center",
+                                background: "#1F51C6",
+                                // p:'5px 10px',
+                                borderRadius: "21px",
+                                height: "41px",
+                                color: "#FFFFFF",
+                            }}
+                            variant="outlined"
+                            value={slotAppointment}
+                            onChange={(e) => setSlotAppointment(e.target.value)}
+                        >
+                            <MenuItem
+                                // onClick={() => setSelectValue(1)}
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "16px",
+                                    textAlign: "center",
+                                    color: "#383838",
+                                }}
+                                value="tokenAppointments"
+                            >
+                                Token Appointments
+                            </MenuItem>
+                            <MenuItem
+                                // onClick={() => setSelectValue(2)}
+                                sx={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "600",
+                                    fontSize: "16px",
+                                    textAlign: "center",
+                                    color: "#383838",
+                                }}
+                                value="slotAppointments"
+                            >
+                                Slot Appointments
+                            </MenuItem>
+                        </Select>
+                        <hr />
+                        {/* <Button
+                                    onClick={() => setSelectValue(1)}
+                                    variant={
+                                        selectValue === 1
+                                            ? "contained"
+                                            : "outlined"
+                                    }
+                                    sx={{
+                                        textTransform: "none",
+                                        width: "119px",
+                                        height: "41px",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        borderRadius: "35px",
+                                        color:
+                                            selectValue === 1
+                                                ? "#ffffff"
+                                                : "#383838",
+                                        boxShadow: "none",
+                                    }}
+                                >
+                                    Upcoming
+                                </Button>
+                                <Button
+                                    onClick={() => setSelectValue(2)}
+                                    variant={
+                                        selectValue === 2
+                                            ? "contained"
+                                            : "outlined"
+                                    }
+                                    sx={{
+                                        textTransform: "none",
+                                        width: "119px",
+                                        height: "41px",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        borderRadius: "35px",
+                                        color:
+                                            selectValue === 2
+                                                ? "#ffffff"
+                                                : "#383838",
+                                        boxShadow: "none",
+                                    }}
+                                >
+                                    Completed
+                                </Button>
+                                <Button
+                                    onClick={() => setSelectValue(3)}
+                                    variant={
+                                        selectValue === 3
+                                            ? "contained"
+                                            : "outlined"
+                                    }
+                                    sx={{
+                                        textTransform: "none",
+                                        width: "119px",
+                                        height: "41px",
+                                        fontFamily: "Raleway",
+                                        fontWeight: "600",
+                                        fontSize: "16px",
+                                        borderRadius: "35px",
+                                        color:
+                                            selectValue === 3
+                                                ? "#ffffff"
+                                                : "#383838",
+                                        boxShadow: "none",
+                                    }}
+                                >
+                                    Missed
+                                </Button> */}
+                    </Stack>
                     <Stack direction={"row"} spacing={1}>
                         <Button
                             onClick={() => setActiveTab(1)}
@@ -574,7 +761,7 @@ const Appoinments = () => {
                             }}
                             value={"pending"}
                         >
-                            Pending Appointments
+                            Pending
                         </MenuItem>
                         <MenuItem
                             onClick={() => setActiveTab(2)}
@@ -587,7 +774,7 @@ const Appoinments = () => {
                             }}
                             value={"completed"}
                         >
-                            Completed Appointments
+                            Completed
                         </MenuItem>
                         <MenuItem
                             onClick={() => setActiveTab(3)}
@@ -600,7 +787,50 @@ const Appoinments = () => {
                             }}
                             value={"missed"}
                         >
-                            Missed Appointments
+                            Missed
+                        </MenuItem>
+                    </Select>
+                    <Select
+                        sx={{
+                            color: "#383838",
+                            fontFamily: "Lato",
+                            fontWeight: "600",
+                            fontSize: "16px",
+                            textAlign: "center",
+                            background: "#1F51C6",
+                            // p:'5px 10px',
+                            borderRadius: "21px",
+                            height: "32px",
+                            color: "#FFFFFF",
+                        }}
+                        variant="outlined"
+                        value={slotAppointment}
+                        onChange={(e) => setSlotAppointment(e.target.value)}
+                        // onChange={(e) => handleChange(e, i)}
+                    >
+                        <MenuItem
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "16px",
+                                textAlign: "center",
+                                color: "#383838",
+                            }}
+                            value="tokenAppointments"
+                        >
+                            Token
+                        </MenuItem>
+                        <MenuItem
+                            sx={{
+                                fontFamily: "Lato",
+                                fontWeight: "600",
+                                fontSize: "16px",
+                                textAlign: "center",
+                                color: "#15B912",
+                            }}
+                            value={"slotAppointments"}
+                        >
+                            Slot
                         </MenuItem>
                     </Select>
                     <Box>
@@ -625,6 +855,13 @@ const Appoinments = () => {
                     <AllPendingAppintmentsForAnHospital
                         pendingAppointmentsData={pendingAppointmentsData}
                         getPendingAppointmentsData={getPendingAppointmentsData}
+                        slotAppointment={slotAppointment}
+                        pendingAppointmentsByTokenData={
+                            pendingAppointmentsByTokenData
+                        }
+                        getPendingAppointmentsByTokenData={
+                            getPendingAppointmentsByTokenData
+                        }
                     />
                 )) ||
                     (activeTab === 2 && (
@@ -633,6 +870,16 @@ const Appoinments = () => {
                             getCompleteAppointmentsData={
                                 getCompleteAppointmentsData
                             }
+                            getPendingAppointmentsByTokenData={
+                                getPendingAppointmentsByTokenData
+                            }
+                            slotAppointment={slotAppointment}
+                            completeAppointmentsByTokenData={
+                                completeAppointmentsByTokenData
+                            }
+                            setCompleteAppointmentsByTokenData={
+                                setCompleteAppointmentsByTokenData
+                            }
                         />
                     )) ||
                     (activeTab === 3 && (
@@ -640,6 +887,16 @@ const Appoinments = () => {
                             missedAppointmentsData={missedAppointmentsData}
                             getMissedAppointmentsData={
                                 getMissedAppointmentsData
+                            }
+                            getMissedAppointmentsByTokenData={
+                                getMissedAppointmentsByTokenData
+                            }
+                            slotAppointment={slotAppointment}
+                            missedAppointmentsByTokenData={
+                                missedAppointmentsByTokenData
+                            }
+                            setMissedAppointmentsByTokenData={
+                                setMissedAppointmentsByTokenData
                             }
                         />
                     ))}

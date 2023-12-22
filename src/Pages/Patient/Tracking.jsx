@@ -125,6 +125,7 @@ const Tracking = () => {
                 <Box sx={{ my: 2, display: "flex", justifyContent: "center" }}>
                     <AutocompleteStyle
                         size="small"
+                        disabled
                         disablePortal
                         popupIcon={<img src="/search.svg" alt="img" />}
                         id="combo-box-demo"

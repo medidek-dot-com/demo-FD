@@ -127,7 +127,7 @@ const ViewPatientCompletedAppointment = () => {
                                         color: "#706D6D",
                                     }}
                                 >
-                                    Your Appointment has been Booked!
+                                    Your appointment is completed
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -262,7 +262,7 @@ const ViewPatientCompletedAppointment = () => {
                                         }{" "}
                                         will start appointments
                                     </Box>
-                                    <Box
+                                    {/* <Box
                                         component="p"
                                         sx={{
                                             fontFamily: "Lato",
@@ -272,7 +272,7 @@ const ViewPatientCompletedAppointment = () => {
                                         }}
                                     >
                                         @12:00 PM, Sept 5, 2021
-                                    </Box>
+                                    </Box> */}
                                 </Stack>
                             </Stack>
                             <Stack direction="row" sx={{ gap: "5px" }}>

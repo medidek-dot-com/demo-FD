@@ -30,6 +30,8 @@ const ViewPetiantAppointment = () => {
     const [updatedStatus, setUpdatedStatus] = useState("pending");
     const [appointmentDetails, setAppointmentDetails] = useState({});
     const [areYouSureDialog, setAreYouSureDialog] = useState(false);
+    const [areYouSureDialogForToken, setAreYouSureDialogForToken] =
+        useState(false);
     const [disableButton, setDisableButton] = useState(false);
     const [tempDate, setTempDate] = useState("");
     // const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
@@ -59,7 +61,6 @@ const ViewPetiantAppointment = () => {
         useState(false);
     const [slotsLoading, setSlotsLoading] = useState(false);
     const [tempDoctorId, setTempDoctorId] = useState("");
-    console.log(appointmentDetails);
 
     const getPendingAppointmentsData = async () => {
         try {
@@ -79,19 +80,37 @@ const ViewPetiantAppointment = () => {
         }
     };
 
+    const cancelAppointmentForToken = async () => {
+        setDisableButton(true);
+        try {
+            const response = await axiosClient.put(
+                `/v2//updateAppointmentByTokenUserAppointmentStatus/${appointmentId}`,
+                { status: "cancelled", remark: "by patient" }
+            );
+            if (response.status === "ok") {
+                navigate("/tracking");
+                getPendingAppointmentsData();
+            }
+            setAreYouSureDialogForToken(false);
+            return setDisableButton(false);
+        } catch (error) {
+            console.log(error);
+        }
+        // setUpdatedStatus("cancled");
+    };
     const cancelAppointment = async () => {
         setDisableButton(true);
         try {
             const response = await axiosClient.put(
                 `/v2/updateUserAppointmentStatus/${appointmentId}`,
-                { status: "cancelled" }
+                { status: "cancelled", remark: "by patient" }
             );
             if (response.status === "ok") {
                 navigate("/tracking");
                 getPendingAppointmentsData();
             }
             setAreYouSureDialog(false);
-            return setDisableButton(true);
+            return setDisableButton(false);
         } catch (error) {
             console.log(error);
         }
@@ -126,13 +145,114 @@ const ViewPetiantAppointment = () => {
                 {appointmentDetails?.tokenid ? (
                     <ViewTokenAppointment
                         appointmentDetails={appointmentDetails}
+                        setAreYouSureDialogForToken={
+                            setAreYouSureDialogForToken
+                        }
                     />
                 ) : (
                     <ViewSlotAppointment
                         appointmentDetails={appointmentDetails}
+                        setAreYouSureDialog={setAreYouSureDialog}
+                        setEditAppointmentDialog={setEditAppointmentDialog}
                     />
                 )}
             </Box>
+            <Dialog
+                sx={{ borderRadius: "14px" }}
+                onClose={() => setAreYouSureDialogForToken(false)}
+                aria-labelledby="customized-dialog-title"
+                open={areYouSureDialogForToken}
+            >
+                <DialogTitle
+                    sx={{
+                        m: 0,
+                        p: 2,
+                        fontFamily: "Raleway",
+                        fontWeight: "600",
+                        fontSize: { xs: "1rem", sm: "1rem", md: "22px" },
+                    }}
+                    id="customized-dialog-title"
+                >
+                    Confirm Cancel Appointment?
+                </DialogTitle>
+                {areYouSureDialogForToken ? (
+                    <IconButton
+                        aria-label="close"
+                        onClick={() => setAreYouSureDialogForToken(false)}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                ) : null}
+                <DialogContent dividers>
+                    <Typography
+                        sx={{
+                            fontFamily: "Lato",
+                            fontWeight: "500",
+                            fontSize: "16px",
+                            color: "#B92612",
+                            my: "25px",
+                            lineHeight: "21.6px",
+                        }}
+                    >
+                        Are you sure you want to cancel this appointment?
+                    </Typography>
+                    <Stack direction="row" spacing="15px">
+                        <Button
+                            onClick={() => setAreYouSureDialog(false)}
+                            variant="contained"
+                            sx={{
+                                width: "328px",
+                                height: "41px",
+                                background: "#D9D9D9",
+                                color: "#383838",
+                                textTransform: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                borderRadius: "44px",
+                                boxShadow: "none",
+                                ":hover": { background: "#706D6D" },
+                            }}
+                        >
+                            No{" "}
+                        </Button>
+                        <LoadingButton
+                            size="small"
+                            fullWidth
+                            onClick={cancelAppointmentForToken}
+                            loading={disableButton}
+                            variant="contained"
+                            sx={{
+                                width: "328px",
+                                height: "41px",
+                                background: "#B92612",
+                                color: "#ffffff",
+                                textTransform: "none",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                                borderRadius: "44px",
+                                boxShadow: "none",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    fontFamily: "Lato",
+                                    fontWeight: "700",
+                                    fontSize: "1rem",
+                                    textTransform: "none",
+                                }}
+                            >
+                                Cancel
+                            </span>
+                        </LoadingButton>
+                    </Stack>
+                </DialogContent>
+            </Dialog>
             <Dialog
                 sx={{ borderRadius: "14px" }}
                 onClose={() => setAreYouSureDialog(false)}

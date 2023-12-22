@@ -83,8 +83,6 @@ const PatientNavBar = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const { tabValue } = useSelector((state) => state.tab);
-    console.log(tabValue);
-    console.log(user, "User");
 
     const handleChange = (event, newValue) => {
         dispatch(tab(newValue));

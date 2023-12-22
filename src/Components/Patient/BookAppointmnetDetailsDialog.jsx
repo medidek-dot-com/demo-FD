@@ -119,8 +119,6 @@ const BookAppointmnetDetailsDialog = ({
     setInputValue,
     setConfirmBookAppointmentDialog,
 }) => {
-    console.log(bookingAppointmentDetails);
-    console.log(doctorinfo);
     const [err, setError] = useState(false);
     const { user } = useSelector((state) => state.auth);
 

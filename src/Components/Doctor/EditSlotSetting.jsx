@@ -303,7 +303,7 @@ const EditSlotSetting = ({
                         Endtime3: endTime3,
                         isholiday: markAsHoliday,
                         date: selectedDay.currentDate,
-                        doctorid: doctorid,
+                        doctorid: doctor?._id,
                     }
                 );
                 await getOnlineSlotDetailForDoctorForPerticularDate();

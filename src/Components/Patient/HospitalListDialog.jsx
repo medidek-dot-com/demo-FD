@@ -45,9 +45,6 @@ const HospitalListDialog = ({
     acceptAppointments,
     setAcceptAppointments,
 }) => {
-    console.log(hospitalList);
-    console.log(bookingAppointmentDetails);
-
     const { user } = useSelector((state) => state.auth);
 
     const selectDoctor = (data) => {

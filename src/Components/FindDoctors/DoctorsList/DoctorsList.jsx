@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Box,
     Container,
@@ -22,8 +22,9 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    Autocomplete,
+    Autocomplete as Auto,
     Avatar,
+    Tooltip,
 } from "@mui/material";
 import DoctorListII from "./DoctorListII";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
@@ -50,6 +51,18 @@ import BookAppointmnetDetailsDialog from "../../Patient/BookAppointmnetDetailsDi
 import FindDoctorsSkeleton from "../../Skeleton/FindDoctorsSkeleton";
 import "ldrs/dotPulse";
 import { toast } from "react-toastify";
+import {
+    useJsApiLoader,
+    GoogleMap,
+    Marker,
+    Autocomplete,
+    DirectionsRenderer,
+} from "@react-google-maps/api";
+import usePlacesAutocomplete from "use-places-autocomplete";
+import { IoLogoWhatsapp } from "react-icons/io";
+
+import axios from "axios";
+import { TiLocationArrow } from "react-icons/ti";
 
 const ListItemsStyling = styled(ListItem)`
     border: 2px solid #706d6d57;
@@ -109,8 +122,15 @@ const DatePickerStyle = styled(MobileDatePicker)({
     },
 });
 
-const AutocompleteStyle = styled(Autocomplete)({
+const AutocompleteStyle = styled(Auto)({
     "& input::placeholder": {
+        fontFamily: "Lato",
+        fontWeight: "500",
+        fontSize: "16px",
+        color: "#706D6D",
+        opacity: 1,
+    },
+    "& input": {
         fontFamily: "Lato",
         fontWeight: "500",
         fontSize: "16px",
@@ -124,20 +144,26 @@ const AutocompleteStyle = styled(Autocomplete)({
     [`& button`]: {
         transform: "none",
     },
-
-    // "& .css-113ntv0-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator":
-    //     {
-    //         transform: "none",
-    //     },
-    "& .css-3crhnd-MuiInputBase-root-MuiOutlinedInput-root": {
-        // borderRadius: "62px",
-        // border:'1px solid red'
-    },
 });
 
 let datedumb;
-
+const libraries = ["places"];
 const DoctorsList = () => {
+    const {
+        setValue,
+        suggestions: { data },
+    } = usePlacesAutocomplete({
+        debounce: 300,
+        initOnMount: true,
+        // callbackName: "YOUR_CALLBACK_NAME",
+    });
+    let latitude;
+    let longitude;
+    // const [nearsby, setnearby] = useState({
+    //     latitude: "",
+    //     longitude: "",
+    // });
+    console.log(data);
     const navigate = useNavigate();
     const { isLoggedIn, user } = useSelector((state) => state.auth);
     const urlLocation = useLocation();
@@ -146,9 +172,10 @@ const DoctorsList = () => {
     const [doctorsData, setDoctorsData] = useState([]);
     const [speciality, setSpeciality] = useState("");
     const [location, setLocation] = useState("");
-    const locationName = doctorsData.map((location) => location.location);
-    const uniqueLocationName = [...new Set(locationName)];
-    const specilityName = doctorsData.map((location) => location.speciality);
+    const [userLocation, setUserLocation] = useState("");
+    // const locationName = doctorsData.map((location) => location?.location);
+    // const uniqueLocationName = [...new Set(locationName)];
+    const specilityName = doctorsData?.map((location) => location.speciality);
     const [activeCard, setActiveCard] = useState();
     const uniquespecilityName = [...new Set(specilityName)];
     const [hospitalListDialog, setHospitalListDialog] = useState(false);
@@ -198,10 +225,13 @@ const DoctorsList = () => {
         role: user?.role,
     });
 
+    const [directionsResponse, setDirectionsResponse] = useState(null);
+    const [distance, setDistance] = useState("");
+    const [duration, setDuration] = useState("");
+
     const [selectedTime, setSelectedTime] = useState();
 
     const [dateErr, setDateErr] = useState(false);
-    // const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({})
     const [bookingAppointmentDialog, setBookAppointmentDialog] =
         useState(false);
 
@@ -219,6 +249,29 @@ const DoctorsList = () => {
     // const [bookAppointmentButtonLoading, setBookAppointmentButtonLoading] =
     //     useState(false);
 
+    /** @type React.MutableRefObject<HTMLInputElement> */
+    const originRef = useRef();
+    /** @type React.MutableRefObject<HTMLInputElement> */
+    const destiantionRef = useRef();
+
+    async function calculateRoute() {
+        if (userLocation === "" || userLocation === "") {
+            return;
+        }
+
+        // eslint-disable-next-line no-undef
+        const directionsService = new google.maps.DirectionsService();
+        const results = await directionsService.route({
+            origin: userLocation,
+            destination: location,
+            // eslint-disable-next-line no-undef
+            travelMode: google.maps.TravelMode.DRIVING,
+        });
+        setDirectionsResponse(results);
+        setDistance(results.routes[0].legs[0].distance.text);
+        setDuration(results.routes[0].legs[0].duration.text);
+    }
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -228,13 +281,36 @@ const DoctorsList = () => {
     const getDoctorsList = async () => {
         setIsLoading(true);
         try {
-            const response = await axiosClient.get(
-                `/v2/getusergetalldoctors?location=${location}&speciality=${speciality}`
-            );
+            const response = await axiosClient.get("/v2/getusergetalldoctors");
             if (response.status === "ok") {
                 setIsLoading(false);
                 return setDoctorsData(response.result);
             }
+        } catch (error) {
+            setIsLoading(false);
+            console.log(error.message);
+        }
+    };
+    const searchApi = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axiosClient.get(
+                `/v2/searchdoctor/${latitude}/${longitude}`
+            );
+            setIsLoading(false);
+            console.log("search result", response.result.data);
+        } catch (error) {
+            setIsLoading(false);
+            console.log(error.message);
+        }
+    };
+    const doctorsByLocation = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axiosClient.get(
+                `/v2/doctorsByLocation/?location=${location}`
+            );
+            console.log("search result", response.result.data);
         } catch (error) {
             setIsLoading(false);
             console.log(error.message);
@@ -272,7 +348,6 @@ const DoctorsList = () => {
                 const response = await axiosClient.get(
                     `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctor_id}/${currentDate}`
                 );
-                console.log(response);
                 if (response.status === "ok") {
                     setSlotsLoading(false);
                     return setTokensData(response.result);
@@ -309,9 +384,9 @@ const DoctorsList = () => {
         getWeekDates();
     }, []);
 
-    useEffect(() => {
-        getDoctorsList();
-    }, [location, speciality]);
+    // useEffect(() => {
+    //     getDoctorsList();
+    // }, [location, speciality]);
 
     const handleClick = async (
         nameOfTheDoctor,
@@ -379,258 +454,373 @@ const DoctorsList = () => {
 
     const [hospitalList, setHospitalList] = useState([]);
 
-    // const multipleloginprofile = async () => {};
+    const success = (result) => {
+        (latitude = result.coords.latitude),
+            (longitude = result.coords.longitude),
+            searchApi();
+    };
+    const error = (result) => {
+        console.log(result);
+    };
+
+    const nearby = () => {
+        navigator.geolocation.getCurrentPosition(success, error);
+    };
+
+    useEffect(() => {
+        // nearby();
+        getDoctorsList();
+    }, []);
+
+    const handleSelectedLocation = async (val, speciality) => {
+        if (speciality) setSpeciality(speciality);
+        if (val !== null) setLocation(val);
+
+        // console.log();
+        // const locationValue = val.terms;
+        try {
+            const response = await axiosClient.post(`/v2/doctorsByLocation`, {
+                location: val ? val : location,
+                speciality,
+            });
+            console.log(response);
+            setDoctorsData(response.result.data);
+        } catch (error) {
+            setIsLoading(false);
+            console.log(error.message);
+        }
+        // setLocation(val?.description);
+        // console.log(val.description);
+        // if (location) {
+        //     doctorsByLocation();
+        // }
+    };
 
     return (
         <>
-            <Box
-                sx={{
-                    width: {
-                        xs: "100%",
-                        sm: "100%",
-                        md: "calc(100% - 100px)",
-                    },
-                    m: "0px auto",
-                    p: 1,
-                    minHeight: "80vh",
-                }}
-            >
-                {/* <Container sx={{display:"flex", justifyContent:"center", mt:5}}> */}
-                <Stack
-                    sx={{
-                        background: {
-                            xs: "#1F51C6",
-                            sm: "#1F51C6",
-                            md: "none",
-                        },
-                        m: "0 auto",
-                        borderRadius: "5px",
-                        p: 2,
-                    }}
-                    direction={{ xs: "column", sm: "column", md: "row" }}
-                    justifyContent="center"
-                    spacing={"10px"}
-                    width={{ xs: "100%", sm: "100%", md: "70%" }}
-                >
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            display: { xs: "block", sm: "block", md: "none" },
-                            textAlign: "center",
-                            fontWeight: "700",
-                            color: "#ffffff",
-                        }}
-                    >
-                        Find Doctors & Book Appointments
-                    </Typography>
-                    <Stack>
-                        <AutocompleteStyle
-                            disabled
-                            size="small"
-                            disablePortal
-                            popupIcon={
-                                <img
-                                    src="/location.svg"
-                                    alt="img"
-                                    width={"20.42px"}
-                                    height={"29.17px"}
-                                />
-                            }
-                            id="combo-box-demo"
-                            // onChange={(e, val) => setLocation(val)}
-                            options={uniqueLocationName}
-                            // getOptionLabel={(location)=>location.location}
-                            sx={{
-                                width: { xs: "100%", sm: "100%", md: "290px" },
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    onSelect={(e) =>
-                                        setLocation(e.target.value)
-                                    }
-                                    {...params}
-                                    placeholder="Enter Location"
-                                    sx={{ background: "#ffffff" }}
-                                />
-                            )}
-                        />
-                    </Stack>
-                    <Stack>
-                        <AutocompleteStyle
-                            disabled
-                            disablePortal
-                            // onChange={(e, v) => setSpeciality(v)}
-                            size="small"
-                            popupIcon={
-                                <img
-                                    src="/doctor.svg"
-                                    alt="img"
-                                    width={"30px"}
-                                    height={"30px"}
-                                />
-                            }
-                            id="combo-box-demo"
-                            options={uniquespecilityName}
-                            // getOptionLabel={(location)=>location.speciality}
-                            sx={{
-                                width: { xs: "100%", sm: "100%", md: "491px" },
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    onSelect={(e) =>
-                                        setSpeciality(e.target.value)
-                                    }
-                                    placeholder="Search doctors, clinics, etc."
-                                    {...params}
-                                    sx={{
-                                        background: "#ffffff",
-                                    }}
-                                />
-                            )}
-                        />
-                    </Stack>
-                </Stack>
+            <>
                 <Box
                     sx={{
-                        width: { xs: "100%", sm: "100%", md: "80%" },
-                        display: "flex",
-                        justifyContent: "space-between",
-                        m: "10px auto",
+                        width: {
+                            xs: "100%",
+                            sm: "100%",
+                            md: "calc(100% - 100px)",
+                        },
+                        m: "0px auto",
+                        p: 1,
+                        minHeight: "80vh",
+                        position: "relative",
                     }}
                 >
-                    <Typography
-                        variant="h6"
-                        fontWeight={600}
-                        fontSize={{ xs: "1rem", sx: "1rem", md: "1.6rem" }}
+                    {/* <Container sx={{display:"flex", justifyContent:"center", mt:5}}> */}
+                    <Stack
+                        sx={{
+                            background: {
+                                xs: "#1F51C6",
+                                sm: "#1F51C6",
+                                md: "none",
+                            },
+                            m: "0 auto",
+                            borderRadius: "5px",
+                            p: 2,
+                        }}
+                        direction={{
+                            xs: "column",
+                            sm: "column",
+                            md: "row",
+                        }}
+                        justifyContent="center"
+                        spacing={"10px"}
+                        width={{ xs: "100%", sm: "100%", md: "70%" }}
                     >
-                        {doctorsData && location && speciality
-                            ? doctorsData.length +
-                              " " +
-                              speciality +
-                              " " +
-                              "near you"
-                            : "Search for a doctor"}
-                        {/* {doctorsData.length} {speciality} near you */}
-                    </Typography>
-                </Box>
-                <Stack
-                    spacing={2}
-                    width={{ xs: "100%", sm: "100%", md: "80%" }}
-                    m="15px auto"
-                >
-                    {isloading && <FindDoctorsSkeleton />}
-                    {doctorsData.map((doctor, i) => (
-                        <Card
-                            key={i}
+                        <Typography
+                            variant="h5"
                             sx={{
-                                boxShadow: "none",
-                                // height: "170px",
-                                border: "1px solid #D9D9D9",
-                                p: { xs: "16px", sm: "16px", md: "25px" },
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: {
-                                    xs: "start",
-                                    sm: "start",
-                                    md: "center",
+                                display: {
+                                    xs: "block",
+                                    sm: "block",
+                                    md: "none",
                                 },
-                                flexDirection: {
-                                    xs: "column",
-                                    sm: "column",
-                                    md: "row",
-                                },
-                                gap: "10px",
+                                textAlign: "center",
+                                fontWeight: "700",
+                                color: "#ffffff",
                             }}
                         >
-                            <Stack
-                                direction="row"
-                                onClick={() =>
-                                    navigate(`/doctor/details/${doctor._id}`)
-                                }
-                                sx={{
-                                    cursor: "pointer",
-                                }}
-                            >
-                                <Box>
-                                    <Avatar
-                                        src={
-                                            doctor?.imgurl
-                                                ? doctor.imgurl
-                                                : "/default.png"
-                                        }
+                            Find Doctors & Book Appointments
+                        </Typography>
+                        {/* {nearsby ? (
+                                <Typography variant="block">
+                                    {nearsby.latitude}
+                                    {nearsby.longitude}
+                                </Typography>
+                            ) : (
+                                <Tooltip title="Near By">
+                                    <IconButton onClick={nearby}>
+                                        <TiLocationArrow color="#1F51C6" />
+                                    </IconButton>
+                                </Tooltip>
+                            )} */}
+
+                        <Stack>
+                            {/* <GoogleMap onLoad={(map) => setMap(map)} /> */}
+                            {/* <Autocomplete>
+                                    <input
+                                        type="text"
+                                        placeholder="Origin"
+                                        ref={originRef}
+                                        className="bg-gray-50 dark:text-gray-50 dark:bg-gray-600 border-gray-300 focus:border-yellow-700 h-8 rounded border-2 p-1.5"
+                                    />
+                                </Autocomplete> */}
+                            <AutocompleteStyle
+                                size="small"
+                                disablePortal
+                                noOptionsText="Search locations"
+                                popupIcon={
+                                    <img
+                                        src="/location.svg"
                                         alt="img"
+                                        width={"20.42px"}
+                                        height={"29.17px"}
+                                    />
+                                }
+                                id="combo-box-demo"
+                                onChange={(e, val) =>
+                                    handleSelectedLocation(val)
+                                }
+                                options={data}
+                                getOptionLabel={(option) =>
+                                    typeof option === "string"
+                                        ? option
+                                        : option.description
+                                }
+                                filterOptions={(x) => x}
+                                renderOption={(props, options) => (
+                                    <li {...props}>
+                                        <img
+                                            src="/location.svg"
+                                            alt="location"
+                                            width="10px"
+                                            style={{ marginRight: "5px" }}
+                                        />{" "}
+                                        {options.description}
+                                    </li>
+                                )}
+                                sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "290px",
+                                    },
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        // onSelect={(e) =>
+                                        //     setLocation(e.target.value)
+                                        // }
+                                        {...params}
+                                        placeholder="Enter Location"
+                                        sx={{ background: "#ffffff" }}
+                                    />
+                                )}
+                                onInputChange={(event, newValue) =>
+                                    setValue(newValue)
+                                }
+                            />
+                        </Stack>
+                        <Stack>
+                            <AutocompleteStyle
+                                onChange={(e, v) =>
+                                    handleSelectedLocation(null, v)
+                                }
+                                size="small"
+                                disablePortal
+                                popupIcon={
+                                    <img
+                                        src="/doctor.svg"
+                                        alt="img"
+                                        width={"30px"}
+                                        height={"30px"}
+                                    />
+                                }
+                                id="combo-box-demo"
+                                options={uniquespecilityName}
+                                // getOptionLabel={(location)=>location.speciality}
+                                sx={{
+                                    width: {
+                                        xs: "100%",
+                                        sm: "100%",
+                                        md: "491px",
+                                    },
+                                }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        // onSelect={(e) =>
+                                        //     setSpeciality(e.target.value)
+                                        // }
+                                        placeholder="Search doctors, clinics, etc."
+                                        {...params}
                                         sx={{
-                                            width: {
-                                                xs: "62px",
-                                                sm: "62px",
-                                                md: "118px",
-                                            },
-                                            height: {
-                                                xs: "62px",
-                                                sm: "62px",
-                                                md: "118px",
-                                            },
+                                            background: "#ffffff",
                                         }}
                                     />
-                                </Box>
-                                <Stack sx={{ mx: 1 }}>
-                                    <Typography
-                                        variant="h6"
-                                        fontWeight="600"
-                                        sx={{
-                                            fontFamily: "Raleway",
-                                            lineHeight: "25.83px",
-                                            // mb: "8px",
-                                        }}
-                                        fontSize={{
-                                            xs: "1rem",
-                                            sm: "1.4",
-                                            md: "22px",
-                                        }}
-                                    >
-                                        {doctor.nameOfTheDoctor}
-                                    </Typography>
-                                    <Typography
-                                        fontSize={{
-                                            xs: "0.8rem",
-                                            sm: "1.4rem",
-                                            md: "15px",
-                                        }}
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontWeight: "400",
-                                            fontSize: "15px",
-                                            color: "#706D6D",
-                                            lineHeight: "18px",
-                                            mb: "8px",
-                                        }}
-                                    >
-                                        <Box component={"span"}>
-                                            {doctor.speciality}
-                                        </Box>
-                                        &nbsp;
-                                        {doctor.yearOfExprience} Years
-                                        Experience
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            fontSize: {
+                                )}
+                            />
+                        </Stack>
+                    </Stack>
+                    <Box
+                        sx={{
+                            width: { xs: "100%", sm: "100%", md: "80%" },
+                            display: "flex",
+                            justifyContent: "space-between",
+                            m: "10px auto",
+                        }}
+                    >
+                        <Typography
+                            variant="h6"
+                            fontWeight={600}
+                            fontSize={{
+                                xs: "1rem",
+                                sx: "1rem",
+                                md: "1.6rem",
+                            }}
+                        >
+                            {doctorsData ===
+                            "no doctor available at your location"
+                                ? doctorsData
+                                : doctorsData && location && speciality
+                                ? doctorsData.length +
+                                  " " +
+                                  " " +
+                                  `${speciality} near you`
+                                : doctorsData && location
+                                ? `${doctorsData.length} Doctors near you`
+                                : "Search for a doctor"}
+                        </Typography>
+                    </Box>
+                    <Stack
+                        spacing={2}
+                        width={{ xs: "100%", sm: "100%", md: "80%" }}
+                        m="15px auto"
+                    >
+                        {isloading && <FindDoctorsSkeleton />}
+                        {doctorsData?.map((doctor, i) => (
+                            <Card
+                                key={i}
+                                sx={{
+                                    boxShadow: "none",
+                                    // height: "170px",
+                                    border: "1px solid #D9D9D9",
+                                    p: {
+                                        xs: "16px",
+                                        sm: "16px",
+                                        md: "25px",
+                                    },
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: {
+                                        xs: "start",
+                                        sm: "start",
+                                        md: "center",
+                                    },
+                                    flexDirection: {
+                                        xs: "column",
+                                        sm: "column",
+                                        md: "row",
+                                    },
+                                    gap: "10px",
+                                }}
+                            >
+                                <Stack
+                                    direction="row"
+                                    onClick={() =>
+                                        navigate(
+                                            `/doctor/details/${doctor._id}`
+                                        )
+                                    }
+                                    sx={{
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    <Box>
+                                        <Avatar
+                                            src={
+                                                doctor?.imgurl
+                                                    ? doctor.imgurl
+                                                    : "/default.png"
+                                            }
+                                            alt="img"
+                                            sx={{
+                                                width: {
+                                                    xs: "62px",
+                                                    sm: "62px",
+                                                    md: "118px",
+                                                },
+                                                height: {
+                                                    xs: "62px",
+                                                    sm: "62px",
+                                                    md: "118px",
+                                                },
+                                            }}
+                                        />
+                                    </Box>
+                                    <Stack sx={{ mx: 1 }}>
+                                        <Typography
+                                            variant="h6"
+                                            fontWeight="600"
+                                            sx={{
+                                                fontFamily: "Raleway",
+                                                lineHeight: "25.83px",
+                                                // mb: "8px",
+                                            }}
+                                            fontSize={{
+                                                xs: "1rem",
+                                                sm: "1.4",
+                                                md: "22px",
+                                            }}
+                                        >
+                                            {doctor.nameOfTheDoctor}
+                                        </Typography>
+                                        <Typography
+                                            fontSize={{
                                                 xs: "0.8rem",
                                                 sm: "1.4rem",
-                                                md: "1.1rem",
-                                            },
-                                            // mb: "8px",
-                                        }}
-                                    >
-                                        <Rating
-                                            size="medium"
-                                            name="simple-controlled"
-                                            value={5}
-                                            readOnly
-                                        />
-                                        {/* &nbsp;
+                                                md: "15px",
+                                            }}
+                                            sx={{
+                                                fontFamily: "Lato",
+                                                fontWeight: "400",
+                                                fontSize: "15px",
+                                                color: "#706D6D",
+                                                lineHeight: "18px",
+                                                mb: "8px",
+                                            }}
+                                        >
+                                            <Box component={"span"}>
+                                                {doctor.speciality}
+                                            </Box>
+                                            &nbsp;
+                                            {doctor.yearOfExprience} Years
+                                            Experience
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                fontSize: {
+                                                    xs: "0.8rem",
+                                                    sm: "1.4rem",
+                                                    md: "1.1rem",
+                                                },
+                                                // mb: "8px",
+                                            }}
+                                        >
+                                            <Rating
+                                                size="medium"
+                                                name="simple-controlled"
+                                                value={5}
+                                                readOnly
+                                            />
+                                            {/* &nbsp;
                                         <Box
                                             component={"span"}
                                             sx={{
@@ -641,99 +831,99 @@ const DoctorsList = () => {
                                         >
                                             114 Rating
                                         </Box> */}
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <img
-                                            src="/location.svg"
-                                            width="15px"
-                                            height="17px"
-                                            alt="img"
-                                        />
-                                        &nbsp;
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <img
+                                                src="/location.svg"
+                                                width="15px"
+                                                height="17px"
+                                                alt="img"
+                                            />
+                                            &nbsp;
+                                            <Typography
+                                                fontSize={{
+                                                    xs: "0.8rem",
+                                                    sm: "1rem",
+                                                }}
+                                                sx={{
+                                                    // mb: "8px",
+                                                    fontSize: "15px",
+                                                    fontWeight: "semi-bold",
+                                                    fontFamily: "Lato",
+                                                    lineHeight: "18px",
+                                                    color: "#706D6D",
+                                                }}
+                                            >
+                                                {doctor.location}
+                                            </Typography>
+                                        </Box>
                                         <Typography
                                             fontSize={{
                                                 xs: "0.8rem",
                                                 sm: "1rem",
                                             }}
                                             sx={{
-                                                // mb: "8px",
+                                                fontFamily: "Lato",
                                                 fontSize: "15px",
                                                 fontWeight: "semi-bold",
-                                                fontFamily: "Lato",
                                                 lineHeight: "18px",
                                                 color: "#706D6D",
                                             }}
                                         >
-                                            {doctor.location}
+                                            ₹{doctor.connsultationFee}{" "}
+                                            Consultation fee
                                         </Typography>
-                                    </Box>
-                                    <Typography
-                                        fontSize={{
-                                            xs: "0.8rem",
-                                            sm: "1rem",
-                                        }}
-                                        sx={{
-                                            fontFamily: "Lato",
-                                            fontSize: "15px",
-                                            fontWeight: "semi-bold",
-                                            lineHeight: "18px",
-                                            color: "#706D6D",
-                                        }}
-                                    >
-                                        ₹{doctor.connsultationFee} Consultation
-                                        fee
-                                    </Typography>
+                                    </Stack>
                                 </Stack>
-                            </Stack>
-                            <Box
-                                sx={{
-                                    width: {
-                                        xs: "100%",
-                                        sm: "100%",
-                                        md: "auto",
-                                    },
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        handleClick(
-                                            doctor.nameOfTheDoctor,
-                                            doctor._id,
-                                            doctor.consultingTime,
-                                            doctor.hospitalId,
-                                            doctor.doctorid
-                                        )
-                                    }
-                                    variant="contained"
-                                    size="small"
+                                <Box
                                     sx={{
-                                        borderRadius: "25px",
-                                        background: "#15B912",
-                                        fontSize: "16px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "600",
-                                        textTransform: "none",
-                                        ":hover": {
-                                            background: "#148512",
-                                        },
-                                        px: "15px",
                                         width: {
                                             xs: "100%",
                                             sm: "100%",
-                                            md: "210px",
+                                            md: "auto",
                                         },
-                                        boxShadow: "none",
+                                        display: "flex",
+                                        justifyContent: "flex-end",
                                     }}
                                 >
-                                    Book Appointment
-                                    {/* {bookAppointmentButtonLoading ? (
+                                    <Button
+                                        onClick={() =>
+                                            handleClick(
+                                                doctor.nameOfTheDoctor,
+                                                doctor._id,
+                                                doctor.consultingTime,
+                                                doctor.hospitalId,
+                                                doctor.doctorid
+                                            )
+                                        }
+                                        variant="contained"
+                                        size="small"
+                                        sx={{
+                                            borderRadius: "25px",
+                                            background: "#15B912",
+                                            fontSize: "16px",
+                                            fontFamily: "Lato",
+                                            fontWeight: "600",
+                                            textTransform: "none",
+                                            ":hover": {
+                                                background: "#148512",
+                                            },
+                                            px: "15px",
+                                            width: {
+                                                xs: "100%",
+                                                sm: "100%",
+                                                md: "210px",
+                                            },
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        Book Appointment
+                                        {/* {bookAppointmentButtonLoading ? (
                                         <l-dot-pulse
                                             size="43"
                                             speed="1.3"
@@ -742,96 +932,127 @@ const DoctorsList = () => {
                                     ) : (
                                         "Book Appointment"
                                     )} */}
-                                </Button>
-                            </Box>
-                        </Card>
-                    ))}
-                </Stack>
-
-                <BookAppointmnetDetailsDialog
-                    inputValue={inputValue}
-                    setInputValue={setInputValue}
-                    setConfirmBookAppointmentDialog={
-                        setConfirmBookAppointmentDialog
-                    }
-                    bookingAppointmentDetailsDialog={
-                        bookingAppointmentDetailsDialog
-                    }
-                    setBookAppointmentDetailsDialog={
-                        setBookAppointmentDetailsDialog
-                    }
-                    bookingAppointmentDetails={bookingAppointmentDetails}
-                    setBookingAppointmentDetails={setBookingAppointmentDetails}
-                    acceptAppointments={acceptAppointments}
-                    setAcceptAppointments={setAcceptAppointments}
-                />
-                <BookAppointmentDialogForPatient
-                    bookingAppointmentDetails={bookingAppointmentDetails}
-                    bookingAppointmentDialog={bookingAppointmentDialog}
-                    datedumb={datedumb}
-                    setBookAppointmentDialog={setBookAppointmentDialog}
-                    setBookingAppointmentDetails={setBookingAppointmentDetails}
-                    confirmBookAppointmentDialog={confirmBookAppointmentDialog}
-                    setConfirmBookAppointmentDialog={
-                        setConfirmBookAppointmentDialog
-                    }
-                    setBookAppointmentDetailsDialog={
-                        setBookAppointmentDetailsDialog
-                    }
-                    inputValue={inputValue}
-                    setInputValue={setInputValue}
-                    slotData={slotData}
-                    setSlotData={setSlotData}
-                    slotsLoading={slotsLoading}
-                    activeCard={activeCard}
-                    setActiveCard={setActiveCard}
-                    selectedTime={selectedTime}
-                    setSelectedTime={setSelectedTime}
-                    acceptAppointments={acceptAppointments}
-                    setAcceptAppointments={setAcceptAppointments}
-                    tokenData={tokenData}
-                />
-                <ConfirmAppointmentDialog
-                    inputValue={inputValue}
-                    setInputValue={setInputValue}
-                    setActiveCard={setActiveCard}
-                    setSelectedTime={setSelectedTime}
-                    confirmBookAppointmentDialog={confirmBookAppointmentDialog}
-                    setConfirmBookAppointmentDialog={
-                        setConfirmBookAppointmentDialog
-                    }
-                    bookingAppointmentDetails={bookingAppointmentDetails}
-                    setBookingAppointmentDetails={setBookingAppointmentDetails}
-                    bookingAppointmentDialog={bookingAppointmentDialog}
-                    setBookAppointmentDialog={setBookAppointmentDialog}
-                    hospitalListDialog={hospitalListDialog}
-                    setHospitalListDialog={setHospitalListDialog}
-                    setBookAppointmentDetailsDialog={
-                        setBookAppointmentDetailsDialog
-                    }
-                    setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
-                    confirmedAppointmentData={confirmedAppointmentData}
-                    setConfirmedAppointmentData={setConfirmedAppointmentData}
-                    acceptAppointments={acceptAppointments}
-                    setAcceptAppointments={setAcceptAppointments}
-                    setSlotData={setSlotData}
-                />
-
-                <HospitalListDialog
-                    inputValue={inputValue}
-                    setInputValue={setInputValue}
-                    hospitalList={hospitalList}
-                    openBookingAppointmentDialog={bookingAppointmentDialog}
-                    setOpenBookingAppointmentDialog={setBookAppointmentDialog}
-                    hospitalListDialog={hospitalListDialog}
-                    setHospitalListDialog={setHospitalListDialog}
-                    setBookingAppointmentDetails={setBookingAppointmentDetails}
-                    bookingAppointmentDetails={bookingAppointmentDetails}
-                    setDoctor_id={setDoctor_id}
-                    acceptAppointments={acceptAppointments}
-                    setAcceptAppointments={setAcceptAppointments}
-                />
-                {/* <AppointmentConfirmDIalog
+                                    </Button>
+                                </Box>
+                            </Card>
+                        ))}
+                    </Stack>
+                    <IconButton
+                        sx={{
+                            position: "fixed",
+                            zIndex: 10,
+                            right: { xs: 40, sm: 20, md: 100 },
+                            bottom: { xs: 70, sm: 20, md: 100 },
+                        }}
+                    >
+                        <a
+                            href="https://api.whatsapp.com/send/?phone=%2B918120763387&text=Chat with medidek&type=phone_number&app_absent=0"
+                            target="_blank"
+                        >
+                            <IoLogoWhatsapp size="60px" color="#25D366" />
+                        </a>
+                    </IconButton>
+                    <BookAppointmnetDetailsDialog
+                        inputValue={inputValue}
+                        setInputValue={setInputValue}
+                        setConfirmBookAppointmentDialog={
+                            setConfirmBookAppointmentDialog
+                        }
+                        bookingAppointmentDetailsDialog={
+                            bookingAppointmentDetailsDialog
+                        }
+                        setBookAppointmentDetailsDialog={
+                            setBookAppointmentDetailsDialog
+                        }
+                        bookingAppointmentDetails={bookingAppointmentDetails}
+                        setBookingAppointmentDetails={
+                            setBookingAppointmentDetails
+                        }
+                        acceptAppointments={acceptAppointments}
+                        setAcceptAppointments={setAcceptAppointments}
+                    />
+                    <BookAppointmentDialogForPatient
+                        bookingAppointmentDetails={bookingAppointmentDetails}
+                        bookingAppointmentDialog={bookingAppointmentDialog}
+                        datedumb={datedumb}
+                        setBookAppointmentDialog={setBookAppointmentDialog}
+                        setBookingAppointmentDetails={
+                            setBookingAppointmentDetails
+                        }
+                        confirmBookAppointmentDialog={
+                            confirmBookAppointmentDialog
+                        }
+                        setConfirmBookAppointmentDialog={
+                            setConfirmBookAppointmentDialog
+                        }
+                        setBookAppointmentDetailsDialog={
+                            setBookAppointmentDetailsDialog
+                        }
+                        inputValue={inputValue}
+                        setInputValue={setInputValue}
+                        slotData={slotData}
+                        setSlotData={setSlotData}
+                        slotsLoading={slotsLoading}
+                        activeCard={activeCard}
+                        setActiveCard={setActiveCard}
+                        selectedTime={selectedTime}
+                        setSelectedTime={setSelectedTime}
+                        acceptAppointments={acceptAppointments}
+                        setAcceptAppointments={setAcceptAppointments}
+                        tokenData={tokenData}
+                    />
+                    <ConfirmAppointmentDialog
+                        inputValue={inputValue}
+                        setInputValue={setInputValue}
+                        setActiveCard={setActiveCard}
+                        setSelectedTime={setSelectedTime}
+                        confirmBookAppointmentDialog={
+                            confirmBookAppointmentDialog
+                        }
+                        setConfirmBookAppointmentDialog={
+                            setConfirmBookAppointmentDialog
+                        }
+                        bookingAppointmentDetails={bookingAppointmentDetails}
+                        setBookingAppointmentDetails={
+                            setBookingAppointmentDetails
+                        }
+                        bookingAppointmentDialog={bookingAppointmentDialog}
+                        setBookAppointmentDialog={setBookAppointmentDialog}
+                        hospitalListDialog={hospitalListDialog}
+                        setHospitalListDialog={setHospitalListDialog}
+                        setBookAppointmentDetailsDialog={
+                            setBookAppointmentDetailsDialog
+                        }
+                        setAppointmentCofirmedDialog={
+                            setAppointmentCofirmedDialog
+                        }
+                        confirmedAppointmentData={confirmedAppointmentData}
+                        setConfirmedAppointmentData={
+                            setConfirmedAppointmentData
+                        }
+                        acceptAppointments={acceptAppointments}
+                        setAcceptAppointments={setAcceptAppointments}
+                        setSlotData={setSlotData}
+                    />
+                    <HospitalListDialog
+                        inputValue={inputValue}
+                        setInputValue={setInputValue}
+                        hospitalList={hospitalList}
+                        openBookingAppointmentDialog={bookingAppointmentDialog}
+                        setOpenBookingAppointmentDialog={
+                            setBookAppointmentDialog
+                        }
+                        hospitalListDialog={hospitalListDialog}
+                        setHospitalListDialog={setHospitalListDialog}
+                        setBookingAppointmentDetails={
+                            setBookingAppointmentDetails
+                        }
+                        bookingAppointmentDetails={bookingAppointmentDetails}
+                        setDoctor_id={setDoctor_id}
+                        acceptAppointments={acceptAppointments}
+                        setAcceptAppointments={setAcceptAppointments}
+                    />
+                    {/* <AppointmentConfirmDIalog
                     confirmedAppointmentData={confirmedAppointmentData}
                     setAppointmentCofirmedDialog={setAppointmentCofirmedDialog}
                     appointmentCofirmedDialog={appointmentCofirmedDialog}
@@ -843,8 +1064,9 @@ const DoctorsList = () => {
                     inputValue={inputValue}
                     setInputValue={setInputValue}
                 /> */}
-            </Box>
-            <Footer />
+                </Box>
+                <Footer />
+            </>
         </>
     );
 };

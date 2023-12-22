@@ -34,7 +34,7 @@ const MissedPatientUserAppointment = ({
 }) => {
     const { user } = useSelector((state) => state.auth);
     const currentDate = moment().format("YYYY-MM-DD");
-
+    console.log(missedAppointmentsData);
     const [bookingAppointmentDetails, setBookingAppointmentDetails] = useState({
         nameOfTheDoctor: "",
         doctorsId: "",
@@ -186,6 +186,7 @@ const MissedPatientUserAppointment = ({
                                 p: "20px",
                                 boxShadow: "none",
                                 border: "1px solid #D9D9D9",
+                                mb: "15px",
                             }}
                         >
                             <Stack
@@ -220,7 +221,9 @@ const MissedPatientUserAppointment = ({
                                         }}
                                     >
                                         {appointment?.status}{" "}
-                                        {appointment?.remark}
+                                        {appointment?.remark === "by patient"
+                                            ? "By You"
+                                            : appointment?.remark}
                                     </Box>
                                     <Typography
                                         sx={{
@@ -249,43 +252,45 @@ const MissedPatientUserAppointment = ({
                                     </Box>
                                 </Stack>
                             </Stack>
-                            <Box
-                                sx={{
-                                    width: {
-                                        xs: "100%",
-                                        sm: "100%",
-                                        md: "auto",
-                                    },
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                        handleReschedule(appointment)
-                                    }
-                                    size="small"
+                            {!appointment?.tokenid && (
+                                <Box
                                     sx={{
-                                        borderRadius: "25px",
-                                        height: "40px",
-                                        fontSize: "16px",
-                                        fontFamily: "Lato",
-                                        fontWeight: "semibold",
-                                        textTransform: "none",
-                                        px: "16px",
                                         width: {
                                             xs: "100%",
                                             sm: "100%",
-                                            md: "210px",
+                                            md: "auto",
                                         },
-                                        boxShadow: "none",
+                                        display: "flex",
+                                        justifyContent: "flex-end",
+                                        alignItems: "center",
                                     }}
                                 >
-                                    Reschedule
-                                </Button>
-                            </Box>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() =>
+                                            handleReschedule(appointment)
+                                        }
+                                        size="small"
+                                        sx={{
+                                            borderRadius: "25px",
+                                            height: "40px",
+                                            fontSize: "16px",
+                                            fontFamily: "Lato",
+                                            fontWeight: "semibold",
+                                            textTransform: "none",
+                                            px: "16px",
+                                            width: {
+                                                xs: "100%",
+                                                sm: "100%",
+                                                md: "210px",
+                                            },
+                                            boxShadow: "none",
+                                        }}
+                                    >
+                                        Reschedule
+                                    </Button>
+                                </Box>
+                            )}
                         </Card>
                     );
                 })

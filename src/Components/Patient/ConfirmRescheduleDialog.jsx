@@ -61,13 +61,14 @@ const ConfirmRescheduleDialog = ({
 
     const [appointmentCofirmedDialog, setAppointmentCofirmedDialog] =
         useState(false);
+    console.log(acceptAppointments);
 
     const bookAppointment = async () => {
         setDisableButton(true);
         if (acceptAppointments === "byToken") {
             try {
                 const response = await axiosClient.put(
-                    `/v2/editAppointmentForAppointmentByToken/${bookingAppointmentDetails.appointmentId}`,
+                    `/v2/editAppointmentForAppointmentByToken/${bookingAppointmentDetails?.appointmentId}`,
                     { ...inputValue, appointmentDate: currentDate }
                 );
                 console.log(response);

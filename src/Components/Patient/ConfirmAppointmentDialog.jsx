@@ -97,10 +97,9 @@ const ConfirmAppointmentDialog = ({
                     setChooseDateAndTimeDialog &&
                         setChooseDateAndTimeDialog(false);
                     // window.location.reload();
-                    setAcceptAppointments &&
-                        setAcceptAppointments("")(
-                            await getPendingAppointmentsDataForPerticularDate
-                        ) &&
+                    setAcceptAppointments && setAcceptAppointments("");
+
+                    (await getPendingAppointmentsDataForPerticularDate) &&
                         getPendingAppointmentsDataForPerticularDate();
                 }
             } catch (error) {
@@ -123,6 +122,7 @@ const ConfirmAppointmentDialog = ({
                     return;
                 }
                 setDisableButton(false);
+                console.log(error.message);
                 toast.error(error.message);
             }
         } else {

@@ -305,7 +305,7 @@ const AppointmentByToken = ({
                 Starttime3: startTime3,
                 Endtime3: endTime3,
                 date: tokenSelectedDay.currentDate,
-                doctorid: user._id,
+                doctorid: doctor?._id,
             });
 
             if (response.status === "ok") {

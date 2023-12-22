@@ -183,7 +183,7 @@ const DoctorInfo = () => {
                 const response = await axiosClient.get(
                     `/v2/getAppointmentByTokenSlotDetailForDoctorForPerticularDate/${doctorsId}/${currentDate}`
                 );
-                console.log(response);
+
                 if (response.status === "ok") {
                     setSlotsLoading(false);
                     return setTokensData(response.result);
@@ -237,7 +237,7 @@ const DoctorInfo = () => {
             });
             return false;
         }
-        console.log("hello hiiiiii");
+
         try {
             const response = await axiosClient.get(
                 `/v2/singledoctor/${doctorsId}`
@@ -787,12 +787,12 @@ const DoctorInfo = () => {
                                     readOnly
                                 />
                                 &nbsp;
-                                <Box
+                                {/* <Box
                                     component={"span"}
                                     sx={{ color: "#ffffff" }}
                                 >
                                     114 Ratings
-                                </Box>
+                                </Box> */}
                             </Box>
                         </Stack>
                     </Stack>
@@ -868,7 +868,7 @@ const DoctorInfo = () => {
                                                       ?.nameOfhospitalOrClinic}
                                         </Typography>
                                         <Stack direction="row">
-                                            <Box
+                                            {/* <Box
                                                 component="span"
                                                 sx={{
                                                     lineHeight: "19.2px",
@@ -880,7 +880,7 @@ const DoctorInfo = () => {
                                                     ? hospital?.connsultationFee
                                                     : hospital?.hospitalId
                                                           ?.connsultationFee}
-                                            </Box>
+                                            </Box> */}
                                             <Box
                                                 component="span"
                                                 sx={{
@@ -1112,7 +1112,13 @@ const DoctorInfo = () => {
                             display: dropDown ? "block" : "none",
                         }}
                     >
-                        <Typography sx={{ color: "#706D6D" }}>
+                        <Typography
+                            sx={{
+                                color: "#706D6D",
+                                fontFamily: "Lato",
+                                fontWeight: "700",
+                            }}
+                        >
                             {doctorsData.description}
                         </Typography>
                     </Card>

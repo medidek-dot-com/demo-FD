@@ -14,7 +14,10 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import moment from "moment";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
-const ViewTokenAppointment = ({ appointmentDetails }) => {
+const ViewTokenAppointment = ({
+    appointmentDetails,
+    setAreYouSureDialogForToken,
+}) => {
     return (
         <>
             <Box
@@ -400,7 +403,7 @@ const ViewTokenAppointment = ({ appointmentDetails }) => {
                 >
                     <Button
                         variant="contained"
-                        onClick={() => setAreYouSureDialog(true)}
+                        onClick={() => setAreYouSureDialogForToken(true)}
                         sx={{
                             background: "#B92612",
                             borderRadius: "38px",
@@ -412,13 +415,13 @@ const ViewTokenAppointment = ({ appointmentDetails }) => {
                             width: {
                                 xs: "100%",
                                 sm: "100%",
-                                md: "191.55px",
+                                md: "391px",
                             },
                         }}
                     >
                         Cancel Appointment
                     </Button>
-                    <Button
+                    {/* <Button
                         variant="contained"
                         onClick={() => setEditAppointmentDialog(true)}
                         sx={{
@@ -437,7 +440,7 @@ const ViewTokenAppointment = ({ appointmentDetails }) => {
                         }}
                     >
                         Edit Appointment
-                    </Button>
+                    </Button> */}
                 </Stack>
             </Box>
         </>
