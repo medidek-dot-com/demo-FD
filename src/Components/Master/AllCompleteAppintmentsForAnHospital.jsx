@@ -26,7 +26,7 @@ import { axiosClient } from "../../Utils/axiosClient";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import moment from "moment";
-import CompletedAppointmentsBySlotTable from "./completedAppointmentsBySlotTable";
+import CompletedAppointmentsBySlotTable from "./CompletedAppointmentsBySlotTable";
 import CompletedAppointmentsByTokenTable from "./CompletedAppointmentsByTokenTable";
 
 const StyledTableCell = styled(TableCell)({
