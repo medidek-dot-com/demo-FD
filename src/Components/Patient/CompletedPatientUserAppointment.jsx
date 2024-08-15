@@ -74,8 +74,8 @@ const CompletedPatientUserAppointment = ({
     return (
         <>
             <Stack spacing="15px">
-                {completeAppointmentsData.length > 0 ? (
-                    completeAppointmentsData.map((appointment, i) => {
+                {completeAppointmentsData?.length > 0 ? (
+                    completeAppointmentsData?.map((appointment, i) => {
                         return (
                             <Card
                                 key={i}

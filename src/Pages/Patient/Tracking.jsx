@@ -86,6 +86,9 @@ const Tracking = () => {
             `/v2/getCompletedAppointment/${user?._id}`
         );
         setIsLoading(false);
+        if(response.result === "no appointment found by this doctor"){
+            return setCompleteAppointmentsData([])
+        }
         setCompleteAppointmentsData(response.result);
         return;
     };
